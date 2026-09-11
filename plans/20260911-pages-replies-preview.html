@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pages gallery: replies on cards</title>
+<style>
+  :root {
+    --bg: #191715;
+    --panel: #1f1c1a;
+    --card: #201d1b;
+    --border: #2d2a27;
+    --border-soft: rgba(120, 112, 104, 0.18);
+    --text: #ece9e5;
+    --muted: #8f8a83;
+    --faint: #5f5b55;
+    --amber: #f5a623;
+    --accent: #e8e4df;
+    --strip-bg: rgba(255, 252, 246, 0.028);
+    --paper: #f4f1ec;
+    --paper-ink: #c9c4bc;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font: 14px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    padding: 0 24px 96px;
+  }
+  .wrap { max-width: 1040px; margin: 0 auto; }
+
+  /* ---------- header ---------- */
+  header { padding: 64px 0 40px; border-bottom: 1px solid var(--border); }
+  .kicker {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  h1 { font-size: 30px; font-weight: 600; letter-spacing: -0.02em; margin-top: 12px; }
+  .deck { margin-top: 12px; max-width: 62ch; color: var(--muted); font-size: 15px; }
+  .deck b { color: var(--text); font-weight: 500; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+  .chip {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 4px 10px;
+  }
+  .chip.live { color: var(--amber); border-color: rgba(245, 166, 35, 0.35); }
+
+  h2 { font-size: 13px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  section { padding-top: 48px; }
+  .section-note { margin-top: 8px; color: var(--muted); max-width: 68ch; }
+  .section-note b { color: var(--text); font-weight: 500; }
+
+  /* ---------- mock chrome ---------- */
+  .mockbar { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; justify-content: space-between; margin-top: 24px; }
+  .toggle { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; padding: 3px; gap: 2px; background: var(--panel); }
+  .toggle button {
+    appearance: none; border: 0; background: transparent; color: var(--muted);
+    font: 500 12.5px/1 inherit; font-family: inherit; padding: 7px 14px; border-radius: 6px; cursor: pointer;
+  }
+  .toggle button[aria-pressed="true"] { background: #322e2a; color: var(--text); }
+  .hint { font-size: 12px; color: var(--faint); }
+
+  .mock {
+    margin-top: 14px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--panel);
+    padding: 28px 28px 36px;
+    overflow: hidden;
+  }
+  .mock-head { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: space-between; }
+  .tabs { display: flex; gap: 4px; align-items: center; flex-wrap: wrap; }
+  .tab {
+    display: inline-flex; gap: 6px; align-items: baseline;
+    padding: 6px 12px; border-radius: 7px; font-size: 13px; color: var(--muted);
+  }
+  .tab .n { font-size: 11px; color: var(--faint); font-variant-numeric: tabular-nums; }
+  .tab.active { background: #2b2826; color: var(--text); }
+  .search {
+    display: flex; align-items: center; gap: 7px;
+    border: 1px solid var(--border); border-radius: 7px;
+    padding: 6px 12px; width: 210px; color: var(--faint); font-size: 13px;
+  }
+  .search svg { width: 13px; height: 13px; }
+
+  /* ---------- cards ---------- */
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 22px; }
+  @media (max-width: 900px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 620px) { .grid { grid-template-columns: 1fr; } body { padding: 0 16px 72px; } .mock { padding: 18px 16px 24px; } }
+
+  .card {
+    display: flex; flex-direction: column;
+    border: 1px solid var(--border); border-radius: 10px;
+    background: var(--card); overflow: hidden;
+  }
+  .thumb { aspect-ratio: 1280 / 880; position: relative; overflow: hidden; background: #232019; }
+  .thumb.paper { background: var(--paper); }
+  .sk { position: absolute; border-radius: 2px; }
+  .paper .sk { background: var(--paper-ink); }
+  .thumb.dark-t .sk { background: #3a3630; }
+  .sk.title { height: 7%; }
+  .sk.line { height: 3.2%; }
+  .sk.block { border-radius: 4px; }
+
+  .card-body { border-top: 1px solid var(--border-soft); padding: 10px 12px 11px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
+  .card-title { font-size: 13.5px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .meta { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--muted); min-width: 0; }
+  .meta svg { width: 12px; height: 12px; flex: none; }
+  .meta .t { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .replies {
+    margin-left: auto; display: inline-flex; align-items: center; gap: 4px;
+    font-variant-numeric: tabular-nums; flex: none; color: var(--muted);
+  }
+  .replies svg { width: 12px; height: 12px; }
+  .replies.open { color: var(--amber); }
+
+  .strip {
+    display: flex; align-items: center; gap: 8px;
+    border-top: 1px solid var(--border-soft);
+    background: var(--strip-bg);
+    padding: 8px 12px; font-size: 11.5px; min-width: 0;
+  }
+  .avatar {
+    width: 16px; height: 16px; border-radius: 50%; flex: none;
+    background: #35312c; color: #b7b1a9;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 7.5px; font-weight: 600; letter-spacing: 0.02em;
+  }
+  .avatar.agent { background: #2c2f38; color: #9fb0d0; }
+  .avatar svg { width: 9px; height: 9px; }
+  .avatar.a { background: #3a3046; color: #c0aee0; }
+  .avatar.b { background: #2d3a33; color: #a4c9b4; }
+  .avatar.c { background: #3e332c; color: #d3b394; }
+  .strip .line { min-width: 0; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .strip .who { font-weight: 550; }
+  .strip .snippet { color: var(--muted); }
+  .strip .when { flex: none; color: var(--faint); font-size: 10.5px; font-variant-numeric: tabular-nums; }
+
+  /* today / with-replies toggle */
+  .grid[data-mode="today"] .replies, .grid[data-mode="today"] .strip { display: none; }
+
+  /* ---------- anatomy ---------- */
+  .anatomy { display: grid; grid-template-columns: minmax(0, 380px) 1fr; gap: 40px; align-items: start; margin-top: 24px; }
+  @media (max-width: 760px) { .anatomy { grid-template-columns: 1fr; } }
+  .anatomy .card { max-width: 380px; }
+  .tag {
+    position: absolute;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--amber); color: #241c08;
+    font: 600 11px/18px var(--mono); text-align: center;
+  }
+  .legend { display: flex; flex-direction: column; gap: 18px; padding-top: 4px; }
+  .legend li { display: flex; gap: 12px; list-style: none; }
+  .legend .dot {
+    flex: none; width: 18px; height: 18px; border-radius: 50%;
+    background: var(--amber); color: #241c08;
+    font: 600 11px/18px var(--mono); text-align: center; margin-top: 1px;
+  }
+  .legend b { font-weight: 550; }
+  .legend p { color: var(--muted); font-size: 13px; margin-top: 2px; max-width: 52ch; }
+  .legend p code { font-family: var(--mono); font-size: 11.5px; color: var(--accent); background: #2a2724; border-radius: 4px; padding: 1px 5px; }
+
+  /* ---------- wiring ---------- */
+  .wiring { margin-top: 20px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  @media (max-width: 760px) { .wiring { grid-template-columns: 1fr; } }
+  .w {
+    border: 1px solid var(--border); border-radius: 10px; padding: 16px;
+    background: var(--panel);
+  }
+  .w h3 { font-size: 13px; font-weight: 600; }
+  .w p { margin-top: 6px; font-size: 12.5px; color: var(--muted); }
+  .w code { font-family: var(--mono); font-size: 11px; color: var(--accent); background: #2a2724; border-radius: 4px; padding: 1px 5px; }
+
+  /* ---------- questions ---------- */
+  .qs { margin-top: 18px; display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .q { padding: 14px 18px; background: var(--panel); }
+  .q + .q { border-top: 1px solid var(--border); }
+  .q b { font-weight: 550; }
+  .q p { color: var(--muted); font-size: 13px; margin-top: 3px; max-width: 76ch; }
+  .invite { margin-top: 14px; font-size: 12.5px; color: var(--faint); }
+
+  footer { margin-top: 64px; padding-top: 20px; border-top: 1px solid var(--border); color: var(--faint); font-size: 12px; font-family: var(--mono); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="kicker">Pages &middot; design preview &middot; September 11, 2026</div>
+  <h1>Replies, visible from the gallery</h1>
+  <p class="deck">Each card on the Pages view now carries its conversation: a <b>reply count</b> that turns amber while threads are still open, and a <b>latest-reply strip</b> showing who spoke last — human or agent. Pages nobody has commented on look exactly as they do today.</p>
+  <div class="chips">
+    <span class="chip live">implemented on show-replies-view</span>
+    <span class="chip">page.list + PageCard</span>
+    <span class="chip">visible after the next API deploy</span>
+  </div>
+</header>
+
+<section>
+  <h2>The view</h2>
+  <div class="mockbar">
+    <div class="toggle" role="group" aria-label="Preview mode">
+      <button type="button" data-mode="today" aria-pressed="false">Today</button>
+      <button type="button" data-mode="replies" aria-pressed="true">With replies</button>
+    </div>
+    <span class="hint">Flip to compare. Cards without comments never grow the extra row.</span>
+  </div>
+
+  <div class="mock" aria-label="Pages view mock">
+    <div class="mock-head">
+      <div class="tabs">
+        <span class="tab active">All <span class="n">101</span></span>
+        <span class="tab">Pinned <span class="n">1</span></span>
+        <span class="tab">Team <span class="n">98</span></span>
+        <span class="tab">Just me <span class="n">3</span></span>
+      </div>
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        Search pages
+      </div>
+    </div>
+
+    <div class="grid" id="grid" data-mode="replies">
+
+      <!-- Support reply queue : open threads -->
+      <article class="card">
+        <div class="thumb paper">
+          <span class="sk title" style="left:8%; top:9%; width:52%"></span>
+          <span class="sk line" style="left:8%; top:22%; width:78%"></span>
+          <span class="sk line" style="left:8%; top:29%; width:70%"></span>
+          <span class="sk line" style="left:8%; top:36%; width:74%"></span>
+          <span class="sk block" style="left:8%; top:48%; width:84%; height:38%; opacity:.35"></span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Support reply queue</div>
+          <div class="meta">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+            <span>&middot;</span><span class="t">Edited 18 seconds ago</span><span>&middot;</span><span class="t">Kiet Ho</span>
+            <span class="replies open" title="5 replies, 2 open threads">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>5
+            </span>
+          </div>
+        </div>
+        <div class="strip">
+          <span class="avatar a">SP</span>
+          <span class="line"><span class="who">Satya Patel</span> <span class="snippet">Can we split the SEMA soft bounces into their own bucket before Monday?</span></span>
+          <span class="when">2h</span>
+        </div>
+      </article>
+
+      <!-- Mobile OTA Updates : agent replied, all resolved -->
+      <article class="card">
+        <div class="thumb paper">
+          <span class="sk title" style="left:10%; top:10%; width:60%"></span>
+          <span class="sk line" style="left:10%; top:24%; width:76%"></span>
+          <span class="sk line" style="left:10%; top:31%; width:64%"></span>
+          <span class="sk block" style="left:10%; top:42%; width:80%; height:16%; opacity:.28"></span>
+          <span class="sk line" style="left:10%; top:66%; width:72%"></span>
+          <span class="sk line" style="left:10%; top:73%; width:68%"></span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Mobile OTA Updates</div>
+          <div class="meta">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+            <span>&middot;</span><span class="t">Edited 15 seconds ago</span><span>&middot;</span><span class="t">Satya Patel</span>
+            <span class="replies" title="3 replies">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>3
+            </span>
+          </div>
+        </div>
+        <div class="strip">
+          <span class="avatar agent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg></span>
+          <span class="line"><span class="who">Agent</span> <span class="snippet">Republished with the runtime-version decision table — resolving.</span></span>
+          <span class="when">1d</span>
+        </div>
+      </article>
+
+      <!-- PR review : one open -->
+      <article class="card">
+        <div class="thumb dark-t">
+          <span class="sk title" style="left:7%; top:10%; width:48%"></span>
+          <span class="sk line" style="left:7%; top:24%; width:80%"></span>
+          <span class="sk line" style="left:7%; top:31%; width:72%"></span>
+          <span class="sk block" style="left:7%; top:44%; width:40%; height:22%; opacity:.5"></span>
+          <span class="sk block" style="left:53%; top:44%; width:40%; height:22%; opacity:.5"></span>
+          <span class="sk line" style="left:7%; top:76%; width:60%"></span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">PascalOrdano18 PR Review</div>
+          <div class="meta">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+            <span>&middot;</span><span class="t">Edited 38 seconds ago</span><span>&middot;</span><span class="t">Kiet Ho</span>
+            <span class="replies open" title="2 replies, 1 open thread">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>2
+            </span>
+          </div>
+        </div>
+        <div class="strip">
+          <span class="avatar c">AP</span>
+          <span class="line"><span class="who">Avi Peltz</span> <span class="snippet">Is #7305 really no-action? The maintainer redirected him to v2.</span></span>
+          <span class="when">4h</span>
+        </div>
+      </article>
+
+      <!-- automations pro gate : no comments, unchanged -->
+      <article class="card">
+        <div class="thumb dark-t">
+          <span class="sk title" style="left:8%; top:9%; width:56%"></span>
+          <span class="sk line" style="left:8%; top:22%; width:70%"></span>
+          <span class="sk block" style="left:8%; top:34%; width:84%; height:48%; opacity:.5"></span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">automations pro gate</div>
+          <div class="meta">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+            <span>&middot;</span><span class="t">Edited 58 seconds ago</span><span>&middot;</span><span class="t">Kiet Ho</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Vercel spend : agent resolved -->
+      <article class="card">
+        <div class="thumb paper">
+          <span class="sk title" style="left:9%; top:10%; width:64%"></span>
+          <span class="sk block" style="left:9%; top:24%; width:19%; height:14%; opacity:.3"></span>
+          <span class="sk block" style="left:31%; top:24%; width:19%; height:14%; opacity:.3"></span>
+          <span class="sk block" style="left:53%; top:24%; width:19%; height:14%; opacity:.3"></span>
+          <span class="sk block" style="left:75%; top:24%; width:16%; height:14%; opacity:.3"></span>
+          <span class="sk line" style="left:9%; top:48%; width:74%"></span>
+          <span class="sk line" style="left:9%; top:55%; width:78%"></span>
+          <span class="sk line" style="left:9%; top:62%; width:66%"></span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Vercel spend, September 2026</div>
+          <div class="meta">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+            <span>&middot;</span><span class="t">Edited 54 minutes ago</span><span>&middot;</span><span class="t">Kiet Ho</span>
+            <span class="replies" title="4 replies">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>4
+            </span>
+          </div>
+        </div>
+        <div class="strip">
+          <span class="avatar agent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg></span>
+          <span class="line"><span class="who">Agent</span> <span class="snippet">Broke daily effective cost out by line item as asked.</span></span>
+          <span class="when">3d</span>
+        </div>
+      </article>
+
+      <!-- Hiring follow-ups : open, private page -->
+      <article class="card">
+        <div class="thumb paper">
+          <span class="sk title" style="left:8%; top:9%; width:44%"></span>
+          <span class="sk line" style="left:8%; top:22%; width:80%"></span>
+          <span class="sk line" style="left:8%; top:29%; width:76%"></span>
+          <span class="sk line" style="left:8%; top:36%; width:80%"></span>
+          <span class="sk line" style="left:8%; top:43%; width:58%"></span>
+          <span class="sk line" style="left:8%; top:56%; width:78%"></span>
+          <span class="sk line" style="left:8%; top:63%; width:72%"></span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Hiring Follow-ups</div>
+          <div class="meta">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <span>&middot;</span><span class="t">Edited 3 hours ago</span><span>&middot;</span><span class="t">Kiet Ho</span>
+            <span class="replies open" title="1 reply, 1 open thread">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>1
+            </span>
+          </div>
+        </div>
+        <div class="strip">
+          <span class="avatar b">KH</span>
+          <span class="line"><span class="who">Kiet Ho</span> <span class="snippet">Move Vedanta to Friday — founder-track bar conflict at 2:30.</span></span>
+          <span class="when">3h</span>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Anatomy</h2>
+  <div class="anatomy">
+    <div style="position: relative; padding: 10px 0;">
+      <article class="card" style="position: relative;">
+        <div class="thumb paper">
+          <span class="sk title" style="left:8%; top:9%; width:52%"></span>
+          <span class="sk line" style="left:8%; top:22%; width:78%"></span>
+          <span class="sk line" style="left:8%; top:29%; width:70%"></span>
+          <span class="sk block" style="left:8%; top:42%; width:84%; height:44%; opacity:.35"></span>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Support reply queue</div>
+          <div class="meta">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+            <span>&middot;</span><span class="t">Edited 18 seconds ago</span><span>&middot;</span><span class="t">Kiet Ho</span>
+            <span class="replies open">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>5
+            </span>
+          </div>
+        </div>
+        <div class="strip">
+          <span class="avatar a">SP</span>
+          <span class="line"><span class="who">Satya Patel</span> <span class="snippet">Can we split the SEMA soft bounces into their own bucket?</span></span>
+          <span class="when">2h</span>
+        </div>
+        <span class="tag" style="right: -9px; bottom: 74px;">1</span>
+        <span class="tag" style="left: -9px; bottom: 26px;">2</span>
+        <span class="tag" style="right: -9px; bottom: 26px;">3</span>
+      </article>
+    </div>
+    <ul class="legend">
+      <li>
+        <span class="dot">1</span>
+        <div><b>Reply count</b><p>Every non-deleted comment on the page, across all threads and versions. Amber whenever unresolved threads remain — the &ldquo;this still needs someone&rdquo; signal; gray once everything is resolved. Screen readers get the full phrase (&ldquo;5 replies, 2 open threads&rdquo;), and pages with zero replies render no chip at all.</p></div>
+      </li>
+      <li>
+        <span class="dot">2</span>
+        <div><b>Latest reply</b><p>Newest comment on the page: avatar, author, and a one-line snippet (the server sends only the first 240 characters). Agent replies show the bot mark and the <code>Agent</code> byline, same as the comments panel. Clicking anywhere on the card still opens the page, where the full threads live.</p></div>
+      </li>
+      <li>
+        <span class="dot">3</span>
+        <div><b>Recency</b><p>Compact relative time of that last reply (<code>formatCompactRelativeTime</code>), so a stale conversation reads differently from one that moved two minutes ago.</p></div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <h2>How it&rsquo;s wired</h2>
+  <div class="wiring">
+    <div class="w">
+      <h3>One query, no fan-out</h3>
+      <p><code>page.list</code> gains two correlated laterals: an aggregate for <code>commentCount</code> / <code>openThreadCount</code>, and a limit-1 for the latest reply. The gallery still makes a single request; nothing fetches per card.</p>
+    </div>
+    <div class="w">
+      <h3>Additive shape</h3>
+      <p>New fields ride the existing <code>RouterOutputs</code> type, so mobile, the CLI, and MCP <code>pages_list</code> pick them up without breakage — mobile&rsquo;s row type derives from the router output.</p>
+    </div>
+    <div class="w">
+      <h3>Localized</h3>
+      <p>The two new plural strings (&ldquo;# replies&rdquo;, &ldquo;# open threads&rdquo;) are hand-translated in all 17 locales, reusing each catalog&rsquo;s established nouns for &ldquo;reply&rdquo; and &ldquo;thread&rdquo;.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Open questions</h2>
+  <div class="qs">
+    <div class="q">
+      <b>Hover depth.</b>
+      <p>The strip shows one reply. Worth a hover card with the last two or three, or is one line plus click-through enough? The query could return three as cheaply as one.</p>
+    </div>
+    <div class="q">
+      <b>Amber semantics.</b>
+      <p>Right now amber means &ldquo;any unresolved thread.&rdquo; An alternative is &ldquo;someone replied since you last opened it,&rdquo; but that needs per-viewer read state we don&rsquo;t track yet.</p>
+    </div>
+    <div class="q">
+      <b>A &ldquo;needs reply&rdquo; filter.</b>
+      <p>Once open-thread counts are on every row, a filter chip beside All / Pinned / Team is a small follow-up. Skipped for now to keep this change tight.</p>
+    </div>
+  </div>
+  <p class="invite">Pin a comment on any element here — the toggle, a card, a strip — and hand it to the agent; this page is watched from the branch.</p>
+</section>
+
+<footer>branch show-replies-view &middot; packages/trpc router/page + apps/desktop PageCard &middot; source: plans/20260911-pages-replies-preview.html</footer>
+
+</div>
+
+<script>
+  var grid = document.getElementById("grid");
+  var buttons = document.querySelectorAll(".toggle button");
+  buttons.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      buttons.forEach(function (b) { b.setAttribute("aria-pressed", String(b === btn)); });
+      grid.dataset.mode = btn.dataset.mode === "today" ? "today" : "replies";
+    });
+  });
+</script>
+</body>
+</html>
