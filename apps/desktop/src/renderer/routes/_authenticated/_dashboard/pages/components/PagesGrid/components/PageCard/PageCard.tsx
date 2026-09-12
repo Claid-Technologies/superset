@@ -108,8 +108,35 @@ export function PageCard({
 				onClick={(event) => onOpen(page, event)}
 				className="flex flex-1 flex-col text-left"
 			>
-				<PageThumbnail src={page.thumbnailUrl} />
-				<div className="flex flex-1 flex-col gap-1 border-border/60 border-t px-3 py-2.5">
+				<div className="relative">
+					<PageThumbnail src={page.thumbnailUrl} />
+					{page.lastComment && lastAuthor ? (
+						<div className="absolute inset-x-0 bottom-0 flex items-center gap-2 border-border/60 border-t bg-background/85 px-3 py-2 text-xs opacity-0 backdrop-blur transition-opacity group-focus-within:opacity-100 group-hover:opacity-100">
+							<Avatar className="size-4 shrink-0">
+								<AvatarImage src={lastAuthor.image ?? undefined} alt="" />
+								<AvatarFallback className="text-[8px]">
+									{lastAuthor.isAgent ? (
+										<Bot className="size-2.5" />
+									) : (
+										getInitials(lastAuthor.name) || "?"
+									)}
+								</AvatarFallback>
+							</Avatar>
+							<span className="min-w-0 flex-1 truncate">
+								<span className="font-medium">{lastAuthor.name}</span>{" "}
+								<span className="text-muted-foreground">
+									{page.lastComment.body}
+								</span>
+							</span>
+							<span className="shrink-0 text-[11px] text-muted-foreground">
+								{formatCompactRelativeTime(
+									new Date(page.lastComment.createdAt),
+								)}
+							</span>
+						</div>
+					) : null}
+				</div>
+				<div className="flex flex-col gap-1 border-border/60 border-t px-3 py-2.5">
 					<span className="truncate font-medium text-sm">{page.title}</span>
 					<span className="flex items-center gap-1.5 text-muted-foreground text-xs">
 						<VisibilityIcon className="size-3 shrink-0" />
@@ -154,29 +181,6 @@ export function PageCard({
 						) : null}
 					</span>
 				</div>
-				{page.lastComment && lastAuthor ? (
-					<div className="flex w-full items-center gap-2 border-border/60 border-t bg-muted/30 px-3 py-2 text-xs">
-						<Avatar className="size-4 shrink-0">
-							<AvatarImage src={lastAuthor.image ?? undefined} alt="" />
-							<AvatarFallback className="text-[8px]">
-								{lastAuthor.isAgent ? (
-									<Bot className="size-2.5" />
-								) : (
-									getInitials(lastAuthor.name) || "?"
-								)}
-							</AvatarFallback>
-						</Avatar>
-						<span className="min-w-0 flex-1 truncate">
-							<span className="font-medium">{lastAuthor.name}</span>{" "}
-							<span className="text-muted-foreground">
-								{page.lastComment.body}
-							</span>
-						</span>
-						<span className="shrink-0 text-[11px] text-muted-foreground">
-							{formatCompactRelativeTime(new Date(page.lastComment.createdAt))}
-						</span>
-					</div>
-				) : null}
 			</button>
 
 			{isPinned && (
