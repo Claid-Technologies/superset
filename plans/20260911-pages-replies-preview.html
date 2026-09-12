@@ -15,6 +15,7 @@
     --faint: #5c606a;
     --indigo: #6e79d6;
     --amber: #f5a623;
+    --active: #f5a623;
     --paper: #f3f1ec;
     --paper-ink: #c9c4ba;
     --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
@@ -214,7 +215,7 @@
     transition: opacity 0.22s ease;
   }
   .replies svg { width: 11px; height: 11px; }
-  .replies.open { color: var(--amber); }
+  .replies.open { color: var(--active); }
 
   .strip {
     position: absolute; inset: auto 0 0 0;
@@ -251,6 +252,29 @@
   .caption { margin-top: 16px; font-size: 13px; color: var(--faint); }
   .caption b { color: var(--muted); font-weight: 500; }
 
+  .swatches {
+    margin-top: 14px;
+    display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+  }
+  .swatch-label { font-size: 12.5px; color: var(--muted); margin-right: 4px; }
+  .swatch {
+    appearance: none; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: inherit; font-size: 12px; font-weight: 500; letter-spacing: -0.005em;
+    color: var(--muted);
+    border: 1px solid var(--line); border-radius: 999px;
+    background: rgba(255, 255, 255, 0.02);
+    padding: 4px 11px 4px 6px;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  .swatch i { width: 12px; height: 12px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25); }
+  .swatch:hover { color: var(--text); border-color: rgba(255, 255, 255, 0.14); }
+  .swatch[aria-pressed="true"] {
+    color: var(--text);
+    border-color: rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, 0.06);
+  }
+
   /* ------------------------------------------------ states */
   .states { display: flex; gap: 24px; flex-wrap: wrap; margin-top: 24px; }
   .state { width: min(320px, 100%); }
@@ -284,7 +308,7 @@
 <header>
   <p class="kicker">Design preview</p>
   <h1>One quiet signal per card</h1>
-  <p class="deck">A <b>reply count</b> in the meta row — gray when the conversation is settled, amber while threads are open. The <b>newest reply</b> appears only when you hover. Nothing else changes: no extra rows, no added height, and a page nobody has commented on is untouched.</p>
+  <p class="deck">A <b>reply count</b> in the meta row — gray when the conversation is settled, lit while threads are open. The <b>newest reply</b> appears only when you hover. Nothing else changes: no extra rows, no added height, and a page nobody has commented on is untouched.</p>
   <p class="status">Implemented on <s>show-replies-view</s>. The desktop shows real data after the next API deploy; until then, this page is the accurate stand-in.</p>
 </header>
 
@@ -494,6 +518,15 @@
     </figure>
   </div>
   <p class="caption"><b>Hover any card</b> to peek at the newest reply. The titlebar switch flips back to today&rsquo;s gallery — the only visible difference is the count.</p>
+  <div class="swatches" role="group" aria-label="Color for counts with open threads">
+    <span class="swatch-label">Open-thread color</span>
+    <button type="button" class="swatch" data-color="#f5a623" aria-pressed="true"><i style="background:#f5a623"></i>Amber</button>
+    <button type="button" class="swatch" data-color="#8e99ec" aria-pressed="false"><i style="background:#8e99ec"></i>Indigo</button>
+    <button type="button" class="swatch" data-color="#5ca8ff" aria-pressed="false"><i style="background:#5ca8ff"></i>Blue</button>
+    <button type="button" class="swatch" data-color="#4cc38a" aria-pressed="false"><i style="background:#4cc38a"></i>Green</button>
+    <button type="button" class="swatch" data-color="#f07b55" aria-pressed="false"><i style="background:#f07b55"></i>Coral</button>
+    <button type="button" class="swatch" data-color="#edeef1" aria-pressed="false"><i style="background:#edeef1"></i>White</button>
+  </div>
 </section>
 
 <section>
@@ -555,7 +588,7 @@
   <div class="rows">
     <div class="row">
       <span class="lead">The count</span>
-      <span class="body">Every comment on the page, across threads and versions. Gray when settled; amber while unresolved threads remain. Screen readers get the whole phrase: &ldquo;5 replies, 2 open threads.&rdquo;</span>
+      <span class="body">Every comment on the page, across threads and versions. Gray when settled; lit while unresolved threads remain — try the color candidates under the window. Screen readers get the whole phrase: &ldquo;5 replies, 2 open threads.&rdquo;</span>
     </div>
     <div class="row">
       <span class="lead">The peek</span>
@@ -594,8 +627,8 @@
       <span class="body">Version 2 in this page&rsquo;s history keeps the newest reply pinned under every card — reads like an inbox, at the cost of taller, busier cards. Hover-only is the current pick.</span>
     </div>
     <div class="row">
-      <span class="lead">Amber semantics</span>
-      <span class="body">Amber currently means any unresolved thread. &ldquo;New since you last opened it&rdquo; is the sharper signal, but needs per-viewer read state we don&rsquo;t track yet.</span>
+      <span class="lead">Active semantics</span>
+      <span class="body">The lit count currently means any unresolved thread. &ldquo;New since you last opened it&rdquo; is the sharper signal, but needs per-viewer read state we don&rsquo;t track yet.</span>
     </div>
     <div class="row">
       <span class="lead">A needs-reply filter</span>
@@ -619,6 +652,14 @@
     btn.addEventListener("click", function () {
       buttons.forEach(function (b) { b.setAttribute("aria-pressed", String(b === btn)); });
       windowEl.dataset.mode = btn.dataset.mode;
+    });
+  });
+
+  var swatches = document.querySelectorAll(".swatch");
+  swatches.forEach(function (sw) {
+    sw.addEventListener("click", function () {
+      swatches.forEach(function (s) { s.setAttribute("aria-pressed", String(s === sw)); });
+      document.documentElement.style.setProperty("--active", sw.dataset.color);
     });
   });
 </script>
