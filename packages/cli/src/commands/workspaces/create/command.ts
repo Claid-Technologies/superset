@@ -19,8 +19,9 @@ export default command({
 		environment: string().desc(
 			"Environment the cloud sandbox boots from (id or name; defaults to the first). Requires --cloud",
 		),
-		project: string().desc(
-			"Project ID. Omit to create a project-less session (a managed scratch folder)",
+		project: string().desc("Project ID. Required unless --session or --cloud"),
+		session: boolean().desc(
+			"Create a project-less session (a managed scratch folder). Cannot be combined with --project or --cloud",
 		),
 		name: string().desc("Workspace name"),
 		branch: string().desc("Git branch (required unless --pr or --task is set)"),
@@ -81,6 +82,15 @@ export default command({
 		}
 
 		const projectId = options.project;
+		if (options.session && projectId !== undefined) {
+			throw new CLIError("--session cannot be combined with --project");
+		}
+		if (projectId === undefined && !options.session) {
+			throw new CLIError(
+				"Specify --project or --session",
+				"Use --project <id> for a project workspace or --session for a project-less scratch folder",
+			);
+		}
 		const isSession = projectId === undefined;
 		if (isSession) {
 			for (const [flag, value] of [

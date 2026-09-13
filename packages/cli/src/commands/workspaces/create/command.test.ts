@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, mock, test } from "bun:test";
 
 let createInput: Record<string, unknown> | undefined;
+let sessionInput: Record<string, unknown> | undefined;
 
 mock.module("../../../lib/host-target", () => ({
 	requireHostTarget: () => "host-1",
@@ -8,6 +9,12 @@ mock.module("../../../lib/host-target", () => ({
 		hostId: "host-1",
 		client: {
 			workspaces: {
+				createSession: {
+					mutate: async (input: Record<string, unknown>) => {
+						sessionInput = input;
+						return { workspace: { name: "scratch" } };
+					},
+				},
 				create: {
 					mutate: async (input: Record<string, unknown>) => {
 						createInput = input;
@@ -35,6 +42,9 @@ function invoke(
 		effort?: string;
 		tag?: string[];
 		project?: string | undefined;
+		session?: boolean;
+		cloud?: boolean;
+		local?: boolean;
 		branch?: string | undefined;
 		model?: string;
 	} = {},
@@ -58,9 +68,42 @@ function invoke(
 
 afterEach(() => {
 	createInput = undefined;
+	sessionInput = undefined;
 });
 
 describe("workspaces create", () => {
+	for (const session of [undefined, false]) {
+		test(`rejects missing project when session is ${session}`, async () => {
+			await expect(
+				invoke({ project: undefined, branch: undefined, session }),
+			).rejects.toThrow(/Specify --project or --session/);
+			expect(createInput).toBeUndefined();
+			expect(sessionInput).toBeUndefined();
+		});
+	}
+
+	test("rejects --session with --project", async () => {
+		await expect(invoke({ session: true })).rejects.toThrow(
+			/--session cannot be combined with --project/,
+		);
+		expect(createInput).toBeUndefined();
+		expect(sessionInput).toBeUndefined();
+	});
+
+	test("rejects --session with --cloud", async () => {
+		await expect(
+			invoke({ project: undefined, session: true, cloud: true, local: false }),
+		).rejects.toThrow(/--session does not apply to --cloud/);
+		expect(createInput).toBeUndefined();
+		expect(sessionInput).toBeUndefined();
+	});
+
+	test("creates a session only with explicit --session", async () => {
+		await invoke({ project: undefined, branch: undefined, session: true });
+		expect(sessionInput).toMatchObject({ name: "agent-effort" });
+		expect(createInput).toBeUndefined();
+	});
+
 	test("forwards model to the agent launched with the workspace", async () => {
 		await invoke({
 			agent: "claude",
@@ -116,7 +159,12 @@ describe("workspaces create", () => {
 
 	test("rejects --tag on a project-less session", async () => {
 		await expect(
-			invoke({ project: undefined, branch: undefined, tag: ["perf"] }),
+			invoke({
+				project: undefined,
+				session: true,
+				branch: undefined,
+				tag: ["perf"],
+			}),
 		).rejects.toThrow(/--tag requires --project/);
 		expect(createInput).toBeUndefined();
 	});

@@ -14,6 +14,7 @@ export interface CloudCreateOptions {
 	host?: string;
 	local?: boolean;
 	project?: string;
+	session?: boolean;
 	pr?: number;
 	task?: string;
 	baseBranch?: string;
@@ -39,6 +40,7 @@ export async function createCloudWorkspace(args: {
 		["--host", options.host],
 		["--local", options.local || undefined],
 		["--project", options.project],
+		["--session", options.session || undefined],
 		["--pr", options.pr],
 		["--task", options.task],
 		["--base-branch", options.baseBranch],
