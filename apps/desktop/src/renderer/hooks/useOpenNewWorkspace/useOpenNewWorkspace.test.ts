@@ -3,11 +3,6 @@ import { GlobalRegistrator } from "@happy-dom/global-registrator";
 
 const navigate = mock(() => Promise.resolve());
 let v2Enabled = true;
-const actualRouter = await import("@tanstack/react-router");
-mock.module("@tanstack/react-router", () => ({
-	...actualRouter,
-	useNavigate: () => navigate,
-}));
 mock.module("renderer/hooks/useIsV2CloudEnabled", () => ({
 	useIsV2CloudEnabled: () => v2Enabled,
 }));
@@ -20,7 +15,29 @@ mock.module(
 
 const alreadyRegistered = GlobalRegistrator.isRegistered;
 if (!alreadyRegistered) GlobalRegistrator.register();
-const { act, cleanup, renderHook } = await import("@testing-library/react");
+const {
+	act,
+	cleanup,
+	renderHook: renderHookWithOptions,
+} = await import("@testing-library/react");
+const {
+	createRootRoute,
+	createRouter,
+	createMemoryHistory,
+	RouterContextProvider,
+} = await import("@tanstack/react-router");
+const { createElement } = await import("react");
+function renderHook<Result>(hook: () => Result) {
+	const router = createRouter({
+		routeTree: createRootRoute(),
+		history: createMemoryHistory({ initialEntries: ["/"] }),
+	});
+	router.navigate = navigate;
+	return renderHookWithOptions(hook, {
+		wrapper: ({ children }) =>
+			createElement(RouterContextProvider, { router, children }),
+	});
+}
 const { useNewWorkspaceDraftStore } = await import(
 	"renderer/stores/new-workspace-draft"
 );
@@ -52,10 +69,12 @@ test.each([
 	});
 	const { result } = renderHook(useOpenNewWorkspaceForLocalProject);
 	act(() => result.current("new-project"));
-	expect(navigate).toHaveBeenCalledWith({
-		to: "/new-workspace",
-		search: { projectId: "new-project", host: "this-machine" },
-	});
+	expect(navigate).toHaveBeenCalledWith(
+		expect.objectContaining({
+			to: "/new-workspace",
+			search: { projectId: "new-project", host: "this-machine" },
+		}),
+	);
 	expect(useNewWorkspaceDraftStore.getState()).toMatchObject({
 		hostId: "this-machine",
 		selectedProjectId: "new-project",
