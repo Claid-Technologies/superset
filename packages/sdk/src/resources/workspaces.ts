@@ -2,6 +2,7 @@ import type { APIPromise } from "../core/api-promise";
 import { SupersetError } from "../core/error";
 import { APIResource } from "../core/resource";
 import type { RequestOptions } from "../internal/request-options";
+import { uuid4 } from "../internal/utils/uuid";
 
 /** Workspace row as served by the owning host's `workspace.list`. */
 export interface HostWorkspaceRow {
@@ -80,9 +81,13 @@ export class Workspaces extends APIResource {
 			params.hostId,
 			{
 				method: "workspaces.create",
-				procedure: params.checkout === "local" ? "workspaces.createLocal" : "workspaces.create",
+				procedure:
+					params.checkout === "local"
+						? "workspaces.createLocal"
+						: "workspaces.create",
 			},
 			{
+				id: params.id ?? (params.checkout === "local" ? uuid4() : undefined),
 				projectId: params.projectId,
 				checkout: params.checkout,
 				name: params.name,
@@ -178,7 +183,7 @@ export interface HostWorkspace {
 	projectId: string;
 	/** Absolute path on the host filesystem. */
 	path?: string;
-	type?: "main" | "worktree";
+	type?: HostWorkspaceRow["type"];
 }
 
 export type WorkspaceListResponse = Array<Workspace>;
@@ -193,6 +198,8 @@ export interface WorkspaceListParams {
 }
 
 export interface WorkspaceCreateParams {
+	/** Client UUID for retries. Automatically generated for each Local create call. */
+	id?: string;
 	/** The host machineId to create the workspace on (see `hosts.list()`). */
 	hostId: string;
 	/** Project UUID (see `projects.list()`). */
@@ -246,7 +253,7 @@ export interface WorkspaceCreateResult {
 		hostId: string;
 		name: string;
 		branch: string;
-		type: "main" | "worktree" | "session";
+		type: HostWorkspaceRow["type"];
 		createdByUserId: string | null;
 		taskId: string | null;
 		createdAt: Date;
@@ -287,7 +294,7 @@ export interface WorkspaceUpdateResult {
 	organizationId: string;
 	projectId: string;
 	hostId: string;
-	type: "main" | "worktree";
+	type: HostWorkspaceRow["type"];
 	createdByUserId: string | null;
 	taskId: string | null;
 	createdAt: Date;

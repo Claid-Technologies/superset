@@ -23,6 +23,9 @@ export function useOpenNewWorkspace() {
 			if (hostId) {
 				useNewWorkspaceDraftStore.getState().updateDraft({ hostId });
 			}
+			if (projectId) {
+				useNewWorkspaceDraftStore.getState().selectProject(projectId);
+			}
 			void navigate({
 				to: "/new-workspace",
 				search:

@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { and, eq, isNull } from "drizzle-orm";
-import { workspaces } from "../../../../db/schema";
+import { projects, workspaces } from "../../../../db/schema";
 import type { HostServiceContext } from "../../../../types";
 import {
 	type HostWorkspaceRow,
@@ -95,7 +95,9 @@ export async function createLocalWorkspace(
 	ctx: LocalWorkspaceContext,
 	values: CreateLocalWorkspaceValues,
 ): Promise<HostWorkspaceRow> {
+	requireUnchangedProjectCheckout(ctx, values.projectId, values.repoPath);
 	const branch = await requireCheckedOutBranch(ctx, values.repoPath);
+	requireUnchangedProjectCheckout(ctx, values.projectId, values.repoPath);
 	return insertLocalWorkspace(
 		{
 			db: ctx.db,
@@ -117,4 +119,25 @@ export async function createLocalWorkspace(
 			tags: values.tags,
 		},
 	);
+}
+
+function requireUnchangedProjectCheckout(
+	ctx: Pick<LocalWorkspaceContext, "db">,
+	projectId: string,
+	repoPath: string,
+): void {
+	const project = ctx.db.query.projects
+		.findFirst({ where: eq(projects.id, projectId) })
+		.sync();
+	if (!project)
+		throw new TRPCError({
+			code: "NOT_FOUND",
+			message: "Project no longer exists.",
+		});
+	if (project.repoPath !== repoPath)
+		throw new TRPCError({
+			code: "CONFLICT",
+			message:
+				"Project checkout moved while creating the workspace. Try again.",
+		});
 }

@@ -3,7 +3,11 @@ import { GlobalRegistrator } from "@happy-dom/global-registrator";
 
 const navigate = mock(() => Promise.resolve());
 let v2Enabled = true;
-mock.module("@tanstack/react-router", () => ({ useNavigate: () => navigate }));
+const actualRouter = await import("@tanstack/react-router");
+mock.module("@tanstack/react-router", () => ({
+	...actualRouter,
+	useNavigate: () => navigate,
+}));
 mock.module("renderer/hooks/useIsV2CloudEnabled", () => ({
 	useIsV2CloudEnabled: () => v2Enabled,
 }));
@@ -32,17 +36,20 @@ beforeEach(() => {
 	useNewWorkspaceDraftStore.getState().resetDraft();
 });
 afterEach(cleanup);
-afterAll(() => {
-	if (!alreadyRegistered) GlobalRegistrator.unregister();
+afterAll(async () => {
+	if (!alreadyRegistered) await GlobalRegistrator.unregister();
 });
 
 test.each([
 	"cloud",
 	"other-machine",
 ])("local project handoff overrides %s while preserving the draft", (hostId) => {
-	useNewWorkspaceDraftStore
-		.getState()
-		.updateDraft({ hostId, prompt: "Keep my prompt", checkout: "local" });
+	useNewWorkspaceDraftStore.getState().updateDraft({
+		hostId,
+		selectedProjectId: "old-project",
+		prompt: "Keep my prompt",
+		checkout: "local",
+	});
 	const { result } = renderHook(useOpenNewWorkspaceForLocalProject);
 	act(() => result.current("new-project"));
 	expect(navigate).toHaveBeenCalledWith({
@@ -51,6 +58,8 @@ test.each([
 	});
 	expect(useNewWorkspaceDraftStore.getState()).toMatchObject({
 		hostId: "this-machine",
+		selectedProjectId: "new-project",
+		isSession: false,
 		prompt: "Keep my prompt",
 		checkout: "local",
 	});

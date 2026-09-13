@@ -1263,7 +1263,8 @@ export const workspacesRouter = router({
 			}
 
 			const terminalsResult: Array<{ terminalId: string; label?: string }> = [];
-			const sugarLaunches = input.agents ?? [];
+			const replayedLocalCreate = input.checkout === "local" && alreadyExists;
+			const sugarLaunches = replayedLocalCreate ? [] : (input.agents ?? []);
 
 			// Wait-for-setup gate: chain a single terminal agent behind the setup
 			// commands in the setup terminal, so the agent starts only after setup
@@ -1340,7 +1341,7 @@ export const workspacesRouter = router({
 						workspaceRow.id,
 						chainedAgentResult ? [] : sugarLaunches,
 					),
-				input.command
+				input.command && !replayedLocalCreate
 					? startCommandTerminal({
 							ctx,
 							workspaceId: workspaceRow.id,
