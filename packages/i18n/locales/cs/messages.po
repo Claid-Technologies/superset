@@ -12007,7 +12007,7 @@ msgid "Reset terminal"
 msgstr "Obnovit terminál"
 
 msgid "Reset time unavailable"
-msgstr "Čas obnovení není k dispozici"
+msgstr "Čas resetu není k dispozici"
 
 msgid "Reset to default"
 msgstr "Obnovit výchozí"

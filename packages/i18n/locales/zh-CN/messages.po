@@ -15855,7 +15855,7 @@ msgid "Usage"
 msgstr "用量"
 
 msgid "Usage is out of date"
-msgstr "用量数据已过期"
+msgstr "用量数据已过时"
 
 msgid "Usage sections"
 msgstr "用量分区"

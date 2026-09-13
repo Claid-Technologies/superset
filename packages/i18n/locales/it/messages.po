@@ -12007,7 +12007,7 @@ msgid "Reset terminal"
 msgstr "Reimposta il terminale"
 
 msgid "Reset time unavailable"
-msgstr "Orario di ripristino non disponibile"
+msgstr "Orario di azzeramento non disponibile"
 
 msgid "Reset to default"
 msgstr "Ripristina il valore predefinito"

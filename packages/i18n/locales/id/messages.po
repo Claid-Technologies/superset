@@ -15855,7 +15855,7 @@ msgid "Usage"
 msgstr "Penggunaan"
 
 msgid "Usage is out of date"
-msgstr "Data penggunaan sudah kedaluwarsa"
+msgstr "Data penggunaan sudah tidak mutakhir"
 
 msgid "Usage sections"
 msgstr "Bagian penggunaan"

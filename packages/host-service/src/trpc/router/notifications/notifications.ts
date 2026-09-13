@@ -3,6 +3,7 @@ import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { terminalSessions, workspaces } from "../../../db/schema";
 import { mapEventType } from "../../../events";
+import { verifyAttributionToken } from "../../../terminal-agents/attribution-token";
 import type { HostServiceContext } from "../../../types";
 import { touchLocalWorkspaceActivity } from "../../../workspaces/local-workspace-store";
 import { publicProcedure, router } from "../../index";
@@ -43,6 +44,7 @@ const hookInput = z.object({
 	launchId: z.string().max(128).optional(),
 	accountProfile: z.string().max(4096).optional(),
 	apiKey: z.boolean().optional(),
+	attributionToken: z.string().max(128).optional(),
 });
 
 function trimOrUndefined(value: string | undefined): string | undefined {
@@ -177,6 +179,7 @@ export const notificationsRouter = router({
 
 		const prior = ctx.terminalAgentStore.get(input.terminalId);
 		const account =
+			verifyAttributionToken(input.terminalId, input.attributionToken) &&
 			eventType === "Attached" &&
 			input.accountProfile !== undefined &&
 			(!prior?.account ||

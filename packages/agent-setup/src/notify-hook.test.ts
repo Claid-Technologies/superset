@@ -104,7 +104,7 @@ function writeHookManifest(home: string, orgId: string, endpoint: string) {
 
 describe("getNotifyScriptContent", () => {
 	it("bumps the notify hook marker when hook semantics change", () => {
-		expect(NOTIFY_SCRIPT_MARKER).toBe("# Superset agent notification hook v18");
+		expect(NOTIFY_SCRIPT_MARKER).toBe("# Superset agent notification hook v19");
 	});
 
 	it("forwards hooks fired inside a subagent (agent_id present) to the host roster only", async () => {
@@ -259,7 +259,7 @@ describe("getNotifyScriptContent", () => {
 			"HOOK_SESSION_ID=$(json_field session_id sessionId)",
 		);
 		expect(script).toContain(
-			'dispatch_to_host "{\\"json\\":{\\"terminalId\\":\\"$(json_escape "$SUPERSET_TERMINAL_ID")\\",\\"eventType\\":\\"$(json_escape "$EVENT_TYPE")\\",\\"agent\\":{\\"agentId\\":\\"$(json_escape "$AGENT_ID")\\",\\"sessionId\\":\\"$(json_escape "$SESSION_ID")\\"}$PREVIEW_FIELD$ACCOUNT_FIELD$LAUNCH_FIELD}}"',
+			'dispatch_to_host "{\\"json\\":{\\"terminalId\\":\\"$(json_escape "$SUPERSET_TERMINAL_ID")\\",\\"eventType\\":\\"$(json_escape "$EVENT_TYPE")\\",\\"agent\\":{\\"agentId\\":\\"$(json_escape "$AGENT_ID")\\",\\"sessionId\\":\\"$(json_escape "$SESSION_ID")\\"}$PREVIEW_FIELD$ACCOUNT_FIELD$LAUNCH_FIELD$ATTRIBUTION_FIELD}}"',
 		);
 		// One dispatcher serves both the agent and subagent payloads.
 		expect(script.split('dispatch_to_host "').length - 1).toBe(2);
@@ -827,6 +827,7 @@ describe("session login metadata", () => {
 				{
 					SUPERSET_AGENT_ID: "claude",
 					SUPERSET_AGENT_LAUNCH_ID: "123-start",
+					SUPERSET_ACCOUNT_ATTRIBUTION_TOKEN: "terminal-scoped-token",
 					SUPERSET_HOST_AGENT_HOOK_URL: host.url,
 					CLAUDE_CONFIG_DIR: '/profile/with "quotes"',
 					ANTHROPIC_API_KEY: "secret-must-stay-local",
@@ -839,6 +840,7 @@ describe("session login metadata", () => {
 			);
 			expect(host.requests[0]?.json).toMatchObject({
 				launchId: "123-start",
+				attributionToken: "terminal-scoped-token",
 				accountProfile: '/profile/with "quotes"',
 				apiKey: true,
 			});
