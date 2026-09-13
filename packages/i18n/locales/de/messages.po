@@ -816,6 +816,9 @@ msgstr "{pending} von {total} Prüfung läuft"
 msgid "{pending} of {total} checks running"
 msgstr "{pending} von {total} Prüfungen laufen"
 
+msgid "{percent} used"
+msgstr "{percent} verbraucht"
+
 msgid "{planLabel} · Joined {joined}"
 msgstr "{planLabel} · Beigetreten {joined}"
 
@@ -928,6 +931,9 @@ msgstr "{uncommittedCount, plural, one {# Datei geändert} other {# Dateien geä
 
 msgid "{updatedLabel} restored to defaults"
 msgstr "{updatedLabel} auf Standardwerte zurückgesetzt"
+
+msgid "{used} used"
+msgstr "{used} verbraucht"
 
 msgid "{waiting} Waiting"
 msgstr "{waiting} ausstehend"
@@ -1315,6 +1321,9 @@ msgstr "Das Konto ist zur Löschung vorgemerkt."
 
 msgid "Account pending deletion"
 msgstr "Konto zur Löschung vorgemerkt"
+
+msgid "Account usage"
+msgstr "Kontonutzung"
 
 msgid "Achievements"
 msgstr "Auszeichnungen"
@@ -1997,6 +2006,9 @@ msgstr "Apache Superset"
 
 msgid "API"
 msgstr "API"
+
+msgid "API billing"
+msgstr "API-Abrechnung"
 
 msgid "API key"
 msgstr "API-Schlüssel"
@@ -8347,6 +8359,9 @@ msgstr "Abmelden"
 msgid "Log out?"
 msgstr "Abmelden?"
 
+msgid "Login unverified"
+msgstr "Anmeldung nicht verifiziert"
+
 msgid "Logins (cookies)"
 msgstr "Logins (Cookies)"
 
@@ -11991,6 +12006,9 @@ msgstr "Speicherort zurücksetzen"
 msgid "Reset terminal"
 msgstr "Terminal zurücksetzen"
 
+msgid "Reset time unavailable"
+msgstr "Zeitpunkt der Zurücksetzung nicht verfügbar"
+
 msgid "Reset to default"
 msgstr "Auf Standard zurücksetzen"
 
@@ -13158,6 +13176,9 @@ msgstr "Diese Seite teilen"
 
 msgid "Share via…"
 msgstr "Teilen über…"
+
+msgid "Shared across sessions using this login."
+msgstr "Wird von allen Sitzungen mit dieser Anmeldung gemeinsam genutzt."
 
 msgid "Shared app components"
 msgstr "Gemeinsame App-Komponenten"
@@ -15832,6 +15853,9 @@ msgstr "URL-tauglicher Bezeichner, eindeutig innerhalb deiner Organisation."
 
 msgid "Usage"
 msgstr "Nutzung"
+
+msgid "Usage is out of date"
+msgstr "Die Nutzungsdaten sind veraltet"
 
 msgid "Usage sections"
 msgstr "Nutzungsbereiche"

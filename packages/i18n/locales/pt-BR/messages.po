@@ -816,6 +816,9 @@ msgstr "{pending} de {total} verificação em execução"
 msgid "{pending} of {total} checks running"
 msgstr "{pending} de {total} verificações em execução"
 
+msgid "{percent} used"
+msgstr "{percent} usado"
+
 msgid "{planLabel} · Joined {joined}"
 msgstr "{planLabel} · Entrou em {joined}"
 
@@ -928,6 +931,9 @@ msgstr "{uncommittedCount, plural, one {# arquivo alterado} other {# arquivos al
 
 msgid "{updatedLabel} restored to defaults"
 msgstr "{updatedLabel} restaurado para os padrões"
+
+msgid "{used} used"
+msgstr "{used} usado"
 
 msgid "{waiting} Waiting"
 msgstr "{waiting} aguardando"
@@ -1315,6 +1321,9 @@ msgstr "A conta está com exclusão pendente."
 
 msgid "Account pending deletion"
 msgstr "Conta com exclusão pendente"
+
+msgid "Account usage"
+msgstr "Uso da conta"
 
 msgid "Achievements"
 msgstr "Conquistas"
@@ -1997,6 +2006,9 @@ msgstr "Apache Superset"
 
 msgid "API"
 msgstr "API"
+
+msgid "API billing"
+msgstr "Cobrança de API"
 
 msgid "API key"
 msgstr "Chave de API"
@@ -8347,6 +8359,9 @@ msgstr "Sair"
 msgid "Log out?"
 msgstr "Sair?"
 
+msgid "Login unverified"
+msgstr "Login não verificado"
+
 msgid "Logins (cookies)"
 msgstr "Logins (cookies)"
 
@@ -11991,6 +12006,9 @@ msgstr "Redefinir local"
 msgid "Reset terminal"
 msgstr "Redefinir terminal"
 
+msgid "Reset time unavailable"
+msgstr "Horário de redefinição indisponível"
+
 msgid "Reset to default"
 msgstr "Restaurar o padrão"
 
@@ -13158,6 +13176,9 @@ msgstr "Compartilhar esta página"
 
 msgid "Share via…"
 msgstr "Compartilhar via…"
+
+msgid "Shared across sessions using this login."
+msgstr "Compartilhado entre as sessões que usam este login."
 
 msgid "Shared app components"
 msgstr "Componentes compartilhados do app"
@@ -15832,6 +15853,9 @@ msgstr "Identificador amigável para URL, único dentro da sua organização."
 
 msgid "Usage"
 msgstr "Uso"
+
+msgid "Usage is out of date"
+msgstr "Os dados de uso estão desatualizados"
 
 msgid "Usage sections"
 msgstr "Seções de uso"

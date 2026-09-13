@@ -816,6 +816,9 @@ msgstr "{total}件中{pending}件のチェックが実行中"
 msgid "{pending} of {total} checks running"
 msgstr "{total}件中{pending}件のチェックが実行中"
 
+msgid "{percent} used"
+msgstr "{percent} 使用済み"
+
 msgid "{planLabel} · Joined {joined}"
 msgstr "{planLabel} · {joined}に参加"
 
@@ -928,6 +931,9 @@ msgstr "{uncommittedCount, plural, one {#件のファイルが変更されまし
 
 msgid "{updatedLabel} restored to defaults"
 msgstr "{updatedLabel}をデフォルトに復元しました"
+
+msgid "{used} used"
+msgstr "{used} 使用済み"
 
 msgid "{waiting} Waiting"
 msgstr "{waiting}件待機中"
@@ -1315,6 +1321,9 @@ msgstr "アカウントは削除待ちです。"
 
 msgid "Account pending deletion"
 msgstr "アカウントは削除待ちです"
+
+msgid "Account usage"
+msgstr "アカウントの使用状況"
 
 msgid "Achievements"
 msgstr "実績"
@@ -1997,6 +2006,9 @@ msgstr "Apache Superset"
 
 msgid "API"
 msgstr "API"
+
+msgid "API billing"
+msgstr "API 課金"
 
 msgid "API key"
 msgstr "APIキー"
@@ -8347,6 +8359,9 @@ msgstr "ログアウト"
 msgid "Log out?"
 msgstr "ログアウトしますか?"
 
+msgid "Login unverified"
+msgstr "ログイン未確認"
+
 msgid "Logins (cookies)"
 msgstr "ログイン情報(Cookie)"
 
@@ -11991,6 +12006,9 @@ msgstr "場所をリセット"
 msgid "Reset terminal"
 msgstr "ターミナルをリセット"
 
+msgid "Reset time unavailable"
+msgstr "リセット時刻を取得できません"
+
 msgid "Reset to default"
 msgstr "デフォルトに戻す"
 
@@ -13158,6 +13176,9 @@ msgstr "このページを共有"
 
 msgid "Share via…"
 msgstr "共有方法を選択…"
+
+msgid "Shared across sessions using this login."
+msgstr "このログインを使用するセッション間で共有されます。"
 
 msgid "Shared app components"
 msgstr "共有アプリコンポーネント"
@@ -15832,6 +15853,9 @@ msgstr "組織内で一意のURLフレンドリーな識別子。"
 
 msgid "Usage"
 msgstr "使用量"
+
+msgid "Usage is out of date"
+msgstr "使用状況が古くなっています"
 
 msgid "Usage sections"
 msgstr "使用量セクション"

@@ -816,6 +816,9 @@ msgstr "{total}項檢查中有{pending}項執行中"
 msgid "{pending} of {total} checks running"
 msgstr "{total}項檢查中有{pending}項執行中"
 
+msgid "{percent} used"
+msgstr "已使用 {percent}"
+
 msgid "{planLabel} · Joined {joined}"
 msgstr "{planLabel} · 加入於{joined}"
 
@@ -928,6 +931,9 @@ msgstr "{uncommittedCount, plural, one {#個檔案已更改} other {#個檔案�
 
 msgid "{updatedLabel} restored to defaults"
 msgstr "{updatedLabel}已恢復為預設值"
+
+msgid "{used} used"
+msgstr "已使用 {used}"
 
 msgid "{waiting} Waiting"
 msgstr "{waiting}人等待"
@@ -1315,6 +1321,9 @@ msgstr "帳戶正在等待刪除。"
 
 msgid "Account pending deletion"
 msgstr "帳戶待刪除"
+
+msgid "Account usage"
+msgstr "帳戶用量"
 
 msgid "Achievements"
 msgstr "成就"
@@ -1997,6 +2006,9 @@ msgstr "Apache Superset"
 
 msgid "API"
 msgstr "API"
+
+msgid "API billing"
+msgstr "API 計費"
 
 msgid "API key"
 msgstr "API金鑰"
@@ -8347,6 +8359,9 @@ msgstr "登出"
 msgid "Log out?"
 msgstr "登出？"
 
+msgid "Login unverified"
+msgstr "登入未驗證"
+
 msgid "Logins (cookies)"
 msgstr "登入資訊（cookie）"
 
@@ -11991,6 +12006,9 @@ msgstr "重置位置"
 msgid "Reset terminal"
 msgstr "重置終端"
 
+msgid "Reset time unavailable"
+msgstr "無法取得重設時間"
+
 msgid "Reset to default"
 msgstr "恢復預設"
 
@@ -13158,6 +13176,9 @@ msgstr "分享此頁面"
 
 msgid "Share via…"
 msgstr "分享方式…"
+
+msgid "Shared across sessions using this login."
+msgstr "使用此登入的所有工作階段共用此額度。"
 
 msgid "Shared app components"
 msgstr "共享應用元件"
@@ -15832,6 +15853,9 @@ msgstr "URL友好的識別符號，在你的組織內唯一。"
 
 msgid "Usage"
 msgstr "用量"
+
+msgid "Usage is out of date"
+msgstr "用量資料已過期"
 
 msgid "Usage sections"
 msgstr "用量分區"

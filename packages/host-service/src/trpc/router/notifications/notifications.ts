@@ -6,6 +6,7 @@ import { mapEventType } from "../../../events";
 import type { HostServiceContext } from "../../../types";
 import { touchLocalWorkspaceActivity } from "../../../workspaces/local-workspace-store";
 import { publicProcedure, router } from "../../index";
+import { captureSessionAccount } from "../usage/session-account/session-account";
 
 // Hook scripts emit "" for unset env vars; we coerce to undefined so the
 // AgentIdentity broadcast carries only meaningful fields.
@@ -39,6 +40,9 @@ const hookInput = z.object({
 		.transform((value) => value.slice(0, 4000))
 		.optional(),
 	subagent: subagentInput,
+	launchId: z.string().max(128).optional(),
+	accountProfile: z.string().max(4096).optional(),
+	apiKey: z.boolean().optional(),
 });
 
 function trimOrUndefined(value: string | undefined): string | undefined {
@@ -171,7 +175,25 @@ export const notificationsRouter = router({
 			occurredAt,
 		});
 
+		const prior = ctx.terminalAgentStore.get(input.terminalId);
+		const account =
+			eventType === "Attached" &&
+			input.accountProfile !== undefined &&
+			(!prior?.account ||
+				prior.agentId !== agent?.agentId ||
+				(input.launchId && input.launchId !== prior.launchId) ||
+				(agent?.sessionId &&
+					prior.agentSessionId &&
+					agent.sessionId !== prior.agentSessionId))
+				? await captureSessionAccount(
+						agent?.agentId,
+						input.accountProfile,
+						input.apiKey ?? false,
+					).catch(() => undefined)
+				: undefined;
 		ctx.terminalAgentStore.recordEvent({
+			account,
+			launchId: trimOrUndefined(input.launchId),
 			terminalId: input.terminalId,
 			workspaceId: terminalSession.originWorkspaceId,
 			eventType,

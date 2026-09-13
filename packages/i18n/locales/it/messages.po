@@ -816,6 +816,9 @@ msgstr "{pending} controllo su {total} in esecuzione"
 msgid "{pending} of {total} checks running"
 msgstr "{pending} controlli su {total} in esecuzione"
 
+msgid "{percent} used"
+msgstr "{percent} utilizzato"
+
 msgid "{planLabel} · Joined {joined}"
 msgstr "{planLabel} · Iscritto il {joined}"
 
@@ -928,6 +931,9 @@ msgstr "{uncommittedCount, plural, one {# file modificato} other {# file modific
 
 msgid "{updatedLabel} restored to defaults"
 msgstr "{updatedLabel} ripristinato ai valori predefiniti"
+
+msgid "{used} used"
+msgstr "{used} utilizzato"
 
 msgid "{waiting} Waiting"
 msgstr "{waiting} in attesa"
@@ -1315,6 +1321,9 @@ msgstr "L'account è in attesa di eliminazione."
 
 msgid "Account pending deletion"
 msgstr "Account in attesa di eliminazione"
+
+msgid "Account usage"
+msgstr "Utilizzo dell’account"
 
 msgid "Achievements"
 msgstr "Riconoscimenti"
@@ -1997,6 +2006,9 @@ msgstr "Apache Superset"
 
 msgid "API"
 msgstr "API"
+
+msgid "API billing"
+msgstr "Fatturazione API"
 
 msgid "API key"
 msgstr "Chiave API"
@@ -8347,6 +8359,9 @@ msgstr "Esci"
 msgid "Log out?"
 msgstr "Uscire?"
 
+msgid "Login unverified"
+msgstr "Accesso non verificato"
+
 msgid "Logins (cookies)"
 msgstr "Accessi (cookie)"
 
@@ -11991,6 +12006,9 @@ msgstr "Reimposta la posizione"
 msgid "Reset terminal"
 msgstr "Reimposta il terminale"
 
+msgid "Reset time unavailable"
+msgstr "Orario di ripristino non disponibile"
+
 msgid "Reset to default"
 msgstr "Ripristina il valore predefinito"
 
@@ -13158,6 +13176,9 @@ msgstr "Condividi questa pagina"
 
 msgid "Share via…"
 msgstr "Condividi tramite…"
+
+msgid "Shared across sessions using this login."
+msgstr "Condiviso tra le sessioni che usano questo accesso."
 
 msgid "Shared app components"
 msgstr "Componenti condivisi dell'app"
@@ -15832,6 +15853,9 @@ msgstr "Identificatore adatto agli URL, univoco all'interno della tua organizzaz
 
 msgid "Usage"
 msgstr "Utilizzo"
+
+msgid "Usage is out of date"
+msgstr "I dati di utilizzo non sono aggiornati"
 
 msgid "Usage sections"
 msgstr "Sezioni di utilizzo"

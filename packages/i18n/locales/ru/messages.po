@@ -816,6 +816,9 @@ msgstr "{pending} из {total} проверки выполняется"
 msgid "{pending} of {total} checks running"
 msgstr "{pending} из {total} проверок выполняется"
 
+msgid "{percent} used"
+msgstr "Использовано {percent}"
+
 msgid "{planLabel} · Joined {joined}"
 msgstr "{planLabel} · присоединился {joined}"
 
@@ -928,6 +931,9 @@ msgstr "{uncommittedCount, plural, one {# файл изменён} few {# фай
 
 msgid "{updatedLabel} restored to defaults"
 msgstr "{updatedLabel} восстановлен к значениям по умолчанию"
+
+msgid "{used} used"
+msgstr "Использовано {used}"
 
 msgid "{waiting} Waiting"
 msgstr "Ожидают: {waiting}"
@@ -1315,6 +1321,9 @@ msgstr "Аккаунт ожидает удаления."
 
 msgid "Account pending deletion"
 msgstr "Аккаунт ожидает удаления"
+
+msgid "Account usage"
+msgstr "Использование аккаунта"
 
 msgid "Achievements"
 msgstr "Достижения"
@@ -1997,6 +2006,9 @@ msgstr "Apache Superset"
 
 msgid "API"
 msgstr "API"
+
+msgid "API billing"
+msgstr "Оплата API"
 
 msgid "API key"
 msgstr "Ключ API"
@@ -8347,6 +8359,9 @@ msgstr "Выйти"
 msgid "Log out?"
 msgstr "Выйти?"
 
+msgid "Login unverified"
+msgstr "Вход не подтверждён"
+
 msgid "Logins (cookies)"
 msgstr "Логины (cookies)"
 
@@ -11991,6 +12006,9 @@ msgstr "Сбросить расположение"
 msgid "Reset terminal"
 msgstr "Сбросить терминал"
 
+msgid "Reset time unavailable"
+msgstr "Время сброса недоступно"
+
 msgid "Reset to default"
 msgstr "Сбросить к значению по умолчанию"
 
@@ -13158,6 +13176,9 @@ msgstr "Поделиться этой страницей"
 
 msgid "Share via…"
 msgstr "Поделиться через…"
+
+msgid "Shared across sessions using this login."
+msgstr "Общий лимит для сеансов с этим аккаунтом."
 
 msgid "Shared app components"
 msgstr "Общие компоненты приложения"
@@ -15832,6 +15853,9 @@ msgstr "Идентификатор для URL, уникальный внутри
 
 msgid "Usage"
 msgstr "Использование"
+
+msgid "Usage is out of date"
+msgstr "Данные об использовании устарели"
 
 msgid "Usage sections"
 msgstr "Разделы использования"

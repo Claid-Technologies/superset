@@ -816,6 +816,9 @@ msgstr "{total} kontrolden {pending} tanesi çalışıyor"
 msgid "{pending} of {total} checks running"
 msgstr "{total} kontrolden {pending} tanesi çalışıyor"
 
+msgid "{percent} used"
+msgstr "{percent} kullanıldı"
+
 msgid "{planLabel} · Joined {joined}"
 msgstr "{planLabel} · Katılım {joined}"
 
@@ -928,6 +931,9 @@ msgstr "{uncommittedCount, plural, one {# dosya değişti} other {# dosya deği�
 
 msgid "{updatedLabel} restored to defaults"
 msgstr "{updatedLabel} varsayılanlara geri yüklendi"
+
+msgid "{used} used"
+msgstr "{used} kullanıldı"
 
 msgid "{waiting} Waiting"
 msgstr "{waiting} bekliyor"
@@ -1315,6 +1321,9 @@ msgstr "Hesap silinmeyi bekliyor."
 
 msgid "Account pending deletion"
 msgstr "Hesap silinmeyi bekliyor"
+
+msgid "Account usage"
+msgstr "Hesap kullanımı"
 
 msgid "Achievements"
 msgstr "Başarımlar"
@@ -1997,6 +2006,9 @@ msgstr "Apache Superset"
 
 msgid "API"
 msgstr "API"
+
+msgid "API billing"
+msgstr "API faturalandırması"
 
 msgid "API key"
 msgstr "API anahtarı"
@@ -8347,6 +8359,9 @@ msgstr "Oturumu kapat"
 msgid "Log out?"
 msgstr "Oturum kapatılsın mı?"
 
+msgid "Login unverified"
+msgstr "Oturum açma doğrulanmadı"
+
 msgid "Logins (cookies)"
 msgstr "Oturum bilgileri (çerezler)"
 
@@ -11991,6 +12006,9 @@ msgstr "Konumu sıfırla"
 msgid "Reset terminal"
 msgstr "Terminali sıfırla"
 
+msgid "Reset time unavailable"
+msgstr "Sıfırlama zamanı kullanılamıyor"
+
 msgid "Reset to default"
 msgstr "Varsayılana sıfırla"
 
@@ -13158,6 +13176,9 @@ msgstr "Bu sayfayı paylaş"
 
 msgid "Share via…"
 msgstr "Şununla paylaş…"
+
+msgid "Shared across sessions using this login."
+msgstr "Bu hesabı kullanan oturumlar arasında paylaşılır."
 
 msgid "Shared app components"
 msgstr "Paylaşılan uygulama bileşenleri"
@@ -15832,6 +15853,9 @@ msgstr "Kuruluşunuz içinde benzersiz, URL dostu tanımlayıcı."
 
 msgid "Usage"
 msgstr "Kullanım"
+
+msgid "Usage is out of date"
+msgstr "Kullanım verileri güncel değil"
 
 msgid "Usage sections"
 msgstr "Kullanım bölümleri"

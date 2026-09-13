@@ -816,6 +816,9 @@ msgstr "{pending}/{total} check đang chạy"
 msgid "{pending} of {total} checks running"
 msgstr "{pending}/{total} check đang chạy"
 
+msgid "{percent} used"
+msgstr "Đã dùng {percent}"
+
 msgid "{planLabel} · Joined {joined}"
 msgstr "{planLabel} · Tham gia {joined}"
 
@@ -928,6 +931,9 @@ msgstr "{uncommittedCount, plural, one {# tệp thay đổi} other {# tệp thay
 
 msgid "{updatedLabel} restored to defaults"
 msgstr "Đã khôi phục {updatedLabel} về mặc định"
+
+msgid "{used} used"
+msgstr "Đã dùng {used}"
 
 msgid "{waiting} Waiting"
 msgstr "{waiting} đang chờ"
@@ -1315,6 +1321,9 @@ msgstr "Tài khoản đang chờ xóa."
 
 msgid "Account pending deletion"
 msgstr "Tài khoản đang chờ xóa"
+
+msgid "Account usage"
+msgstr "Mức sử dụng tài khoản"
 
 msgid "Achievements"
 msgstr "Thành tích"
@@ -1997,6 +2006,9 @@ msgstr "Apache Superset"
 
 msgid "API"
 msgstr "API"
+
+msgid "API billing"
+msgstr "Thanh toán API"
 
 msgid "API key"
 msgstr "Khóa API"
@@ -8347,6 +8359,9 @@ msgstr "Đăng xuất"
 msgid "Log out?"
 msgstr "Đăng xuất?"
 
+msgid "Login unverified"
+msgstr "Đăng nhập chưa được xác minh"
+
 msgid "Logins (cookies)"
 msgstr "Đăng nhập (cookie)"
 
@@ -11991,6 +12006,9 @@ msgstr "Đặt lại vị trí"
 msgid "Reset terminal"
 msgstr "Đặt lại terminal"
 
+msgid "Reset time unavailable"
+msgstr "Không có thời gian đặt lại"
+
 msgid "Reset to default"
 msgstr "Đặt lại về mặc định"
 
@@ -13158,6 +13176,9 @@ msgstr "Chia sẻ trang này"
 
 msgid "Share via…"
 msgstr "Chia sẻ qua…"
+
+msgid "Shared across sessions using this login."
+msgstr "Dùng chung giữa các phiên sử dụng tài khoản đăng nhập này."
 
 msgid "Shared app components"
 msgstr "Component dùng chung của ứng dụng"
@@ -15832,6 +15853,9 @@ msgstr "Định danh thân thiện với URL, duy nhất trong tổ chức của
 
 msgid "Usage"
 msgstr "Mức sử dụng"
+
+msgid "Usage is out of date"
+msgstr "Dữ liệu sử dụng đã cũ"
 
 msgid "Usage sections"
 msgstr "Các mục mức sử dụng"

@@ -816,6 +816,9 @@ msgstr "{pending} z {total} kontroli w toku"
 msgid "{pending} of {total} checks running"
 msgstr "{pending} z {total} kontroli w toku"
 
+msgid "{percent} used"
+msgstr "Wykorzystano {percent}"
+
 msgid "{planLabel} · Joined {joined}"
 msgstr "{planLabel} · dołączono {joined}"
 
@@ -928,6 +931,9 @@ msgstr "{uncommittedCount, plural, one {# zmieniony plik} few {# zmienione pliki
 
 msgid "{updatedLabel} restored to defaults"
 msgstr "{updatedLabel} przywrócono do ustawień domyślnych"
+
+msgid "{used} used"
+msgstr "Wykorzystano {used}"
 
 msgid "{waiting} Waiting"
 msgstr "{waiting} oczekuje"
@@ -1315,6 +1321,9 @@ msgstr "Konto oczekuje na usunięcie."
 
 msgid "Account pending deletion"
 msgstr "Konto oczekuje na usunięcie"
+
+msgid "Account usage"
+msgstr "Wykorzystanie konta"
 
 msgid "Achievements"
 msgstr "Osiągnięcia"
@@ -1997,6 +2006,9 @@ msgstr "Apache Superset"
 
 msgid "API"
 msgstr "API"
+
+msgid "API billing"
+msgstr "Rozliczenia API"
 
 msgid "API key"
 msgstr "Klucz API"
@@ -8347,6 +8359,9 @@ msgstr "Wyloguj się"
 msgid "Log out?"
 msgstr "Wylogować się?"
 
+msgid "Login unverified"
+msgstr "Logowanie niezweryfikowane"
+
 msgid "Logins (cookies)"
 msgstr "Dane logowania (cookies)"
 
@@ -11991,6 +12006,9 @@ msgstr "Zresetuj lokalizację"
 msgid "Reset terminal"
 msgstr "Zresetuj terminal"
 
+msgid "Reset time unavailable"
+msgstr "Czas resetowania jest niedostępny"
+
 msgid "Reset to default"
 msgstr "Przywróć domyślną"
 
@@ -13158,6 +13176,9 @@ msgstr "Udostępnij tę stronę"
 
 msgid "Share via…"
 msgstr "Udostępnij przez…"
+
+msgid "Shared across sessions using this login."
+msgstr "Współdzielone przez sesje korzystające z tego logowania."
 
 msgid "Shared app components"
 msgstr "Wspólne komponenty aplikacji"
@@ -15832,6 +15853,9 @@ msgstr "Identyfikator przyjazny adresom URL, unikalny w organizacji."
 
 msgid "Usage"
 msgstr "Zużycie"
+
+msgid "Usage is out of date"
+msgstr "Dane o wykorzystaniu są nieaktualne"
 
 msgid "Usage sections"
 msgstr "Sekcje zużycia"

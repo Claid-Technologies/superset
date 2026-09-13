@@ -816,6 +816,9 @@ msgstr "{pending} vérification sur {total} en cours"
 msgid "{pending} of {total} checks running"
 msgstr "{pending} vérifications sur {total} en cours"
 
+msgid "{percent} used"
+msgstr "{percent} utilisés"
+
 msgid "{planLabel} · Joined {joined}"
 msgstr "{planLabel} · Membre depuis {joined}"
 
@@ -928,6 +931,9 @@ msgstr "{uncommittedCount, plural, one {# fichier modifié} other {# fichiers mo
 
 msgid "{updatedLabel} restored to defaults"
 msgstr "{updatedLabel} restauré aux valeurs par défaut"
+
+msgid "{used} used"
+msgstr "{used} utilisés"
 
 msgid "{waiting} Waiting"
 msgstr "{waiting} en attente"
@@ -1315,6 +1321,9 @@ msgstr "Le compte est en attente de suppression."
 
 msgid "Account pending deletion"
 msgstr "Compte en attente de suppression"
+
+msgid "Account usage"
+msgstr "Utilisation du compte"
 
 msgid "Achievements"
 msgstr "Distinctions"
@@ -1997,6 +2006,9 @@ msgstr "Apache Superset"
 
 msgid "API"
 msgstr "API"
+
+msgid "API billing"
+msgstr "Facturation API"
 
 msgid "API key"
 msgstr "Clé API"
@@ -8347,6 +8359,9 @@ msgstr "Se déconnecter"
 msgid "Log out?"
 msgstr "Se déconnecter ?"
 
+msgid "Login unverified"
+msgstr "Connexion non vérifiée"
+
 msgid "Logins (cookies)"
 msgstr "Identifiants (cookies)"
 
@@ -11991,6 +12006,9 @@ msgstr "Réinitialiser l'emplacement"
 msgid "Reset terminal"
 msgstr "Réinitialiser le terminal"
 
+msgid "Reset time unavailable"
+msgstr "Heure de réinitialisation indisponible"
+
 msgid "Reset to default"
 msgstr "Rétablir la valeur par défaut"
 
@@ -13158,6 +13176,9 @@ msgstr "Partager cette page"
 
 msgid "Share via…"
 msgstr "Partager via…"
+
+msgid "Shared across sessions using this login."
+msgstr "Partagé entre les sessions utilisant cette connexion."
 
 msgid "Shared app components"
 msgstr "Composants d'application partagés"
@@ -15832,6 +15853,9 @@ msgstr "Identifiant compatible avec les URL, unique au sein de votre organisatio
 
 msgid "Usage"
 msgstr "Utilisation"
+
+msgid "Usage is out of date"
+msgstr "Les données d’utilisation ne sont plus à jour"
 
 msgid "Usage sections"
 msgstr "Sections d'utilisation"

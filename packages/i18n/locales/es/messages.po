@@ -816,6 +816,9 @@ msgstr "{pending} de {total} comprobación en ejecución"
 msgid "{pending} of {total} checks running"
 msgstr "{pending} de {total} comprobaciones en ejecución"
 
+msgid "{percent} used"
+msgstr "{percent} usado"
+
 msgid "{planLabel} · Joined {joined}"
 msgstr "{planLabel} · Se unió {joined}"
 
@@ -928,6 +931,9 @@ msgstr "{uncommittedCount, plural, one {# archivo modificado} other {# archivos 
 
 msgid "{updatedLabel} restored to defaults"
 msgstr "{updatedLabel} restaurado a los valores predeterminados"
+
+msgid "{used} used"
+msgstr "{used} usado"
 
 msgid "{waiting} Waiting"
 msgstr "{waiting} en espera"
@@ -1315,6 +1321,9 @@ msgstr "La cuenta está pendiente de eliminación."
 
 msgid "Account pending deletion"
 msgstr "Cuenta pendiente de eliminación"
+
+msgid "Account usage"
+msgstr "Uso de la cuenta"
 
 msgid "Achievements"
 msgstr "Logros"
@@ -1997,6 +2006,9 @@ msgstr "Apache Superset"
 
 msgid "API"
 msgstr "API"
+
+msgid "API billing"
+msgstr "Facturación de API"
 
 msgid "API key"
 msgstr "Clave de API"
@@ -8347,6 +8359,9 @@ msgstr "Cerrar sesión"
 msgid "Log out?"
 msgstr "¿Cerrar sesión?"
 
+msgid "Login unverified"
+msgstr "Inicio de sesión sin verificar"
+
 msgid "Logins (cookies)"
 msgstr "Inicios de sesión (cookies)"
 
@@ -11991,6 +12006,9 @@ msgstr "Restablecer ubicación"
 msgid "Reset terminal"
 msgstr "Restablecer el terminal"
 
+msgid "Reset time unavailable"
+msgstr "Hora de restablecimiento no disponible"
+
 msgid "Reset to default"
 msgstr "Restablecer al predeterminado"
 
@@ -13158,6 +13176,9 @@ msgstr "Compartir esta página"
 
 msgid "Share via…"
 msgstr "Compartir mediante…"
+
+msgid "Shared across sessions using this login."
+msgstr "Compartido entre las sesiones que usan este inicio de sesión."
 
 msgid "Shared app components"
 msgstr "Componentes compartidos de la app"
@@ -15832,6 +15853,9 @@ msgstr "Identificador apto para URL, único dentro de tu organización."
 
 msgid "Usage"
 msgstr "Uso"
+
+msgid "Usage is out of date"
+msgstr "Los datos de uso están desactualizados"
 
 msgid "Usage sections"
 msgstr "Secciones de uso"

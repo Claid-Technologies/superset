@@ -816,6 +816,9 @@ msgstr "{pending} dari {total} check berjalan"
 msgid "{pending} of {total} checks running"
 msgstr "{pending} dari {total} check berjalan"
 
+msgid "{percent} used"
+msgstr "{percent} terpakai"
+
 msgid "{planLabel} · Joined {joined}"
 msgstr "{planLabel} · Bergabung {joined}"
 
@@ -928,6 +931,9 @@ msgstr "{uncommittedCount, plural, one {# file berubah} other {# file berubah}}"
 
 msgid "{updatedLabel} restored to defaults"
 msgstr "{updatedLabel} dipulihkan ke setelan bawaan"
+
+msgid "{used} used"
+msgstr "{used} terpakai"
 
 msgid "{waiting} Waiting"
 msgstr "{waiting} Menunggu"
@@ -1315,6 +1321,9 @@ msgstr "Akun sedang menunggu penghapusan."
 
 msgid "Account pending deletion"
 msgstr "Akun menunggu penghapusan"
+
+msgid "Account usage"
+msgstr "Penggunaan akun"
 
 msgid "Achievements"
 msgstr "Pencapaian"
@@ -1997,6 +2006,9 @@ msgstr "Apache Superset"
 
 msgid "API"
 msgstr "API"
+
+msgid "API billing"
+msgstr "Penagihan API"
 
 msgid "API key"
 msgstr "Kunci API"
@@ -8347,6 +8359,9 @@ msgstr "Keluar"
 msgid "Log out?"
 msgstr "Keluar?"
 
+msgid "Login unverified"
+msgstr "Login belum diverifikasi"
+
 msgid "Logins (cookies)"
 msgstr "Login (cookie)"
 
@@ -11991,6 +12006,9 @@ msgstr "Reset lokasi"
 msgid "Reset terminal"
 msgstr "Reset terminal"
 
+msgid "Reset time unavailable"
+msgstr "Waktu reset tidak tersedia"
+
 msgid "Reset to default"
 msgstr "Reset ke bawaan"
 
@@ -13158,6 +13176,9 @@ msgstr "Bagikan halaman ini"
 
 msgid "Share via…"
 msgstr "Bagikan lewat…"
+
+msgid "Shared across sessions using this login."
+msgstr "Dibagikan di semua sesi yang menggunakan login ini."
 
 msgid "Shared app components"
 msgstr "Komponen aplikasi bersama"
@@ -15832,6 +15853,9 @@ msgstr "Pengenal ramah URL, unik di dalam organisasi Anda."
 
 msgid "Usage"
 msgstr "Penggunaan"
+
+msgid "Usage is out of date"
+msgstr "Data penggunaan sudah kedaluwarsa"
 
 msgid "Usage sections"
 msgstr "Bagian penggunaan"

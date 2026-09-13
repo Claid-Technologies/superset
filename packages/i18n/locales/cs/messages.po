@@ -816,6 +816,9 @@ msgstr "Běží {pending} z {total} kontroly"
 msgid "{pending} of {total} checks running"
 msgstr "Běží {pending} z {total} kontrol"
 
+msgid "{percent} used"
+msgstr "Využito {percent}"
+
 msgid "{planLabel} · Joined {joined}"
 msgstr "{planLabel} · Připojeno {joined}"
 
@@ -928,6 +931,9 @@ msgstr "{uncommittedCount, plural, one {# změněný soubor} few {# změněné s
 
 msgid "{updatedLabel} restored to defaults"
 msgstr "{updatedLabel} obnoveno na výchozí"
+
+msgid "{used} used"
+msgstr "Využito {used}"
 
 msgid "{waiting} Waiting"
 msgstr "Čeká: {waiting}"
@@ -1315,6 +1321,9 @@ msgstr "Účet čeká na smazání."
 
 msgid "Account pending deletion"
 msgstr "Účet čeká na smazání"
+
+msgid "Account usage"
+msgstr "Využití účtu"
 
 msgid "Achievements"
 msgstr "Úspěchy"
@@ -1997,6 +2006,9 @@ msgstr "Apache Superset"
 
 msgid "API"
 msgstr "API"
+
+msgid "API billing"
+msgstr "Fakturace API"
 
 msgid "API key"
 msgstr "API klíč"
@@ -8347,6 +8359,9 @@ msgstr "Odhlásit se"
 msgid "Log out?"
 msgstr "Odhlásit se?"
 
+msgid "Login unverified"
+msgstr "Přihlášení neověřeno"
+
 msgid "Logins (cookies)"
 msgstr "Přihlášení (cookies)"
 
@@ -11991,6 +12006,9 @@ msgstr "Obnovit umístění"
 msgid "Reset terminal"
 msgstr "Obnovit terminál"
 
+msgid "Reset time unavailable"
+msgstr "Čas obnovení není k dispozici"
+
 msgid "Reset to default"
 msgstr "Obnovit výchozí"
 
@@ -13158,6 +13176,9 @@ msgstr "Sdílet tuto stránku"
 
 msgid "Share via…"
 msgstr "Sdílet přes…"
+
+msgid "Shared across sessions using this login."
+msgstr "Sdíleno mezi relacemi používajícími toto přihlášení."
 
 msgid "Shared app components"
 msgstr "Sdílené komponenty aplikace"
@@ -15832,6 +15853,9 @@ msgstr "Identifikátor vhodný do URL, jedinečný v rámci vaší organizace."
 
 msgid "Usage"
 msgstr "Využití"
+
+msgid "Usage is out of date"
+msgstr "Údaje o využití jsou zastaralé"
 
 msgid "Usage sections"
 msgstr "Sekce využití"
