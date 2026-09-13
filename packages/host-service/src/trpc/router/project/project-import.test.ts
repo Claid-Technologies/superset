@@ -9,12 +9,14 @@ import { drizzle } from "drizzle-orm/bun-sqlite";
 import { migrate } from "drizzle-orm/bun-sqlite/migrator";
 import type { HostDb } from "../../../db";
 import * as schema from "../../../db/schema";
-import { projects } from "../../../db/schema";
+import { projects, workspaces } from "../../../db/schema";
 import { createUserSimpleGit } from "../../../runtime/git/simple-git";
 import type { HostServiceContext } from "../../../types";
 import { createCallerFactory } from "../../index";
+import { workspaceCreationRouter } from "../workspace-creation/workspace-creation";
 import { createFromImportLocal } from "./handlers";
 import { projectRouter } from "./project";
+import { createLocalWorkspace } from "./utils/create-local-workspace";
 
 const MIGRATIONS_FOLDER = resolve(import.meta.dir, "../../../../drizzle");
 
@@ -52,9 +54,16 @@ async function createTempGitRepo(): Promise<string> {
 	return (await git.revparse(["--show-toplevel"])).trim();
 }
 
+async function detachHead(root: string): Promise<void> {
+	const git = createUserSimpleGit(root);
+	await git.raw(["checkout", "--detach"]);
+	expect((await git.revparse(["--abbrev-ref", "HEAD"])).trim()).toBe("HEAD");
+}
+
 function createRecordingApiStub() {
 	const calls: string[] = [];
 	const api = {
+		analytics: { captureEvent: { mutate: async () => {} } },
 		v2Project: {
 			findByGitHubRemote: {
 				query: async () => {
@@ -162,5 +171,117 @@ describe("createFromImportLocal idempotency", () => {
 		expect(rows[0]?.name).toBe("Custom Name");
 		expect(rows[0]?.color).toBe("#112233");
 		expect(rows[0]?.icon).toBe("none");
+	});
+});
+
+// A v1 project whose checkout sits on a detached HEAD must still import;
+// the v1→v2 auto-migration ledgers a throwing import as `error`, which
+// blocks the flip gate for the whole machine. The branch requirement lives
+// only on local-workspace creation, and the importer never reaches it for
+// a detached main checkout (listProjectWorktrees drops it), so the v1 main
+// workspace lands as a non-blocking skip instead.
+describe("detached-HEAD repos (v1 importer)", () => {
+	it("importLocal persists the project row without a main workspace", async () => {
+		const db = createTestDb();
+		const { api } = createRecordingApiStub();
+		const ctx = createTestContext(db, api);
+		const root = await createTempGitRepo();
+		await detachHead(root);
+
+		const result = await createFromImportLocal(ctx, {
+			name: "Detached",
+			repoPath: root,
+		});
+
+		expect(result.created).toBe(true);
+		expect(result.repoPath).toBe(root);
+		const row = db
+			.select()
+			.from(projects)
+			.where(eq(projects.id, result.projectId))
+			.get();
+		expect(row?.repoPath).toBe(root);
+		expect(db.select().from(workspaces).all()).toHaveLength(0);
+	});
+
+	it("setup mode=import links the project without a main workspace", async () => {
+		const db = createTestDb();
+		const { api } = createRecordingApiStub();
+		const ctx = createTestContext(db, api);
+		const root = await createTempGitRepo();
+		await detachHead(root);
+		const projectId = randomUUID();
+
+		const caller = createCallerFactory(projectRouter)(ctx);
+		const result = await caller.setup({
+			projectId,
+			origin: { name: "Detached" },
+			mode: { kind: "import", repoPath: root, allowRelocate: false },
+		});
+
+		expect(result.repoPath).toBe(root);
+		const row = db
+			.select()
+			.from(projects)
+			.where(eq(projects.id, projectId))
+			.get();
+		expect(row?.repoPath).toBe(root);
+		expect(db.select().from(workspaces).all()).toHaveLength(0);
+	});
+
+	it("listProjectWorktrees omits the detached main checkout, so the importer skips its v1 workspace instead of creating a local one", async () => {
+		const db = createTestDb();
+		const { api } = createRecordingApiStub();
+		const ctx = createTestContext(db, api);
+		const root = await createTempGitRepo();
+		await detachHead(root);
+		const { projectId } = await createFromImportLocal(ctx, {
+			name: "Detached",
+			repoPath: root,
+		});
+
+		const caller = createCallerFactory(workspaceCreationRouter)(ctx);
+		const detached = await caller.listProjectWorktrees({ projectId });
+		expect(detached.worktrees.find((w) => w.isMainWorktree)).toBeUndefined();
+
+		await createUserSimpleGit(root).raw(["checkout", "main"]);
+		const onBranch = await caller.listProjectWorktrees({ projectId });
+		expect(onBranch.worktrees.find((w) => w.isMainWorktree)?.branch).toBe(
+			"main",
+		);
+	});
+
+	it("local workspace creation still requires a branch, and succeeds once one is checked out", async () => {
+		const db = createTestDb();
+		const { api } = createRecordingApiStub();
+		const ctx = createTestContext(db, api);
+		const root = await createTempGitRepo();
+		await detachHead(root);
+		const { projectId } = await createFromImportLocal(ctx, {
+			name: "Detached",
+			repoPath: root,
+		});
+
+		const attempt = createLocalWorkspace(ctx, {
+			projectId,
+			repoPath: root,
+			name: "local",
+		});
+		await expect(attempt).rejects.toMatchObject({
+			code: "PRECONDITION_FAILED",
+			message: expect.stringContaining("detached-HEAD"),
+		});
+		expect(db.select().from(workspaces).all()).toHaveLength(0);
+
+		await createUserSimpleGit(root).raw(["checkout", "main"]);
+		const created = await createLocalWorkspace(ctx, {
+			projectId,
+			repoPath: root,
+			name: "local",
+		});
+		expect(created.projectId).toBe(projectId);
+		expect(created.type).toBe("local");
+		expect(created.branch).toBe("main");
+		expect(created.worktreePath).toBe(root);
 	});
 });
