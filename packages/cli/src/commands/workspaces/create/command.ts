@@ -7,16 +7,21 @@ import { createCloudWorkspace } from "./createCloudWorkspace";
 export default command({
 	description: "Create a workspace on a host, or a cloud sandbox with --cloud",
 	options: {
-		host: string().desc("Target host machineId"),
-		local: boolean().desc("Target this machine"),
+		host: string().desc(
+			"Target host machineId (required unless --local or --cloud)",
+		),
+		local: boolean().desc(
+			"Target this machine (required unless --host or --cloud)",
+		),
 		cloud: boolean().desc(
 			"Provision a cloud sandbox instead of using one of your machines",
 		),
 		environment: string().desc(
 			"Environment the cloud sandbox boots from (id or name; defaults to the first). Requires --cloud",
 		),
-		project: string().desc(
-			"Project ID. Omit to create a project-less session (a managed scratch folder)",
+		project: string().desc("Project ID. Required unless --session or --cloud"),
+		session: boolean().desc(
+			"Create a project-less session (a managed scratch folder). Cannot be combined with --project or --cloud",
 		),
 		name: string().desc("Workspace name"),
 		checkout: string().desc(
@@ -82,6 +87,15 @@ export default command({
 		}
 
 		const projectId = options.project;
+		if (options.session && projectId !== undefined) {
+			throw new CLIError("--session cannot be combined with --project");
+		}
+		if (projectId === undefined && !options.session) {
+			throw new CLIError(
+				"Specify --project or --session",
+				"Use --project <id> for a project workspace or --session for a project-less scratch folder",
+			);
+		}
 		const isSession = projectId === undefined;
 		const checkout = options.checkout ?? "worktree";
 		if (checkout !== "worktree" && checkout !== "local") {

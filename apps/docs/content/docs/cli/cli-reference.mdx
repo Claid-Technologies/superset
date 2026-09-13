@@ -716,7 +716,8 @@ project id when the host doesn't know the project's name.
 <Command
 	name="superset workspaces create"
 	options={[
-		{ flag: "--project <projectId>", description: "Project ID. Omit to create a project-less session (a managed scratch folder)." },
+		{ flag: "--project <projectId>", description: "Project ID. Required unless --session or --cloud is set." },
+		{ flag: "--session", description: "Create a project-less session (a managed scratch folder). Mutually exclusive with --project and --cloud." },
 		{ flag: "--name <name>", description: "Workspace name. Required when `--project` is set; optional for sessions." },
 		{ flag: "--checkout <local|worktree>", description: "Use the shared project checkout or an isolated worktree (default). Requires --project; incompatible with --cloud." },
 		{ flag: "--branch <branch>", description: "Workspace branch. Required unless `--pr`, `--task`, or `--checkout local` is set." },
@@ -739,7 +740,7 @@ project id when the host doesn't know the project's name.
 Create a workspace on the target host. With `--project`, specify one of
 `--checkout local`, `--branch`, `--pr`, or `--task` (`--branch` and `--pr` are mutually
 exclusive). If you pass `--agent`, you must also pass `--prompt`. `--command`
-runs a one-off shell command in the worktree and is independent of
+runs a one-off shell command in the workspace directory and is independent of
 `--agent`/`--prompt`. Pass either or both. `--model` and `--effort` require
 `--agent`; see the [agent effort levels](#agent-effort-levels) below.
 
@@ -749,11 +750,12 @@ It does not switch branches or run setup. Do not combine it with `--branch`, `--
 supports local workspaces; older hosts reject it without creating a worktree.
 `--local` selects this machine and is independent of `--checkout local`.
 
-Omitting `--project` creates a **session**: a project-less workspace backed
+Pass `--session` explicitly to create a **session**: a project-less workspace backed
 by a managed folder under `~/.superset/sessions`, initialized as its own git
 repo. Sessions have no branch semantics, so `--branch`, `--pr`, `--task`,
-`--base-branch`, `--checkout`, and `--skip-branch-prefix` are rejected, `--name` is
-optional, and the output has no `alreadyExists` field.
+`--base-branch`, `--checkout`, `--skip-branch-prefix`, and `--tag` are rejected, `--name` is
+optional, and the output has no `alreadyExists` field. Host workspace creation
+requires either `--project <id>` or `--session`; omitting both is an error.
 
 ```bash
 superset workspaces create \
@@ -769,7 +771,7 @@ superset workspaces create \
   --local
 
 # Project-less session with an agent
-superset workspaces create --local --agent claude --prompt "…"
+superset workspaces create --session --local --agent claude --prompt "…"
 
 # Tags group the workspace into sidebar folders — no folder setup needed
 superset workspaces create --project prj_… --name "perf-spike" --branch perf/spike --local --tag perf
