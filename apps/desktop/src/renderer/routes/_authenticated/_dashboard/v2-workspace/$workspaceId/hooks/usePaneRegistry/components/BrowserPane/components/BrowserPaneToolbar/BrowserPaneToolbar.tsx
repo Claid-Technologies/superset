@@ -16,6 +16,7 @@ import { findBarStore } from "../../findBarStore";
 import { useBrowserState } from "../../hooks/useBrowserState";
 import { BrowserOverflowMenu } from "../BrowserOverflowMenu";
 import { BrowserToolbar } from "../BrowserToolbar";
+import { replaceBrowserPane } from "./utils/replaceBrowserPane";
 
 interface BrowserPaneToolbarProps {
 	ctx: RendererContext<PaneViewerData>;
@@ -67,7 +68,12 @@ export function BrowserPaneToolbar({ ctx }: BrowserPaneToolbarProps) {
 				onNavigate={handleNavigate}
 			/>
 			<div className="flex shrink-0 items-center gap-1 pr-1.5">
-				<OpenBrowserPageInAppButton currentUrl={state.currentUrl} />
+				<OpenBrowserPageInAppButton
+					currentUrl={state.currentUrl}
+					onOpenInPane={(newPane) =>
+						replaceBrowserPane(ctx.store, ctx.tab.id, paneId, newPane)
+					}
+				/>
 				<Tooltip disableHoverableContent>
 					<TooltipTrigger asChild>
 						<button
