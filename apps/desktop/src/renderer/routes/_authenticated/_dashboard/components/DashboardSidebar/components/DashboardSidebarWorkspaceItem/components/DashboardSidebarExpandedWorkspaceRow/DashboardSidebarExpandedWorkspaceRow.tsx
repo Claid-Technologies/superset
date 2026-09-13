@@ -407,7 +407,7 @@ export const DashboardSidebarExpandedWorkspaceRow = forwardRef<
 													}}
 													className="flex items-center justify-center text-muted-foreground hover:text-foreground"
 													aria-label={t({
-														message: "Close workspace",
+														message: "Delete workspace",
 													})}
 												>
 													<HiMiniXMark className="size-3.5" />
@@ -416,7 +416,7 @@ export const DashboardSidebarExpandedWorkspaceRow = forwardRef<
 											<TooltipContent side="top">
 												<HotkeyLabel
 													label={t({
-														message: "Close workspace",
+														message: "Delete workspace",
 													})}
 													id={isActive ? "CLOSE_WORKSPACE" : undefined}
 												/>
