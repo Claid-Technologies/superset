@@ -8,6 +8,10 @@ import {
 	HOST_CHANNEL,
 	type HostMessageBody,
 } from "@superset/shared/page-comments-runtime";
+import {
+	applyPageViewportZoom,
+	type PageViewportZoom,
+} from "@superset/shared/page-zoom";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useComments } from "../../providers/CommentProvider";
 import { CommentBubble, pinClassName } from "./components/CommentBubble";
@@ -26,6 +30,7 @@ interface PageCommentsViewProps {
 	src: string;
 	title: string;
 	initialScrollY?: number;
+	pinchZoomEnabled?: boolean;
 	onScrollYChange?: (y: number) => void;
 	/**
 	 * A press inside the frame. It never bubbles into the host document, so a
@@ -38,6 +43,7 @@ export function PageCommentsView({
 	src,
 	title,
 	initialScrollY,
+	pinchZoomEnabled = false,
 	onScrollYChange,
 	onFramePointerDown,
 }: PageCommentsViewProps) {
@@ -47,6 +53,7 @@ export function PageCommentsView({
 	const onFramePointerDownRef = useRef(onFramePointerDown);
 	onFramePointerDownRef.current = onFramePointerDown;
 	const frameRef = useRef<HTMLIFrameElement>(null);
+	const viewportRef = useRef<PageViewportZoom | null>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
 	const [container, setContainer] = useState({ width: 0, height: 0 });
 	const [frameEpoch, setFrameEpoch] = useState(0);
@@ -169,7 +176,30 @@ export function PageCommentsView({
 			const data = event.data as FrameMessage | undefined;
 			if (!data || data.channel !== FRAME_CHANNEL) return;
 
+			if (data.type === "viewport-zoom") {
+				viewportRef.current = data.viewport;
+				if (frameRef.current)
+					applyPageViewportZoom(frameRef.current, data.viewport);
+			}
+			const transformRect = (
+				rect: {
+					top: number;
+					left: number;
+					width: number;
+					height: number;
+				} | null,
+			) => {
+				const v = viewportRef.current;
+				if (!rect || !v) return rect;
+				return {
+					top: rect.top * v.scale - v.y,
+					left: rect.left * v.scale - v.x,
+					width: rect.width * v.scale,
+					height: rect.height * v.scale,
+				};
+			};
 			if (data.type === "ready") {
+				if (pinchZoomEnabled) send({ type: "enable-pinch-zoom" });
 				setReadySrc(src);
 				setFrameEpoch((epoch) => epoch + 1);
 				if (scrollYRef.current > 0) {
@@ -180,7 +210,7 @@ export function PageCommentsView({
 				scrollYRef.current = data.y;
 				onScrollYChangeRef.current?.(data.y);
 			}
-			if (data.type === "hover") setHoverRect(data.rect);
+			if (data.type === "hover") setHoverRect(transformRect(data.rect));
 			if (data.type === "pointer-down") {
 				onFramePointerDownRef.current?.();
 				notifyFramePointerDown();
@@ -191,9 +221,18 @@ export function PageCommentsView({
 				}
 			}
 			if (data.type === "escape") dismiss();
-			if (data.type === "rects") setRects(data.entries);
+			if (data.type === "rects")
+				setRects(
+					data.entries.map((entry) => ({
+						...entry,
+						rect: transformRect(entry.rect),
+					})),
+				);
 			if (data.type === "pick" && !popoverOpen) {
-				openSelection({ anchor: data.anchor, rect: data.rect });
+				openSelection({
+					anchor: data.anchor,
+					rect: transformRect(data.rect) ?? data.rect,
+				});
 				setHoverRect(null);
 			}
 		};
@@ -204,6 +243,7 @@ export function PageCommentsView({
 		discardDraft,
 		dismiss,
 		frameOrigin,
+		pinchZoomEnabled,
 		notifyFramePointerDown,
 		openSelection,
 		popoverOpen,

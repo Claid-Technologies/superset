@@ -4,6 +4,10 @@
 	"private": true,
 	"type": "module",
 	"exports": {
+		"./page-zoom": {
+			"types": "./src/page-zoom.ts",
+			"default": "./src/page-zoom.ts"
+		},
 		"./usercontent": {
 			"types": "./src/usercontent/index.ts",
 			"default": "./src/usercontent/index.ts"

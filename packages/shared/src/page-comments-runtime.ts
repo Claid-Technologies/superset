@@ -1,3 +1,8 @@
+import {
+	PAGE_PINCH_ZOOM_RUNTIME_SOURCE,
+	type PageViewportZoom,
+} from "./page-zoom";
+
 export interface CommentAnchor {
 	path: string;
 	tag: string;
@@ -24,6 +29,7 @@ export const FRAME_CHANNEL = "superset-comments/frame";
 
 export type HostMessageBody =
 	| { type: "ready" }
+	| { type: "enable-pinch-zoom" }
 	| { type: "set-mode"; enabled: boolean; locked: boolean }
 	| { type: "track"; anchors: { id: string; anchor: CommentAnchor }[] }
 	| { type: "restore-scroll"; y: number };
@@ -32,6 +38,11 @@ export type HostMessage = HostMessageBody & { channel: typeof HOST_CHANNEL };
 
 export type FrameMessage =
 	| { channel: typeof FRAME_CHANNEL; type: "ready" }
+	| {
+			channel: typeof FRAME_CHANNEL;
+			type: "viewport-zoom";
+			viewport: PageViewportZoom;
+	  }
 	| { channel: typeof FRAME_CHANNEL; type: "hover"; rect: FrameRect | null }
 	| { channel: typeof FRAME_CHANNEL; type: "pointer-down" }
 	| { channel: typeof FRAME_CHANNEL; type: "escape" }
@@ -223,6 +234,13 @@ export const PAGE_COMMENTS_RUNTIME_SOURCE = `(() => {
 		true,
 	);
 
+	const pinchZoom = (${PAGE_PINCH_ZOOM_RUNTIME_SOURCE})((viewport) => {
+		post({ type: "viewport-zoom", viewport });
+		lastHoverPath = null;
+		post({ type: "hover", rect: null });
+		schedule();
+	}, () => locked);
+
 	addEventListener("scroll", schedule, true);
 	addEventListener("resize", schedule);
 	for (const type of ["wheel", "touchstart", "keydown"]) {
@@ -252,6 +270,7 @@ export const PAGE_COMMENTS_RUNTIME_SOURCE = `(() => {
 	addEventListener("message", (event) => {
 		const data = event.data;
 		if (!data || data.channel !== HOST) return;
+		if (data.type === "enable-pinch-zoom" && event.source === parent) pinchZoom.enable();
 		if (data.type === "ready") post({ type: "ready" });
 		if (data.type === "set-mode") {
 			enabled = Boolean(data.enabled);
