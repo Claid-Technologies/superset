@@ -10118,6 +10118,9 @@ msgstr "Otevřete v jakémkoli IDE"
 msgid "Open in Any IDE"
 msgstr "Otevřete v libovolném IDE"
 
+msgid "Open in app"
+msgstr "Otevřít v aplikaci"
+
 msgid "Open in App"
 msgstr "Otevřít v aplikaci"
 

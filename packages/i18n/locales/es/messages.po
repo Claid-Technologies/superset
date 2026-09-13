@@ -10118,6 +10118,9 @@ msgstr "Abrir en cualquier IDE"
 msgid "Open in Any IDE"
 msgstr "Ábrelo en cualquier IDE"
 
+msgid "Open in app"
+msgstr "Abrir en la aplicación"
+
 msgid "Open in App"
 msgstr "Abrir en una app"
 

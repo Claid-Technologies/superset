@@ -1,0 +1,62 @@
+import { Trans, useLingui } from "@lingui/react/macro";
+import { FEATURE_FLAGS } from "@superset/shared/constants";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@superset/ui/tooltip";
+import { useNavigate } from "@tanstack/react-router";
+import { AppWindow } from "lucide-react";
+import { useFeatureFlagEnabled } from "posthog-js/react";
+import { env } from "renderer/env.renderer";
+import { useHostProjects } from "renderer/hooks/host-projects/useHostProjects";
+import { parseSupersetPageUrl } from "renderer/lib/parseSupersetPageUrl";
+import { useOpenPage } from "renderer/routes/_authenticated/_dashboard/hooks/useOpenPage";
+import { usePullRequestsSplitViewStore } from "renderer/routes/_authenticated/_dashboard/pull-requests/stores/pullRequestsSplitViewStore";
+import { getPullRequestTarget } from "./utils/getPullRequestTarget";
+
+export function OpenBrowserPageInAppButton({
+	currentUrl,
+}: {
+	currentUrl: string;
+}) {
+	const { t } = useLingui();
+	const navigate = useNavigate();
+	const { projects } = useHostProjects();
+	const target = getPullRequestTarget(currentUrl, projects);
+	const openPage = useOpenPage();
+	const isPagesEnabled = useFeatureFlagEnabled(FEATURE_FLAGS.PAGES);
+	const pageSlug = isPagesEnabled
+		? parseSupersetPageUrl(currentUrl, env.NEXT_PUBLIC_WEB_URL)
+		: null;
+	if (!target && !pageSlug) return null;
+
+	return (
+		<Tooltip>
+			<TooltipTrigger asChild>
+				<button
+					type="button"
+					aria-label={t({ message: "Open in app" })}
+					className="flex h-[22px] shrink-0 items-center gap-1 rounded-md bg-accent px-1.5 text-[11px] font-medium leading-none text-accent-foreground transition-colors hover:bg-accent/80"
+					onClick={() => {
+						if (pageSlug) {
+							openPage({ slug: pageSlug });
+							return;
+						}
+						if (!target) return;
+						usePullRequestsSplitViewStore.getState().expandDetail();
+						void navigate({
+							to: "/pull-requests/$prNumber",
+							params: { prNumber: target.prNumber },
+							search: { project: target.projectId },
+						});
+					}}
+				>
+					<AppWindow className="size-3" />
+					<span className="hidden @min-[480px]/browser-toolbar:inline whitespace-nowrap">
+						<Trans>Open in app</Trans>
+					</span>
+				</button>
+			</TooltipTrigger>
+			<TooltipContent side="bottom">
+				<Trans>Open in app</Trans>
+			</TooltipContent>
+		</Tooltip>
+	);
+}
