@@ -472,13 +472,17 @@ async function migrateSettings(
 	const v1Projects = await deps.ipc.readV1Projects();
 	for (const v1 of v1Projects) {
 		const ledgerId = `project-prefs:${v1.id}`;
-		const done = ledger.get(ledgerKey("settings", ledgerId));
-		if (done && isTerminalStatus(done.status)) continue;
-
 		const mapped = ledger.get(ledgerKey("project", v1.id));
 		const v2ProjectId =
 			mapped && isTerminalStatus(mapped.status) ? mapped.v2Id : null;
 		if (!v2ProjectId) continue; // retried after the project migrates
+
+		// A done row that points at a previous v2 project (the project was
+		// re-imported after the host lost it) is redone for the replacement.
+		const done = ledger.get(ledgerKey("settings", ledgerId));
+		if (done && isTerminalStatus(done.status) && done.v2Id === v2ProjectId) {
+			continue;
+		}
 
 		try {
 			const v2Project = await deps.hostClient.project.get.query({

@@ -1,4 +1,5 @@
-import { describe, expect, mock, test } from "bun:test";
+import { afterAll, describe, expect, mock, test } from "bun:test";
+import { GlobalRegistrator } from "@happy-dom/global-registrator";
 import { renderToStaticMarkup } from "react-dom/server";
 
 // completion.ts and the zustand persist store read the global localStorage;
@@ -14,6 +15,14 @@ globalThis.localStorage = {
 		return backing.size;
 	},
 } as Storage;
+
+// happy-dom on top, for the one mounted test that needs a live window event;
+// it replaces the shim above with an equivalent working localStorage.
+const alreadyRegistered = GlobalRegistrator.isRegistered;
+if (!alreadyRegistered) GlobalRegistrator.register();
+(
+	globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }
+).IS_REACT_ACT_ENVIRONMENT = true;
 
 // Pre-cutoff account: defaults to v1 (not in any v2-only signup cohort).
 const V1_ERA_CREATED_AT = new Date("2026-01-01T00:00:00Z");
@@ -76,6 +85,11 @@ const { useIsV1FlipLocked, useIsV2CloudEnabled } = await import(
 const { markV1MigrationComplete } = await import(
 	"renderer/lib/v1-migration/completion"
 );
+const { act, cleanup, render } = await import("@testing-library/react");
+
+afterAll(async () => {
+	if (!alreadyRegistered) await GlobalRegistrator.unregister();
+});
 
 function Probe() {
 	const locked = useIsV1FlipLocked();
@@ -167,6 +181,19 @@ describe("useIsV1FlipLocked", () => {
 		} finally {
 			createdAt = V1_ERA_CREATED_AT;
 		}
+	});
+
+	test("a mounted hook locks the moment completion fires, without a remount", async () => {
+		activeOrganizationId = "org-live";
+		optInV2 = null;
+		const { container } = render(<Probe />);
+		expect(container.querySelector('[data-locked="true"]')).toBeNull();
+		await act(async () => {
+			markV1MigrationComplete("org-live");
+		});
+		expect(container.querySelector('[data-locked="true"]')).not.toBeNull();
+		expect(container.querySelector('[data-v2="false"]')).not.toBeNull();
+		cleanup();
 	});
 
 	test("no active org: not locked", () => {

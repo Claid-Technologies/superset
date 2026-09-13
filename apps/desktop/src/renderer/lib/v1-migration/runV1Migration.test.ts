@@ -533,6 +533,32 @@ describe("runV1Migration scenarios", () => {
 		expect(host.projects).toHaveLength(1);
 	});
 
+	test("on v1, a re-imported project gets its v1 preferences applied again", async () => {
+		const ipc = new FakeIpc();
+		const host = new FakeHost();
+		ipc.projects = [
+			{ ...project("p1", "/repo/a"), worktreeBaseDir: "/trees/custom" },
+		];
+		await runOnV1(ipc, host);
+		const setsBefore = host.mutations.filter(
+			(m) => m.kind === "project.setWorktreeBaseDir",
+		);
+		expect(setsBefore).toHaveLength(1);
+
+		host.projects = [];
+		host.workspaces = [];
+		await runOnV1(ipc, host);
+
+		const newV2Id = ipc.ledger.get("project\0p1")?.v2Id ?? "";
+		expect(newV2Id).not.toBe("");
+		const sets = host.mutations.filter(
+			(m) => m.kind === "project.setWorktreeBaseDir",
+		);
+		expect(sets).toHaveLength(2);
+		expect((sets[1]?.args as { projectId: string }).projectId).toBe(newV2Id);
+		expect(ipc.ledger.get("settings\0project-prefs:p1")?.v2Id).toBe(newV2Id);
+	});
+
 	test("after the flip, a project the user deleted on v2 is not re-imported", async () => {
 		const ipc = new FakeIpc();
 		const host = new FakeHost();
