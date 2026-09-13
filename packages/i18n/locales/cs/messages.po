@@ -3646,6 +3646,9 @@ msgstr "Nastavte, jak se úkoly synchronizují mezi Superset a Linearem."
 msgid "Configure terminal behavior and reusable terminal scripts"
 msgstr "Nastavte chování terminálu a znovupoužitelné terminálové skripty"
 
+msgid "Configure the automation yourself"
+msgstr "Nastavte automatizaci sami"
+
 msgid "Configure the in-app browser"
 msgstr "Nastavte vestavěný prohlížeč"
 
@@ -4461,6 +4464,9 @@ msgstr "Vytvořit účet"
 msgid "Create failed: {message}"
 msgstr "Vytvoření selhalo: {message}"
 
+msgid "Create manually"
+msgstr "Vytvořit ručně"
+
 msgid "Create merge commit"
 msgstr "Vytvořit merge commit"
 
@@ -5013,6 +5019,9 @@ msgstr "Popište změnu…"
 
 msgid "Describe the task for the agent…"
 msgstr "Popište úkol pro agenta…"
+
+msgid "Describe the work to your agent"
+msgstr "Popište práci svému agentovi"
 
 msgid "Describe what you need. Superset creates an isolated workspace and clean branch for the task."
 msgstr "Popište, co potřebujete. Superset pro úkol vytvoří izolovaný pracovní prostor a čistou větev."
@@ -8787,9 +8796,6 @@ msgstr "Další {kindLower} motivy"
 
 msgid "More actions"
 msgstr "Další akce"
-
-msgid "More options"
-msgstr "Další možnosti"
 
 msgid "More pages"
 msgstr "Další stránky"

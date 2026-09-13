@@ -3646,6 +3646,9 @@ msgstr "配置任务在Superset和Linear之间的同步方式。"
 msgid "Configure terminal behavior and reusable terminal scripts"
 msgstr "配置终端行为和可复用的终端脚本"
 
+msgid "Configure the automation yourself"
+msgstr "自行配置自动化"
+
 msgid "Configure the in-app browser"
 msgstr "配置应用内浏览器"
 
@@ -4461,6 +4464,9 @@ msgstr "创建账户"
 msgid "Create failed: {message}"
 msgstr "创建失败：{message}"
 
+msgid "Create manually"
+msgstr "手动创建"
+
 msgid "Create merge commit"
 msgstr "创建合并提交"
 
@@ -5013,6 +5019,9 @@ msgstr "描述要做的更改…"
 
 msgid "Describe the task for the agent…"
 msgstr "描述交给智能体的任务…"
+
+msgid "Describe the work to your agent"
+msgstr "向智能体描述工作内容"
 
 msgid "Describe what you need. Superset creates an isolated workspace and clean branch for the task."
 msgstr "描述你的需求。Superset会为该任务创建隔离的工作区和干净的分支。"
@@ -8787,9 +8796,6 @@ msgstr "更多{kindLower}主题"
 
 msgid "More actions"
 msgstr "更多操作"
-
-msgid "More options"
-msgstr "更多选项"
 
 msgid "More pages"
 msgstr "更多页面"

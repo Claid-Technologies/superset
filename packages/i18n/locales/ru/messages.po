@@ -3646,6 +3646,9 @@ msgstr "Настройте, как задачи синхронизируются
 msgid "Configure terminal behavior and reusable terminal scripts"
 msgstr "Настройка поведения терминала и переиспользуемых скриптов терминала"
 
+msgid "Configure the automation yourself"
+msgstr "Настройте автоматизацию самостоятельно"
+
 msgid "Configure the in-app browser"
 msgstr "Настройка встроенного браузера"
 
@@ -4461,6 +4464,9 @@ msgstr "Создать аккаунт"
 msgid "Create failed: {message}"
 msgstr "Не удалось создать: {message}"
 
+msgid "Create manually"
+msgstr "Создать вручную"
+
 msgid "Create merge commit"
 msgstr "Создать коммит слияния"
 
@@ -5013,6 +5019,9 @@ msgstr "Опишите изменение…"
 
 msgid "Describe the task for the agent…"
 msgstr "Опишите задачу для агента…"
+
+msgid "Describe the work to your agent"
+msgstr "Опишите задачу своему агенту"
 
 msgid "Describe what you need. Superset creates an isolated workspace and clean branch for the task."
 msgstr "Опишите, что нужно. Superset создаст изолированную рабочую область и чистую ветку под задачу."
@@ -8787,9 +8796,6 @@ msgstr "Ещё {kindLower} темы"
 
 msgid "More actions"
 msgstr "Ещё действия"
-
-msgid "More options"
-msgstr "Другие варианты"
 
 msgid "More pages"
 msgstr "Ещё страницы"

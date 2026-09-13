@@ -3646,6 +3646,9 @@ msgstr "Superset과 Linear 사이에서 작업을 동기화하는 방식을 설�
 msgid "Configure terminal behavior and reusable terminal scripts"
 msgstr "터미널 동작과 재사용 가능한 터미널 스크립트를 설정합니다"
 
+msgid "Configure the automation yourself"
+msgstr "자동화를 직접 설정하세요"
+
 msgid "Configure the in-app browser"
 msgstr "앱 내 브라우저를 설정합니다"
 
@@ -4461,6 +4464,9 @@ msgstr "계정 만들기"
 msgid "Create failed: {message}"
 msgstr "생성 실패: {message}"
 
+msgid "Create manually"
+msgstr "수동으로 만들기"
+
 msgid "Create merge commit"
 msgstr "머지 커밋 만들기"
 
@@ -5013,6 +5019,9 @@ msgstr "변경할 내용을 설명하세요…"
 
 msgid "Describe the task for the agent…"
 msgstr "에이전트에게 맡길 작업을 설명하세요…"
+
+msgid "Describe the work to your agent"
+msgstr "에이전트에게 작업을 설명하세요"
 
 msgid "Describe what you need. Superset creates an isolated workspace and clean branch for the task."
 msgstr "필요한 것을 설명하세요. Superset이 그 작업을 위한 격리된 워크스페이스와 깨끗한 브랜치를 만듭니다."
@@ -8787,9 +8796,6 @@ msgstr "{kindLower} 테마 더 보기"
 
 msgid "More actions"
 msgstr "추가 작업"
-
-msgid "More options"
-msgstr "추가 옵션"
 
 msgid "More pages"
 msgstr "더 많은 페이지"

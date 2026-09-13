@@ -3646,6 +3646,9 @@ msgstr "Görevlerin Superset ile Linear arasında nasıl eşitleneceğini yapıl
 msgid "Configure terminal behavior and reusable terminal scripts"
 msgstr "Terminal davranışını ve yeniden kullanılabilir terminal betiklerini yapılandırın"
 
+msgid "Configure the automation yourself"
+msgstr "Otomasyonu kendiniz yapılandırın"
+
 msgid "Configure the in-app browser"
 msgstr "Uygulama içi tarayıcıyı yapılandırın"
 
@@ -4461,6 +4464,9 @@ msgstr "Hesap oluşturun"
 msgid "Create failed: {message}"
 msgstr "Oluşturulamadı: {message}"
 
+msgid "Create manually"
+msgstr "Manuel oluştur"
+
 msgid "Create merge commit"
 msgstr "Birleştirme commit'i oluştur"
 
@@ -5013,6 +5019,9 @@ msgstr "Değişikliği anlatın…"
 
 msgid "Describe the task for the agent…"
 msgstr "Ajan için görevi anlatın…"
+
+msgid "Describe the work to your agent"
+msgstr "Yapılacak işi ajanınıza açıklayın"
 
 msgid "Describe what you need. Superset creates an isolated workspace and clean branch for the task."
 msgstr "Neye ihtiyacınız olduğunu anlatın. Superset, görev için yalıtılmış bir çalışma alanı ve temiz bir dal oluşturur."
@@ -8787,9 +8796,6 @@ msgstr "Daha fazla {kindLower} tema"
 
 msgid "More actions"
 msgstr "Diğer eylemler"
-
-msgid "More options"
-msgstr "Diğer seçenekler"
 
 msgid "More pages"
 msgstr "Daha fazla sayfa"

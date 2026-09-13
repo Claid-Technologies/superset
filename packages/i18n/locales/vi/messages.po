@@ -3646,6 +3646,9 @@ msgstr "Cấu hình cách tác vụ đồng bộ giữa Superset và Linear."
 msgid "Configure terminal behavior and reusable terminal scripts"
 msgstr "Cấu hình hành vi terminal và các script terminal dùng lại được"
 
+msgid "Configure the automation yourself"
+msgstr "Tự cấu hình quy trình tự động hóa"
+
 msgid "Configure the in-app browser"
 msgstr "Cấu hình trình duyệt trong ứng dụng"
 
@@ -4461,6 +4464,9 @@ msgstr "Tạo tài khoản"
 msgid "Create failed: {message}"
 msgstr "Tạo thất bại: {message}"
 
+msgid "Create manually"
+msgstr "Tạo thủ công"
+
 msgid "Create merge commit"
 msgstr "Tạo merge commit"
 
@@ -5013,6 +5019,9 @@ msgstr "Mô tả thay đổi…"
 
 msgid "Describe the task for the agent…"
 msgstr "Mô tả tác vụ cho agent…"
+
+msgid "Describe the work to your agent"
+msgstr "Mô tả công việc cho tác tử của bạn"
 
 msgid "Describe what you need. Superset creates an isolated workspace and clean branch for the task."
 msgstr "Mô tả điều bạn cần. Superset tạo một workspace tách biệt và một nhánh sạch cho tác vụ đó."
@@ -8787,9 +8796,6 @@ msgstr "Thêm chủ đề {kindLower}"
 
 msgid "More actions"
 msgstr "Thêm hành động"
-
-msgid "More options"
-msgstr "Tùy chọn khác"
 
 msgid "More pages"
 msgstr "Thêm trang"

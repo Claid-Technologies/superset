@@ -3646,6 +3646,9 @@ msgstr "Configura cómo se sincronizan las tareas entre Superset y Linear."
 msgid "Configure terminal behavior and reusable terminal scripts"
 msgstr "Configura el comportamiento de la terminal y los scripts de terminal reutilizables"
 
+msgid "Configure the automation yourself"
+msgstr "Configura la automatización por tu cuenta"
+
 msgid "Configure the in-app browser"
 msgstr "Configura el navegador integrado"
 
@@ -4461,6 +4464,9 @@ msgstr "Crear una cuenta"
 msgid "Create failed: {message}"
 msgstr "Error al crear: {message}"
 
+msgid "Create manually"
+msgstr "Crear manualmente"
+
 msgid "Create merge commit"
 msgstr "Crear un commit de fusión"
 
@@ -5013,6 +5019,9 @@ msgstr "Describe el cambio…"
 
 msgid "Describe the task for the agent…"
 msgstr "Describe la tarea para el agente…"
+
+msgid "Describe the work to your agent"
+msgstr "Describe el trabajo a tu agente"
 
 msgid "Describe what you need. Superset creates an isolated workspace and clean branch for the task."
 msgstr "Describe lo que necesitas. Superset crea un espacio de trabajo aislado y una rama limpia para la tarea."
@@ -8787,9 +8796,6 @@ msgstr "Más temas {kindLower}"
 
 msgid "More actions"
 msgstr "Más acciones"
-
-msgid "More options"
-msgstr "Más opciones"
 
 msgid "More pages"
 msgstr "Más páginas"

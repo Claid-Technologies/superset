@@ -3646,6 +3646,9 @@ msgstr "Atur cara tugas disinkronkan antara Superset dan Linear."
 msgid "Configure terminal behavior and reusable terminal scripts"
 msgstr "Atur perilaku terminal dan skrip terminal pakai ulang"
 
+msgid "Configure the automation yourself"
+msgstr "Konfigurasikan otomatisasi sendiri"
+
 msgid "Configure the in-app browser"
 msgstr "Atur browser dalam aplikasi"
 
@@ -4461,6 +4464,9 @@ msgstr "Buat akun"
 msgid "Create failed: {message}"
 msgstr "Gagal membuat: {message}"
 
+msgid "Create manually"
+msgstr "Buat secara manual"
+
 msgid "Create merge commit"
 msgstr "Buat merge commit"
 
@@ -5013,6 +5019,9 @@ msgstr "Jelaskan perubahannya…"
 
 msgid "Describe the task for the agent…"
 msgstr "Jelaskan tugas untuk agennya…"
+
+msgid "Describe the work to your agent"
+msgstr "Jelaskan pekerjaan kepada agen Anda"
 
 msgid "Describe what you need. Superset creates an isolated workspace and clean branch for the task."
 msgstr "Jelaskan apa yang Anda butuhkan. Superset membuat workspace terisolasi dan branch bersih untuk tugas itu."
@@ -8787,9 +8796,6 @@ msgstr "Tema {kindLower} lainnya"
 
 msgid "More actions"
 msgstr "Aksi lainnya"
-
-msgid "More options"
-msgstr "Opsi lainnya"
 
 msgid "More pages"
 msgstr "Halaman lainnya"

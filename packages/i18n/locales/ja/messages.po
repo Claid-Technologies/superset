@@ -3646,6 +3646,9 @@ msgstr "SupersetとLinearの間でタスクをどう同期するかを設定し�
 msgid "Configure terminal behavior and reusable terminal scripts"
 msgstr "ターミナルの動作と再利用可能なターミナルスクリプトを設定"
 
+msgid "Configure the automation yourself"
+msgstr "自分でオートメーションを設定する"
+
 msgid "Configure the in-app browser"
 msgstr "アプリ内ブラウザを設定"
 
@@ -4461,6 +4464,9 @@ msgstr "アカウントを作成"
 msgid "Create failed: {message}"
 msgstr "作成に失敗しました: {message}"
 
+msgid "Create manually"
+msgstr "手動で作成"
+
 msgid "Create merge commit"
 msgstr "マージコミットを作成"
 
@@ -5013,6 +5019,9 @@ msgstr "変更内容を説明…"
 
 msgid "Describe the task for the agent…"
 msgstr "エージェントに任せるタスクを説明…"
+
+msgid "Describe the work to your agent"
+msgstr "エージェントに作業内容を説明する"
 
 msgid "Describe what you need. Superset creates an isolated workspace and clean branch for the task."
 msgstr "必要なことを説明してください。Supersetがそのタスク用に独立したワークスペースときれいなブランチを作成します。"
@@ -8787,9 +8796,6 @@ msgstr "他の{kindLower}テーマ"
 
 msgid "More actions"
 msgstr "その他の操作"
-
-msgid "More options"
-msgstr "その他のオプション"
 
 msgid "More pages"
 msgstr "その他のページ"
