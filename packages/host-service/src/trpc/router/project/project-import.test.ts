@@ -54,10 +54,14 @@ async function createTempGitRepo(): Promise<string> {
 	return (await git.revparse(["--show-toplevel"])).trim();
 }
 
-async function detachHead(root: string): Promise<void> {
+/** Detaches HEAD and returns the branch it was on, so a test can restore
+ * the checkout without assuming git's default branch name. */
+async function detachHead(root: string): Promise<string> {
 	const git = createUserSimpleGit(root);
+	const branch = (await git.raw(["symbolic-ref", "--short", "HEAD"])).trim();
 	await git.raw(["checkout", "--detach"]);
 	expect((await git.revparse(["--abbrev-ref", "HEAD"])).trim()).toBe("HEAD");
+	return branch;
 }
 
 function createRecordingApiStub() {
@@ -234,7 +238,7 @@ describe("detached-HEAD repos (v1 importer)", () => {
 		const { api } = createRecordingApiStub();
 		const ctx = createTestContext(db, api);
 		const root = await createTempGitRepo();
-		await detachHead(root);
+		const branch = await detachHead(root);
 		const { projectId } = await createFromImportLocal(ctx, {
 			name: "Detached",
 			repoPath: root,
@@ -244,10 +248,10 @@ describe("detached-HEAD repos (v1 importer)", () => {
 		const detached = await caller.listProjectWorktrees({ projectId });
 		expect(detached.worktrees.find((w) => w.isMainWorktree)).toBeUndefined();
 
-		await createUserSimpleGit(root).raw(["checkout", "main"]);
+		await createUserSimpleGit(root).raw(["checkout", branch]);
 		const onBranch = await caller.listProjectWorktrees({ projectId });
 		expect(onBranch.worktrees.find((w) => w.isMainWorktree)?.branch).toBe(
-			"main",
+			branch,
 		);
 	});
 
@@ -256,7 +260,7 @@ describe("detached-HEAD repos (v1 importer)", () => {
 		const { api } = createRecordingApiStub();
 		const ctx = createTestContext(db, api);
 		const root = await createTempGitRepo();
-		await detachHead(root);
+		const branch = await detachHead(root);
 		const { projectId } = await createFromImportLocal(ctx, {
 			name: "Detached",
 			repoPath: root,
@@ -273,7 +277,7 @@ describe("detached-HEAD repos (v1 importer)", () => {
 		});
 		expect(db.select().from(workspaces).all()).toHaveLength(0);
 
-		await createUserSimpleGit(root).raw(["checkout", "main"]);
+		await createUserSimpleGit(root).raw(["checkout", branch]);
 		const created = await createLocalWorkspace(ctx, {
 			projectId,
 			repoPath: root,
@@ -281,7 +285,7 @@ describe("detached-HEAD repos (v1 importer)", () => {
 		});
 		expect(created.projectId).toBe(projectId);
 		expect(created.type).toBe("local");
-		expect(created.branch).toBe("main");
+		expect(created.branch).toBe(branch);
 		expect(created.worktreePath).toBe(root);
 	});
 });
