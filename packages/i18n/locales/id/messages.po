@@ -1034,9 +1034,6 @@ msgstr "<0>vs</0> <1/>"
 msgid "~{stars} projected this week"
 msgstr "~{stars} diperkirakan minggu ini"
 
-msgid "~{totalSeconds}s typical"
-msgstr "~{totalSeconds} dtk biasanya"
-
 msgid "~{TYPICAL_SECONDS}s typical"
 msgstr "~{TYPICAL_SECONDS} dtk biasanya"
 
@@ -4065,9 +4062,6 @@ msgstr "Salin riwayat penjelajahan dan login Anda dari browser lain ke Superset.
 msgid "Copy your key now — you won't be able to see it again."
 msgstr "Salin kunci Anda sekarang — Anda tidak akan bisa melihatnya lagi."
 
-msgid "Copying configuration"
-msgstr "Menyalin konfigurasi"
-
 msgid "Cost"
 msgstr "Biaya"
 
@@ -4576,9 +4570,6 @@ msgstr "membuat"
 
 msgid "Creating"
 msgstr "Membuat"
-
-msgid "Creating git worktree"
-msgstr "Membuat worktree git"
 
 msgid "Creating PR..."
 msgstr "Membuat PR…"
@@ -6480,9 +6471,6 @@ msgstr "Filter"
 msgid "Filters, {activeFilterCount} active"
 msgstr "Filter, {activeFilterCount} aktif"
 
-msgid "Finalizing setup"
-msgstr "Merampungkan penyiapan"
-
 msgid "Find"
 msgstr "Cari"
 
@@ -7470,9 +7458,6 @@ msgstr "Inisialisasi Git"
 
 msgid "Initialize Git Repository?"
 msgstr "Inisialisasi Repositori Git?"
-
-msgid "Initializing session"
-msgstr "Menginisialisasi sesi"
 
 msgid "Initializing..."
 msgstr "Menginisialisasi..."
@@ -14259,9 +14244,6 @@ msgstr "Sinkronkan Repositori"
 msgid "Sync started"
 msgstr "Sinkronisasi dimulai"
 
-msgid "Syncing with remote"
-msgstr "Menyinkronkan dengan remote"
-
 msgid "Syncing..."
 msgstr "Menyinkronkan..."
 
@@ -15932,9 +15914,6 @@ msgstr "Verifikasi ini"
 
 msgid "Verify your identity"
 msgstr "Memverifikasi identitas Anda"
-
-msgid "Verifying base branch"
-msgstr "Memverifikasi branch dasar"
 
 msgid "Version"
 msgstr "Versi"
