@@ -63,6 +63,14 @@ describe("parseSupersetPageUrl", () => {
 		).toBeNull();
 	});
 
+	it.each([
+		"//page/report",
+		"/page//report",
+		"/page/report//",
+	])("rejects empty path segments: %s", (path) => {
+		expect(parseSupersetPageUrl(`${WEB_URL}${path}`, WEB_URL)).toBeNull();
+	});
+
 	it("decodes percent-encoded slugs", () => {
 		expect(parseSupersetPageUrl(`${WEB_URL}/page/a%20b-a3f9k2`, WEB_URL)).toBe(
 			"a b-a3f9k2",

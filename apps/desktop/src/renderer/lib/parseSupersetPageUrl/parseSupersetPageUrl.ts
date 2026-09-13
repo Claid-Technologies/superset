@@ -13,10 +13,8 @@ export function parseSupersetPageUrl(
 
 	if (parsed.origin !== web.origin) return null;
 
-	const segments = parsed.pathname.split("/").filter(Boolean);
-	if (segments.length !== 2 || segments[0] !== "page") return null;
-
-	const slug = segments[1];
+	const match = parsed.pathname.match(/^\/page\/([^/]+)\/?$/);
+	const slug = match?.[1];
 	if (!slug) return null;
 
 	try {
