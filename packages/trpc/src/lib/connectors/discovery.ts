@@ -10,6 +10,7 @@ export interface AuthorizationServerMetadata {
 	code_challenge_methods_supported?: string[];
 	token_endpoint_auth_methods_supported?: string[];
 	client_id_metadata_document_supported?: boolean;
+	authorization_response_iss_parameter_supported?: boolean;
 }
 
 export interface DiscoveredServer {
@@ -52,7 +53,7 @@ function requireHttps(value: string, field: string, issuer: string): void {
 	}
 }
 
-function sameIssuer(a: string, b: string): boolean {
+export function sameIssuer(a: string, b: string): boolean {
 	return a.replace(/\/$/, "") === b.replace(/\/$/, "");
 }
 

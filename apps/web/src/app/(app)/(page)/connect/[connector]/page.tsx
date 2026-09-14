@@ -7,7 +7,7 @@ import {
 	CardTitle,
 } from "@superset/ui/card";
 import { notFound } from "next/navigation";
-import { i18n } from "@/lib/i18n-server";
+import { initServerI18n } from "@/lib/i18n-server";
 import { api } from "@/trpc/server";
 import { ConnectorConnect } from "./components/ConnectorConnect";
 
@@ -17,6 +17,7 @@ export default async function ConnectorPage({
 	params: Promise<{ connector: string }>;
 }) {
 	const { connector: slug } = await params;
+	const i18n = await initServerI18n();
 	const trpc = await api();
 	const organization = await trpc.user.myOrganization.query();
 

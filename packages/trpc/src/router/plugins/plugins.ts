@@ -501,7 +501,7 @@ export const pluginsRouter = createTRPCRouter({
 				icon: undefined,
 				connector: slug,
 				mcpUrl: null,
-				skills: [] as string[],
+				skills: [] as { name: string; description: string }[],
 				homepage: null,
 				author: null,
 				license: null,

@@ -101,6 +101,7 @@
 		"@azure/msal-node": "5.5.0",
 		"@googleapis/calendar": "16.0.0",
 		"@googleapis/gmail": "18.0.0",
+		"@modelcontextprotocol/sdk": "1.30.0",
 		"@linear/sdk": "68.1.1",
 		"@microsoft/microsoft-graph-client": "3.0.7",
 		"@notionhq/client": "5.25.2",

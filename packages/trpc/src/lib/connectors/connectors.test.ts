@@ -2,10 +2,13 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { CONNECTOR_SLUGS, getConnector } from "@superset/shared/connectors";
 import { generateCodeChallenge } from "better-auth/oauth2";
 import {
+	assertRespondingIssuer,
 	authorizeUrl,
 	connectorMethod,
+	IssuerMismatchError,
 	MissingConnectorEnvError,
 	probeIdentity,
+	type ResolvedEndpoints,
 	requireConnector,
 	resolveConnectorTemplate,
 	UnknownConnectorError,
@@ -174,5 +177,60 @@ describe("registry invariants", () => {
 					connector.scope === "user",
 				]);
 		}
+	});
+});
+
+describe("authorization response issuer (RFC 9207)", () => {
+	const discovered = (
+		extra: Partial<ResolvedEndpoints> = {},
+	): ResolvedEndpoints => ({
+		authorizationEndpoint: "https://as.example.com/authorize",
+		tokenEndpoint: "https://as.example.com/token",
+		clientId: "cid",
+		pkce: true,
+		issuer: "https://as.example.com",
+		...extra,
+	});
+
+	test("accepts the issuer that was discovered, ignoring a trailing slash", () => {
+		expect(() =>
+			assertRespondingIssuer("linear", discovered(), "https://as.example.com/"),
+		).not.toThrow();
+	});
+
+	test("refuses a code minted by a different authorization server", () => {
+		expect(() =>
+			assertRespondingIssuer(
+				"linear",
+				discovered(),
+				"https://evil.example.com",
+			),
+		).toThrow(IssuerMismatchError);
+	});
+
+	test("refuses a missing iss when the server said it sends one", () => {
+		expect(() =>
+			assertRespondingIssuer(
+				"linear",
+				discovered({ issuerParameterSupported: true }),
+				null,
+			),
+		).toThrow(IssuerMismatchError);
+	});
+
+	test("allows a missing iss when the server never advertised it", () => {
+		expect(() =>
+			assertRespondingIssuer("linear", discovered(), null),
+		).not.toThrow();
+	});
+
+	test("has nothing to check for a static client with no discovered issuer", () => {
+		expect(() =>
+			assertRespondingIssuer(
+				"slack",
+				discovered({ issuer: undefined }),
+				"https://evil.example.com",
+			),
+		).not.toThrow();
 	});
 });

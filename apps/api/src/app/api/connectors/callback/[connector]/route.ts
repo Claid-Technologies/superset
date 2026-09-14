@@ -70,6 +70,7 @@ export async function GET(
 			redirectUri: redirectUriFor(slug),
 			codeVerifier,
 			params: callback.params,
+			issuer: new URL(request.url).searchParams.get("iss"),
 		});
 
 		const identity = await probeIdentity(

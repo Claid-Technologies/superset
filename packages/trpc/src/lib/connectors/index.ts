@@ -7,7 +7,7 @@ import {
 import { generateCodeChallenge } from "better-auth/oauth2";
 import { credentialFetch, readPath } from "../../router/plugins/manifest";
 import { forgetClient, resolveClientIdentity } from "./client-identity";
-import { discoverServer } from "./discovery";
+import { discoverServer, sameIssuer } from "./discovery";
 
 const TEMPLATE = /\$\{(env|params|config)\.([\w.-]+)\}/g;
 
@@ -102,6 +102,7 @@ export interface ResolvedEndpoints {
 	resource?: string;
 	pkce: boolean;
 	issuer?: string;
+	issuerParameterSupported?: boolean;
 }
 
 export async function resolveEndpoints(
@@ -135,6 +136,8 @@ export async function resolveEndpoints(
 			resource: server.resource,
 			pkce: true,
 			issuer: server.issuer,
+			issuerParameterSupported:
+				server.metadata.authorization_response_iss_parameter_supported === true,
 		};
 	}
 
@@ -242,6 +245,32 @@ export interface ConnectorTokens {
 	raw: Record<string, unknown>;
 }
 
+export class IssuerMismatchError extends Error {}
+
+/**
+ * RFC 9207. `state` proves the response is ours; only `iss` proves which
+ * authorization server answered. A connector whose issuer comes from per-connect
+ * discovery can otherwise be induced to redeem server A's code at server B.
+ */
+export function assertRespondingIssuer(
+	slug: string,
+	endpoints: ResolvedEndpoints,
+	iss: string | null,
+): void {
+	if (!endpoints.issuer) return;
+	if (iss === null) {
+		if (!endpoints.issuerParameterSupported) return;
+		throw new IssuerMismatchError(
+			`Connector "${slug}": ${endpoints.issuer} advertises iss on the authorization response but returned none.`,
+		);
+	}
+	if (!sameIssuer(iss, endpoints.issuer)) {
+		throw new IssuerMismatchError(
+			`Connector "${slug}": authorization response came from "${iss}", not the expected ${endpoints.issuer}.`,
+		);
+	}
+}
+
 export async function exchangeCode(
 	slug: string,
 	method: ConnectorMethod,
@@ -250,6 +279,7 @@ export async function exchangeCode(
 		redirectUri: string;
 		codeVerifier?: string | null;
 		params?: Record<string, string | undefined>;
+		issuer?: string | null;
 	},
 ): Promise<ConnectorTokens> {
 	if (method.type === "api_key")
@@ -259,6 +289,8 @@ export async function exchangeCode(
 		method.type === "oauth2"
 			? await resolveEndpoints(slug, method, options.redirectUri)
 			: null;
+	if (endpoints)
+		assertRespondingIssuer(slug, endpoints, options.issuer ?? null);
 	const env = connectorEnv(slug, method);
 	const { clientId, clientSecret } = endpoints
 		? {

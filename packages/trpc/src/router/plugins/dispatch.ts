@@ -3,6 +3,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
+import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import { getConnector, secretInputNames } from "@superset/shared/connectors";
 import type { BundledSource } from "./connections";
 import {
@@ -14,12 +15,7 @@ import {
 	type TemplateScope,
 } from "./manifest";
 
-export interface ToolDefinition {
-	name: string;
-	description?: string;
-	inputSchema?: unknown;
-	annotations?: Record<string, unknown>;
-}
+export type ToolDefinition = Tool;
 
 const REQUEST_ID = 1;
 
