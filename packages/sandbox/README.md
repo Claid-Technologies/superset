@@ -34,7 +34,7 @@ The rule of thumb: if you can answer "where is it on the box", put it there.
 | `bun run build` | Hashes `bundle/`, renders `contract.sh` from `@superset/shared/sandbox-contract`, derives the step versions, writes `dist/bundle/<sha>/` and the tarball. Deterministic: the same tree is the same sha on any machine. |
 | `bun run build --publish` | Also uploads the bundle and any asset the bucket lacks. Refuses to publish a bundle that references an asset the bucket does not have. |
 | `bun run image` | Builds the image: OS, apt lists, vendor tools, the `ubuntu` user, then installs the bundle at its sha and runs every pass once, so a fresh box finds every hash sidecar and step marker matching. `--local` builds `superset-sandbox:local` for the boot-twice test; `--dry` prints the Dockerfile. |
-| boot (`superset-boot`) | On the box, as root, run by the control plane on every create and wake with the identity and the host secret in its env: writes `sandbox.conf`, clears `/run/superset`, installs the pinned bundle if the hash differs, runs the three passes (each a hash compare), starts host-service as `ubuntu` with the secret from the boot env, then the desktop and the checkout. The repo's `start` hook runs from host-service once the managed environment and the checkout are in. |
+| boot (`superset-boot`) | On the box, as root, run by the control plane on every create and wake, after it has written `sandbox.conf`, with the host secret in its env: clears `/run/superset`, installs the pinned bundle if the hash differs, runs the three passes (each a hash compare), starts host-service as `ubuntu` with the secret from the boot env, then the desktop and the checkout. The repo's `start` hook runs from host-service once the managed environment and the checkout are in. |
 | `bun run release` | Rewrites the host-service asset from this checkout, publishes the bundle, pushes the image (unless `--skip-image`), builds the internal golden with the environment's `setup` hook, probes a fork of it (`src/environments/probe.ts`) including a stop and wake, and writes the environment rows only after the probe passes. |
 | `bun run src/real-sandbox.ts` | The `workflow_dispatch` job: one real dev sandbox from the registry image on this checkout's bundle, the same probe, a stop and a wake. |
 
@@ -43,7 +43,7 @@ The rule of thumb: if you can answer "where is it on the box", put it there.
 - A rootfs file: its sha256, compared to the `.hash` sidecar beside it on the box.
 - An asset: its sha256, same sidecar rule; it is also the object's name in the bucket.
 - A step: `sha256(script + declared asset shas + declared input hashes + versions of steps it follows + salt)`.
-- The bundle: the sha256 of its tarball; the one pointer the box holds, handed to `superset-boot` in `sandbox.conf` by the control plane.
+- The bundle: the sha256 of its tarball; the one pointer the box holds, written into `/etc/superset/sandbox.conf` by the control plane.
 - host-service and Chrome are asset rows that move only when a release or a deliberate `bun run assets` rewrites them; a merge to main changes nothing on any box.
 
 ## The runner in the image runs first
@@ -52,10 +52,9 @@ The rule of thumb: if you can answer "where is it on the box", put it there.
 `apply-rootfs` installs it; but the runner that handles a boot is the one
 already on the box, and it fetches the bundle only after it has read its
 own inputs. A change to how the control plane hands the runner its inputs
-(the identity in `SUPERSET_SANDBOX_CONF`, the secret in
-`HOST_SERVICE_SECRET`) therefore reaches a box that has booted at least once
-on a bundle carrying the new runner, and a fresh box only through the
-image. `bun run release` pushes the image for that reason; `--skip-image`
+(the identity file, the secret in `HOST_SERVICE_SECRET`) therefore reaches
+a box that has booted at least once on a bundle carrying the new runner,
+and a fresh box only through the image. `bun run release` pushes the image for that reason; `--skip-image`
 is for a release that changes nothing under `rootfs/usr/local/bin/`.
 
 ## Tests

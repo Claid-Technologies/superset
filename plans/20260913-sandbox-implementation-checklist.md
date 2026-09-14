@@ -88,7 +88,7 @@ Found on the second read of the reference (2026-09-14)
 ## PR 4 — Control plane
 
 Build
-- [x] `sandbox.conf` written at claim and rewritten on wake (rendered into the boot command's env and written by `superset-boot`, one round trip; `SUPERSET_BUNDLE_SHA` from `environments.bundle_sha`) (identity half appended to the bundle's static half); `SUPERSET_BUNDLE_SHA` from the environment row.
+- [x] `sandbox.conf` written at claim and rewritten on wake (`writeIdentity` in `vercel.ts`, alongside the policy update; Satya chose the file over the boot command's env on 2026-09-14 for legibility; `SUPERSET_BUNDLE_SHA` from `environments.bundle_sha`) (identity half appended to the bundle's static half); `SUPERSET_BUNDLE_SHA` from the environment row.
 - [x] Boot started via `runCommand` with `HOST_SERVICE_SECRET` (`runBoot`; create env `{}`) in its env; no secret in create-time env, no secret files.
 - [x] Env push: host-service procedure `environment.set` (`sandbox.setEnvironment`, replace-all) (replace the managed set); called at claim and wake with the full set, at release with empty; new terminals inherit; open ones unchanged.
 - [x] Header rules for every credential (`credentials.ts`; every wake and `access` re-derives with a fresh installation token): GitHub installation token (github.com + api.github.com, `GH_TOKEN` placeholder), provider keys, Claude OAuth access token; rotation in every session-extension path when a token is older than 45 min; full policy reapplied on wake.

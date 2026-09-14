@@ -1,11 +1,10 @@
 /**
  * The contract between the control plane, host-service and the box.
  *
- * Three readers share one vocabulary: the API renders `sandbox.conf` into
- * the boot command's env at claim and wake and pushes the managed env;
- * `superset-boot` is shell, runs before any Node process, writes that file
- * and sources `contract.sh`, which `build.ts` renders from the constants
- * here; host-service reads its env and the push. A change
+ * Three readers share one vocabulary: the API writes `sandbox.conf` at claim
+ * and wake and pushes the managed env; host-service reads its env and the
+ * push; `superset-boot` is shell, runs before any Node process, and sources
+ * `contract.sh`, which `build.ts` renders from the constants here. A change
  * to a path, port or key is one edit in this file and the bundle hash moves.
  */
 import { z } from "zod";
@@ -71,11 +70,10 @@ export const SANDBOX_DISPLAY = {
 export const SANDBOX_ASSET_BASE_URL = "https://cdn.superset.sh/sandbox";
 
 /**
- * What the boot runner writes into `sandbox.conf` when a workspace claims a
- * box, and rewrites on every wake, from the `SUPERSET_SANDBOX_CONF` env of
- * the `runCommand` that starts it. Identity and non-secret configuration
+ * What the control plane writes into `sandbox.conf` when a workspace claims
+ * a box, and rewrites on every wake. Identity and non-secret configuration
  * only; readable by everyone on the box. The host secret never lands here:
- * it rides beside it in that command's env and nowhere else.
+ * it rides in the env of the `runCommand` that starts boot.
  */
 export const sandboxIdentitySchema = z.object({
 	SUPERSET_SANDBOX_CONTRACT: z.literal(String(SANDBOX_CONTRACT_VERSION)),
@@ -94,8 +92,9 @@ export const sandboxIdentitySchema = z.object({
 	SUPERSET_SANDBOX_PROVIDER: z.string().min(1),
 	/**
 	 * The environment's overrides for the repository's `.superset/config.json`
-	 * hooks, as JSON: `{ start?: string[], ports?: number[], setup?: string[] }`.
-	 * host-service runs `start` once the managed environment has arrived.
+	 * hooks the box acts on, as JSON: `{ start?: string[], ports?: number[] }`.
+	 * `setup` never travels here; the release runs it. host-service runs
+	 * `start` once the managed environment has arrived.
 	 */
 	SUPERSET_SANDBOX_HOOKS: z.string().optional(),
 	HOST_SERVICE_SENTRY_DSN: z.string().optional(),

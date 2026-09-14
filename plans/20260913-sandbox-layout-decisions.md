@@ -97,6 +97,10 @@ archives; `superset-desktop-init` as its own process beside host-service (the re
 
 - ~~Contract names shared by the API, host-service and the shell-side boot runner~~ done:
   `build.ts` renders `contract.sh` from `@superset/shared/sandbox-contract` (Decision 20).
+- The identity stays a file the API writes before boot (Decision 12 as written). A variant that put it in the
+  boot command's env saved one provider call (~0.3 s); Satya chose the file on 2026-09-14: a file on the box
+  is legible, has no size ceiling, and the runner's inputs keep one shape. The box receives only the `start`
+  and `ports` hook overrides; `setup` is the release's.
 - The `start` hook runs from host-service, not the boot runner (amends Decision 9's "boot runs
   it"): it needs the managed environment, which only arrives once host-service answers, and the
   checkout, which lands beside it. Once per boot, marker in `/run/superset`.

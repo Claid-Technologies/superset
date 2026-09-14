@@ -53,6 +53,12 @@ export async function buildSandboxClaim(args: {
 		? await readRepoHooks({ repo, branch: args.row.branch, token: clone.token })
 		: null;
 	const hooks = mergeHooks(repoHooks, environment.hooks);
+	// The box acts on start and ports; setup is the release's, and can be a
+	// whole script, which has no place in the identity file.
+	const boxHooks =
+		environment.hooks?.start || environment.hooks?.ports
+			? { start: environment.hooks.start, ports: environment.hooks.ports }
+			: null;
 
 	const identity: SandboxIdentity = {
 		SUPERSET_SANDBOX_CONTRACT: String(SANDBOX_CONTRACT_VERSION) as "1",
@@ -66,9 +72,7 @@ export async function buildSandboxClaim(args: {
 		...(environment.bundleSha
 			? { SUPERSET_BUNDLE_SHA: environment.bundleSha }
 			: {}),
-		...(environment.hooks
-			? { SUPERSET_SANDBOX_HOOKS: JSON.stringify(environment.hooks) }
-			: {}),
+		...(boxHooks ? { SUPERSET_SANDBOX_HOOKS: JSON.stringify(boxHooks) } : {}),
 		...(env.SENTRY_DSN_SANDBOX
 			? {
 					HOST_SERVICE_SENTRY_DSN: env.SENTRY_DSN_SANDBOX,

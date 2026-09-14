@@ -105,25 +105,39 @@ function publishedPorts(extra: readonly number[] = []): number[] {
 }
 
 /**
- * Starts boot: root, detached, one call. The identity file and the host
- * secret both ride in the command's env (the platform's own `sudo: true`
- * resets the env; the image's sudoers grants SETENV, so they cross into
- * root without touching argv or a file written from outside). The runner
- * writes the identity to disk itself and refuses to stack a second
- * host-service on a live one, so a wake that races a wake is harmless.
+ * The identity file, written before boot on every create and wake: what a
+ * person can read on the box to see which workspace it is. A file rather
+ * than a variable on the boot command, so it can hold whatever the box needs
+ * without a size limit and so the runner's inputs never change shape.
  */
-async function runBoot(sandbox: Sandbox, claim: SandboxClaim): Promise<void> {
+async function writeIdentity(
+	sandbox: Sandbox,
+	identity: SandboxIdentity,
+): Promise<void> {
+	await sandbox.writeFiles([
+		{
+			path: SANDBOX_PATHS.conf,
+			content: renderSandboxConf(identity),
+			mode: 0o644,
+		},
+	]);
+}
+
+/**
+ * Starts boot: root, detached, with the host secret in the command's env and
+ * nowhere else. The platform's own `sudo: true` resets the env; the image's
+ * sudoers grants SETENV, so the secret crosses into root without touching
+ * argv. The runner refuses to stack a second host-service on a live one, so
+ * a wake that races a wake is harmless.
+ */
+async function runBoot(sandbox: Sandbox, hostSecret: string): Promise<void> {
 	await sandbox.runCommand({
 		cmd: "sudo",
-		args: [`--preserve-env=${BOOT_ENV_KEYS.join(",")}`, BOOT_COMMAND],
+		args: ["--preserve-env=HOST_SERVICE_SECRET", BOOT_COMMAND],
 		detached: true,
-		env: {
-			HOST_SERVICE_SECRET: claim.hostSecret,
-			SUPERSET_SANDBOX_CONF: renderSandboxConf(claim.identity),
-		},
+		env: { HOST_SERVICE_SECRET: hostSecret },
 	});
 }
-const BOOT_ENV_KEYS = ["HOST_SERVICE_SECRET", "SUPERSET_SANDBOX_CONF"];
 
 /**
  * When the provider call that makes the sandbox started and returned, and
@@ -137,7 +151,7 @@ export interface ProvisionStamps {
 }
 
 /**
- * Creates the sandbox and starts boot with its identity. Returns once the
+ * Creates the sandbox, writes its identity and starts boot. Returns once the
  * sandbox's address exists, not once anything listens on it; `settleSandbox`
  * is how a caller waits for that. Idempotent on the name: a re-delivered
  * provision finds the sandbox it already made.
@@ -186,7 +200,8 @@ export async function provisionSandbox(args: {
 					resources: { vcpus: IMAGE_SANDBOX_VCPUS },
 				}));
 	const sandboxCreateFinishedAt = new Date();
-	await runBoot(sandbox, args.claim);
+	await writeIdentity(sandbox, args.claim.identity);
+	await runBoot(sandbox, args.claim.hostSecret);
 	return {
 		providerSandboxId: args.name,
 		sandboxUrl: sandbox.domain(HOST_SERVICE_PORT),
@@ -331,7 +346,7 @@ export async function wakeSandbox(args: {
 				await sandbox.extendTimeout(SESSION_TIMEOUT_MS).catch(() => {});
 			}
 		}
-		// The policy and the boot command go out together: the first call to
+		// The policy goes out alongside the identity write: the first call to
 		// touch a stopped session pays the resume, and the rules are in place
 		// long before anything on the box makes a request.
 		await Promise.all([
@@ -343,8 +358,9 @@ export async function wakeSandbox(args: {
 						error,
 					),
 				),
-			runBoot(sandbox, args.claim),
+			writeIdentity(sandbox, args.claim.identity),
 		]);
+		await runBoot(sandbox, args.claim.hostSecret);
 		const { healthyAt } = await settleSandbox({
 			providerSandboxId: args.providerSandboxId,
 			hostTarget,
@@ -436,7 +452,8 @@ export async function promoteSandboxToEnvironment(args: {
 	await golden.stop();
 	await waitForStopSnapshot(args.goldenName, created);
 	if (wasRunning) {
-		await runBoot(source, args.claim);
+		await writeIdentity(source, args.claim.identity);
+		await runBoot(source, args.claim.hostSecret);
 	}
 	return args.goldenName;
 }
