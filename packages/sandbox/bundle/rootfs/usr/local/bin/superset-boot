@@ -183,12 +183,14 @@ start_hook() {
 }
 
 # One checkout per repository in SUPERSET_SANDBOX_REPOSITORIES, each at
-# <workspace>/<path> on its branch. A marker per path under the state
-# directory says it is done; a golden has the markers stripped so a fork
-# fetches its branch into the checkout it inherited.
+# <workspace>/<path> on its branch, or at the workspace root itself when its
+# path is ".". A marker per path under the state directory says it is done;
+# a golden has the markers stripped so a fork fetches its branch into the
+# checkout it inherited.
 checkout_one() {
 	local url="$1" branch="$2" path="$3"
 	local ws="${SUPERSET_WORKSPACE_DIR}/${path}" marker="${SUPERSET_CHECKOUTS_DIR}/${path}"
+	if [ "$path" = "." ]; then ws="$SUPERSET_WORKSPACE_DIR"; marker="${SUPERSET_CHECKOUTS_DIR}/@root"; fi
 	if [ -f "$marker" ]; then stamp "checkout.skipped ${path} already done"; return 0; fi
 	local baked
 	baked="$(as_user git -C "$ws" remote get-url origin 2>/dev/null || true)"
@@ -200,13 +202,23 @@ checkout_one() {
 		# fetch nothing; start over rather than fail every boot.
 		stamp "checkout.fetch.failed ${path} ${branch}; recloning"
 	fi
-	# Empty the directory rather than replace it: a shell already sitting in
-	# it keeps a live cwd.
-	install -d -o "$SUPERSET_USER" -g "$SUPERSET_USER" "$ws"; find "$ws" -mindepth 1 -delete
-	if as_user git clone -q --depth 1 --single-branch --branch "$branch" "$url" "$ws" || as_user git clone -q --depth 1 "$url" "$ws"; then
+	# Clone beside the target and move the result in, the worktree first and
+	# .git last, so the directory becomes a repository in one rename: host-service
+	# seeds the workspace row before the checkout lands and would otherwise find
+	# a half-written .git and fetch into it. The directory itself is emptied
+	# rather than replaced, so a shell already sitting in it keeps a live cwd.
+	local tmp
+	tmp="$(mktemp -d "${SUPERSET_WORKSPACE_DIR}/.clone.XXXXXX")"
+	chown "$SUPERSET_USER:$SUPERSET_USER" "$tmp"
+	if as_user git clone -q --depth 1 --single-branch --branch "$branch" "$url" "$tmp" \
+		|| { find "$tmp" -mindepth 1 -delete; as_user git clone -q --depth 1 "$url" "$tmp"; }; then
+		install -d -o "$SUPERSET_USER" -g "$SUPERSET_USER" "$ws"
+		find "$ws" -mindepth 1 -maxdepth 1 ! -name '.clone.*' -exec rm -rf {} +
+		( shopt -s dotglob nullglob; for entry in "$tmp"/*; do [ "${entry##*/}" = ".git" ] || mv "$entry" "$ws"/; done )
+		mv "$tmp/.git" "$ws/.git"; rmdir "$tmp"
 		touch "$marker"; stamp "checkout.cloned ${path} ${url}"; return 0
 	fi
-	stamp "checkout.clone.failed ${path}"; return 1
+	rm -rf "$tmp"; stamp "checkout.clone.failed ${path}"; return 1
 }
 checkout() {
 	exec >> "${SUPERSET_LOG_DIR}/checkout.log" 2>&1
