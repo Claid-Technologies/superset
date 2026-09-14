@@ -1,6 +1,7 @@
 import crypto from "node:crypto";
 import { AUTH_PROVIDERS } from "@superset/shared/constants";
 import { getHostId, getHostName } from "@superset/shared/host-info";
+import { TRPCError } from "@trpc/server";
 import { observable } from "@trpc/server/observable";
 import { shell } from "electron";
 import { env } from "main/env.main";
@@ -17,6 +18,24 @@ import {
 	saveToken,
 	stateStore,
 } from "./utils/auth-functions";
+
+// Every token write takes a lock directory next to the token file, so a full
+// disk is the user's environment, not a bug.
+async function writeAuth<Result>(
+	operation: () => Promise<Result>,
+): Promise<Result> {
+	try {
+		return await operation();
+	} catch (error) {
+		if ((error as NodeJS.ErrnoException | null)?.code === "ENOSPC") {
+			throw new TRPCError({
+				code: "PRECONDITION_FAILED",
+				message: error instanceof Error ? error.message : String(error),
+			});
+		}
+		throw error;
+	}
+}
 
 export const createAuthRouter = () => {
 	return router({
@@ -35,7 +54,7 @@ export const createAuthRouter = () => {
 				}),
 			)
 			.mutation(async ({ input }) => {
-				await saveToken(input);
+				await writeAuth(() => saveToken(input));
 				return { success: true };
 			}),
 
@@ -48,7 +67,7 @@ export const createAuthRouter = () => {
 				}),
 			)
 			.mutation(async ({ input }) => {
-				return await saveOrganizationIds(input);
+				return await writeAuth(() => saveOrganizationIds(input));
 			}),
 
 		/**
@@ -122,7 +141,7 @@ export const createAuthRouter = () => {
 
 		signOut: publicProcedure.mutation(async () => {
 			getHostServiceCoordinator().stopAll();
-			await clearToken();
+			await writeAuth(() => clearToken());
 			return { success: true };
 		}),
 	});
