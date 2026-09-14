@@ -119,6 +119,7 @@ export function PageViewer({
 			<div className="relative flex h-full w-full">
 				<div className="min-h-0 min-w-0 flex-1">
 					<PageCommentsView
+						pinchZoomEnabled
 						src={pull.data.viewUrl}
 						title={resolvedTitle}
 						initialScrollY={scrollPositions.get(scrollKey) ?? 0}

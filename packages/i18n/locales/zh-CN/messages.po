@@ -313,7 +313,7 @@ msgstr "{0}的操作"
 msgid "{0} and {1} settle it as terminal dinosaurs. Stats decide the winner."
 msgstr "{0}与{1}化身终端恐龙一决高下。数据决定胜负。"
 
-#. placeholder {0}: formatTokens(Math.max(0, me.tokens - below.tokens))
+#. placeholder {0}: formatTokens(belowGap > 0n ? belowGap : 0n)
 msgid "{0} behind you"
 msgstr "落后你{0}"
 
@@ -451,7 +451,7 @@ msgstr "已终止{0}个会话"
 msgid "{0} terminated, {1} remaining"
 msgstr "已终止{0}个，剩余{1}个"
 
-#. placeholder {0}: formatTokens(Math.max(0, above.tokens - me.tokens))
+#. placeholder {0}: formatTokens(aboveGap > 0n ? aboveGap : 0n)
 #. placeholder {1}: formatNumber(above.rank)
 msgid "{0} to pass #{1}"
 msgstr "再需{0}即可超越 #{1}"
@@ -782,9 +782,6 @@ msgstr "{name} 是内置的，无法替换"
 msgid "serverError.plugins.marketplaceNotAdded"
 msgstr "{name} 尚未添加"
 
-msgid "{needing, plural, one {# needs you} other {# need you}}"
-msgstr "{needing, plural, other {# 个需要你}}"
-
 msgid "{nonBrandPct} of clicks"
 msgstr "占点击的 {nonBrandPct}"
 
@@ -819,8 +816,14 @@ msgstr "{total}项检查中有{pending}项运行中"
 msgid "{pending} of {total} checks running"
 msgstr "{total}项检查中有{pending}项运行中"
 
+msgid "{percent} used"
+msgstr "已使用 {percent}"
+
 msgid "{planLabel} · Joined {joined}"
 msgstr "{planLabel} · 加入于{joined}"
+
+msgid "{planLabel} plan"
+msgstr "{planLabel}方案"
 
 msgid "{presetLabel} reset to defaults"
 msgstr "{presetLabel}已重置为默认值"
@@ -902,12 +905,6 @@ msgstr "{threshold, plural, other {已合并 # 个智能体 PR}}"
 msgid "{toolName} interrupted"
 msgstr "{toolName}已中断"
 
-msgid "{total, plural, one {# agent working} other {# agents working}}"
-msgstr "{total, plural, other {# 个智能体运行中}}"
-
-msgid "{total, plural, one {# agent} other {# agents}}"
-msgstr "{total, plural, other {# 个智能体}}"
-
 msgid "{total, plural, one {The check passed} other {All # checks passed}}"
 msgstr "{total, plural, one {#项检查全部通过} other {#项检查全部通过}}"
 
@@ -934,6 +931,9 @@ msgstr "{uncommittedCount, plural, one {#个文件已更改} other {#个文件�
 
 msgid "{updatedLabel} restored to defaults"
 msgstr "{updatedLabel}已恢复为默认值"
+
+msgid "{used} used"
+msgstr "已使用 {used}"
 
 msgid "{waiting} Waiting"
 msgstr "{waiting}人等待"
@@ -1051,9 +1051,6 @@ msgstr "~/agent $"
 
 msgid "⌘ click"
 msgstr "⌘点击"
-
-msgid "⌘↵ to send"
-msgstr "⌘↵发送"
 
 msgid "⌘⇧ click"
 msgstr "⌘⇧点击"
@@ -1245,6 +1242,9 @@ msgstr "此标签页中仍有进程在运行"
 msgid "A process is still running in this terminal"
 msgstr "此终端中仍有进程在运行"
 
+msgid "A pull request always gets its own worktree"
+msgstr "拉取请求总是使用自己的 worktree"
+
 msgid "A rebuilt chat surface for driving agents: richer tool output, smoother steering, faster everything."
 msgstr "重建的智能体驱动聊天界面：更丰富的工具输出、更顺手的引导，一切都更快。"
 
@@ -1321,6 +1321,9 @@ msgstr "账户正在等待删除。"
 
 msgid "Account pending deletion"
 msgstr "账户待删除"
+
+msgid "Account usage"
+msgstr "账户用量"
 
 msgid "Achievements"
 msgstr "成就"
@@ -2004,6 +2007,9 @@ msgstr "Apache Superset"
 msgid "API"
 msgstr "API"
 
+msgid "API billing"
+msgstr "API 计费"
+
 msgid "API key"
 msgstr "API密钥"
 
@@ -2377,6 +2383,9 @@ msgstr "返回"
 
 msgid "Back to About"
 msgstr "返回关于页"
+
+msgid "Back to billing"
+msgstr "返回账单"
 
 msgid "Back to Blog"
 msgstr "返回博客"
@@ -2832,6 +2841,7 @@ msgid "Cancelled"
 msgstr "已取消"
 
 #. placeholder {0}: format(new Date(cancelAt), "MMMM d, yyyy")
+#. placeholder {0}: formatDate(cancelAt)
 msgid "Cancels {0} — downgrades to Free at the end of the billing period."
 msgstr "将于{0}取消，在计费周期结束时降级为免费版。"
 
@@ -3030,6 +3040,9 @@ msgstr "正在检查…"
 
 msgid "Checklist"
 msgstr "清单"
+
+msgid "Checkout: {label}"
+msgstr "检出：{label}"
 
 msgid "Checkpoint"
 msgstr "检查点"
@@ -3651,6 +3664,9 @@ msgstr "配置任务在Superset和Linear之间的同步方式。"
 msgid "Configure terminal behavior and reusable terminal scripts"
 msgstr "配置终端行为和可复用的终端脚本"
 
+msgid "Configure the automation yourself"
+msgstr "自行配置自动化"
+
 msgid "Configure the in-app browser"
 msgstr "配置应用内浏览器"
 
@@ -4167,6 +4183,9 @@ msgstr "无法加载你的机器"
 msgid "Could not mark ready"
 msgstr "无法标记为待审查"
 
+msgid "Could not open billing. Please try again."
+msgstr "无法打开账单，请重试。"
+
 msgid "Could not open Files"
 msgstr "无法打开“文件”"
 
@@ -4235,6 +4254,9 @@ msgstr "无法设置图标"
 
 msgid "Could not start agent"
 msgstr "无法启动智能体"
+
+msgid "Could not start checkout. Please try again."
+msgstr "无法开始结账，请重试。"
 
 msgid "Could not start cloud workspace provisioning"
 msgstr "无法开始配置云端工作区"
@@ -4459,6 +4481,9 @@ msgstr "创建账户"
 
 msgid "Create failed: {message}"
 msgstr "创建失败：{message}"
+
+msgid "Create manually"
+msgstr "手动创建"
 
 msgid "Create merge commit"
 msgstr "创建合并提交"
@@ -5012,6 +5037,9 @@ msgstr "描述要做的更改…"
 
 msgid "Describe the task for the agent…"
 msgstr "描述交给智能体的任务…"
+
+msgid "Describe the work to your agent"
+msgstr "向智能体描述工作内容"
 
 msgid "Describe what you need. Superset creates an isolated workspace and clean branch for the task."
 msgstr "描述你的需求。Superset会为该任务创建隔离的工作区和干净的分支。"
@@ -7643,6 +7671,9 @@ msgstr "邀请团队加入共享工作区。查看实时更新、同步配置，
 msgid "Invited By"
 msgstr "邀请人"
 
+msgid "Invoices and payment method"
+msgstr "发票和支付方式"
+
 msgid "iOS app"
 msgstr "iOS应用"
 
@@ -7717,6 +7748,9 @@ msgstr "斜体"
 
 msgid "Item"
 msgstr "条目"
+
+msgid "Its own branch and copy of the files"
+msgstr "独立的分支和文件副本"
 
 msgid "Its workspaces and terminals are unavailable until it restarts — use the Superset tray menu > Host Service > Restart."
 msgstr "在它重启之前，其工作区和终端都不可用，请使用Superset托盘菜单 > 主机服务 > 重启。"
@@ -8298,6 +8332,9 @@ msgstr "加载中..."
 msgid "Loading…"
 msgstr "正在加载…"
 
+msgid "Local"
+msgstr "本地"
+
 msgid "Local Device"
 msgstr "本地设备"
 
@@ -8324,6 +8361,9 @@ msgstr "退出登录"
 
 msgid "Log out?"
 msgstr "退出登录？"
+
+msgid "Login unverified"
+msgstr "登录未验证"
 
 msgid "Logins (cookies)"
 msgstr "登录信息（cookie）"
@@ -8373,9 +8413,6 @@ msgstr "品红"
 msgid "Main"
 msgstr "主进程"
 
-msgid "Main workspace"
-msgstr "主工作区"
-
 msgid "Make all panes equal size"
 msgstr "使所有窗格大小相同"
 
@@ -8396,6 +8433,9 @@ msgstr "让匹配项目的“运行”按钮启动此终端脚本。"
 
 msgid "Manage"
 msgstr "管理"
+
+msgid "Manage billing"
+msgstr "管理账单"
 
 msgid "Manage integrations in the web app to connect and configure services."
 msgstr "在网页应用中管理集成，以连接和配置服务。"
@@ -8433,9 +8473,6 @@ msgstr "管理你的账户设置"
 
 msgid "Manage your organization's branding and members."
 msgstr "管理组织的品牌形象和成员。"
-
-msgid "Manage your subscription and billing in the desktop app."
-msgstr "在桌面应用中管理你的订阅和账单。"
 
 msgid "Managed"
 msgstr "托管"
@@ -8786,9 +8823,6 @@ msgstr "更多{kindLower}主题"
 
 msgid "More actions"
 msgstr "更多操作"
-
-msgid "More options"
-msgstr "更多选项"
 
 msgid "More pages"
 msgstr "更多页面"
@@ -9912,6 +9946,9 @@ msgstr "当前在线"
 msgid "Online Now"
 msgstr "当前在线"
 
+msgid "Only an organization owner can change the plan. Ask yours to upgrade."
+msgstr "只有组织所有者才能更改方案，请联系所有者升级。"
+
 msgid "Only available on macOS."
 msgstr "仅在macOS上可用。"
 
@@ -10099,6 +10136,9 @@ msgstr "在任意IDE中打开"
 msgid "Open in Any IDE"
 msgstr "在任意IDE中打开"
 
+msgid "Open in app"
+msgstr "在应用中打开"
+
 msgid "Open in App"
 msgstr "在应用中打开"
 
@@ -10128,9 +10168,6 @@ msgstr "在当前标签页打开"
 
 msgid "Open in Cursor"
 msgstr "在Cursor中打开"
-
-msgid "Open in Desktop App"
-msgstr "在桌面应用中打开"
 
 msgid "Open in diff"
 msgstr "在差异视图中打开"
@@ -10179,6 +10216,9 @@ msgstr "在Scira AI中打开"
 
 msgid "Open in split pane"
 msgstr "在分屏窗格中打开"
+
+msgid "Open in Superset"
+msgstr "在 Superset 中打开"
 
 msgid "Open in T3 Chat"
 msgstr "在T3 Chat中打开"
@@ -10866,9 +10906,6 @@ msgstr "方案"
 
 msgid "Plan restored"
 msgstr "方案已恢复"
-
-msgid "Plan, ask, build..."
-msgstr "规划、提问、构建..."
 
 msgid "Planning the tooltip refactor"
 msgstr "正在规划tooltip重构"
@@ -11632,6 +11669,9 @@ msgstr "刷新拉取请求"
 msgid "Refreshes when Claude Code next runs."
 msgstr "下次运行 Claude Code 时刷新。"
 
+msgid "Refreshes when OpenCode next runs."
+msgstr "下次运行 OpenCode 时刷新。"
+
 msgid "Register any CLI agent alongside the built-ins, each with its own name, icon, and launch command."
 msgstr "在内置智能体之外注册任意CLI智能体，各自拥有名称、图标和启动命令。"
 
@@ -11848,6 +11888,7 @@ msgid "Renders a registered hotkey inside dropdown/menubar items"
 msgstr "在下拉菜单／菜单栏项中渲染已注册的快捷键"
 
 #. placeholder {0}: format(new Date(periodEnd), "MMMM d, yyyy")
+#. placeholder {0}: formatDate(periodEnd)
 msgid "Renews {0}."
 msgstr "将于{0}续订。"
 
@@ -11970,6 +12011,9 @@ msgstr "重置位置"
 
 msgid "Reset terminal"
 msgstr "重置终端"
+
+msgid "Reset time unavailable"
+msgstr "重置时间不可用"
 
 msgid "Reset to default"
 msgstr "恢复默认"
@@ -13139,6 +13183,9 @@ msgstr "分享此页面"
 msgid "Share via…"
 msgstr "分享方式…"
 
+msgid "Shared across sessions using this login."
+msgstr "使用此登录的所有会话共享此额度。"
+
 msgid "Shared app components"
 msgstr "共享应用组件"
 
@@ -13150,6 +13197,9 @@ msgstr "可导入Superset的共享主题JSON文件。"
 
 msgid "Shared version"
 msgstr "分享的版本"
+
+msgid "Shares the project's checkout — files, git index and branch — with its other local workspaces"
+msgstr "与该项目的其他本地工作区共享项目的检出（文件、git 索引和分支）"
 
 msgid "Sheet"
 msgstr "侧边面板"
@@ -14112,6 +14162,9 @@ msgstr "Superset Mobile属于专业版"
 msgid "Superset Mobile runs agents on the computers you connect."
 msgstr "Superset Mobile在你连接的电脑上运行智能体。"
 
+msgid "Superset Mobile, cloud workspaces, automations, and priority support."
+msgstr "Superset Mobile、云工作区、自动化和优先支持。"
+
 msgid "Superset needs Full Disk Access to read another browser's data. Grant it in System Settings, then check again."
 msgstr "Superset需要“完全磁盘访问权限”才能读取其他浏览器的数据。请在系统设置中授予权限，然后重新检查。"
 
@@ -14738,6 +14791,9 @@ msgstr "你要找的页面不存在。"
 msgid "The people behind Superset."
 msgstr "Superset背后的团队。"
 
+msgid "The project's checkout as it is: files and branch are shared"
+msgstr "按原样使用项目的检出: 文件和分支是共享的"
+
 #. placeholder {0}: params?.status
 msgid "The provider answered {0}."
 msgstr "提供商返回了{0}。"
@@ -14900,6 +14956,12 @@ msgstr "这会关闭所有终端会话 — 包括此工作区和其他工作区�
 msgid "This closes every terminal session for your organization{runningCountSuffix} and starts a fresh daemon."
 msgstr "这会关闭你组织的所有终端会话{runningCountSuffix}并启动全新的守护进程。"
 
+msgid "This closes the selected workspaces and their terminals. The project's files and branches stay as they are."
+msgstr "这将关闭所选工作区及其终端。项目的文件和分支保持不变。"
+
+msgid "This closes the workspace and its terminals. The project's files, branches and other workspaces stay as they are."
+msgstr "这将关闭该工作区及其终端。项目的文件、分支和其他工作区保持不变。"
+
 msgid "This comment is no longer here"
 msgstr "此评论已不存在"
 
@@ -15041,8 +15103,8 @@ msgstr "这将移除该主机、其访问权限及其工作区。机器上的文
 msgid "This removes the project from every reachable device."
 msgstr "这会从所有可访问的设备中移除该项目。"
 
-msgid "This removes the worktree from disk. The cloud workspace record will also be removed."
-msgstr "这会把worktree从磁盘上移除。云端的工作区记录也会一并移除。"
+msgid "This removes the worktree from disk and closes the workspace."
+msgstr "这将从磁盘中删除该 worktree 并关闭工作区。"
 
 msgid "This replaces its label, command, arguments, prompt and resume settings, environment variables, and icon with the current bundled configuration."
 msgstr "这会用当前内置配置替换它的名称、命令、参数、提示词与恢复设置、环境变量和图标。"
@@ -15710,6 +15772,9 @@ msgstr "更新命名规则"
 msgid "Update naming instructions for {0}"
 msgstr "更新{0}的命名规则"
 
+msgid "Update payment method"
+msgstr "更新支付方式"
+
 msgid "Update ready"
 msgstr "更新已就绪"
 
@@ -15754,9 +15819,16 @@ msgstr "升级"
 msgid "Upgrade a dependency and fix what breaks…"
 msgstr "升级一个依赖，并修好被它弄坏的地方…"
 
+#. placeholder {0}: COMPANY.DOMAIN
+msgid "Upgrade on {0}"
+msgstr "在 {0} 升级"
+
 #. placeholder {0}: i18n._(plan.name)
 msgid "Upgrade to {0}"
 msgstr "升级到{0}"
+
+msgid "Upgrade to Pro"
+msgstr "升级到 Pro"
 
 msgid "Upload files"
 msgstr "上传文件"
@@ -15787,6 +15859,9 @@ msgstr "URL友好的标识符，在你的组织内唯一。"
 
 msgid "Usage"
 msgstr "用量"
+
+msgid "Usage is out of date"
+msgstr "用量数据已过时"
 
 msgid "Usage sections"
 msgstr "用量分区"
@@ -16278,6 +16353,9 @@ msgstr "你排第几？"
 msgid "Where does my code run?"
 msgstr "我的代码在哪里运行？"
 
+msgid "Where Page links in terminals, chat messages, and task markdown open when clicked."
+msgstr "终端、聊天消息和任务 Markdown 中的页面链接点击后在何处打开。"
+
 msgid "Where serious teams are"
 msgstr "认真的团队都在这里"
 
@@ -16474,6 +16552,9 @@ msgstr "已更新worktree位置"
 msgid "Worktree missing"
 msgstr "worktree缺失"
 
+msgid "Worktree on this device"
+msgstr "此设备上的 worktree"
+
 msgid "Worktree opened"
 msgstr "worktree已打开"
 
@@ -16482,6 +16563,9 @@ msgstr "worktree不同步"
 
 msgid "Worktrees"
 msgstr "Worktree"
+
+msgid "Worktrees are removed from disk; workspaces on the project's checkout only close. Files in the checkout stay as they are."
+msgstr "worktree 会从磁盘中删除；位于项目检出上的工作区仅会关闭。检出中的文件保持不变。"
 
 msgid "Worktrees with uncommitted changes are left on disk."
 msgstr "有未提交更改的worktree会保留在磁盘上。"
@@ -16554,6 +16638,9 @@ msgstr "你"
 
 msgid "You appear to be offline"
 msgstr "你似乎处于离线状态"
+
+msgid "You are not a member of that organization."
+msgstr "你不是该组织的成员。"
 
 msgid "You are not a member of this organization"
 msgstr "你不是此组织的成员"
@@ -16657,6 +16744,9 @@ msgstr "下载将自动开始。如果没有，请点此获取。"
 
 msgid "Your GitHub link comes from the account you signed in with, so it shows as verified and cannot be edited here."
 msgstr "你的 GitHub 链接来自登录所用的账号，因此显示为已验证，无法在此编辑。"
+
+msgid "Your last payment failed. Update your payment method to keep Pro."
+msgstr "上次付款失败。请更新支付方式以继续使用 Pro。"
 
 msgid "Your name"
 msgstr "你的姓名"

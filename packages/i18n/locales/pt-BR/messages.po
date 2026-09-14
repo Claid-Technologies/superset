@@ -313,7 +313,7 @@ msgstr "Ações de {0}"
 msgid "{0} and {1} settle it as terminal dinosaurs. Stats decide the winner."
 msgstr "{0} e {1} resolvem isso como dinossauros de terminal. As estatísticas decidem o vencedor."
 
-#. placeholder {0}: formatTokens(Math.max(0, me.tokens - below.tokens))
+#. placeholder {0}: formatTokens(belowGap > 0n ? belowGap : 0n)
 msgid "{0} behind you"
 msgstr "{0} atrás de você"
 
@@ -451,7 +451,7 @@ msgstr "{0} sessões encerradas"
 msgid "{0} terminated, {1} remaining"
 msgstr "{0} encerradas, {1} restantes"
 
-#. placeholder {0}: formatTokens(Math.max(0, above.tokens - me.tokens))
+#. placeholder {0}: formatTokens(aboveGap > 0n ? aboveGap : 0n)
 #. placeholder {1}: formatNumber(above.rank)
 msgid "{0} to pass #{1}"
 msgstr "{0} para ultrapassar #{1}"
@@ -782,9 +782,6 @@ msgstr "{name} é integrado e não pode ser substituído"
 msgid "serverError.plugins.marketplaceNotAdded"
 msgstr "{name} não foi adicionado"
 
-msgid "{needing, plural, one {# needs you} other {# need you}}"
-msgstr "{needing, plural, one {# precisa de você} other {# precisam de você}}"
-
 msgid "{nonBrandPct} of clicks"
 msgstr "{nonBrandPct} dos cliques"
 
@@ -819,8 +816,14 @@ msgstr "{pending} de {total} verificação em execução"
 msgid "{pending} of {total} checks running"
 msgstr "{pending} de {total} verificações em execução"
 
+msgid "{percent} used"
+msgstr "{percent} usado"
+
 msgid "{planLabel} · Joined {joined}"
 msgstr "{planLabel} · Entrou em {joined}"
+
+msgid "{planLabel} plan"
+msgstr "Plano {planLabel}"
 
 msgid "{presetLabel} reset to defaults"
 msgstr "{presetLabel} redefinido para os padrões"
@@ -902,12 +905,6 @@ msgstr "{threshold, plural, one {# PR de agente mesclado} other {# PRs de agente
 msgid "{toolName} interrupted"
 msgstr "{toolName} interrompida"
 
-msgid "{total, plural, one {# agent working} other {# agents working}}"
-msgstr "{total, plural, one {# agente trabalhando} other {# agentes trabalhando}}"
-
-msgid "{total, plural, one {# agent} other {# agents}}"
-msgstr "{total, plural, one {# agente} other {# agentes}}"
-
 msgid "{total, plural, one {The check passed} other {All # checks passed}}"
 msgstr "{total, plural, one {A verificação passou} other {Todas as # verificações passaram}}"
 
@@ -934,6 +931,9 @@ msgstr "{uncommittedCount, plural, one {# arquivo alterado} other {# arquivos al
 
 msgid "{updatedLabel} restored to defaults"
 msgstr "{updatedLabel} restaurado para os padrões"
+
+msgid "{used} used"
+msgstr "{used} usado"
 
 msgid "{waiting} Waiting"
 msgstr "{waiting} aguardando"
@@ -1051,9 +1051,6 @@ msgstr "~/agent $"
 
 msgid "⌘ click"
 msgstr "⌘ clique"
-
-msgid "⌘↵ to send"
-msgstr "⌘↵ para enviar"
 
 msgid "⌘⇧ click"
 msgstr "⌘⇧ clique"
@@ -1245,6 +1242,9 @@ msgstr "Ainda há um processo rodando nesta aba"
 msgid "A process is still running in this terminal"
 msgstr "Ainda há um processo rodando neste terminal"
 
+msgid "A pull request always gets its own worktree"
+msgstr "Um pull request sempre tem seu próprio worktree"
+
 msgid "A rebuilt chat surface for driving agents: richer tool output, smoother steering, faster everything."
 msgstr "Uma superfície de chat reconstruída para conduzir agentes: saída de ferramentas mais rica, condução mais fluida e tudo mais rápido."
 
@@ -1321,6 +1321,9 @@ msgstr "A conta está com exclusão pendente."
 
 msgid "Account pending deletion"
 msgstr "Conta com exclusão pendente"
+
+msgid "Account usage"
+msgstr "Uso da conta"
 
 msgid "Achievements"
 msgstr "Conquistas"
@@ -2004,6 +2007,9 @@ msgstr "Apache Superset"
 msgid "API"
 msgstr "API"
 
+msgid "API billing"
+msgstr "Cobrança de API"
+
 msgid "API key"
 msgstr "Chave de API"
 
@@ -2377,6 +2383,9 @@ msgstr "Voltar"
 
 msgid "Back to About"
 msgstr "Voltar para Sobre"
+
+msgid "Back to billing"
+msgstr "Voltar ao faturamento"
 
 msgid "Back to Blog"
 msgstr "Voltar para o blog"
@@ -2832,6 +2841,7 @@ msgid "Cancelled"
 msgstr "Cancelada"
 
 #. placeholder {0}: format(new Date(cancelAt), "MMMM d, yyyy")
+#. placeholder {0}: formatDate(cancelAt)
 msgid "Cancels {0} — downgrades to Free at the end of the billing period."
 msgstr "Cancela em {0} — volta para o gratuito no fim do período de cobrança."
 
@@ -3030,6 +3040,9 @@ msgstr "Verificando…"
 
 msgid "Checklist"
 msgstr "Lista de tarefas"
+
+msgid "Checkout: {label}"
+msgstr "Checkout: {label}"
 
 msgid "Checkpoint"
 msgstr "Checkpoint"
@@ -3651,6 +3664,9 @@ msgstr "Configure como as tarefas sincronizam entre o Superset e o Linear."
 msgid "Configure terminal behavior and reusable terminal scripts"
 msgstr "Configure o comportamento do terminal e os scripts de terminal reutilizáveis"
 
+msgid "Configure the automation yourself"
+msgstr "Configure a automação por conta própria"
+
 msgid "Configure the in-app browser"
 msgstr "Configure o navegador do app"
 
@@ -4167,6 +4183,9 @@ msgstr "Não foi possível carregar suas máquinas"
 msgid "Could not mark ready"
 msgstr "Não foi possível marcar como pronto"
 
+msgid "Could not open billing. Please try again."
+msgstr "Não foi possível abrir o faturamento. Tente novamente."
+
 msgid "Could not open Files"
 msgstr "Não foi possível abrir o Arquivos"
 
@@ -4235,6 +4254,9 @@ msgstr "Não foi possível definir o ícone"
 
 msgid "Could not start agent"
 msgstr "Não foi possível iniciar o agente"
+
+msgid "Could not start checkout. Please try again."
+msgstr "Não foi possível iniciar o checkout. Tente novamente."
 
 msgid "Could not start cloud workspace provisioning"
 msgstr "Não foi possível iniciar o provisionamento da área de trabalho na nuvem"
@@ -4459,6 +4481,9 @@ msgstr "Criar uma conta"
 
 msgid "Create failed: {message}"
 msgstr "Falha ao criar: {message}"
+
+msgid "Create manually"
+msgstr "Criar manualmente"
 
 msgid "Create merge commit"
 msgstr "Criar commit de merge"
@@ -5012,6 +5037,9 @@ msgstr "Descreva a alteração…"
 
 msgid "Describe the task for the agent…"
 msgstr "Descreva a tarefa para o agente…"
+
+msgid "Describe the work to your agent"
+msgstr "Descreva o trabalho para seu agente"
 
 msgid "Describe what you need. Superset creates an isolated workspace and clean branch for the task."
 msgstr "Descreva o que você precisa. O Superset cria uma área de trabalho isolada e uma branch limpa para a tarefa."
@@ -7643,6 +7671,9 @@ msgstr "Convide sua equipe para áreas de trabalho compartilhadas. Veja atualiza
 msgid "Invited By"
 msgstr "Convidado por"
 
+msgid "Invoices and payment method"
+msgstr "Faturas e forma de pagamento"
+
 msgid "iOS app"
 msgstr "App para iOS"
 
@@ -7717,6 +7748,9 @@ msgstr "Itálico"
 
 msgid "Item"
 msgstr "Item"
+
+msgid "Its own branch and copy of the files"
+msgstr "Sua própria branch e sua própria cópia dos arquivos"
 
 msgid "Its workspaces and terminals are unavailable until it restarts — use the Superset tray menu > Host Service > Restart."
 msgstr "As áreas de trabalho e os terminais dele ficam indisponíveis até reiniciar — use o menu da bandeja do Superset > Serviço do host > Reiniciar."
@@ -8298,6 +8332,9 @@ msgstr "Carregando..."
 msgid "Loading…"
 msgstr "Carregando…"
 
+msgid "Local"
+msgstr "Local"
+
 msgid "Local Device"
 msgstr "Dispositivo local"
 
@@ -8324,6 +8361,9 @@ msgstr "Sair"
 
 msgid "Log out?"
 msgstr "Sair?"
+
+msgid "Login unverified"
+msgstr "Login não verificado"
 
 msgid "Logins (cookies)"
 msgstr "Logins (cookies)"
@@ -8373,9 +8413,6 @@ msgstr "Magenta"
 msgid "Main"
 msgstr "Main"
 
-msgid "Main workspace"
-msgstr "Área de trabalho principal"
-
 msgid "Make all panes equal size"
 msgstr "Deixar todos os painéis do mesmo tamanho"
 
@@ -8396,6 +8433,9 @@ msgstr "Faz o botão Executar lançar este script de terminal nos projetos corre
 
 msgid "Manage"
 msgstr "Gerenciar"
+
+msgid "Manage billing"
+msgstr "Gerenciar faturamento"
 
 msgid "Manage integrations in the web app to connect and configure services."
 msgstr "Gerencie as integrações no app web para conectar e configurar serviços."
@@ -8433,9 +8473,6 @@ msgstr "Gerencie as configurações da sua conta"
 
 msgid "Manage your organization's branding and members."
 msgstr "Gerencie a identidade visual e os membros da sua organização."
-
-msgid "Manage your subscription and billing in the desktop app."
-msgstr "Gerencie sua assinatura e o faturamento no app de desktop."
 
 msgid "Managed"
 msgstr "Gerenciada"
@@ -8786,9 +8823,6 @@ msgstr "Mais temas {kindLower}s"
 
 msgid "More actions"
 msgstr "Mais ações"
-
-msgid "More options"
-msgstr "Mais opções"
 
 msgid "More pages"
 msgstr "Mais páginas"
@@ -9912,6 +9946,9 @@ msgstr "Online agora"
 msgid "Online Now"
 msgstr "Online agora"
 
+msgid "Only an organization owner can change the plan. Ask yours to upgrade."
+msgstr "Só um proprietário da organização pode mudar o plano. Peça ao seu para fazer o upgrade."
+
 msgid "Only available on macOS."
 msgstr "Disponível apenas no macOS."
 
@@ -10099,6 +10136,9 @@ msgstr "Abra em qualquer IDE"
 msgid "Open in Any IDE"
 msgstr "Abra em qualquer IDE"
 
+msgid "Open in app"
+msgstr "Abrir no aplicativo"
+
 msgid "Open in App"
 msgstr "Abrir no app"
 
@@ -10128,9 +10168,6 @@ msgstr "Abrir na aba atual"
 
 msgid "Open in Cursor"
 msgstr "Abrir no Cursor"
-
-msgid "Open in Desktop App"
-msgstr "Abrir no app de desktop"
 
 msgid "Open in diff"
 msgstr "Abrir no diff"
@@ -10179,6 +10216,9 @@ msgstr "Abrir no Scira AI"
 
 msgid "Open in split pane"
 msgstr "Abrir em painel dividido"
+
+msgid "Open in Superset"
+msgstr "Abrir no Superset"
 
 msgid "Open in T3 Chat"
 msgstr "Abrir no T3 Chat"
@@ -10866,9 +10906,6 @@ msgstr "Plano"
 
 msgid "Plan restored"
 msgstr "Plano restaurado"
-
-msgid "Plan, ask, build..."
-msgstr "Planeje, pergunte, construa..."
 
 msgid "Planning the tooltip refactor"
 msgstr "Planejando a refatoração dos tooltips"
@@ -11632,6 +11669,9 @@ msgstr "Atualizar os pull requests"
 msgid "Refreshes when Claude Code next runs."
 msgstr "Atualiza na próxima execução do Claude Code."
 
+msgid "Refreshes when OpenCode next runs."
+msgstr "Atualiza na próxima execução do OpenCode."
+
 msgid "Register any CLI agent alongside the built-ins, each with its own name, icon, and launch command."
 msgstr "Registre qualquer agente de CLI ao lado dos nativos, cada um com nome, ícone e comando de execução próprios."
 
@@ -11848,6 +11888,7 @@ msgid "Renders a registered hotkey inside dropdown/menubar items"
 msgstr "Renderiza um atalho registrado dentro de itens de menu suspenso ou de menubar"
 
 #. placeholder {0}: format(new Date(periodEnd), "MMMM d, yyyy")
+#. placeholder {0}: formatDate(periodEnd)
 msgid "Renews {0}."
 msgstr "Renova em {0}."
 
@@ -11970,6 +12011,9 @@ msgstr "Redefinir local"
 
 msgid "Reset terminal"
 msgstr "Redefinir terminal"
+
+msgid "Reset time unavailable"
+msgstr "Horário de redefinição indisponível"
 
 msgid "Reset to default"
 msgstr "Restaurar o padrão"
@@ -13139,6 +13183,9 @@ msgstr "Compartilhar esta página"
 msgid "Share via…"
 msgstr "Compartilhar via…"
 
+msgid "Shared across sessions using this login."
+msgstr "Compartilhado entre as sessões que usam este login."
+
 msgid "Shared app components"
 msgstr "Componentes compartilhados do app"
 
@@ -13150,6 +13197,9 @@ msgstr "Arquivos JSON de tema compartilhados que você pode importar no Superset
 
 msgid "Shared version"
 msgstr "Versão compartilhada"
+
+msgid "Shares the project's checkout — files, git index and branch — with its other local workspaces"
+msgstr "Compartilha o checkout do projeto (arquivos, índice do git e branch) com suas outras áreas de trabalho locais"
 
 msgid "Sheet"
 msgstr "Sheet"
@@ -14112,6 +14162,9 @@ msgstr "O Superset Mobile faz parte do Pro"
 msgid "Superset Mobile runs agents on the computers you connect."
 msgstr "O Superset Mobile roda agentes nos computadores que você conectar."
 
+msgid "Superset Mobile, cloud workspaces, automations, and priority support."
+msgstr "Superset Mobile, workspaces na nuvem, automações e suporte prioritário."
+
 msgid "Superset needs Full Disk Access to read another browser's data. Grant it in System Settings, then check again."
 msgstr "O Superset precisa de Acesso Total ao Disco para ler os dados de outro navegador. Conceda em Ajustes do Sistema e verifique novamente."
 
@@ -14738,6 +14791,9 @@ msgstr "A página que você procura não existe."
 msgid "The people behind Superset."
 msgstr "As pessoas por trás do Superset."
 
+msgid "The project's checkout as it is: files and branch are shared"
+msgstr "O checkout do projeto como está: arquivos e branch são compartilhados"
+
 #. placeholder {0}: params?.status
 msgid "The provider answered {0}."
 msgstr "O provedor respondeu {0}."
@@ -14900,6 +14956,12 @@ msgstr "Isso fecha todas as sessões de terminal — nesta área de trabalho e e
 msgid "This closes every terminal session for your organization{runningCountSuffix} and starts a fresh daemon."
 msgstr "Isso fecha todas as sessões de terminal da sua organização{runningCountSuffix} e inicia um daemon novo."
 
+msgid "This closes the selected workspaces and their terminals. The project's files and branches stay as they are."
+msgstr "Isso fecha as áreas de trabalho selecionadas e seus terminais. Os arquivos e as branches do projeto permanecem como estão."
+
+msgid "This closes the workspace and its terminals. The project's files, branches and other workspaces stay as they are."
+msgstr "Isso fecha a área de trabalho e seus terminais. Os arquivos, as branches e as outras áreas de trabalho do projeto permanecem como estão."
+
 msgid "This comment is no longer here"
 msgstr "Este comentário não está mais aqui"
 
@@ -15041,8 +15103,8 @@ msgstr "Isso remove o host, o acesso a ele e as áreas de trabalho dele. Os arqu
 msgid "This removes the project from every reachable device."
 msgstr "Isso remove o projeto de todos os dispositivos acessíveis."
 
-msgid "This removes the worktree from disk. The cloud workspace record will also be removed."
-msgstr "Isso remove a worktree do disco. O registro da área de trabalho na nuvem também será removido."
+msgid "This removes the worktree from disk and closes the workspace."
+msgstr "Isso remove o worktree do disco e fecha a área de trabalho."
 
 msgid "This replaces its label, command, arguments, prompt and resume settings, environment variables, and icon with the current bundled configuration."
 msgstr "Isso substitui o rótulo, comando, argumentos, configurações de prompt e retomada, variáveis de ambiente e ícone pela configuração incluída na versão atual."
@@ -15710,6 +15772,9 @@ msgstr "Atualizar as instruções de nomenclatura"
 msgid "Update naming instructions for {0}"
 msgstr "Atualizar as instruções de nomenclatura de {0}"
 
+msgid "Update payment method"
+msgstr "Atualizar forma de pagamento"
+
 msgid "Update ready"
 msgstr "Atualização pronta"
 
@@ -15754,9 +15819,16 @@ msgstr "Fazer upgrade"
 msgid "Upgrade a dependency and fix what breaks…"
 msgstr "Atualize uma dependência e conserte o que quebrar…"
 
+#. placeholder {0}: COMPANY.DOMAIN
+msgid "Upgrade on {0}"
+msgstr "Fazer upgrade em {0}"
+
 #. placeholder {0}: i18n._(plan.name)
 msgid "Upgrade to {0}"
 msgstr "Fazer upgrade para {0}"
+
+msgid "Upgrade to Pro"
+msgstr "Fazer upgrade para o Pro"
 
 msgid "Upload files"
 msgstr "Enviar arquivos"
@@ -15787,6 +15859,9 @@ msgstr "Identificador amigável para URL, único dentro da sua organização."
 
 msgid "Usage"
 msgstr "Uso"
+
+msgid "Usage is out of date"
+msgstr "Os dados de uso estão desatualizados"
 
 msgid "Usage sections"
 msgstr "Seções de uso"
@@ -16278,6 +16353,9 @@ msgstr "Qual é a sua posição?"
 msgid "Where does my code run?"
 msgstr "Onde o meu código roda?"
 
+msgid "Where Page links in terminals, chat messages, and task markdown open when clicked."
+msgstr "Onde os links de páginas em terminais, mensagens de chat e markdown de tarefas abrem ao serem clicados."
+
 msgid "Where serious teams are"
 msgstr "Onde os times sérios estão"
 
@@ -16474,6 +16552,9 @@ msgstr "Local das worktrees atualizado"
 msgid "Worktree missing"
 msgstr "Worktree ausente"
 
+msgid "Worktree on this device"
+msgstr "Worktree neste dispositivo"
+
 msgid "Worktree opened"
 msgstr "Worktree aberta"
 
@@ -16482,6 +16563,9 @@ msgstr "Worktree fora de sincronia"
 
 msgid "Worktrees"
 msgstr "Worktrees"
+
+msgid "Worktrees are removed from disk; workspaces on the project's checkout only close. Files in the checkout stay as they are."
+msgstr "Os worktrees são removidos do disco; as áreas de trabalho no checkout do projeto apenas são fechadas. Os arquivos do checkout permanecem como estão."
 
 msgid "Worktrees with uncommitted changes are left on disk."
 msgstr "Worktrees com alterações não commitadas permanecem no disco."
@@ -16554,6 +16638,9 @@ msgstr "VOCÊ"
 
 msgid "You appear to be offline"
 msgstr "Parece que você está offline"
+
+msgid "You are not a member of that organization."
+msgstr "Você não é membro dessa organização."
 
 msgid "You are not a member of this organization"
 msgstr "Você não é membro desta organização"
@@ -16657,6 +16744,9 @@ msgstr "Seu download começa automaticamente. Se não começou, baixe aqui."
 
 msgid "Your GitHub link comes from the account you signed in with, so it shows as verified and cannot be edited here."
 msgstr "Seu link do GitHub vem da conta com que você entrou, por isso aparece como verificado e não pode ser editado aqui."
+
+msgid "Your last payment failed. Update your payment method to keep Pro."
+msgstr "Seu último pagamento falhou. Atualize sua forma de pagamento para manter o Pro."
 
 msgid "Your name"
 msgstr "Seu nome"

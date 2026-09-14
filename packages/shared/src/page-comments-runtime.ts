@@ -1,3 +1,8 @@
+import {
+	PAGE_PINCH_ZOOM_RUNTIME_SOURCE,
+	type PageViewportZoom,
+} from "./page-zoom";
+
 export interface CommentAnchor {
 	path: string;
 	tag: string;
@@ -25,7 +30,9 @@ export const FRAME_CHANNEL = "superset-comments/frame";
 export const PENDING_ANCHOR_ID = "superset-pending-anchor";
 
 export type HostMessageBody =
-	| { type: "set-mode"; enabled: boolean }
+	| { type: "ready" }
+	| { type: "enable-pinch-zoom" }
+	| { type: "set-mode"; enabled: boolean; locked: boolean }
 	| { type: "track"; anchors: { id: string; anchor: CommentAnchor }[] }
 	| { type: "restore-scroll"; y: number };
 
@@ -33,6 +40,11 @@ export type HostMessage = HostMessageBody & { channel: typeof HOST_CHANNEL };
 
 export type FrameMessage =
 	| { channel: typeof FRAME_CHANNEL; type: "ready" }
+	| {
+			channel: typeof FRAME_CHANNEL;
+			type: "viewport-zoom";
+			viewport: PageViewportZoom;
+	  }
 	| { channel: typeof FRAME_CHANNEL; type: "hover"; rect: FrameRect | null }
 	| { channel: typeof FRAME_CHANNEL; type: "pointer-down" }
 	| { channel: typeof FRAME_CHANNEL; type: "escape" }
@@ -60,6 +72,8 @@ export const PAGE_COMMENTS_RUNTIME_SOURCE = `(() => {
 	const FRAME = ${JSON.stringify(FRAME_CHANNEL)};
 
 	let enabled = false;
+	let locked = false;
+	let lockedAtPointerDown = false;
 	let tracked = [];
 	let lastHoverPath = null;
 	let frame = 0;
@@ -155,7 +169,7 @@ export const PAGE_COMMENTS_RUNTIME_SOURCE = `(() => {
 	document.addEventListener(
 		"mousemove",
 		(event) => {
-			if (!enabled) return;
+			if (!enabled || locked) return;
 			const el = targetAt(event.clientX, event.clientY);
 			const path = el ? pathOf(el) : null;
 			if (path === lastHoverPath) return;
@@ -182,9 +196,13 @@ export const PAGE_COMMENTS_RUNTIME_SOURCE = `(() => {
 		true,
 	);
 
+	// The host dismisses whatever is open on pointer-down and unlocks the frame
+	// before this same gesture's click arrives, so the click has to remember
+	// that it began as a dismiss or it starts a new pick.
 	document.addEventListener(
 		"mousedown",
 		() => {
+			lockedAtPointerDown = locked;
 			post({ type: "pointer-down" });
 		},
 		true,
@@ -193,9 +211,12 @@ export const PAGE_COMMENTS_RUNTIME_SOURCE = `(() => {
 	document.addEventListener(
 		"click",
 		(event) => {
+			const dismissing = lockedAtPointerDown;
+			lockedAtPointerDown = false;
 			if (!enabled) return;
 			event.preventDefault();
 			event.stopPropagation();
+			if (locked || dismissing) return;
 			const el = targetAt(event.clientX, event.clientY);
 			if (!el) return;
 			const rect = rectOf(el);
@@ -214,6 +235,13 @@ export const PAGE_COMMENTS_RUNTIME_SOURCE = `(() => {
 		},
 		true,
 	);
+
+	const pinchZoom = (${PAGE_PINCH_ZOOM_RUNTIME_SOURCE})((viewport) => {
+		post({ type: "viewport-zoom", viewport });
+		lastHoverPath = null;
+		post({ type: "hover", rect: null });
+		schedule();
+	}, () => locked);
 
 	addEventListener(
 		"scroll",
@@ -254,10 +282,14 @@ export const PAGE_COMMENTS_RUNTIME_SOURCE = `(() => {
 	addEventListener("message", (event) => {
 		const data = event.data;
 		if (!data || data.channel !== HOST) return;
+		if (data.type === "enable-pinch-zoom" && event.source === parent) pinchZoom.enable();
+		if (data.type === "ready") post({ type: "ready" });
 		if (data.type === "set-mode") {
 			enabled = Boolean(data.enabled);
-			document.documentElement.style.cursor = enabled ? "crosshair" : "";
-			if (!enabled) {
+			locked = Boolean(data.locked);
+			document.documentElement.style.cursor =
+				enabled && !locked ? "crosshair" : "";
+			if (!enabled || locked) {
 				lastHoverPath = null;
 				post({ type: "hover", rect: null });
 			}

@@ -10,6 +10,10 @@ import {
 	type HostMessageBody,
 	PENDING_ANCHOR_ID,
 } from "@superset/shared/page-comments-runtime";
+import {
+	applyPageViewportZoom,
+	type PageViewportZoom,
+} from "@superset/shared/page-zoom";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useComments } from "../../providers/CommentProvider";
 import { CommentBubble, pinClassName } from "./components/CommentBubble";
@@ -27,6 +31,7 @@ interface PageCommentsViewProps {
 	src: string;
 	title: string;
 	initialScrollY?: number;
+	pinchZoomEnabled?: boolean;
 	onScrollYChange?: (y: number) => void;
 	/**
 	 * A press inside the frame. It never bubbles into the host document, so a
@@ -39,6 +44,7 @@ export function PageCommentsView({
 	src,
 	title,
 	initialScrollY,
+	pinchZoomEnabled = false,
 	onScrollYChange,
 	onFramePointerDown,
 }: PageCommentsViewProps) {
@@ -48,9 +54,11 @@ export function PageCommentsView({
 	const onFramePointerDownRef = useRef(onFramePointerDown);
 	onFramePointerDownRef.current = onFramePointerDown;
 	const frameRef = useRef<HTMLIFrameElement>(null);
+	const viewportRef = useRef<PageViewportZoom | null>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
 	const [container, setContainer] = useState({ width: 0, height: 0 });
 	const [frameEpoch, setFrameEpoch] = useState(0);
+	const [readySrc, setReadySrc] = useState<string | null>(null);
 
 	const { i18n } = useLingui();
 	const {
@@ -139,6 +147,7 @@ export function PageCommentsView({
 		? null
 		: threads.find((thread) => thread.id === activeThreadId);
 	const popoverOpen = Boolean(draft || popoverThread);
+	const locked = popoverOpen;
 	useEffect(() => {
 		const element = containerRef.current;
 		if (!element) return;
@@ -165,7 +174,31 @@ export function PageCommentsView({
 			const data = event.data as FrameMessage | undefined;
 			if (!data || data.channel !== FRAME_CHANNEL) return;
 
+			if (data.type === "viewport-zoom") {
+				viewportRef.current = data.viewport;
+				if (frameRef.current)
+					applyPageViewportZoom(frameRef.current, data.viewport);
+			}
+			const transformRect = (
+				rect: {
+					top: number;
+					left: number;
+					width: number;
+					height: number;
+				} | null,
+			) => {
+				const v = viewportRef.current;
+				if (!rect || !v) return rect;
+				return {
+					top: rect.top * v.scale - v.y,
+					left: rect.left * v.scale - v.x,
+					width: rect.width * v.scale,
+					height: rect.height * v.scale,
+				};
+			};
 			if (data.type === "ready") {
+				if (pinchZoomEnabled) send({ type: "enable-pinch-zoom" });
+				setReadySrc(src);
 				setFrameEpoch((epoch) => epoch + 1);
 				if (scrollYRef.current > 0) {
 					send({ type: "restore-scroll", y: scrollYRef.current });
@@ -175,7 +208,7 @@ export function PageCommentsView({
 				scrollYRef.current = data.y;
 				onScrollYChangeRef.current?.(data.y);
 			}
-			if (data.type === "hover") setHoverRect(data.rect);
+			if (data.type === "hover") setHoverRect(transformRect(data.rect));
 			if (data.type === "pointer-down") {
 				onFramePointerDownRef.current?.();
 				notifyFramePointerDown();
@@ -185,9 +218,18 @@ export function PageCommentsView({
 				}
 			}
 			if (data.type === "escape") dismiss();
-			if (data.type === "rects") setRects(data.entries);
-			if (data.type === "pick") {
-				openDraft({ anchor: data.anchor, rect: data.rect });
+			if (data.type === "rects")
+				setRects(
+					data.entries.map((entry) => ({
+						...entry,
+						rect: transformRect(entry.rect),
+					})),
+				);
+			if (data.type === "pick" && !popoverOpen) {
+				openDraft({
+					anchor: data.anchor,
+					rect: transformRect(data.rect) ?? data.rect,
+				});
 				setHoverRect(null);
 			}
 		};
@@ -197,43 +239,55 @@ export function PageCommentsView({
 		discardDraft,
 		dismiss,
 		frameOrigin,
+		pinchZoomEnabled,
 		notifyFramePointerDown,
 		openDraft,
+		popoverOpen,
 		send,
 		setActiveThreadId,
 		setHoverRect,
 		setRects,
+		src,
 		submitting,
 	]);
 
+	useEffect(() => {
+		send({ type: "ready" });
+	}, [send]);
+
 	// biome-ignore lint/correctness/useExhaustiveDependencies: frameEpoch is a resend trigger, not a value read here
 	useEffect(() => {
-		send({ type: "set-mode", enabled });
-	}, [enabled, frameEpoch, send]);
+		send({ type: "set-mode", enabled, locked });
+	}, [enabled, locked, frameEpoch, send]);
+
+	const unresolvedThreads = useMemo(
+		() => threads.filter((thread) => !thread.resolved),
+		[threads],
+	);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: frameEpoch resends the anchor set to a runtime that just restarted
 	useEffect(() => {
 		send({
 			type: "track",
 			anchors: [
-				...threads.map((thread) => ({
+				...unresolvedThreads.map((thread) => ({
 					id: thread.id,
 					anchor: thread.anchor,
 				})),
 				...(draft ? [{ id: PENDING_ANCHOR_ID, anchor: draft.anchor }] : []),
 			],
 		});
-	}, [frameEpoch, send, threads, draft]);
+	}, [frameEpoch, send, unresolvedThreads, draft]);
 
 	const pins = useMemo(() => {
 		const out: { id: string; point: PinPoint }[] = [];
-		for (const thread of threads) {
+		for (const thread of unresolvedThreads) {
 			const rect = rects[thread.id];
 			if (rect)
 				out.push({ id: thread.id, point: pinPointOf(rect, thread.anchor) });
 		}
 		return out;
-	}, [rects, threads]);
+	}, [rects, unresolvedThreads]);
 
 	const pinPoints = useMemo(
 		() => new Map(pins.map((pin) => [pin.id, pin.point])),
@@ -252,11 +306,12 @@ export function PageCommentsView({
 				ref={frameRef}
 				src={src}
 				title={title}
+				ready={readySrc === src}
 				onLoad={() => setFrameEpoch((epoch) => epoch + 1)}
 			/>
 
 			<div className="pointer-events-none absolute inset-0 overflow-hidden">
-				{enabled && outlineRect ? (
+				{enabled && !locked && outlineRect ? (
 					<div
 						style={{
 							transform: `translate(${outlineRect.left}px, ${outlineRect.top}px)`,
@@ -291,7 +346,7 @@ export function PageCommentsView({
 					</div>
 				) : null}
 
-				{threads.map((thread) => {
+				{unresolvedThreads.map((thread) => {
 					const point = pinPoints.get(thread.id);
 					if (!point) return null;
 					const first = thread.comments[0];
