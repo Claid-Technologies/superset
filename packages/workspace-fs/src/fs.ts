@@ -25,10 +25,9 @@ export class WorkspaceFsPathError extends Error {
 	}
 }
 
-// A read comes back as one JS string (text directly, bytes as base64 in the
-// routers), so nothing past V8's string ceiling can ever be returned — and a
-// single FileHandle.read of 2 GiB or more fails a Node CHECK that aborts the
-// whole process instead of throwing.
+// Text past V8's string ceiling can never be returned, and a single
+// FileHandle.read of 2 GiB or more fails a Node CHECK that aborts the whole
+// process instead of throwing.
 const MAX_READ_BYTES = bufferConstants.MAX_STRING_LENGTH;
 
 const PATH_LOCK_STALE_MS = 30_000;
