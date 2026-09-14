@@ -432,8 +432,6 @@ describe("rethrowEnvironmentalGitError", () => {
 	});
 
 	test("does not claim the license refusal alongside a failure of git's own", () => {
-		// The sentence names no tool, so a hook reaching any shimmed tool prints
-		// the same line. Only when it is all git produced did git never run.
 		expect(
 			capture(
 				new Error(
