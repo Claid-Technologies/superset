@@ -4113,6 +4113,9 @@ msgstr "Sdílenou verzi se nepodařilo změnit"
 msgid "Could not change who can see this page"
 msgstr "Nepodařilo se změnit, kdo tuto stránku vidí"
 
+msgid "Could not check your plan. Check your connection and try again."
+msgstr "Nepodařilo se ověřit váš plán. Zkontrolujte připojení a zkuste to znovu."
+
 msgid "Could not clear browsing data"
 msgstr "Data prohlížení se nepodařilo vymazat"
 

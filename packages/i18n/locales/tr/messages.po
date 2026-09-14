@@ -4113,6 +4113,9 @@ msgstr "Paylaşılan sürüm değiştirilemedi"
 msgid "Could not change who can see this page"
 msgstr "Bu sayfayı kimlerin görebileceği değiştirilemedi"
 
+msgid "Could not check your plan. Check your connection and try again."
+msgstr "Planınız kontrol edilemedi. Bağlantınızı kontrol edip tekrar deneyin."
+
 msgid "Could not clear browsing data"
 msgstr "Tarama verileri temizlenemedi"
 

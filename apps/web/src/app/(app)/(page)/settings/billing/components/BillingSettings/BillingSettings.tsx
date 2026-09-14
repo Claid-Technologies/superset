@@ -81,8 +81,6 @@ export function BillingSettings({ organizationId }: BillingSettingsProps) {
 		members && members.length > 0 ? members.length : undefined;
 
 	const plan = resolveCurrentPlan({
-		organizationId: activeOrganizationId,
-		sessionOrganizationId: session?.session?.activeOrganizationId,
 		subscriptionPlan: activePlan?.plan,
 		sessionPlan: session?.session?.plan,
 		subscriptionsLoaded: activePlan !== undefined,

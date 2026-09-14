@@ -4113,6 +4113,9 @@ msgstr "No se pudo cambiar la versión compartida"
 msgid "Could not change who can see this page"
 msgstr "No se pudo cambiar quién puede ver esta página"
 
+msgid "Could not check your plan. Check your connection and try again."
+msgstr "No se pudo comprobar tu plan. Revisa tu conexión e inténtalo de nuevo."
+
 msgid "Could not clear browsing data"
 msgstr "No se pudieron borrar los datos de navegación"
 

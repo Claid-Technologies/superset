@@ -4113,6 +4113,9 @@ msgstr "无法更改分享的版本"
 msgid "Could not change who can see this page"
 msgstr "无法更改谁可以查看这个页面"
 
+msgid "Could not check your plan. Check your connection and try again."
+msgstr "无法检查您的套餐。请检查网络连接后重试。"
+
 msgid "Could not clear browsing data"
 msgstr "无法清除浏览数据"
 

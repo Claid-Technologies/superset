@@ -94,8 +94,6 @@ describe("resolveCurrentPlan", () => {
 	test("prefers the live subscription plan over a stale session plan", () => {
 		expect(
 			resolveCurrentPlan({
-				organizationId: "selected-org",
-				sessionOrganizationId: "selected-org",
 				subscriptionPlan: "pro",
 				sessionPlan: "free",
 				subscriptionsLoaded: true,
@@ -106,8 +104,6 @@ describe("resolveCurrentPlan", () => {
 	test("treats loaded subscriptions with no active plan as free", () => {
 		expect(
 			resolveCurrentPlan({
-				organizationId: "selected-org",
-				sessionOrganizationId: "selected-org",
 				subscriptionPlan: null,
 				sessionPlan: "pro",
 				subscriptionsLoaded: true,
@@ -118,8 +114,6 @@ describe("resolveCurrentPlan", () => {
 	test("falls back to the session plan while subscriptions are still loading", () => {
 		expect(
 			resolveCurrentPlan({
-				organizationId: "selected-org",
-				sessionOrganizationId: "selected-org",
 				subscriptionPlan: null,
 				sessionPlan: "pro",
 				subscriptionsLoaded: false,
@@ -130,25 +124,10 @@ describe("resolveCurrentPlan", () => {
 	test("supports enterprise subscriptions", () => {
 		expect(
 			resolveCurrentPlan({
-				organizationId: "selected-org",
-				sessionOrganizationId: "selected-org",
 				subscriptionPlan: "enterprise",
 				sessionPlan: "free",
 				subscriptionsLoaded: true,
 			}),
 		).toBe("enterprise");
 	});
-});
-
-test("does not borrow another organization's paid session plan", () => {
-	for (const organizationId of ["other-org", null, undefined]) {
-		expect(
-			resolveCurrentPlan({
-				organizationId,
-				sessionOrganizationId: "session-org",
-				sessionPlan: "pro",
-				subscriptionsLoaded: false,
-			}),
-		).toBe("free");
-	}
 });

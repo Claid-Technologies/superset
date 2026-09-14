@@ -1,4 +1,6 @@
-import { isPaidPlanTier } from "@superset/shared/billing";
+import { useLingui } from "@lingui/react/macro";
+import { isPaidPlanTier, type PlanTier } from "@superset/shared/billing";
+import { toast } from "@superset/ui/sonner";
 import { useRef } from "react";
 import { useActiveOrganizationId } from "renderer/hooks/useActiveOrganizationId";
 import { useCurrentPlan } from "renderer/hooks/useCurrentPlan";
@@ -6,6 +8,7 @@ import type { GatedFeature } from "./constants";
 import { paywall } from "./Paywall";
 
 export function usePaywall() {
+	const { t } = useLingui();
 	const { plan: userPlan, isReady, resolvePlanWhenKnown } = useCurrentPlan();
 	// Read at the top level, not inside gateFeature: hooks may not be called
 	// from a callback, and the paywall must be attributed to the org THIS
@@ -32,8 +35,22 @@ export function usePaywall() {
 		resolving.current.add(feature);
 		void (async () => {
 			try {
-				const plan = await resolvePlanWhenKnown();
-				if (plan === null) return;
+				let plan: PlanTier;
+				try {
+					plan = await resolvePlanWhenKnown();
+				} catch (error) {
+					console.warn(
+						`[paywall] Could not resolve the plan for ${feature}:`,
+						error,
+					);
+					toast.error(
+						t({
+							message:
+								"Could not check your plan. Check your connection and try again.",
+						}),
+					);
+					return;
+				}
 				if (isPaidPlanTier(plan)) {
 					try {
 						await callback();

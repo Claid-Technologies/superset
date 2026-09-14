@@ -19,8 +19,6 @@ import { join } from "node:path";
  * most people run one window.
  */
 const ACCOUNT_WIDE_READERS: Record<string, string> = {
-	"hooks/useCurrentPlan.ts":
-		"uses session plan only when its organization matches the window organization",
 	// Identity for analytics is the person, not the window they are looking at.
 	"components/PostHogUserIdentifier/PostHogUserIdentifier.tsx":
 		"analytics identity is per user, not per window",
