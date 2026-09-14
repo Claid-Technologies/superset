@@ -209,6 +209,35 @@ describe("findByPath walkAllRemotes (v1 importer)", () => {
 		]);
 	});
 
+	it("keeps repoCloneUrl origin-derived when a secondary remote resolves the same project first", async () => {
+		const db = createTestDb();
+		const { api, byRemoteUrl } = createRecordingApiStub();
+		const ctx = createTestContext(db, api);
+		const root = await createTempGitRepo();
+		// Config order queries `mirror` before `origin`; both resolve to the
+		// same cloud project, so the merge (not the insert) sets viaOrigin.
+		await addRemotes(root, {
+			mirror: "git@github.com:owner/mirror.git",
+			origin: "git@github.com:owner/a.git",
+		});
+		byRemoteUrl.set("https://github.com/owner/mirror", ["project-a"]);
+		byRemoteUrl.set("https://github.com/owner/a", ["project-a"]);
+
+		const caller = createCallerFactory(projectRouter)(ctx);
+		const result = await caller.findByPath({
+			repoPath: root,
+			walkAllRemotes: true,
+		});
+
+		expect(result.candidates).toEqual([
+			expect.objectContaining({
+				id: "project-a",
+				viaOrigin: true,
+				repoCloneUrl: "https://github.com/owner/a",
+			}),
+		]);
+	});
+
 	it("reports hasOriginRemote for a non-GitHub origin", async () => {
 		const db = createTestDb();
 		const { api, byRemoteUrl } = createRecordingApiStub();

@@ -566,8 +566,14 @@ export const projectRouter = router({
 							// candidate and merge the match flag.
 							existing.matchesExpected =
 								existing.matchesExpected || matches(parsed.url);
-							existing.viaOrigin = existing.viaOrigin || viaOrigin;
-							existing.repoCloneUrl = existing.repoCloneUrl ?? parsed.url;
+							// The URL rides into setup's slug check, so an origin hit
+							// must replace a URL learned from a secondary remote.
+							if (viaOrigin && !existing.viaOrigin) {
+								existing.viaOrigin = true;
+								existing.repoCloneUrl = parsed.url;
+							} else {
+								existing.repoCloneUrl = existing.repoCloneUrl ?? parsed.url;
+							}
 						} else {
 							byId.set(c.id, {
 								id: c.id,
