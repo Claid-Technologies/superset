@@ -304,6 +304,7 @@ until someone widens it.
 
 ```bash
 superset pages list --workspace <id>     # or omit --workspace for the whole org
+superset pages list --search "Q3 close"  # -q also works; matches title or slug
 superset pages get <page-id-or-slug>
 superset pages versions <page-id-or-slug>
 superset pages pull <page-id-or-slug> --version 2 > v2.html
@@ -311,6 +312,14 @@ superset pages pull <page-id-or-slug> --version 2 > v2.html
 
 `pull` writes HTML to stdout; use it to recover a source file you no longer
 have, or to diff what actually shipped against what you have locally.
+
+`list` returns every page it can see, so reach for `--search` before you reach
+for a pipe into `grep`. Two flags change that: `--limit <1-200>` returns one
+batch, and `--cursor` continues from where a batch stopped. Passing either one
+also changes the output shape — plain `list` prints a bare array, while a
+batched run prints `{ items, nextCursor }` and you pass that `nextCursor` back
+as `--cursor` until it comes back `null`. Scripts that expect an array should
+just not pass the flags.
 
 ## Answer comments
 
