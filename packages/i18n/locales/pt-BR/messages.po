@@ -4134,6 +4134,9 @@ msgstr "Não foi possível mudar a versão compartilhada"
 msgid "Could not change who can see this page"
 msgstr "Não foi possível mudar quem pode ver esta página"
 
+msgid "Could not check your plan. Check your connection and try again."
+msgstr "Não foi possível verificar seu plano. Verifique sua conexão e tente novamente."
+
 msgid "Could not clear browsing data"
 msgstr "Não foi possível limpar os dados de navegação"
 
@@ -10574,9 +10577,6 @@ msgstr "URL da organização atualizada!"
 msgid "Organization: <0>{0}</0>"
 msgstr "Organização: <0>{0}</0>"
 
-msgid "Organizations"
-msgstr "Organizações"
-
 msgid "Organizations with a second member vs single-member accounts; the line is teams per 1,000."
 msgstr "Organizações com um segundo membro em relação a contas de um só membro; a linha são times por 1.000."
 
@@ -13532,6 +13532,9 @@ msgstr "Login expirado — execute"
 msgid "Sign-in failed"
 msgstr "Falha no login"
 
+msgid "Sign-in failed ({reason}). Please try again."
+msgstr "Falha ao entrar ({reason}). Tente novamente."
+
 msgid "Signed in as {accountLabel}"
 msgstr "Conectado como {accountLabel}"
 
@@ -14208,8 +14211,8 @@ msgstr "O Superset está construindo software que se aprimora sozinho. Isso come
 msgid "Superset is building self-improving software. It starts with giving engineers the best tools that adapt to their needs over time. We're 3 ex-YC CTOs building a tool that we love."
 msgstr "O Superset está construindo software que se aprimora sozinho. Isso começa entregando a quem desenvolve as melhores ferramentas, que se adaptam às suas necessidades com o tempo. Somos 3 ex-CTOs da YC construindo uma ferramenta que amamos."
 
-msgid "Superset is built by a team based in San Francisco, California. For product support or account questions, email <0>{supportEmail}</0> and we'll get back to you within one business day. For partnerships, press, enterprise, or anything for the founding team, write to <1>{foundersEmail}</1>."
-msgstr "O Superset é feito por um time em San Francisco, Califórnia. Para suporte do produto ou dúvidas sobre a conta, escreva para <0>{supportEmail}</0> e respondemos em até um dia útil. Para parcerias, imprensa, enterprise ou assuntos para o time fundador, escreva para <1>{foundersEmail}</1>."
+msgid "Superset is built by a team based in San Francisco, California. For product support or account questions, email <0>{supportEmail}</0> and we'll get back to you within one business day. For partnerships, press, enterprise, or anything else, write to <1>{teamEmail}</1>."
+msgstr "O Superset é feito por um time em San Francisco, Califórnia. Para suporte do produto ou dúvidas sobre a conta, escreva para <0>{supportEmail}</0> e respondemos em até um dia útil. Para parcerias, imprensa, enterprise ou qualquer outro assunto, escreva para <1>{teamEmail}</1>."
 
 msgid "Superset is built in Superset, so we're our own #1 users—you get paid to make your own life easier. If you've ever wanted to build a product you love to use, come build it with us."
 msgstr "O Superset é desenvolvido no Superset, então somos nossos próprios usuários número um: você recebe para facilitar a própria vida. Se você sempre quis criar um produto que adora usar, venha construí-lo com a gente."
@@ -15073,6 +15076,9 @@ msgstr "Este dispositivo não está conectado ao relay do Superset, então as ex
 
 msgid "This directory does not exist. The terminal script will fall back to the workspace root."
 msgstr "Este diretório não existe. O script de terminal vai usar a raiz da área de trabalho."
+
+msgid "This email is already registered with another sign-in method, and the provider did not confirm it as verified. Sign in with the method you used before."
+msgstr "Este e-mail já está registrado com outro método de login, e o provedor não o confirmou como verificado. Entre com o método que você usou antes."
 
 msgid "This environment was promoted from a workspace, so its repositories are fixed. Promote a workspace again to change them."
 msgstr "Este ambiente foi promovido a partir de uma área de trabalho, então seus repositórios são fixos. Promova uma área de trabalho novamente para alterá-los."

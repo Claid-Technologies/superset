@@ -4134,6 +4134,9 @@ msgstr "Paylaşılan sürüm değiştirilemedi"
 msgid "Could not change who can see this page"
 msgstr "Bu sayfayı kimlerin görebileceği değiştirilemedi"
 
+msgid "Could not check your plan. Check your connection and try again."
+msgstr "Planınız kontrol edilemedi. Bağlantınızı kontrol edip tekrar deneyin."
+
 msgid "Could not clear browsing data"
 msgstr "Tarama verileri temizlenemedi"
 
@@ -10574,9 +10577,6 @@ msgstr "Kuruluş URL'si güncellendi!"
 msgid "Organization: <0>{0}</0>"
 msgstr "Kuruluş: <0>{0}</0>"
 
-msgid "Organizations"
-msgstr "Kuruluşlar"
-
 msgid "Organizations with a second member vs single-member accounts; the line is teams per 1,000."
 msgstr "İkinci üyesi olan organizasyonlara karşı tek üyeli hesaplar; çizgi 1.000 başına ekip sayısıdır."
 
@@ -13532,6 +13532,9 @@ msgstr "Oturum süresi doldu — bu host'ta bir terminalde"
 msgid "Sign-in failed"
 msgstr "Oturum açılamadı"
 
+msgid "Sign-in failed ({reason}). Please try again."
+msgstr "Oturum açılamadı ({reason}). Lütfen tekrar deneyin."
+
 msgid "Signed in as {accountLabel}"
 msgstr "{accountLabel} olarak oturum açıldı"
 
@@ -14208,8 +14211,8 @@ msgstr "Superset, kendini geliştiren yazılım üretiyor. Bu, mühendislere zam
 msgid "Superset is building self-improving software. It starts with giving engineers the best tools that adapt to their needs over time. We're 3 ex-YC CTOs building a tool that we love."
 msgstr "Superset, kendini geliştiren yazılım üretiyor. Bu, mühendislere zamanla ihtiyaçlarına uyum sağlayan en iyi araçları vermekle başlıyor. Sevdiğimiz bir araç geliştiren 3 eski YC CTO'suyuz."
 
-msgid "Superset is built by a team based in San Francisco, California. For product support or account questions, email <0>{supportEmail}</0> and we'll get back to you within one business day. For partnerships, press, enterprise, or anything for the founding team, write to <1>{foundersEmail}</1>."
-msgstr "Superset, San Francisco, Kaliforniya merkezli bir ekip tarafından geliştirilir. Ürün desteği veya hesap soruları için <0>{supportEmail}</0> adresine e-posta gönderin; bir iş günü içinde size dönelim. İş birliği, basın, kurumsal veya kurucu ekibe iletilecek her konu için <1>{foundersEmail}</1> adresine yazın."
+msgid "Superset is built by a team based in San Francisco, California. For product support or account questions, email <0>{supportEmail}</0> and we'll get back to you within one business day. For partnerships, press, enterprise, or anything else, write to <1>{teamEmail}</1>."
+msgstr "Superset, San Francisco, Kaliforniya merkezli bir ekip tarafından geliştirilir. Ürün desteği veya hesap soruları için <0>{supportEmail}</0> adresine e-posta gönderin; bir iş günü içinde size dönelim. İş birliği, basın, kurumsal veya diğer tüm konular için <1>{teamEmail}</1> adresine yazın."
 
 msgid "Superset is built in Superset, so we're our own #1 users—you get paid to make your own life easier. If you've ever wanted to build a product you love to use, come build it with us."
 msgstr "Superset, Superset içinde geliştiriliyor; yani en büyük kullanıcımız biziz. Kendi hayatınızı kolaylaştırmak için para kazanıyorsunuz. Severek kullandığınız bir ürün geliştirmek istediyseniz, gelin birlikte geliştirelim."
@@ -15073,6 +15076,9 @@ msgstr "Bu cihaz Superset rölesine bağlı değil, bu yüzden otomasyon çalı�
 
 msgid "This directory does not exist. The terminal script will fall back to the workspace root."
 msgstr "Bu dizin mevcut değil. Terminal betiği çalışma alanı köküne geri dönecek."
+
+msgid "This email is already registered with another sign-in method, and the provider did not confirm it as verified. Sign in with the method you used before."
+msgstr "Bu e-posta zaten başka bir oturum açma yöntemiyle kayıtlı ve sağlayıcı bunu doğrulanmış olarak onaylamadı. Daha önce kullandığınız yöntemle oturum açın."
 
 msgid "This environment was promoted from a workspace, so its repositories are fixed. Promote a workspace again to change them."
 msgstr "Bu ortam bir çalışma alanından yükseltildiği için depoları sabittir. Değiştirmek için bir çalışma alanını yeniden yükseltin."

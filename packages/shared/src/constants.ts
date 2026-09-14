@@ -35,8 +35,8 @@ export const COMPANY = {
 	LINKEDIN_URL: "https://www.linkedin.com/company/superset-sh",
 	YOUTUBE_URL: "https://www.youtube.com/@superset-sh",
 	MAIL_TO: `mailto:support@${ROOT_DOMAIN}`,
-	FOUNDERS_EMAIL: `founders@${ROOT_DOMAIN}`,
-	FOUNDERS_MAIL_TO: `mailto:founders@${ROOT_DOMAIN}`,
+	TEAM_EMAIL: `team@${ROOT_DOMAIN}`,
+	TEAM_MAIL_TO: `mailto:team@${ROOT_DOMAIN}`,
 	REPORT_ISSUE_URL: "https://github.com/superset-sh/superset/issues/new",
 	DISCORD_URL: "https://discord.gg/cZeD9WYcV7",
 	APP_STORE_URL: "https://apps.apple.com/app/id6788926383",
@@ -188,6 +188,12 @@ export const FEATURE_FLAGS = {
 	 */
 	PLUGINS: "plugins",
 	PAGES: "pages",
+	/**
+	 * Lock Screen / Dynamic Island agent card on iOS. Off by default while the
+	 * card is still being worked on; the flag's release conditions decide who
+	 * sees it, so a new build ships with it dark and no release widens it.
+	 */
+	MOBILE_LIVE_ACTIVITY: "mobile-live-activity",
 } as const;
 
 /**

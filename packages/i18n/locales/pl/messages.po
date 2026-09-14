@@ -4134,6 +4134,9 @@ msgstr "Nie udało się zmienić udostępnionej wersji"
 msgid "Could not change who can see this page"
 msgstr "Nie udało się zmienić, kto widzi tę stronę"
 
+msgid "Could not check your plan. Check your connection and try again."
+msgstr "Nie udało się sprawdzić Twojego planu. Sprawdź połączenie i spróbuj ponownie."
+
 msgid "Could not clear browsing data"
 msgstr "Nie udało się wyczyścić danych przeglądania"
 
@@ -10574,9 +10577,6 @@ msgstr "Zaktualizowano adres URL organizacji!"
 msgid "Organization: <0>{0}</0>"
 msgstr "Organizacja: <0>{0}</0>"
 
-msgid "Organizations"
-msgstr "Organizacje"
-
 msgid "Organizations with a second member vs single-member accounts; the line is teams per 1,000."
 msgstr "Organizacje z drugim członkiem wobec kont jednoosobowych; linia to zespoły na 1000."
 
@@ -13532,6 +13532,9 @@ msgstr "Logowanie wygasło — uruchom"
 msgid "Sign-in failed"
 msgstr "Logowanie nie powiodło się"
 
+msgid "Sign-in failed ({reason}). Please try again."
+msgstr "Logowanie nie powiodło się ({reason}). Spróbuj ponownie."
+
 msgid "Signed in as {accountLabel}"
 msgstr "Zalogowano jako {accountLabel}"
 
@@ -14208,8 +14211,8 @@ msgstr "Superset buduje samodoskonalące się oprogramowanie. Zaczyna się od da
 msgid "Superset is building self-improving software. It starts with giving engineers the best tools that adapt to their needs over time. We're 3 ex-YC CTOs building a tool that we love."
 msgstr "Superset buduje samodoskonalące się oprogramowanie. Zaczyna się od dania inżynierom najlepszych narzędzi, które z czasem dopasowują się do ich potrzeb. Jesteśmy trójką byłych CTO z YC budującą narzędzie, które sami kochamy."
 
-msgid "Superset is built by a team based in San Francisco, California. For product support or account questions, email <0>{supportEmail}</0> and we'll get back to you within one business day. For partnerships, press, enterprise, or anything for the founding team, write to <1>{foundersEmail}</1>."
-msgstr "Superset tworzy zespół z San Francisco w Kalifornii. W sprawach wsparcia produktu lub konta napisz na <0>{supportEmail}</0> — odpowiemy w ciągu jednego dnia roboczego. W sprawach partnerstw, prasy, enterprise lub do zespołu założycielskiego pisz na <1>{foundersEmail}</1>."
+msgid "Superset is built by a team based in San Francisco, California. For product support or account questions, email <0>{supportEmail}</0> and we'll get back to you within one business day. For partnerships, press, enterprise, or anything else, write to <1>{teamEmail}</1>."
+msgstr "Superset tworzy zespół z San Francisco w Kalifornii. W sprawach wsparcia produktu lub konta napisz na <0>{supportEmail}</0> — odpowiemy w ciągu jednego dnia roboczego. W sprawach partnerstw, prasy, enterprise lub w każdej innej sprawie pisz na <1>{teamEmail}</1>."
 
 msgid "Superset is built in Superset, so we're our own #1 users—you get paid to make your own life easier. If you've ever wanted to build a product you love to use, come build it with us."
 msgstr "Superset powstaje w Superset, więc sami jesteśmy jego głównymi użytkownikami — dostajesz wynagrodzenie za ułatwianie sobie życia. Jeśli chcesz tworzyć produkt, z którego korzystasz z przyjemnością, dołącz do nas."
@@ -15073,6 +15076,9 @@ msgstr "To urządzenie nie jest połączone z przekaźnikiem Superset, więc uru
 
 msgid "This directory does not exist. The terminal script will fall back to the workspace root."
 msgstr "Ten katalog nie istnieje. Skrypt terminala użyje katalogu głównego obszaru roboczego."
+
+msgid "This email is already registered with another sign-in method, and the provider did not confirm it as verified. Sign in with the method you used before."
+msgstr "Ten e-mail jest już zarejestrowany inną metodą logowania, a dostawca nie potwierdził go jako zweryfikowanego. Zaloguj się metodą używaną wcześniej."
 
 msgid "This environment was promoted from a workspace, so its repositories are fixed. Promote a workspace again to change them."
 msgstr "To środowisko powstało z awansowanego obszaru roboczego, więc jego repozytoria są ustalone. Aby je zmienić, ponownie awansuj obszar roboczy."

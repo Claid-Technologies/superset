@@ -4134,6 +4134,9 @@ msgstr "Die geteilte Version konnte nicht geändert werden"
 msgid "Could not change who can see this page"
 msgstr "Es konnte nicht geändert werden, wer diese Seite sehen kann"
 
+msgid "Could not check your plan. Check your connection and try again."
+msgstr "Dein Tarif konnte nicht überprüft werden. Prüfe deine Verbindung und versuche es erneut."
+
 msgid "Could not clear browsing data"
 msgstr "Browserdaten konnten nicht gelöscht werden"
 
@@ -10574,9 +10577,6 @@ msgstr "URL der Organisation aktualisiert!"
 msgid "Organization: <0>{0}</0>"
 msgstr "Organisation: <0>{0}</0>"
 
-msgid "Organizations"
-msgstr "Organisationen"
-
 msgid "Organizations with a second member vs single-member accounts; the line is teams per 1,000."
 msgstr "Organisationen mit einem zweiten Mitglied gegenüber Einzelkonten; die Linie zeigt Teams pro 1.000."
 
@@ -13532,6 +13532,9 @@ msgstr "Anmeldung abgelaufen — führe"
 msgid "Sign-in failed"
 msgstr "Anmeldung fehlgeschlagen"
 
+msgid "Sign-in failed ({reason}). Please try again."
+msgstr "Anmeldung fehlgeschlagen ({reason}). Bitte versuche es erneut."
+
 msgid "Signed in as {accountLabel}"
 msgstr "Angemeldet als {accountLabel}"
 
@@ -14208,8 +14211,8 @@ msgstr "Superset baut sich selbst verbessernde Software. Es beginnt damit, Entwi
 msgid "Superset is building self-improving software. It starts with giving engineers the best tools that adapt to their needs over time. We're 3 ex-YC CTOs building a tool that we love."
 msgstr "Superset baut sich selbst verbessernde Software. Es beginnt damit, Entwicklern die besten Werkzeuge zu geben, die sich mit der Zeit an ihre Bedürfnisse anpassen. Wir sind 3 ehemalige YC-CTOs und bauen ein Werkzeug, das wir lieben."
 
-msgid "Superset is built by a team based in San Francisco, California. For product support or account questions, email <0>{supportEmail}</0> and we'll get back to you within one business day. For partnerships, press, enterprise, or anything for the founding team, write to <1>{foundersEmail}</1>."
-msgstr "Superset wird von einem Team in San Francisco, Kalifornien, entwickelt. Bei Produktsupport oder Kontofragen schreib an <0>{supportEmail}</0> — wir antworten innerhalb eines Werktags. Für Partnerschaften, Presse, Enterprise oder alles für das Gründungsteam schreib an <1>{foundersEmail}</1>."
+msgid "Superset is built by a team based in San Francisco, California. For product support or account questions, email <0>{supportEmail}</0> and we'll get back to you within one business day. For partnerships, press, enterprise, or anything else, write to <1>{teamEmail}</1>."
+msgstr "Superset wird von einem Team in San Francisco, Kalifornien, entwickelt. Bei Produktsupport oder Kontofragen schreib an <0>{supportEmail}</0> — wir antworten innerhalb eines Werktags. Für Partnerschaften, Presse, Enterprise oder alles andere schreib an <1>{teamEmail}</1>."
 
 msgid "Superset is built in Superset, so we're our own #1 users—you get paid to make your own life easier. If you've ever wanted to build a product you love to use, come build it with us."
 msgstr "Superset wird in Superset entwickelt. Wir sind also selbst unsere wichtigsten Nutzer – du wirst dafür bezahlt, dir das Leben leichter zu machen. Wenn du schon immer ein Produkt entwickeln wolltest, das du selbst gerne nutzt, dann bau es mit uns."
@@ -15073,6 +15076,9 @@ msgstr "Dieses Gerät ist nicht mit dem Superset-Relay verbunden, daher werden A
 
 msgid "This directory does not exist. The terminal script will fall back to the workspace root."
 msgstr "Dieses Verzeichnis existiert nicht. Das Terminal-Skript greift auf die Wurzel des Arbeitsbereichs zurück."
+
+msgid "This email is already registered with another sign-in method, and the provider did not confirm it as verified. Sign in with the method you used before."
+msgstr "Diese E-Mail-Adresse ist bereits mit einer anderen Anmeldemethode registriert, und der Anbieter hat sie nicht als verifiziert bestätigt. Melde dich mit der zuvor verwendeten Methode an."
 
 msgid "This environment was promoted from a workspace, so its repositories are fixed. Promote a workspace again to change them."
 msgstr "Diese Umgebung wurde aus einem Arbeitsbereich befördert, daher sind ihre Repositories festgelegt. Befördere erneut einen Arbeitsbereich, um sie zu ändern."

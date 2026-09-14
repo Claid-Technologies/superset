@@ -4134,6 +4134,9 @@ msgstr "Tidak bisa mengubah versi yang dibagikan"
 msgid "Could not change who can see this page"
 msgstr "Tidak bisa mengubah siapa yang bisa melihat halaman ini"
 
+msgid "Could not check your plan. Check your connection and try again."
+msgstr "Tidak dapat memeriksa paket Anda. Periksa koneksi Anda dan coba lagi."
+
 msgid "Could not clear browsing data"
 msgstr "Tidak bisa membersihkan data penjelajahan"
 
@@ -10574,9 +10577,6 @@ msgstr "URL organisasi diperbarui!"
 msgid "Organization: <0>{0}</0>"
 msgstr "Organisasi: <0>{0}</0>"
 
-msgid "Organizations"
-msgstr "Organisasi"
-
 msgid "Organizations with a second member vs single-member accounts; the line is teams per 1,000."
 msgstr "Organisasi dengan anggota kedua dibandingkan akun beranggota tunggal; garisnya adalah tim per 1.000."
 
@@ -13532,6 +13532,9 @@ msgstr "Sesi masuk kedaluwarsa — jalankan"
 msgid "Sign-in failed"
 msgstr "Gagal masuk"
 
+msgid "Sign-in failed ({reason}). Please try again."
+msgstr "Gagal masuk ({reason}). Silakan coba lagi."
+
 msgid "Signed in as {accountLabel}"
 msgstr "Masuk sebagai {accountLabel}"
 
@@ -14208,8 +14211,8 @@ msgstr "Superset sedang membangun perangkat lunak yang memperbaiki dirinya sendi
 msgid "Superset is building self-improving software. It starts with giving engineers the best tools that adapt to their needs over time. We're 3 ex-YC CTOs building a tool that we love."
 msgstr "Superset sedang membangun perangkat lunak yang memperbaiki dirinya sendiri. Dimulai dengan memberi engineer alat terbaik yang menyesuaikan diri dengan kebutuhan mereka seiring waktu. Kami bertiga mantan CTO YC yang membangun alat yang kami cintai."
 
-msgid "Superset is built by a team based in San Francisco, California. For product support or account questions, email <0>{supportEmail}</0> and we'll get back to you within one business day. For partnerships, press, enterprise, or anything for the founding team, write to <1>{foundersEmail}</1>."
-msgstr "Superset dibangun oleh tim yang berbasis di San Francisco, California. Untuk dukungan produk atau pertanyaan akun, kirim email ke <0>{supportEmail}</0> dan kami akan membalas dalam satu hari kerja. Untuk kemitraan, media, enterprise, atau apa pun untuk tim pendiri, tulis ke <1>{foundersEmail}</1>."
+msgid "Superset is built by a team based in San Francisco, California. For product support or account questions, email <0>{supportEmail}</0> and we'll get back to you within one business day. For partnerships, press, enterprise, or anything else, write to <1>{teamEmail}</1>."
+msgstr "Superset dibangun oleh tim yang berbasis di San Francisco, California. Untuk dukungan produk atau pertanyaan akun, kirim email ke <0>{supportEmail}</0> dan kami akan membalas dalam satu hari kerja. Untuk kemitraan, media, enterprise, atau hal lainnya, tulis ke <1>{teamEmail}</1>."
 
 msgid "Superset is built in Superset, so we're our own #1 users—you get paid to make your own life easier. If you've ever wanted to build a product you love to use, come build it with us."
 msgstr "Superset dibangun di dalam Superset, jadi kami sendiri adalah pengguna utamanya—Anda dibayar untuk mempermudah pekerjaan Anda sendiri. Jika Anda ingin membangun produk yang Anda sukai dan senang gunakan, mari bangun bersama kami."
@@ -15073,6 +15076,9 @@ msgstr "Perangkat ini tidak terhubung ke relay Superset, jadi run otomatisasi ak
 
 msgid "This directory does not exist. The terminal script will fall back to the workspace root."
 msgstr "Direktori ini tidak ada. Skrip terminal akan memakai root workspace."
+
+msgid "This email is already registered with another sign-in method, and the provider did not confirm it as verified. Sign in with the method you used before."
+msgstr "Email ini sudah terdaftar dengan metode masuk lain, dan penyedia tidak mengonfirmasinya sebagai terverifikasi. Masuk dengan metode yang Anda gunakan sebelumnya."
 
 msgid "This environment was promoted from a workspace, so its repositories are fixed. Promote a workspace again to change them."
 msgstr "Environment ini dipromosikan dari sebuah workspace, sehingga repositorinya sudah tetap. Promosikan workspace lagi untuk mengubahnya."
