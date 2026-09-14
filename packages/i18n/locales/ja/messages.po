@@ -14135,8 +14135,8 @@ msgstr "Supersetは自己改善するソフトウェアを作っています。�
 msgid "Superset is building self-improving software. It starts with giving engineers the best tools that adapt to their needs over time. We're 3 ex-YC CTOs building a tool that we love."
 msgstr "Supersetは自己改善するソフトウェアを作っています。その第一歩は、時間とともにニーズに適応していく最高のツールをエンジニアに届けることです。私たちはYC出身の元CTO3人で、自分たちが気に入って使えるツールを作っています。"
 
-msgid "Superset is built by a team based in San Francisco, California. For product support or account questions, email <0>{supportEmail}</0> and we'll get back to you within one business day. For partnerships, press, enterprise, or anything for the founding team, write to <1>{foundersEmail}</1>."
-msgstr "Supersetは、米国カリフォルニア州サンフランシスコを拠点とするチームが開発しています。製品サポートやアカウントに関するご質問は<0>{supportEmail}</0>までメールをお送りください。1営業日以内に返信します。パートナーシップ、取材、エンタープライズ、創業チームへのご連絡は<1>{foundersEmail}</1>までお願いします。"
+msgid "Superset is built by a team based in San Francisco, California. For product support or account questions, email <0>{supportEmail}</0> and we'll get back to you within one business day. For partnerships, press, enterprise, or anything else, write to <1>{teamEmail}</1>."
+msgstr "Supersetは、米国カリフォルニア州サンフランシスコを拠点とするチームが開発しています。製品サポートやアカウントに関するご質問は<0>{supportEmail}</0>までメールをお送りください。1営業日以内に返信します。パートナーシップ、取材、エンタープライズ、その他のご連絡は<1>{teamEmail}</1>までお願いします。"
 
 msgid "Superset is built in Superset, so we're our own #1 users—you get paid to make your own life easier. If you've ever wanted to build a product you love to use, come build it with us."
 msgstr "SupersetはSupersetで開発されています。私たち自身が一番のユーザーなので、自分の生活を楽にすることで報酬を得られます。自分が使いたいと思えるプロダクトを作りたいなら、一緒に作りましょう。"

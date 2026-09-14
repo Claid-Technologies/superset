@@ -14135,8 +14135,8 @@ msgstr "Superset sta costruendo software che si migliora da solo. Si comincia da
 msgid "Superset is building self-improving software. It starts with giving engineers the best tools that adapt to their needs over time. We're 3 ex-YC CTOs building a tool that we love."
 msgstr "Superset sta costruendo software che si migliora da solo. Si comincia dando agli ingegneri i migliori strumenti, che si adattano nel tempo alle loro esigenze. Siamo 3 ex CTO YC che costruiscono uno strumento che amano usare."
 
-msgid "Superset is built by a team based in San Francisco, California. For product support or account questions, email <0>{supportEmail}</0> and we'll get back to you within one business day. For partnerships, press, enterprise, or anything for the founding team, write to <1>{foundersEmail}</1>."
-msgstr "Superset è realizzato da un team con sede a San Francisco, California. Per il supporto sul prodotto o domande sull'account, scrivi a <0>{supportEmail}</0> e ti risponderemo entro un giorno lavorativo. Per partnership, stampa, enterprise o qualsiasi cosa per il team fondatore, scrivi a <1>{foundersEmail}</1>."
+msgid "Superset is built by a team based in San Francisco, California. For product support or account questions, email <0>{supportEmail}</0> and we'll get back to you within one business day. For partnerships, press, enterprise, or anything else, write to <1>{teamEmail}</1>."
+msgstr "Superset è realizzato da un team con sede a San Francisco, California. Per il supporto sul prodotto o domande sull'account, scrivi a <0>{supportEmail}</0> e ti risponderemo entro un giorno lavorativo. Per partnership, stampa, enterprise o qualsiasi altra cosa, scrivi a <1>{teamEmail}</1>."
 
 msgid "Superset is built in Superset, so we're our own #1 users—you get paid to make your own life easier. If you've ever wanted to build a product you love to use, come build it with us."
 msgstr "Superset viene sviluppato in Superset, quindi siamo noi stessi i nostri primi utenti: vieni pagato per semplificarti la vita. Se hai sempre voluto creare un prodotto che ami usare, vieni a costruirlo con noi."
