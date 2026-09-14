@@ -188,6 +188,12 @@ export const FEATURE_FLAGS = {
 	 */
 	PLUGINS: "plugins",
 	PAGES: "pages",
+	/**
+	 * Lock Screen / Dynamic Island agent card on iOS. Off by default while the
+	 * card is still being worked on; the flag's release conditions decide who
+	 * sees it, so a new build ships with it dark and no release widens it.
+	 */
+	MOBILE_LIVE_ACTIVITY: "mobile-live-activity",
 } as const;
 
 /**
