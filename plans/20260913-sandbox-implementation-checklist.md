@@ -82,6 +82,7 @@ Found on the second read of the reference (2026-09-14)
 - [x] Chrome's remote-debugging port needs a non-default profile directory on Chrome 136+ (the reference's Chrome 148 accepted the default path given explicitly; 153 does not): the visible profile is `~/.config/google-chrome-visible`. (verified on a real box)
 - [x] The agent CLIs' self-updater has nowhere to write as `ubuntu` (installed by root at image build) and warned every session; `DISABLE_AUTOUPDATER=1` in the login profile. (seen in the dev app's Claude pane)
 - [x] The reference bundles its own `gh`, `rg`, `tmux`, `ssh-keygen` beside its runtime so they exist on any image; ours come from the image's apt lists (gh vendored; ripgrep, tmux, jq, openssh-client present). Left as is: the image is ours.
+- [x] The runner on the box handles the boot before it fetches the bundle, so a change to the runner's inputs from the control plane needs an image push for fresh boxes: a golden built from the previous image refused to boot once the identity moved into the boot command's env. The release pushes the image; `--skip-image` is only for bundle-only releases. (`packages/sandbox/README.md`)
 - [x] Rollback: pointing `environments.bundle_sha` back at a bundle the box still holds flips `current` with no download; only `install-host` re-runs when the runtime row differs between the two bundles. (dev workspace 2026-09-14: 13.7 s stop-to-ready either way)
 
 ## PR 4 — Control plane

@@ -46,6 +46,18 @@ The rule of thumb: if you can answer "where is it on the box", put it there.
 - The bundle: the sha256 of its tarball; the one pointer the box holds, handed to `superset-boot` in `sandbox.conf` by the control plane.
 - host-service and Chrome are asset rows that move only when a release or a deliberate `bun run assets` rewrites them; a merge to main changes nothing on any box.
 
+## The runner in the image runs first
+
+`superset-boot` is a rootfs file, so a bundle carries the newest runner and
+`apply-rootfs` installs it; but the runner that handles a boot is the one
+already on the box, and it fetches the bundle only after it has read its
+own inputs. A change to how the control plane hands the runner its inputs
+(the identity in `SUPERSET_SANDBOX_CONF`, the secret in
+`HOST_SERVICE_SECRET`) therefore reaches a box that has booted at least once
+on a bundle carrying the new runner, and a fresh box only through the
+image. `bun run release` pushes the image for that reason; `--skip-image`
+is for a release that changes nothing under `rootfs/usr/local/bin/`.
+
 ## Tests
 
 `bun test` covers the manifest math. The runner and steps are exercised by
