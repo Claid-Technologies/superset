@@ -140,7 +140,9 @@ try {
 	// on the pin either way.
 	expect(
 		"first boot: bundle is the pinned one",
-		new RegExp(`bundle\\.(current|installed) ${bundleSha.slice(0, 12)}`).test(log1),
+		new RegExp(`bundle\\.(current|installed) ${bundleSha.slice(0, 12)}`).test(
+			log1,
+		),
 		log1.match(/bundle .*/)?.[0],
 	);
 	expect(
