@@ -200,6 +200,12 @@ try {
 		),
 	);
 	expect(
+		"desktop: session bus address written for terminals",
+		/DBUS_SESSION_BUS_ADDRESS=unix/.test(
+			exec(`cat ${SANDBOX_PATHS.run}/desktop.env`, { check: false }),
+		),
+	);
+	expect(
 		"desktop: window manager up",
 		/window id/.test(
 			exec(

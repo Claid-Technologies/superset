@@ -75,8 +75,14 @@ if [ -d "$SUPERSET_BACKGROUNDS_DIR" ]; then
 	fi
 fi
 
-# The session: panel, window manager, desktop, Thunar, the autostart entries.
-dbus-launch --exit-with-session xfce4-session >"${SUPERSET_LOG_DIR}/xfce4-session.log" 2>&1 &
+# The session bus first, so its address can be handed to every terminal a
+# person opens later (a GUI app launched from a shell must find this bus,
+# not spawn its own); then the session: panel, window manager, desktop,
+# Thunar, the autostart entries.
+eval "$(dbus-launch --sh-syntax --exit-with-session)"
+export DBUS_SESSION_BUS_ADDRESS
+printf 'export DISPLAY=%q DBUS_SESSION_BUS_ADDRESS=%q\n' "$DISPLAY" "$DBUS_SESSION_BUS_ADDRESS" > "${SUPERSET_RUN_DIR}/desktop.env"
+xfce4-session >"${SUPERSET_LOG_DIR}/xfce4-session.log" 2>&1 &
 session_pid=$!
 for _ in $(seq 1 120); do
 	xprop -root _NET_SUPPORTING_WM_CHECK -display "$DISPLAY" 2>/dev/null | grep -q "window id" && break

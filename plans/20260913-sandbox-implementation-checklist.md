@@ -77,6 +77,13 @@ Test
 
 Evidence: boot.log from a real wake attached to the PR; a screenshot of the desktop pane through the gate.
 
+Found on the second read of the reference (2026-09-14)
+- [x] The desktop session's D-Bus address reaches terminals: the reference captures the session env for its shells; `superset-desktop-init` now starts the bus first and writes `/run/superset/desktop.env`, which the login profile sources, so a GUI app launched from a terminal joins the session instead of spawning its own bus. (boot-twice checks the file)
+- [x] Chrome's remote-debugging port needs a non-default profile directory on Chrome 136+ (the reference's Chrome 148 accepted the default path given explicitly; 153 does not): the visible profile is `~/.config/google-chrome-visible`. (verified on a real box)
+- [x] The agent CLIs' self-updater has nowhere to write as `ubuntu` (installed by root at image build) and warned every session; `DISABLE_AUTOUPDATER=1` in the login profile. (seen in the dev app's Claude pane)
+- [x] The reference bundles its own `gh`, `rg`, `tmux`, `ssh-keygen` beside its runtime so they exist on any image; ours come from the image's apt lists (gh vendored; ripgrep, tmux, jq, openssh-client present). Left as is: the image is ours.
+- [x] Rollback: pointing `environments.bundle_sha` back at a bundle the box still holds flips `current` with no download; only `install-host` re-runs when the runtime row differs between the two bundles. (dev workspace 2026-09-14: 13.7 s stop-to-ready either way)
+
 ## PR 4 — Control plane
 
 Build
@@ -108,9 +115,9 @@ Build
 - [x] `internal-setup.sh` moves to the internal environment's `setup` override (the release stores it in `environments.hooks.setup`, `start` = `superset-dev-stack`).
 
 Test
-- [ ] Dry run of the release against dev writes nothing on a failed probe (previous row intact).
-- [ ] Successful dev release: new bundle sha on the row; an existing dev workspace picks it up on its next wake (boot.log shows the fetch and exactly the changed steps).
-- [ ] Rollback: point the row at the previous sha; next wake flips `current` with no download.
+- [x] Dry run of the release against dev writes nothing on a failed probe (previous row intact). (two failed runs on 2026-09-14, a setup-hook exit and a wrong port, left the previous rows untouched; the third wrote them)
+- [x] Successful dev release: new bundle sha on the row; an existing dev workspace picks it up on its next wake (boot.log shows the fetch and exactly the changed steps). (2026-09-14: golden `env-internal-mu0wro0a`, rows on the branch DB with bundle `c64136cb`; the dev workspace's next wake fetched it and re-ran only `install-host`)
+- [x] Rollback: point the row at the previous sha; next wake flips `current` with no download. (2026-09-14 on the dev workspace: `bundle.installed e169f74b9994 was c64136cbbcae`, nothing fetched, both bundles on disk)
 
 Evidence: two consecutive dev releases and one rollback, each with the box's boot.log.
 
