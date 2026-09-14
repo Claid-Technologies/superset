@@ -5,20 +5,51 @@ workspace shows a live terminal in under 3 seconds; a reopened one in under 8.
 
 ## Where the time goes today
 
-Create-to-terminal is ~12 s. Measured pieces, from the release probe and the
-dev stack logs; anything marked ~ is inferred and P0 replaces it with a number.
+Measured 2026-09-14 by P0 (`bun run sandbox:measure`, five creates and five
+reopens against the dev golden `env-internal-mu0tzcdu`, sfo1, 8 vCPU, an
+environment with no variables; a second run of three and three agreed, and
+its medians are the second number where they differ). Job stamps come off the
+`cloud_workspaces` row, boot stamps off host-service's `health.check`, and the
+first 200 from a 100 ms probe next to the API's own one-second wake poll.
 
-| Stage | Where | Today |
+| Stage | Where | Measured (median) |
 | --- | --- | --- |
-| `cloudWorkspace.create` writes the row, nudges | API | 0.3 s |
-| QStash publish → provision job (prod only; dev is inline) | API | ~1 s |
-| Name from the model, alongside clone lookup and environment | job | 0.7 s, on the critical path |
-| `Sandbox.fork` from the golden, identity in the config env | Vercel | ~6 s (their floor) |
-| Write `/data/environment.env`, fire `start.sh` detached | job | <0.5 s |
-| Row → `ready`, nudge; client refetches list | API + client | ≤1 s |
-| Access mint with wake → `Sandbox.get`, extend, wait for health | API | poll 1 s granularity |
-| `start.sh`: env, host.db copy, `git fetch --depth 1` + checkout, `dockerd`, Xvnc + xfce, **then** `node host-service.js` | sandbox | ~10–12 s from fork return to first 200 |
-| Panes connect through the gate, agent launches | client + sandbox | ~1 s |
+| `cloudWorkspace.create` writes the row, nudges | API | 0.03 s row write; job starts 0.03 s later (dev runs it inline) |
+| QStash publish → provision job | API | prod only, not measured here |
+| Name from the model, alongside clone lookup and environment | job | 0.74 s (0.55 s) |
+| `Sandbox.fork` from the golden | Vercel | 0.92 s, and the sandbox reports `running` |
+| Write `/data/environment.env`, fire `start.sh` detached | job | **14.6 s** (15.6 s): the first SDK call after the fork blocks until the VM is up; 1.0 s in 2 of 9 boots |
+| Row → `ready`, nudge; client refetches list | API + client | 0.03 s job side; the desktop saw `ready` 4.1 s after pressing create on a 1.0 s boot |
+| Access mint with wake → `Sandbox.get`, extend, wait for health | API | 3.34 s from `ready` on the 1 s poll, against 3.16 s to the true first 200 |
+| `start.sh`: env, host.db copy, `git fetch --depth 1` + checkout, `dockerd`, Xvnc + xfce, **then** `node host-service.js` | sandbox | 2.03 s from `boot.start` to the exec, 1.94 s of it the fetch and checkout; node then takes 0.13 s to start and 0.94 s to listen: **3.16 s** boot to listening |
+| Panes connect through the gate, agent launches | client + sandbox | 5.6 s from the first 200 to the first terminal attaching (desktop event) |
+
+Create to first 200: **19.6 s** median, 21.0 s max (n=5); 20.3 s median with one
+5.3 s outlier (n=3). Reopen (stop, then wake): **15.4 s** median, 17.6 s max
+(n=5); 17.9 s (n=3). Of a reopen, 14.3 s (16.3 s) is the resume itself, from
+the wake call to `boot.start`; the boot script then reaches the exec in 0.05 s
+and host-service listens 1.08 s later.
+
+What the desktop reported (`cloud_workspace_opened`, one real create and one
+real reopen over CDP, same golden): create → ready 4.1 s, ready → first 200
+3.9 s, ready → first terminal 9.5 s; reopen: ready → first 200 18.6 s, ready →
+first terminal 22.5 s. Job stamps on that create: 0.06 s to job start, 0.71 s
+to the fork, 0.88 s fork, 0.99 s to boot fired, 2.97 s boot fired to the first
+healthy wake.
+
+Two probes against the SDK alone, one sandbox each, to place the 14.6 s: a
+fork with the credential-brokering firewall policy answered its first
+`writeFiles` after 15.1 s, a fork with `allow-all` after 0.6 s; a stopped
+sandbox resumed on `runCommand` in 16.8 s with the policy and 15.6 s without.
+The fork wait correlates with the policy at n=1 and is not proven by it — the
+desktop create above carried the same policy and booted in 1.0 s.
+
+Where that leaves the plan: the boot script we own is 2 s on a create (the
+checkout) and 0.05 s on a reopen, host-service is 1.1 s, and everything else
+is the platform bringing a VM up (~15 s on both paths). P1 and P2 recover
+about 1 s on a create, P3 about 0.2 s of poll slack and the client refetch;
+the 3 s create target needs P5, a member already booted, and the 8 s reopen
+target is under the measured resume floor.
 
 Two structural facts drive the plan: the identity of a workspace rides in the
 sandbox's create-time env, so nothing can exist before the create call; and
@@ -26,13 +57,15 @@ host-service is the last thing the boot script starts.
 
 ## Plan, one PR each
 
-**P0 — Measure.** One trace per create. `start.sh` stamps every step to
-`/data/boot.log` with millisecond timestamps (it writes one line today);
-host-service reports the boot stamps on `health.check`; the API records
-job-side stamps (job start, fork start/end, start fired) on the row; the
-desktop emits `cloud_workspace_opened` with create→ready, ready→first-200
-durations. Deliverable: a table like the one above with numbers from five
-creates and five reopens. Nothing below ships without it.
+**P0 — Measure. Done 2026-09-14.** One trace per create. `start.sh` stamps
+every step to `/data/boot.log` with millisecond timestamps; host-service
+reports the current boot's stamps and its runtime on `health.check`; the API
+records job-side stamps (job start, sandbox create start/end, boot fired,
+first healthy wake) on the row; the desktop emits `cloud_workspace_opened`
+with create→ready, ready→access, ready→first-200 and ready→first-terminal.
+`bun run sandbox:measure` runs five creates and five reopens against the
+newest fork environment and prints the stage table; the numbers above are its
+output.
 
 **P1 — host-service first.** Reorder `start.sh`: source env, copy host.db,
 start host-service at once; the branch checkout, `dockerd` and the display are

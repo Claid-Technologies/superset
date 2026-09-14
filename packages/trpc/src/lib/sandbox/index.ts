@@ -9,6 +9,7 @@ export {
 	deleteSandbox,
 	HOST_SERVICE_PORT,
 	type ProvisionedSandbox,
+	type ProvisionStamps,
 	promoteSandboxToEnvironment,
 	provisionSandbox,
 	resolveSandboxAddress,

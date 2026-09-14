@@ -7,6 +7,7 @@ import {
 import type { Terminal as XTerm } from "@xterm/xterm";
 import { ensureFreshJwt } from "renderer/lib/auth-client";
 import { posthog } from "renderer/lib/posthog";
+import { notifyTerminalAttached } from "renderer/lib/terminal/terminal-attach-events";
 import {
 	type AttachRetryState,
 	clearAttachRetryableMessage,
@@ -736,6 +737,7 @@ function attachSocketListeners(
 			transport._seqCounting = false;
 			transport._bytesSinceAttach = false;
 			setConnectionState(transport, "open");
+			notifyTerminalAttached(transport.currentUrl);
 			sendVisibleState(transport);
 			sendResize(transport, terminal.cols, terminal.rows);
 			return;
