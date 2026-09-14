@@ -34,7 +34,7 @@ sudo rm -rf "/tmp/.X${display_number}-lock" "/tmp/.X11-unix/X${display_number}"
 sudo install -d -m 1777 /tmp/.X11-unix
 # Chrome's profile lock names the previous session's hostname and pid; woken,
 # it reads as "in use on another computer". Nothing runs yet, so drop it.
-for profile in google-chrome google-chrome-playwright; do
+for profile in google-chrome-visible google-chrome-playwright; do
 	rm -f "$HOME/.config/$profile/SingletonLock" "$HOME/.config/$profile/SingletonSocket" "$HOME/.config/$profile/SingletonCookie"
 done
 # The VM mounts a 64 MB /dev/shm; Chromium composites in software and backs

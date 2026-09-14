@@ -6,3 +6,6 @@ export SUPERSET_WORKSPACE_PATH="${SUPERSET_WORKSPACE_DIR:-/workspace}"
 export BROWSER=/usr/local/bin/google-chrome
 export DISPLAY="${DISPLAY:-${SUPERSET_DISPLAY:-:1}}"
 case ":$PATH:" in *":/usr/local/go/bin:"*) ;; *) export PATH="$PATH:/usr/local/go/bin" ;; esac
+# The agent CLIs are installed by root at image build; a self-update from the
+# sandbox user has nowhere to write and only prints a warning every session.
+export DISABLE_AUTOUPDATER=1

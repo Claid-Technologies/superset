@@ -355,11 +355,15 @@ one of eight photographic wallpapers chosen by the workspace id, so it is
 stable across wakes and differs between boxes. Chrome runs as `ubuntu` and
 still launches with `--no-sandbox` (this VM needs it regardless of user; plus
 `--test-type`, which hides the bar that flag otherwise adds to every window)
-with remote debugging on 9222 for an agent; its first run is pre-answered —
+with remote debugging on 9222 for an agent (in its own profile directory,
+`~/.config/google-chrome-visible`: Chrome 136+ refuses remote debugging on
+the default one, and passing the default path explicitly does not count);
+its first run is pre-answered —
 the `First Run` sentinel and `--no-first-run` skip the terms dialog, and a
 managed policy turns off sign-in, sync and the default-browser prompt. Two
-profiles are seeded identically (`google-chrome` for the visible instance,
-`google-chrome-playwright` for automation that launches its own Chrome),
+profiles are seeded identically (`google-chrome-visible` for the visible
+instance, `google-chrome-playwright` for automation that launches its own
+Chrome),
 because Chrome is single-instance per profile, not as a boundary. The stream
 is TigerVNC's Xvnc on loopback with websockify from apt on its own published
 port (6080); the desktop pane connects to that port through the gate with
