@@ -35,8 +35,8 @@ export interface CommentDraft {
 }
 
 export interface CreateThreadInput {
-	anchor: CommentAnchor;
-	anchorText: string;
+	anchor?: CommentAnchor;
+	anchorText?: string;
 	body: string;
 	intent?: CommentIntent | null;
 }
