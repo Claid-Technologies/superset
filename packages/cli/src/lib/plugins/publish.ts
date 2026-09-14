@@ -4,9 +4,10 @@ import fs from "node:fs";
 import path from "node:path";
 import { promisify } from "node:util";
 import { CLIError } from "@superset/cli-framework";
+import { CONNECTOR_SLUGS } from "@superset/shared/connectors";
+import { pluginManifestSchema } from "@superset/shared/plugins/manifest-schema";
 import { buildPlugin, isBuildCurrent, SERVER_ENTRY } from "./build";
 import {
-	CLIENT_ENV_PATTERN,
 	type MarketplaceContext,
 	type ResolvedPlugin,
 	releaseTag,
@@ -133,128 +134,34 @@ export async function publishPlugin(
 	};
 }
 
-function checkAuth(plugin: ResolvedPlugin): CheckIssue[] {
+function checkManifest(plugin: ResolvedPlugin): CheckIssue[] {
 	const name = plugin.manifest.name;
+	const parsed = pluginManifestSchema.safeParse(plugin.manifest);
+	if (!parsed.success) {
+		return parsed.error.issues.map((issue) => ({
+			name,
+			problem: `${issue.path.join(".") || "manifest"}: ${issue.message}`,
+		}));
+	}
+
 	const extension = supersetExtension(plugin.manifest);
-	const methods = extension?.auth;
-	if (!methods) return [];
-
-	const mcpUrl = extension?.mcp?.url;
-
 	const issues: CheckIssue[] = [];
-	if (!Array.isArray(methods)) {
-		issues.push({ name, problem: "auth must be a list of methods" });
-		return issues;
-	}
-
 	const seen = new Set<string>();
-	for (const auth of methods) {
-		if (seen.has(auth.type)) {
-			issues.push({ name, problem: `auth declares ${auth.type} twice` });
+	for (const ref of extension?.connectors ?? []) {
+		if (
+			!CONNECTOR_SLUGS.includes(ref.slug as (typeof CONNECTOR_SLUGS)[number])
+		) {
+			issues.push({
+				name,
+				problem: `names connector "${ref.slug}", which is not in the registry (${CONNECTOR_SLUGS.join(", ")})`,
+			});
 		}
-		seen.add(auth.type);
-
-		const inputs = new Set((auth.inputs ?? []).map((input) => input.name));
-
-		if (auth.type === "oauth2") {
-			const secrets = (auth.inputs ?? []).filter((input) => input.secret);
-			if (secrets.length) {
-				issues.push({
-					name,
-					problem: `oauth2 inputs cannot be secret (${secrets.map((i) => i.name).join(", ")}); they travel in the authorize URL`,
-				});
-			}
+		if (seen.has(ref.slug)) {
+			issues.push({ name, problem: `names connector "${ref.slug}" twice` });
 		}
-
-		if (auth.type === "oauth2" && auth.client === "dynamic") {
-			if (!mcpUrl) {
-				issues.push({
-					name,
-					problem:
-						'oauth2 auth with client "dynamic" needs an mcp url to discover its authorization server from',
-				});
-			}
-			if (auth.requires_env?.length) {
-				issues.push({
-					name,
-					problem:
-						'oauth2 auth with client "dynamic" gets its client from the server; drop requires_env',
-				});
-			}
-		} else if (auth.type === "oauth2") {
-			if (!auth.authorization_url || !auth.token_url) {
-				issues.push({
-					name,
-					problem: "oauth2 auth needs both authorization_url and token_url",
-				});
-			}
-
-			const declared = auth.requires_env ?? [];
-			const foreign = declared.filter(
-				(variable) => !CLIENT_ENV_PATTERN.test(variable),
-			);
-			if (foreign.length) {
-				issues.push({
-					name,
-					problem: `requires_env may only name PLUGIN_<SERVICE>_CLIENT_ID and PLUGIN_<SERVICE>_CLIENT_SECRET; found ${foreign.join(", ")}`,
-				});
-			}
-			if (!declared.some((variable) => variable.endsWith("_CLIENT_ID"))) {
-				issues.push({
-					name,
-					problem:
-						"oauth2 auth must name its client id in requires_env; it is what the host reads to start the flow",
-				});
-			}
-			if (!declared.some((variable) => variable.endsWith("_CLIENT_SECRET"))) {
-				issues.push({
-					name,
-					problem:
-						"oauth2 auth must name its client secret in requires_env; it is what the host reads to exchange the code",
-				});
-			}
-		} else if (auth.type === "api_key") {
-			const credential = auth.credential_input ?? "api_key";
-			if (!inputs.has(credential)) {
-				issues.push({
-					name,
-					problem: `api_key auth names credential_input "${credential}" but no input declares it`,
-				});
-			}
-		} else {
-			issues.push({ name, problem: `unknown auth type "${auth.type}"` });
-		}
-
-		for (const template of templatedStrings(auth)) {
-			for (const reference of template.matchAll(/\$\{inputs\.([\w.-]+)\}/g)) {
-				const key = reference[1];
-				if (key && !inputs.has(key)) {
-					issues.push({
-						name,
-						problem: `references \${inputs.${key}} but no input declares it`,
-					});
-				}
-			}
-		}
-
-		if (auth.identity && !auth.identity.url) {
-			issues.push({ name, problem: "identity needs a url" });
-		}
-		if (auth.identity && !auth.identity.id) {
-			issues.push({ name, problem: "identity needs an id path" });
-		}
+		seen.add(ref.slug);
 	}
-
 	return issues;
-}
-
-function templatedStrings(value: unknown): string[] {
-	if (typeof value === "string") return [value];
-	if (Array.isArray(value)) return value.flatMap(templatedStrings);
-	if (value && typeof value === "object") {
-		return Object.values(value).flatMap(templatedStrings);
-	}
-	return [];
 }
 
 function treeFiles(dir: string, prefix = ""): string[] {
@@ -340,7 +247,7 @@ export async function checkPlugin(
 		});
 	}
 
-	issues.push(...checkAuth(plugin));
+	issues.push(...checkManifest(plugin));
 	return issues;
 }
 

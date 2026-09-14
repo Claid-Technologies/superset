@@ -20,16 +20,37 @@ export interface PluginServer {
 	ref?: string;
 }
 
+export interface PluginConnectorRef {
+	readonly slug: string;
+	readonly required?: boolean;
+}
+
 export interface SupersetExtension {
 	interface?: { displayName: string; category?: string; icon?: string };
-	connector?: string;
+	connectors?: readonly PluginConnectorRef[];
 	bind?: PluginBind;
 	mcp?: PluginMcp;
 	server?: PluginServer;
 }
 
+export function pluginConnectors(
+	manifest: PluginManifest,
+): readonly PluginConnectorRef[] {
+	return supersetExtension(manifest)?.connectors ?? [];
+}
+
+/**
+ * The one connection a dispatch runs under. Plugins declaring several
+ * connectors still resolve to a single credential today, so the required one
+ * wins and declaration order breaks the tie.
+ */
 export function pluginConnector(manifest: PluginManifest): string | undefined {
-	return supersetExtension(manifest)?.connector;
+	const refs = pluginConnectors(manifest);
+	return (refs.find((ref) => ref.required) ?? refs[0])?.slug;
+}
+
+export function pluginNeedsConnection(manifest: PluginManifest): boolean {
+	return pluginConnectors(manifest).length > 0;
 }
 
 export interface PluginManifest {

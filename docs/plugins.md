@@ -52,23 +52,30 @@ that must not change under them.
 
 - `interface` — `displayName`, `category` (one of `PLUGIN_CATEGORIES` in
   `packages/shared/src/plugins/index.ts`), and `icon`.
-- `auth` — an array of methods, each `oauth2` or `api_key`. OAuth entries carry
-  `authorization_url`, `token_url`, `scopes`, `requires_env` (the client id/secret env names the API
-  reads — name the service's pair, not the plugin's, so two plugins for one service share one
-  registered OAuth app; only `PLUGIN_<SERVICE>_CLIENT_ID`/`_SECRET` may be named), an `identity`
-  probe that names the connected account, and `bind`, which says how the
-  credential is attached to outbound calls. `${config.access_token}` and `${inputs.<name>}`
-  placeholders are resolved server-side by `apps/api/src/lib/plugins/manifest.ts`.
-  `authorization_params` and `token_params` add provider-specific parameters to those two requests
-  (Notion's `owner=user`, Google's `access_type=offline`).
+- `connectors` — the connections this plugin needs, as a list of `{ "slug", "required" }`. A slug
+  names a connector in `packages/shared/src/connectors/connectors.json`; the manifest carries no
+  OAuth configuration of its own — no scopes, no client mode, no `requires_env`. A connection is
+  account state, and the connections system already owns obtaining, refreshing and disconnecting
+  it, so naming one is all a plugin does. Dispatch runs under the first `required` connector,
+  falling back to declaration order.
+- `bind` — how the connection's credential is attached to outbound calls.
+  `${config.access_token}` and `${inputs.<name>}` placeholders are resolved server-side by
+  `packages/trpc/src/router/plugins/manifest.ts`.
+- `mcp` — a single remote server (`type: "streamable-http"`, `url`, optional `headers`), not a map:
+  a plugin serves tools from exactly one place. Omit it when the plugin ships a bundled server.
 
-### OAuth with no client to register
+The published JSON Schema at `https://superset.sh/schemas/plugin/1.0.0.json` is generated from
+`pluginManifestSchema` in `packages/shared/src/plugins/manifest-schema.ts`, and
+`superset plugins publish` validates against that same definition — so the schema we serve and the
+schema we enforce cannot drift.
 
-`"client": "dynamic"` on an oauth2 method drops `token_url` and `requires_env`, and repoints
-`authorization_url` at the MCP server itself rather than an authorize endpoint: the API takes the
-endpoints and the client identity from that server at connect time. It reads
-`/.well-known/oauth-protected-resource` for the server named there, follows that to the
-authorization server's metadata for the endpoints, and then gets a client identity one of two ways:
+### Where a connection comes from
+
+How a connector obtains its connection is the connections system's decision, not a manifest field.
+A connector either names a pre-registered client through `requires_env` in `connectors.json`, or
+declares `"client": "dynamic"` and takes both endpoints and client identity from the MCP server at
+connect time: the API reads `/.well-known/oauth-protected-resource`, follows it to the
+authorization server's metadata, and then gets a client identity one of two ways:
 
 - the server advertises `client_id_metadata_document_supported`, so the client id is the URL of a
   document we host at `/api/connectors/<connector>/client-metadata` — nothing is registered or
@@ -77,15 +84,15 @@ authorization server's metadata for the endpoints, and then gets a client identi
   (RFC 7591) and keep the result in `plugin_oauth_clients`, keyed by issuer and redirect URI so
   every user shares one registration.
 
-Either way the flow is PKCE with a `resource` indicator, and refresh happens before dispatch. This
-is what lets a hosted MCP server be installable without anyone registering an OAuth app first —
-Notion is the first plugin to use it.
-- `mcpServers` — server name → config, the same shape as an `.mcp.json` value. The name lands
-  verbatim as a config key in agent CLIs.
+Either way the flow is PKCE with a `resource` indicator, the authorization response's `iss` is
+checked against the discovered issuer before the code is redeemed (RFC 9207), and refresh happens
+before dispatch. This is what lets a hosted MCP server be installable without anyone registering an
+OAuth app first.
 
-Credentials never reach the manifest, the renderer, or the agent's machine. They are encrypted at
-rest with `BETTER_AUTH_SECRET` (`apps/api/src/lib/plugins/crypto.ts`) and attached by the proxy in
-`apps/api/src/lib/plugins/dispatch.ts`, so a tool call goes out from the API, not from the agent.
+Credentials never reach the manifest, the renderer, or the agent's machine. They are sealed at rest
+by `packages/trpc/src/lib/secret-box.ts` under `SECRETS_ENCRYPTION_KEY` and attached by the proxy in
+`packages/trpc/src/router/plugins/dispatch.ts`, so a tool call goes out from the API, not from the
+agent.
 
 ## Install state on a machine
 

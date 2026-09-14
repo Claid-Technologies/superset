@@ -38,54 +38,6 @@ export interface Marketplace {
 	renames?: Record<string, string>;
 }
 
-export interface AuthInput {
-	name: string;
-	label?: string;
-	placeholder?: string;
-	description?: string;
-	required?: boolean;
-	secret?: boolean;
-}
-
-export interface AuthIdentity {
-	url: string;
-	method?: "GET" | "POST";
-	headers?: Record<string, string>;
-	body?: unknown;
-	id: string;
-	label?: string;
-}
-
-export interface PluginAuthMethod {
-	type: "oauth2" | "api_key";
-	label?: string;
-	provider?: string;
-	inputs?: AuthInput[];
-	credential_input?: string;
-	authorization_url?: string;
-	token_url?: string;
-	scopes?: string[];
-	scope_separator?: string;
-	token_request_auth_method?: string;
-	token_expiration_buffer?: number;
-	requires_env?: string[];
-	identity?: AuthIdentity;
-	bind?: PluginBind;
-	client?: "static" | "dynamic";
-	pkce?: boolean;
-	authorization_params?: Record<string, string>;
-	token_params?: Record<string, string>;
-}
-
-export type PluginAuth = PluginAuthMethod[];
-
-export function suggestedEnvFor(name: string): string[] {
-	const slug = name.toUpperCase().replace(/[.-]/g, "_");
-	return [`PLUGIN_${slug}_CLIENT_ID`, `PLUGIN_${slug}_CLIENT_SECRET`];
-}
-
-export const CLIENT_ENV_PATTERN = /^PLUGIN_[A-Z0-9_]+_CLIENT_(ID|SECRET)$/;
-
 export interface PluginMcp {
 	type: "streamable-http";
 	url: string;
@@ -97,10 +49,14 @@ export interface PluginBind {
 	env?: Record<string, string>;
 }
 
+export interface PluginConnectorRef {
+	slug: string;
+	required?: boolean;
+}
+
 export interface SupersetExtension {
 	interface?: { displayName: string; category?: string; icon?: string };
-	connector?: string;
-	auth?: PluginAuth;
+	connectors?: PluginConnectorRef[];
 	bind?: PluginBind;
 	mcp?: PluginMcp;
 }
@@ -116,6 +72,12 @@ export function supersetExtension(
 	manifest: PluginManifest,
 ): SupersetExtension | undefined {
 	return manifest.extensions?.[SUPERSET_EXTENSION];
+}
+
+/** Mirrors `pluginConnector` in packages/trpc: required first, else declared order. */
+export function pluginConnector(manifest: PluginManifest): string | undefined {
+	const refs = supersetExtension(manifest)?.connectors ?? [];
+	return (refs.find((ref) => ref.required) ?? refs[0])?.slug;
 }
 
 export interface ResolvedPlugin {

@@ -9,6 +9,7 @@ import type { BundledSource } from "./connections";
 import {
 	credentialFetch,
 	type PluginManifest,
+	pluginConnector,
 	resolveTemplateDeep,
 	resolveUrlTemplate,
 	supersetExtension,
@@ -172,9 +173,8 @@ function remoteTarget(
 	const mcp = extension?.mcp;
 	if (!mcp?.url) return null;
 
-	const connector = extension?.connector
-		? getConnector(extension.connector)
-		: undefined;
+	const slug = pluginConnector(manifest);
+	const connector = slug ? getConnector(slug) : undefined;
 	const connectorMethod = method
 		? connector?.methods.find((entry) => entry.type === method)
 		: connector?.methods[0];

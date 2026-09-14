@@ -19,7 +19,9 @@ export default command({
 			),
 		url: string().desc("MCP server URL, required when --kind url"),
 		skills: boolean().desc("Scaffold a skills/ folder with a starter skill"),
-		auth: boolean().desc("Include an OAuth2 block to fill in"),
+		connector: string().desc(
+			"Slug of the connector this plugin needs a connection to",
+		),
 		"display-name": string().desc(
 			"Name shown in the UI (default: derived from name)",
 		),
@@ -46,7 +48,7 @@ export default command({
 			description: options.description as string | undefined,
 			category: options.category as string | undefined,
 			skills: Boolean(options.skills),
-			auth: Boolean(options.auth),
+			connector: options.connector as string | undefined,
 		});
 
 		const next =

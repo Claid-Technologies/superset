@@ -15,7 +15,7 @@
 			},
 			"category": "development",
 			"source": "./plugins/github",
-			"version": "1.0.0"
+			"version": "1.0.1"
 		},
 		{
 			"name": "linear",
@@ -25,7 +25,7 @@
 			},
 			"category": "productivity",
 			"source": "./plugins/linear",
-			"version": "1.5.1"
+			"version": "1.5.2"
 		},
 		{
 			"name": "notion",
@@ -35,7 +35,7 @@
 			},
 			"category": "productivity",
 			"source": "./plugins/notion",
-			"version": "1.0.1"
+			"version": "1.0.2"
 		},
 		{
 			"name": "slack",
@@ -45,7 +45,7 @@
 			},
 			"category": "communication",
 			"source": "./plugins/slack",
-			"version": "1.2.2"
+			"version": "1.2.3"
 		},
 		{
 			"name": "gmail",
@@ -55,7 +55,7 @@
 			},
 			"category": "communication",
 			"source": "./plugins/gmail",
-			"version": "1.1.4"
+			"version": "1.1.5"
 		}
 	],
 	"featured": ["github", "linear"],

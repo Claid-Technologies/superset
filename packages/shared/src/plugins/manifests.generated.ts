@@ -9,7 +9,7 @@ export const FIRST_PARTY_MANIFESTS = {
 	"github": {
 		"$schema": "https://superset.sh/schemas/plugin/1.0.0.json",
 		"name": "github",
-		"version": "1.0.0",
+		"version": "1.0.1",
 		"description": "Work with issues, pull requests, and CI across your repositories.",
 		"author": {
 			"name": "Superset",
@@ -32,7 +32,12 @@ export const FIRST_PARTY_MANIFESTS = {
 					"category": "Developer tools",
 					"icon": "github"
 				},
-				"connector": "github",
+				"connectors": [
+					{
+						"slug": "github",
+						"required": true
+					}
+				],
 				"mcp": {
 					"type": "streamable-http",
 					"url": "https://api.githubcopilot.com/mcp/"
@@ -53,7 +58,7 @@ export const FIRST_PARTY_MANIFESTS = {
 	"linear": {
 		"$schema": "https://superset.sh/schemas/plugin/1.0.0.json",
 		"name": "linear",
-		"version": "1.5.1",
+		"version": "1.5.2",
 		"description": "Plan and build products: create, search, and update Linear issues.",
 		"author": {
 			"name": "Superset",
@@ -75,7 +80,12 @@ export const FIRST_PARTY_MANIFESTS = {
 					"category": "Productivity",
 					"icon": "linear"
 				},
-				"connector": "linear",
+				"connectors": [
+					{
+						"slug": "linear",
+						"required": true
+					}
+				],
 				"mcp": {
 					"type": "streamable-http",
 					"url": "https://mcp.linear.app/mcp"
@@ -100,7 +110,7 @@ export const FIRST_PARTY_MANIFESTS = {
 	"notion": {
 		"$schema": "https://superset.sh/schemas/plugin/1.0.0.json",
 		"name": "notion",
-		"version": "1.0.1",
+		"version": "1.0.2",
 		"description": "Search, read, and write your Notion workspace: pages, databases, and comments.",
 		"author": {
 			"name": "Superset",
@@ -123,7 +133,12 @@ export const FIRST_PARTY_MANIFESTS = {
 					"category": "Productivity",
 					"icon": "notion"
 				},
-				"connector": "notion",
+				"connectors": [
+					{
+						"slug": "notion",
+						"required": true
+					}
+				],
 				"mcp": {
 					"type": "streamable-http",
 					"url": "https://mcp.notion.com/mcp"
@@ -144,7 +159,7 @@ export const FIRST_PARTY_MANIFESTS = {
 	"slack": {
 		"$schema": "https://superset.sh/schemas/plugin/1.0.0.json",
 		"name": "slack",
-		"version": "1.2.2",
+		"version": "1.2.3",
 		"description": "Search, read, and post across your Slack workspace: channels, DMs, and threads.",
 		"author": {
 			"name": "Superset",
@@ -167,11 +182,16 @@ export const FIRST_PARTY_MANIFESTS = {
 					"category": "Communication",
 					"icon": "slack"
 				},
-				"connector": "slack",
+				"connectors": [
+					{
+						"slug": "slack",
+						"required": true
+					}
+				],
 				"server": {
 					"path": "plugins/slack/server/index.mjs",
 					"integrity": "sha256-v6jbpX7Wl57RBS2IU1mk2s4qrnnYIf68AUF3GtV3gxw=",
-					"ref": "slack@1.2.2"
+					"ref": "slack@1.2.3"
 				}
 			}
 		},
@@ -180,7 +200,7 @@ export const FIRST_PARTY_MANIFESTS = {
 	"gmail": {
 		"$schema": "https://superset.sh/schemas/plugin/1.0.0.json",
 		"name": "gmail",
-		"version": "1.1.4",
+		"version": "1.1.5",
 		"description": "Read, search, send, and organize mail in your Gmail account.",
 		"author": {
 			"name": "Superset",
@@ -203,11 +223,16 @@ export const FIRST_PARTY_MANIFESTS = {
 					"category": "Communication",
 					"icon": "gmail"
 				},
-				"connector": "google",
+				"connectors": [
+					{
+						"slug": "google",
+						"required": true
+					}
+				],
 				"server": {
 					"path": "plugins/gmail/server/index.mjs",
 					"integrity": "sha256-j3X7Hn0q6evz96JrEycg5e1BkbUVxZGJ2/IjwyDlkxc=",
-					"ref": "gmail@1.1.4"
+					"ref": "gmail@1.1.5"
 				}
 			}
 		},

@@ -1,7 +1,7 @@
 {
 	"$schema": "https://superset.sh/schemas/plugin/1.0.0.json",
 	"name": "github",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "Work with issues, pull requests, and CI across your repositories.",
 	"author": {
 		"name": "Superset",
@@ -18,7 +18,12 @@
 				"category": "Developer tools",
 				"icon": "github"
 			},
-			"connector": "github",
+			"connectors": [
+				{
+					"slug": "github",
+					"required": true
+				}
+			],
 			"mcp": {
 				"type": "streamable-http",
 				"url": "https://api.githubcopilot.com/mcp/"

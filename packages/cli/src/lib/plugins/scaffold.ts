@@ -4,7 +4,6 @@ import { CLIError } from "@superset/cli-framework";
 import {
 	type MarketplaceContext,
 	SUPERSET_EXTENSION,
-	suggestedEnvFor,
 	writeJson,
 } from "./marketplace";
 
@@ -18,7 +17,7 @@ export interface ScaffoldOptions {
 	description?: string;
 	category?: string;
 	skills: boolean;
-	auth: boolean;
+	connector?: string;
 }
 
 const NAME_PATTERN = /^(?!.*(?:--|\.\.))[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?$/;
@@ -256,18 +255,8 @@ export function scaffoldPlugin(
 		},
 	};
 
-	if (options.auth) {
-		const method: Record<string, unknown> = {
-			type: "oauth2",
-			provider: name,
-			authorization_url: `https://example.com/oauth/authorize`,
-			token_url: `https://example.com/oauth/token`,
-			scopes: ["read"],
-			scope_separator: " ",
-			token_request_auth_method: "client_secret_post",
-			requires_env: suggestedEnvFor(name),
-		};
-		extension.auth = [method];
+	if (options.connector) {
+		extension.connectors = [{ slug: options.connector, required: true }];
 		if (kind === "url") {
 			extension.bind = {
 				// biome-ignore lint/suspicious/noTemplateCurlyInString: the proxy interpolates this at call time; it must stay a literal
@@ -314,7 +303,10 @@ export function scaffoldPlugin(
 
 	if (kind === "server") {
 		add(path.join("src", "index.ts"), serverIndex());
-		add(path.join("src", "tools.ts"), serverTools(name, options.auth));
+		add(
+			path.join("src", "tools.ts"),
+			serverTools(name, Boolean(options.connector)),
+		);
 		add(path.join("src", "types.ts"), SERVER_TYPES);
 		add("tsconfig.json", TSCONFIG);
 	}

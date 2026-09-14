@@ -29,7 +29,8 @@
 		"ink": "7.0.1",
 		"mime-types": "3.0.2",
 		"react": "19.2.3",
-		"superjson": "2.2.6"
+		"superjson": "2.2.6",
+		"zod": "4.4.3"
 	},
 	"devDependencies": {
 		"@superset/typescript": "workspace:*",

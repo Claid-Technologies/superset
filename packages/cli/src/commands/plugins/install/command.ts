@@ -18,7 +18,7 @@ import {
 	ensureDefaultMarketplace,
 	installPlugin,
 } from "../../../lib/plugins/install";
-import { supersetExtension } from "../../../lib/plugins/marketplace";
+import { pluginConnector } from "../../../lib/plugins/marketplace";
 
 export default command({
 	description:
@@ -70,11 +70,11 @@ export default command({
 			accountError = error instanceof Error ? error.message : String(error);
 		}
 
-		const slug = supersetExtension(
+		const slug = pluginConnector(
 			JSON.parse(
 				fs.readFileSync(path.join(local.installPath, "plugin.json"), "utf8"),
 			),
-		)?.connector;
+		);
 
 		const connector = slug
 			? await ctx.api.connectors.get.query({ slug })

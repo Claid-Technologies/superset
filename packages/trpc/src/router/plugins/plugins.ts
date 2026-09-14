@@ -29,6 +29,7 @@ import { callTool, listTools, PluginDispatchError } from "./dispatch";
 import {
 	type PluginManifest,
 	pluginConnector,
+	pluginNeedsConnection,
 	supersetExtension,
 } from "./manifest";
 
@@ -154,7 +155,7 @@ function describe(
 		displayName: extension?.interface?.displayName ?? manifest.name,
 		category: extension?.interface?.category ?? "Developer tools",
 		icon: extension?.interface?.icon,
-		connector: extension?.connector ?? null,
+		connector: pluginConnector(manifest) ?? null,
 		mcpUrl: extension?.mcp?.url ?? null,
 		skills: manifest.skills ?? [],
 		homepage: (manifest as { homepage?: string }).homepage ?? null,
@@ -588,8 +589,8 @@ export const pluginsRouter = createTRPCRouter({
 				plugin: input.name,
 				version: manifest.version,
 				marketplace: FIRST_PARTY,
-				connector: manifest.extensions?.superset?.connector ?? null,
-				needsConnection: Boolean(manifest.extensions?.superset?.connector),
+				connector: pluginConnector(manifest) ?? null,
+				needsConnection: pluginNeedsConnection(manifest),
 			};
 		}),
 
