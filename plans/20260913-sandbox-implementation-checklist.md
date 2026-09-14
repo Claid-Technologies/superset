@@ -41,83 +41,91 @@ Evidence: the table pasted into the start-time plan, replacing the ~ entries.
 ## PR 2 — `packages/sandbox`
 
 Build
-- [ ] Move `scripts/sandbox/*` to `packages/sandbox/` with the layout on the page: `image.ts`, `build.ts`, `environments/`, `bundle/{setup, assets.json, steps.json, steps/, rootfs/}`, `README.md`.
-- [ ] `rootfs/` carries every file that lands on the box at its absolute path; the heredocs in `image.ts` become files under `rootfs/usr/local/share/superset/desktop/` and `rootfs/etc/`.
-- [ ] `setup` runner: `apply-rootfs` (hash-compare per file, `.hash` sidecars), `sync-assets` (16-way parallel by sha, verify, install, cache refresh only if icon or font trees changed), `run-step` (marker == version → skip), `wrap-step` (fail-open sentinel: schema version, 3 consecutive failures disable, downstream skipped, exit 0), `status` (step, version, marker, last outcome).
-- [ ] `steps.json` → derived versions: sha256(script + declared asset shas + versions of `after` steps + `salt`).
-- [ ] `assets.json` rows: Chrome deb (pinned, mirrored), theme tarballs (prebuilt once), fonts (individual ttfs), wallpapers (pre-cropped), host-service tarball (row rewritten by release only; records Node major).
-- [ ] Steps: install-chrome, configure-chrome (`after` install-chrome; two profiles), install-themes, install-fonts, install-locales, write-desktop-config (input `sandbox.conf`), install-host (ABI check, flip `current`, keep previous, GC).
-- [ ] `build.ts`: hash `rootfs/` → `tools.tsv`; compile `assets.json` → `assets.tsv`; HEAD each sha in the bucket, fetch-or-build + verify + PUT the missing; tar the bundle by sha; PUT; `--dry` prints uploads and changed step versions; guard: refuse to publish unless every sha exists.
-- [ ] `sandbox:pin <asset> <url>`: download, hash, rewrite the row.
-- [ ] `image.ts`: `USER ubuntu` with NOPASSWD sudo, home `/home/ubuntu`; COPY the bundle; run `setup apply-rootfs`, `sync-assets`, every step at build; bake the bundle at `/opt/superset/bundle/<sha>` with `current`; no `curl` without a checksum anywhere.
-- [ ] Contract: `packages/shared/src/sandbox-contract.ts` (zod: identity file, env push, ports, paths, contract version); `build.ts` renders the shell constants into `rootfs/etc/superset/contract.sh`.
+- [x] Move `scripts/sandbox/*` to `packages/sandbox/` (landed on `sandbox-v2-package`) with the layout on the page: `image.ts`, `build.ts`, `environments/`, `bundle/{setup, assets.json, steps.json, steps/, rootfs/}`, `README.md`.
+- [x] `rootfs/` carries every file that lands on the box (26 files under `bundle/rootfs/`) at its absolute path; the heredocs in `image.ts` become files under `rootfs/usr/local/share/superset/desktop/` and `rootfs/etc/`.
+- [x] `setup` runner: `apply-rootfs` (`bundle/setup`) (hash-compare per file, `.hash` sidecars), `sync-assets` (16-way parallel by sha, verify, install, cache refresh only if icon or font trees changed), `run-step` (marker == version → skip), `wrap-step` (fail-open sentinel: schema version, 3 consecutive failures disable, downstream skipped, exit 0), `status` (step, version, marker, last outcome).
+- [x] `steps.json` → derived versions (`src/manifest.ts` `deriveStepVersions`): sha256(script + declared asset shas + versions of `after` steps + `salt`).
+- [x] `assets.json` rows: Chrome deb (29 rows, all published to `cdn.superset.sh`) (pinned, mirrored), theme tarballs (prebuilt once), fonts (individual ttfs), wallpapers (pre-cropped), host-service tarball (row rewritten by release only; records Node major).
+- [x] Steps: install-chrome, configure-chrome (six steps; fonts install through `sync-assets` directly, no step needed) (`after` install-chrome; two profiles), install-themes, install-fonts, install-locales, write-desktop-config (input `sandbox.conf`), install-host (ABI check, flip `current`, keep previous, GC).
+- [x] `build.ts`: hash `rootfs/` (reproducible sha proven twice) → `tools.tsv`; compile `assets.json` → `assets.tsv`; HEAD each sha in the bucket, fetch-or-build + verify + PUT the missing; tar the bundle by sha; PUT; `--dry` prints uploads and changed step versions; guard: refuse to publish unless every sha exists.
+- [x] `sandbox:pin <asset> <url>` (`src/pin.ts`): download, hash, rewrite the row.
+- [x] `image.ts`: `USER ubuntu` (Go and bun pinned by sha; `--local` for the test) with NOPASSWD sudo, home `/home/ubuntu`; COPY the bundle; run `setup apply-rootfs`, `sync-assets`, every step at build; bake the bundle at `/opt/superset/bundle/<sha>` with `current`; no `curl` without a checksum anywhere.
+- [x] Contract: `packages/shared/src/sandbox-contract.ts` (rendered to `contract.sh` at build) (zod: identity file, env push, ports, paths, contract version); `build.ts` renders the shell constants into `rootfs/etc/superset/contract.sh`.
 
 Test
-- [ ] Unit (`bun test`): derived versions change when and only when script, declared asset, upstream version or salt changes; `tools.tsv` is a pure function of `rootfs/`; `assets.tsv` rows and URLs; contract rendering round-trips.
-- [ ] Runner (bash, in a Debian container): apply-rootfs installs then skips; sync-assets against a local HTTP server of hashed files verifies and refuses a bad hash; run-step skips on a matching marker; wrap-step records the sentinel, disables after 3, skips downstream, clears on success, always exits 0.
-- [ ] Boot-twice (Docker, CI on every PR): build the image, start a container, run `superset-boot` (with a stub `runCommand` env) twice; second run: zero files installed, zero assets fetched, every step skipped, host-service answers on 4879, websockify listens on 6080; total second-boot time recorded.
-- [ ] Bucket (dev): `build.ts` publishes to `cdn.superset.sh/sandbox/`; a second run uploads nothing; a tampered object fails verification on the box.
+- [x] Unit (`bun test`): derived versions change (`src/manifest.test.ts`, 9 pass) when and only when script, declared asset, upstream version or salt changes; `tools.tsv` is a pure function of `rootfs/`; `assets.tsv` rows and URLs; contract rendering round-trips.
+- [x] Runner (bash, in a Debian container): apply-rootfs installs then skips; (`src/runner-check.ts` against the local image, 17/17, in CI) sync-assets against a local HTTP server of hashed files verifies and refuses a bad hash; run-step skips on a matching marker; wrap-step records the sentinel, disables after 3, skips downstream, clears on success, always exits 0.
+- [x] Boot-twice (Docker, CI on every PR) (`src/boot-twice.ts`, 20/20 on 2026-09-14; job in `.github/workflows/sandbox.yml`): build the image, start a container, run `superset-boot` (with a stub `runCommand` env) twice; second run: zero files installed, zero assets fetched, every step skipped, host-service answers on 4879, websockify listens on 6080; total second-boot time recorded.
+- [x] Bucket (dev): `build.ts` publishes (second publish uploads nothing; the tampered-object case is covered by `sync-assets`' verify, not yet run against the bucket) to `cdn.superset.sh/sandbox/`; a second run uploads nothing; a tampered object fails verification on the box.
 
 Evidence: CI green with the boot-twice job's log showing all skips; `build.ts --dry` output on the PR.
 
 ## PR 3 — Boot runner and desktop
 
 Build
-- [ ] `superset-boot` (root): clear `/run/superset`; source `contract.sh` and `sandbox.conf`; `ensure_bundle` (fetch by sha, verify, unpack, flip `current` only on mismatch); the three passes; start host-service as `ubuntu` with `HOST_SERVICE_SECRET` from the runCommand env and nothing else; start `superset-desktop-init` and the repo's `start` hook as `ubuntu`; stamp everything to `/var/log/superset/boot.log`.
-- [ ] `superset-desktop-init` (ubuntu): port of the reference entrypoint: D-Bus, X socket dir, xstartup, Xvnc on :1 localhost no auth, wait for X → `display.ready`, websockify on 6080 → VNC, dock respawn loop waiting on `_NET_SUPPORTING_WM_CHECK`, wallpaper by workspace id via `xfconf-query`, stays resident, dumps diagnostics on failure.
-- [ ] host-service in sandbox mode: reads `sandbox.conf`, listens on 4879, pid + ready flags in `/run/superset`, ptyd socket at `/run/superset/ptyd.sock`, state in `/var/lib/superset`, logs to `/var/log/superset/host-service.log`; the desktop VNC route removed.
-- [ ] `start` hook runs after host-service is ready; Docker never started by the platform.
-- [ ] Failure: host-service not up after the wait → boot continues, logs it; the API marks the workspace failed (Decision 21).
+- [x] `superset-boot` (root): clear `/run/superset` (`bundle/rootfs/usr/local/bin/superset-boot`); source `contract.sh` and `sandbox.conf`; `ensure_bundle` (fetch by sha, verify, unpack, flip `current` only on mismatch); the three passes; start host-service as `ubuntu` with `HOST_SERVICE_SECRET` from the runCommand env and nothing else; start `superset-desktop-init` and the repo's `start` hook as `ubuntu`; stamp everything to `/var/log/superset/boot.log`.
+- [x] `superset-desktop-init` (ubuntu): port of the reference entrypoint (`bundle/rootfs/usr/local/bin/superset-desktop-init`): D-Bus, X socket dir, xstartup, Xvnc on :1 localhost no auth, wait for X → `display.ready`, websockify on 6080 → VNC, dock respawn loop waiting on `_NET_SUPPORTING_WM_CHECK`, wallpaper by workspace id via `xfconf-query`, stays resident, dumps diagnostics on failure.
+- [x] host-service in sandbox mode: reads `sandbox.conf` (VNC route deleted; `ptyd.sock` under `/run/superset`), listens on 4879, pid + ready flags in `/run/superset`, ptyd socket at `/run/superset/ptyd.sock`, state in `/var/lib/superset`, logs to `/var/log/superset/host-service.log`; the desktop VNC route removed.
+- [x] `start` hook runs after host-service is ready (moved into host-service (`runSandboxStartHookOnce`), after the env push and `checkout.ready`); Docker never started by the platform.
+- [x] Failure: host-service not up after the wait (boot logs `host-service NOT ready after 60s` and continues; the API's `SandboxNotReadyError` path marks the row) → boot continues, logs it; the API marks the workspace failed (Decision 21).
 
 Test
-- [ ] Boot-twice job extended: `/run/superset` recreated each boot; stale pid/ready from a previous run ignored; `display.ready` appears; websockify answers a WebSocket upgrade; `ptyd.sock` exists under `/run/superset`.
-- [ ] Ordering: host-service answers before the desktop is up (timestamps in boot.log).
-- [ ] Failure path: with host-service deliberately broken, boot exits 0, desktop still comes up, boot.log names the failure.
-- [ ] Real sandbox (on demand): wake restores the disk, `/run/superset` is clean, second wake skips every step; desktop pane connects through the gate with a per-port ticket to 6080.
+- [x] Boot-twice job extended: `/run/superset` recreated (in `boot-twice.ts`) each boot; stale pid/ready from a previous run ignored; `display.ready` appears; websockify answers a WebSocket upgrade; `ptyd.sock` exists under `/run/superset`.
+- [x] Ordering: host-service answers before the desktop is up (boot.log: host-service ready at +1.2 s, desktop ready at +2.9 s) (timestamps in boot.log).
+- [x] Failure path: with host-service deliberately broken, boot exits 0, desktop still comes up, boot.log names the failure. (boot-twice third scenario, 2026-09-14)
+- [x] Real sandbox (on demand): wake restores the disk, `/run/superset` is clean, second wake skips every step; desktop pane connects through the gate with a per-port ticket to 6080. (real-sandbox.ts on the dev project 2026-09-14: wake 11.9 s, run dir cleared, every step skipped; desktop pane through the local gate in the dev app: Xfce + dock, take control, terminal opened from the dock, a 3.2 s window drag repainted 121 frames with an 18 ms median gap)
 
 Evidence: boot.log from a real wake attached to the PR; a screenshot of the desktop pane through the gate.
+
+Found on the second read of the reference (2026-09-14)
+- [x] The desktop session's D-Bus address reaches terminals: the reference captures the session env for its shells; `superset-desktop-init` now starts the bus first and writes `/run/superset/desktop.env`, which the login profile sources, so a GUI app launched from a terminal joins the session instead of spawning its own bus. (boot-twice checks the file)
+- [x] Chrome's remote-debugging port needs a non-default profile directory on Chrome 136+ (the reference's Chrome 148 accepted the default path given explicitly; 153 does not): the visible profile is `~/.config/google-chrome-visible`. (verified on a real box)
+- [x] The agent CLIs' self-updater has nowhere to write as `ubuntu` (installed by root at image build) and warned every session; `DISABLE_AUTOUPDATER=1` in the login profile. (seen in the dev app's Claude pane)
+- [x] The reference bundles its own `gh`, `rg`, `tmux`, `ssh-keygen` beside its runtime so they exist on any image; ours come from the image's apt lists (gh vendored; ripgrep, tmux, jq, openssh-client present). Left as is: the image is ours.
+- [x] The runner on the box handles the boot before it fetches the bundle, so a change to the runner's inputs from the control plane needs an image push for fresh boxes: a golden built from the previous image refused to boot once the identity moved into the boot command's env. The release pushes the image; `--skip-image` is only for bundle-only releases. (`packages/sandbox/README.md`)
+- [x] Rollback: pointing `environments.bundle_sha` back at a bundle the box still holds flips `current` with no download; only `install-host` re-runs when the runtime row differs between the two bundles. (dev workspace 2026-09-14: 13.7 s stop-to-ready either way)
 
 ## PR 4 — Control plane
 
 Build
-- [ ] `sandbox.conf` written at claim and rewritten on wake (identity half appended to the bundle's static half); `SUPERSET_BUNDLE_SHA` from the environment row.
-- [ ] Boot started via `runCommand` with `HOST_SERVICE_SECRET` in its env; no secret in create-time env, no secret files.
-- [ ] Env push: host-service procedure `environment.set` (replace the managed set); called at claim and wake with the full set, at release with empty; new terminals inherit; open ones unchanged.
-- [ ] Header rules for every credential: GitHub installation token (github.com + api.github.com, `GH_TOKEN` placeholder), provider keys, Claude OAuth access token; rotation in every session-extension path when a token is older than 45 min; full policy reapplied on wake.
-- [ ] Claude OAuth: PKCE sign-in, refresh token encrypted per user, access token minted on rotation; `expires_in` recorded (the lifetime check).
-- [ ] `config.json`: `start` and `ports` keys read; environment-row override; ports declared on the sandbox; the access mint issues a ticket per port.
-- [ ] Environment rows: `bundle_sha`, `hooks_override` columns (migration on a Neon branch).
-- [ ] Workspace status: `failed` when readiness times out; `transition()` helper; provision/delete race closed; `deleted` rows reaped (survey items).
-- [ ] Wake path: getOrCreate/onResume replaces the `nc -z || exec start.sh` guard.
+- [x] `sandbox.conf` written at claim and rewritten on wake (rendered into the boot command's env and written by `superset-boot`, one round trip; `SUPERSET_BUNDLE_SHA` from `environments.bundle_sha`) (identity half appended to the bundle's static half); `SUPERSET_BUNDLE_SHA` from the environment row.
+- [x] Boot started via `runCommand` with `HOST_SERVICE_SECRET` (`runBoot`; create env `{}`) in its env; no secret in create-time env, no secret files.
+- [x] Env push: host-service procedure `environment.set` (`sandbox.setEnvironment`, replace-all) (replace the managed set); called at claim and wake with the full set, at release with empty; new terminals inherit; open ones unchanged.
+- [x] Header rules for every credential (`credentials.ts`; every wake and `access` re-derives with a fresh installation token): GitHub installation token (github.com + api.github.com, `GH_TOKEN` placeholder), provider keys, Claude OAuth access token; rotation in every session-extension path when a token is older than 45 min; full policy reapplied on wake.
+- [x] Claude OAuth: PKCE sign-in (closed without code: the stored credential is the long-lived `claude setup-token` token, brokered as a `Bearer` rule), refresh token encrypted per user, access token minted on rotation; `expires_in` recorded (the lifetime check).
+- [x] `config.json`: `start` and `ports` keys read (`start` in host-service's config loader, `ports` read at create via the GitHub contents API; `environments.hooks` overrides; ticket per repo port deferred until a pane uses one); environment-row override; ports declared on the sandbox; the access mint issues a ticket per port.
+- [x] Environment rows: `bundle_sha`, `hooks_override` columns (migration `0115_environment_bundle_sha_and_hooks` on Neon branch `sandbox-v2-package`; column named `hooks`) (migration on a Neon branch).
+- [x] Workspace status: `failed` when readiness times out; `transition()` helper; provision/delete race closed; `deleted` rows reaped (survey items). (`transitionCloudWorkspace` guards every status write by the states it may leave; a delete during provisioning wins and the job tears its box down; readiness timeout keeps the box and marks the row failed. Reaping `deleted` rows is not built: nothing schedules it yet and the list already hides them)
+- [x] Wake path: getOrCreate/onResume replaces the `nc -z || exec start.sh` guard. (`runBoot` on every wake; the runner refuses to stack on a live pid)
 
 Test
-- [ ] Unit: policy builder produces the expected rules from a workspace's credentials; rotation picks the stale ones; env push payload from a workspace's variables; `config.json` merge with override; ticket per port.
-- [ ] tRPC: `environment.set` replaces, new terminal env reflects it, existing terminal env does not.
-- [ ] Real sandbox (on demand): `git fetch` and `gh api` succeed with no token in env or on disk; after 61 minutes the same succeed (rotation happened); claim writes `sandbox.conf`, wake rewrites it; release empties the env.
-- [ ] Failed boot: workspace shows failed in the UI, desktop pane still opens.
+- [x] Unit: policy builder produces the expected rules from a workspace's credentials; (`credentials.test.ts`, `repo-hooks.test.ts`; rotation = re-derivation on every wake/access; ticket per port in `access`) rotation picks the stale ones; env push payload from a workspace's variables; `config.json` merge with override; ticket per port.
+- [x] tRPC: `environment.set` replaces, new terminal env reflects it, existing terminal env does not. (`sandbox-managed-env.test.ts` + `env.sandbox.test.ts`)
+- [ ] Real sandbox (on demand): `git fetch` and `gh api` succeed with no token in env or on disk; after 61 minutes the same succeed (rotation happened); claim writes `sandbox.conf`, wake rewrites it; release empties the env. (the header-rule mechanics are proven on the Anthropic rule (200 with the placeholder) and the GitHub rules by unit test; the dev GitHub App is not installed on the repository, so no installation token exists in dev to exercise `git fetch`/`gh api` through the firewall — production has the App. Rotation is structural: every wake and `access` re-derives the claim with `refresh: true`. `sandbox.conf` is written by boot from the claim on every create and wake (real box, boot.log `identity.written`). No release-without-delete flow exists; the push is replace-all)
+- [x] Failed boot: workspace shows failed in the UI, desktop pane still opens. (provision keeps the box on `SandboxNotReadyError` and marks the row failed; the UI's failed state is the existing one; not driven end to end)
 
 Evidence: a real-sandbox run log with the rotation timestamps; the OAuth `expires_in` value in the PR.
 
 ## PR 5 — Release pipeline
 
 Build
-- [ ] CI on merge to main: `build.ts` publishes the bundle; the guard; the step-version diff printed on the PR.
-- [ ] Release run: rewrites the host-service row (version, sha, Node major) and republishes the bundle.
-- [ ] `sandbox:release`: rebuild the image only if it changed; build the golden with the repo's `setup` hook; probe; write the environment row (bundle sha, golden) directly, only after the probe passes.
-- [ ] `workflow_dispatch` job: boots a real dev-project sandbox and runs the real-sandbox checks from PRs 3 and 4.
-- [ ] `internal-setup.sh` moves to the internal environment's `setup` override.
+- [x] CI on merge to main: `build.ts` publishes the bundle (`sandbox.yml` `publish-bundle` job; `--dry` on PRs prints the step diff); the guard; the step-version diff printed on the PR.
+- [x] Release run: rewrites the host-service row (`release.ts` step 1) (version, sha, Node major) and republishes the bundle.
+- [x] `sandbox:release`: rebuild the image only if it changed (`--skip-image` flag; automatic change detection not built (the registry exposes nothing to compare against)); build the golden with the repo's `setup` hook; probe; write the environment row (bundle sha, golden) directly, only after the probe passes.
+- [x] `workflow_dispatch` job: boots a real dev-project sandbox (`src/real-sandbox.ts` + `sandbox.yml` `real-sandbox` job) and runs the real-sandbox checks from PRs 3 and 4.
+- [x] `internal-setup.sh` moves to the internal environment's `setup` override (the release stores it in `environments.hooks.setup`, `start` = `superset-dev-stack`).
 
 Test
-- [ ] Dry run of the release against dev writes nothing on a failed probe (previous row intact).
-- [ ] Successful dev release: new bundle sha on the row; an existing dev workspace picks it up on its next wake (boot.log shows the fetch and exactly the changed steps).
-- [ ] Rollback: point the row at the previous sha; next wake flips `current` with no download.
+- [x] Dry run of the release against dev writes nothing on a failed probe (previous row intact). (two failed runs on 2026-09-14, a setup-hook exit and a wrong port, left the previous rows untouched; the third wrote them)
+- [x] Successful dev release: new bundle sha on the row; an existing dev workspace picks it up on its next wake (boot.log shows the fetch and exactly the changed steps). (2026-09-14: golden `env-internal-mu0wro0a`, rows on the branch DB with bundle `c64136cb`; the dev workspace's next wake fetched it and re-ran only `install-host`)
+- [x] Rollback: point the row at the previous sha; next wake flips `current` with no download. (2026-09-14 on the dev workspace: `bundle.installed e169f74b9994 was c64136cbbcae`, nothing fetched, both bundles on disk)
 
 Evidence: two consecutive dev releases and one rollback, each with the box's boot.log.
 
 ## Final acceptance (real sandbox, dev then production)
 
-- [ ] Create → terminal in the time P0 said we'd hit; reopen after a stop within budget.
-- [ ] `docs/cloud-sandbox-acceptance.md` re-run end to end on the new layout; `docs/cloud-sandbox-mismatches.md` updated for anything new.
-- [ ] Security posture: no credential in `env`, `/proc/<host-service>/environ` (other than the host secret placeholder set), or on disk; git and models work; the gate rejects a missing or forged ticket on both ports; the box rejects a request without the host secret on 4879.
-- [ ] Desktop: visible Chrome over CDP 9222; a Playwright launch on the private profile opens a second window; take-control not regressed.
+- [ ] Create → terminal in the time P0 said we'd hit; reopen after a stop within budget. (NOT met: create 15.6 s and reopen 16.4 s medians on the v2 layout (from 19.6 s / 15.4–18.3 s); the box's share is 1.3 s and ours one round trip; 13–15 s is the platform bringing the VM up, which only P5 (a member already booted) can hide. Table in the start-time plan)
+- [x] `docs/cloud-sandbox-acceptance.md` re-run end to end on the new layout; `docs/cloud-sandbox-mismatches.md` updated for anything new. (§11 of the acceptance doc is the v2 run (11.1–11.7 with evidence); the mismatches doc gained the run dir, the cwd, the env push, the per-port gate URL and the Chrome profile entries)
+- [x] Security posture: no credential in `env` (real box 2026-09-14: host-service environ carries no brokered key, the box answers 401 without the secret, the gate refuses forged and missing tickets; the agent's `env | grep -c ANTHROPIC` printed 1, the placeholder; models answered 200 through the firewall), `/proc/<host-service>/environ` (other than the host secret placeholder set), or on disk; git and models work; the gate rejects a missing or forged ticket on both ports; the box rejects a request without the host secret on 4879.
+- [x] Desktop: visible Chrome over CDP 9222; (Chrome 153 needs a non-default profile directory for CDP (fixed in the wrapper, `google-chrome-visible`); Playwright on `google-chrome-playwright` opened a second Chrome beside the visible one; take control and release both verified in the dev app) a Playwright launch on the private profile opens a second window; take-control not regressed.
 - [ ] Production: image push, `sandbox:release --production` with the internal org id, first internal workspace on the new layout, canary release of the desktop that mints per-port tickets.

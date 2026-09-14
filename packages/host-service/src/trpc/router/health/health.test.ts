@@ -54,6 +54,8 @@ describe("health.check", () => {
 				{ phase: "host.listening", at: 1789000010400 },
 			],
 			runtime: { node: process.version, hostService: result.version },
+			bundle: null,
+			ready: { "host-service": false, display: false, checkout: false },
 		});
 	});
 

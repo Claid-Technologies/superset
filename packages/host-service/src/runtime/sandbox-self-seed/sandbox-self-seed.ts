@@ -1,4 +1,5 @@
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { spawn } from "node:child_process";
+import { existsSync, openSync, readFileSync, writeFileSync } from "node:fs";
 import { rm } from "node:fs/promises";
 import { homedir } from "node:os";
 import { dirname, join } from "node:path";
@@ -6,12 +7,18 @@ import {
 	type CloudAgentLaunch,
 	readCloudAgentLaunch,
 } from "@superset/shared/cloud-agent-launch";
+import { SANDBOX_PATHS } from "@superset/shared/sandbox-contract";
 import { eq } from "drizzle-orm";
 import type { HostDb } from "../../db";
 import { projects, workspaces } from "../../db/schema";
 import { runAgentInWorkspace } from "../../trpc/router/agents/agents";
 import { seedDefaultsIfEmpty } from "../../trpc/router/settings/agent-configs";
 import type { HostServiceContext } from "../../types";
+import {
+	getManagedEnv,
+	waitForManagedEnv,
+} from "../sandbox-managed-env/sandbox-managed-env.ts";
+import { resolveScript, shellSingleQuote } from "../setup/config";
 
 /**
  * Makes a sandbox describe its own workspace, instead of being described from
@@ -38,6 +45,39 @@ export interface SandboxIdentity {
 	launch: CloudAgentLaunch | null;
 	/** Written once the launch has happened, so a restart never repeats it. */
 	launchMarkerPath: string;
+	/** The environment's overrides for the repository's hooks. */
+	hooks: SandboxHooks | null;
+}
+
+export interface SandboxHooks {
+	start?: string[];
+	ports?: number[];
+	setup?: string[];
+}
+
+function readSandboxHooks(raw: string | undefined): SandboxHooks | null {
+	if (!raw) return null;
+	try {
+		const parsed: unknown = JSON.parse(raw);
+		if (!parsed || typeof parsed !== "object") return null;
+		const hooks = parsed as Record<string, unknown>;
+		const strings = (value: unknown) =>
+			Array.isArray(value) && value.every((item) => typeof item === "string")
+				? (value as string[])
+				: undefined;
+		return {
+			start: strings(hooks.start),
+			setup: strings(hooks.setup),
+			ports: Array.isArray(hooks.ports)
+				? hooks.ports.filter((port): port is number => typeof port === "number")
+				: undefined,
+		};
+	} catch {
+		console.warn(
+			"[sandbox] SUPERSET_SANDBOX_HOOKS is not JSON; overrides ignored",
+		);
+		return null;
+	}
 }
 
 export function readSandboxIdentity(
@@ -49,15 +89,73 @@ export function readSandboxIdentity(
 	return {
 		workspaceId,
 		worktreePath,
-		workspaceName: env.SUPERSET_SANDBOX_WORKSPACE_NAME || "workspace",
-		projectName: env.SUPERSET_SANDBOX_PROJECT_NAME || "project",
+		// The API owns the workspace's name; the row here is scratch host-service
+		// serves panes against, so it needs a name, not the name.
+		workspaceName: "workspace",
+		projectName: "project",
 		branch: env.SUPERSET_SANDBOX_BRANCH || "main",
 		launch: readCloudAgentLaunch(env),
 		launchMarkerPath: join(
-			dirname(env.HOST_DB_PATH || "/data/host.db"),
-			".sandbox-agent-launched",
+			dirname(env.HOST_DB_PATH || SANDBOX_PATHS.hostDb),
+			"agent-launched",
 		),
+		hooks: readSandboxHooks(env.SUPERSET_SANDBOX_HOOKS),
 	};
+}
+
+const START_HOOK_MARKER = join(SANDBOX_PATHS.run, "start-hook.pid");
+const START_HOOK_LOG = join(SANDBOX_PATHS.logs, "start-hook.log");
+
+/**
+ * The repository's `start` hook: the services a workspace needs on every
+ * boot. Runs from here rather than from the boot runner because it needs
+ * the managed environment, which only arrives once host-service answers,
+ * and the checkout, which lands beside it. Once per boot: the marker lives
+ * in the run directory the boot runner clears.
+ */
+export async function runSandboxStartHookOnce(
+	identity: SandboxIdentity,
+): Promise<void> {
+	if (existsSync(START_HOOK_MARKER)) return;
+	const [pushed, checkedOut] = await Promise.all([
+		waitForManagedEnv(120_000),
+		waitForFlag(join(SANDBOX_PATHS.run, "checkout.ready"), 300_000),
+	]);
+	if (!checkedOut) {
+		console.warn(
+			"[sandbox] start hook skipped: the checkout never reported ready",
+		);
+		return;
+	}
+	const commands =
+		identity.hooks?.start ??
+		(() => {
+			const resolved = resolveScript("start", {
+				repoPath: identity.worktreePath,
+				projectId: identity.workspaceId,
+			});
+			if (!resolved) return null;
+			return resolved.kind === "commands"
+				? resolved.commands
+				: [`bash ${shellSingleQuote(resolved.scriptPath)}`];
+		})();
+	if (!commands?.length) return;
+	if (!pushed)
+		console.warn(
+			"[sandbox] start hook running without a managed environment push",
+		);
+	const log = openSync(START_HOOK_LOG, "a");
+	const child = spawn("bash", ["-lc", commands.join(" && ")], {
+		cwd: identity.worktreePath,
+		env: { ...process.env, ...getManagedEnv(), IS_SANDBOX: "1" },
+		stdio: ["ignore", log, log],
+		detached: true,
+	});
+	child.unref();
+	writeFileSync(START_HOOK_MARKER, `${child.pid ?? 0}\n`);
+	console.log(
+		`[sandbox] start hook running (pid ${child.pid}): ${commands.join(" && ")}`,
+	);
 }
 
 /**
@@ -121,6 +219,16 @@ export async function launchSandboxAgentOnce(
 	if (!identity.launch) return;
 	if (existsSync(identity.launchMarkerPath)) return;
 	const { agent, prompt, model, effort, mode } = identity.launch;
+	// The agent needs the environment the control plane pushes after boot and
+	// the branch the boot runner is checking out beside us; both are seconds.
+	const [pushed, checkedOut] = await Promise.all([
+		waitForManagedEnv(120_000),
+		waitForFlag(join(SANDBOX_PATHS.run, "checkout.ready"), 120_000),
+	]);
+	if (!pushed)
+		console.warn("[sandbox] launching without a managed environment push");
+	if (!checkedOut)
+		console.warn("[sandbox] launching before the checkout reported ready");
 	// Claimed before the launch, not after: a restart while the first launch
 	// is still setting up its terminal would otherwise start a second one.
 	// A failed launch gives the claim back so the next start retries.
@@ -151,6 +259,15 @@ export async function launchSandboxAgentOnce(
 			error,
 		);
 	}
+}
+
+async function waitForFlag(path: string, timeoutMs: number): Promise<boolean> {
+	const deadline = Date.now() + timeoutMs;
+	while (Date.now() < deadline) {
+		if (existsSync(path)) return true;
+		await new Promise((resolve) => setTimeout(resolve, 250));
+	}
+	return false;
 }
 
 export function runSandboxSelfSeed(

@@ -50,7 +50,7 @@ import type {
 	TriggerConfig,
 	UserIdentityMetadata,
 } from "./types";
-import type { WorkspaceConfig } from "./zod";
+import type { EnvironmentHooks, WorkspaceConfig } from "./zod";
 
 export const taskStatus = pgEnum("task_status", taskStatusEnumValues);
 export const taskPriority = pgEnum("task_priority", taskPriorityValues);
@@ -566,6 +566,10 @@ export const environments = pgTable(
 		provider: text().notNull().default("vercel"),
 		sourceKind: environmentSourceKind("source_kind").notNull(),
 		sourceRef: text("source_ref").notNull(),
+		/** The sandbox bundle every workspace of this environment boots on; null keeps the image's own. */
+		bundleSha: text("bundle_sha"),
+		/** Overrides for the repository's `.superset/config.json` hooks. */
+		hooks: jsonb().$type<EnvironmentHooks>(),
 		archivedAt: timestamp("archived_at", { withTimezone: true }),
 		createdAt: timestamp("created_at", { withTimezone: true })
 			.notNull()

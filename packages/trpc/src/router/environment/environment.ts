@@ -1,5 +1,9 @@
 import { db } from "@superset/db/client";
-import { cloudWorkspaces, environments } from "@superset/db/schema";
+import {
+	cloudWorkspaces,
+	environmentHooksSchema,
+	environments,
+} from "@superset/db/schema";
 import {
 	SANDBOX_IMAGE_NAME,
 	SHARED_ENVIRONMENT_ORGANIZATION_ID,
@@ -8,7 +12,10 @@ import type { TRPCRouterRecord } from "@trpc/server";
 import { and, asc, eq, inArray, isNull } from "drizzle-orm";
 import { z } from "zod";
 import { assertCloudAccess, assertMember } from "../../lib/cloud-guards";
-import { promoteSandboxToEnvironment } from "../../lib/sandbox";
+import {
+	buildSandboxClaim,
+	promoteSandboxToEnvironment,
+} from "../../lib/sandbox";
 import { jwtProcedure, userError } from "../../trpc";
 import { secretsRouter } from "./secrets";
 
@@ -141,9 +148,11 @@ export const environmentRouter = {
 
 			const environmentId = crypto.randomUUID();
 			const goldenName = `env-${environmentId.replaceAll("-", "").slice(0, 24)}`;
+			const { claim } = await buildSandboxClaim({ row: workspace });
 			await promoteSandboxToEnvironment({
 				sourceSandbox: workspace.providerSandboxId,
 				goldenName,
+				claim,
 			});
 
 			const [row] = await db
@@ -166,6 +175,13 @@ export const environmentRouter = {
 				id: z.string().uuid(),
 				name: z.string().min(1).max(100).optional(),
 				sourceRef: z.string().min(1).optional(),
+				/** Null pins nothing: workspaces boot on the image's own bundle. */
+				bundleSha: z
+					.string()
+					.regex(/^[0-9a-f]{64}$/)
+					.nullable()
+					.optional(),
+				hooks: environmentHooksSchema.nullable().optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -176,6 +192,10 @@ export const environmentRouter = {
 				.set({
 					...(input.name ? { name: input.name } : {}),
 					...(input.sourceRef ? { sourceRef: input.sourceRef } : {}),
+					...(input.bundleSha !== undefined
+						? { bundleSha: input.bundleSha }
+						: {}),
+					...(input.hooks !== undefined ? { hooks: input.hooks } : {}),
 				})
 				.where(eq(environments.id, input.id))
 				.returning();

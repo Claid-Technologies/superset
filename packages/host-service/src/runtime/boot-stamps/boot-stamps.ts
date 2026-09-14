@@ -16,15 +16,20 @@ export interface SandboxBootReport {
 		node: string;
 		hostService: string;
 	};
+	/** The bundle the box is on (`current.bundle-hash`), null before the first boot. */
+	bundle: string | null;
+	/** Which of the boot runner's ready flags are up right now. */
+	ready: Record<string, boolean>;
 }
 
 const BOOT_START = "boot.start";
-const STAMP_LINE = /^(\d{13}) (\S+)$/;
+/** `<epoch ms> <phase> [detail]`; the runner's own lines (`setup …`) carry no phase and are skipped below. */
+const STAMP_LINE = /^(\d{13}) ([a-z][a-z0-9-]*(?:\.[a-z0-9-]+)+)(?: .*)?$/;
 
 /**
  * The boot log is append-only across wakes, so a boot is the run of lines
- * from the last `boot.start`. Lines carrying anything but a stamp (the
- * checkout summary) are skipped.
+ * from the last `boot.start`. A phase is a dotted token; a line's trailing
+ * detail and lines the runner's subcommands print are skipped.
  */
 export function parseBootStamps(log: string): BootStamp[] {
 	let current: BootStamp[] = [];

@@ -227,13 +227,6 @@ export const SANDBOX_CREDENTIAL_PLACEHOLDER =
  */
 export const SANDBOX_WORKSPACE_PATH = "/workspace";
 
-/**
- * host.db inside a sandbox. Separate from the checkout so a persistent volume
- * can mount over it without touching the workspace, and so the image can ship
- * a pre-migrated template alongside it.
- */
-export const SANDBOX_HOST_DB_PATH = "/data/host.db";
-
 export const SANDBOX_IMAGE_NAME = "superset-hostsvc";
 
 export const SHARED_ENVIRONMENT_ORGANIZATION_ID =
