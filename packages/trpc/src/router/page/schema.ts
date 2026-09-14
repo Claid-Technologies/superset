@@ -105,9 +105,29 @@ export const createPageSchema = z
 
 export type CreatePageInput = z.infer<typeof createPageSchema>;
 
+export const PAGE_LIST_DEFAULT_LIMIT = 50;
+export const PAGE_LIST_MAX_LIMIT = 200;
+
+export const pageListCursorSchema = z.object({
+	updatedAt: z.string().min(1).max(64),
+	id: pageFields.id,
+});
+
 export const listPagesSchema = z
-	.object({ workspaceId: pageFields.workspaceId.optional() })
+	.object({
+		workspaceId: pageFields.workspaceId.optional(),
+		search: z.string().min(1).max(200).optional(),
+		cursor: pageListCursorSchema.optional(),
+		limit: z
+			.number()
+			.int()
+			.min(1)
+			.max(PAGE_LIST_MAX_LIMIT)
+			.default(PAGE_LIST_DEFAULT_LIMIT),
+	})
 	.optional();
+
+export type PageListCursor = z.infer<typeof pageListCursorSchema>;
 
 const pageRefFieldsSchema = z.object({
 	id: pageFields.id.optional(),

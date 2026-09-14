@@ -22,6 +22,8 @@ import { PagesGrid } from "../PagesGrid";
 import { useCreatePageWithAgent } from "./hooks/useCreatePageWithAgent";
 import { usePageFavorites } from "./hooks/usePageFavorites";
 
+const PAGES_QUERY = { limit: 200 } as const;
+
 const TABS: Array<{ value: PageScope }> = [
 	{ value: "all" },
 	{ value: "pinned" },
@@ -46,21 +48,45 @@ export function PagesView({
 	const { creatingWithAgent, handleCreateWithAgent } = useCreatePageWithAgent();
 	const { data: session } = authClient.useSession();
 	const utils = cloudTrpc.useUtils();
-	const pages = cloudTrpc.page.list.useQuery({});
+	const pages = cloudTrpc.page.list.useInfiniteQuery(PAGES_QUERY, {
+		getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
+	});
+	const {
+		hasNextPage,
+		isFetchingNextPage,
+		isFetchNextPageError,
+		fetchNextPage,
+	} = pages;
+	useEffect(() => {
+		if (hasNextPage && !isFetchingNextPage && !isFetchNextPageError) {
+			void fetchNextPage();
+		}
+	}, [hasNextPage, isFetchingNextPage, isFetchNextPageError, fetchNextPage]);
+
 	const deletePage = cloudTrpc.page.delete.useMutation({
 		onMutate: async ({ id }) => {
-			await utils.page.list.cancel({});
-			const previous = utils.page.list.getData({});
-			utils.page.list.setData({}, (old) =>
-				old?.filter((entry) => entry.id !== id),
+			await utils.page.list.cancel(PAGES_QUERY);
+			const previous = utils.page.list.getInfiniteData(PAGES_QUERY);
+			utils.page.list.setInfiniteData(PAGES_QUERY, (old) =>
+				old
+					? {
+							...old,
+							pages: old.pages.map((page) => ({
+								...page,
+								items: page.items.filter((entry) => entry.id !== id),
+							})),
+						}
+					: old,
 			);
 			return { previous };
 		},
 		onError: (_error, _variables, context) => {
-			if (context?.previous) utils.page.list.setData({}, context.previous);
+			if (context?.previous) {
+				utils.page.list.setInfiniteData(PAGES_QUERY, context.previous);
+			}
 		},
 		onSettled: () => {
-			void utils.page.list.invalidate({});
+			void utils.page.list.invalidate(PAGES_QUERY);
 		},
 	});
 	const { favoritePageIdSet, toggleFavorite } = usePageFavorites();
@@ -73,7 +99,10 @@ export function PagesView({
 		mine: t({ message: "Just me" }),
 	};
 
-	const all = useMemo(() => pages.data ?? [], [pages.data]);
+	const all = useMemo(
+		() => pages.data?.pages.flatMap((page) => page.items) ?? [],
+		[pages.data],
+	);
 
 	const counts = useMemo(
 		() => ({
@@ -88,11 +117,15 @@ export function PagesView({
 	);
 
 	const tabs = useMemo(
-		() => TABS.filter((tab) => tab.value !== "pinned" || counts.pinned > 0),
-		[counts.pinned],
+		() =>
+			TABS.filter(
+				(tab) =>
+					tab.value !== "pinned" || counts.pinned > 0 || scope === "pinned",
+			),
+		[counts.pinned, scope],
 	);
 
-	const pinnedEmpty = scope === "pinned" && counts.pinned === 0;
+	const pinnedEmpty = !hasNextPage && scope === "pinned" && counts.pinned === 0;
 	const activeScope = pinnedEmpty ? "all" : scope;
 
 	useEffect(() => {
