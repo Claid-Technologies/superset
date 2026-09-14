@@ -4134,6 +4134,9 @@ msgstr "共有バージョンを変更できませんでした"
 msgid "Could not change who can see this page"
 msgstr "このページを見られる人を変更できませんでした"
 
+msgid "Could not check your plan. Check your connection and try again."
+msgstr "プランを確認できませんでした。接続を確認してもう一度お試しください。"
+
 msgid "Could not clear browsing data"
 msgstr "閲覧データを消去できませんでした"
 
@@ -10574,9 +10577,6 @@ msgstr "組織のURLを更新しました!"
 msgid "Organization: <0>{0}</0>"
 msgstr "組織: <0>{0}</0>"
 
-msgid "Organizations"
-msgstr "組織"
-
 msgid "Organizations with a second member vs single-member accounts; the line is teams per 1,000."
 msgstr "2人目のメンバーがいる組織と単独メンバーのアカウントの比較。線は1,000あたりのチーム数です。"
 
@@ -13532,6 +13532,9 @@ msgstr "サインインの期限切れ — 次を実行:"
 msgid "Sign-in failed"
 msgstr "サインインに失敗しました"
 
+msgid "Sign-in failed ({reason}). Please try again."
+msgstr "サインインに失敗しました（{reason}）。もう一度お試しください。"
+
 msgid "Signed in as {accountLabel}"
 msgstr "{accountLabel}としてサインイン中"
 
@@ -14208,8 +14211,8 @@ msgstr "Supersetは自己改善するソフトウェアを作っています。�
 msgid "Superset is building self-improving software. It starts with giving engineers the best tools that adapt to their needs over time. We're 3 ex-YC CTOs building a tool that we love."
 msgstr "Supersetは自己改善するソフトウェアを作っています。その第一歩は、時間とともにニーズに適応していく最高のツールをエンジニアに届けることです。私たちはYC出身の元CTO3人で、自分たちが気に入って使えるツールを作っています。"
 
-msgid "Superset is built by a team based in San Francisco, California. For product support or account questions, email <0>{supportEmail}</0> and we'll get back to you within one business day. For partnerships, press, enterprise, or anything for the founding team, write to <1>{foundersEmail}</1>."
-msgstr "Supersetは、米国カリフォルニア州サンフランシスコを拠点とするチームが開発しています。製品サポートやアカウントに関するご質問は<0>{supportEmail}</0>までメールをお送りください。1営業日以内に返信します。パートナーシップ、取材、エンタープライズ、創業チームへのご連絡は<1>{foundersEmail}</1>までお願いします。"
+msgid "Superset is built by a team based in San Francisco, California. For product support or account questions, email <0>{supportEmail}</0> and we'll get back to you within one business day. For partnerships, press, enterprise, or anything else, write to <1>{teamEmail}</1>."
+msgstr "Supersetは、米国カリフォルニア州サンフランシスコを拠点とするチームが開発しています。製品サポートやアカウントに関するご質問は<0>{supportEmail}</0>までメールをお送りください。1営業日以内に返信します。パートナーシップ、取材、エンタープライズ、その他のご連絡は<1>{teamEmail}</1>までお願いします。"
 
 msgid "Superset is built in Superset, so we're our own #1 users—you get paid to make your own life easier. If you've ever wanted to build a product you love to use, come build it with us."
 msgstr "SupersetはSupersetで開発されています。私たち自身が一番のユーザーなので、自分の生活を楽にすることで報酬を得られます。自分が使いたいと思えるプロダクトを作りたいなら、一緒に作りましょう。"
@@ -15073,6 +15076,9 @@ msgstr "このデバイスはSupersetリレーに接続されていないため�
 
 msgid "This directory does not exist. The terminal script will fall back to the workspace root."
 msgstr "このディレクトリは存在しません。ターミナルスクリプトはワークスペースルートにフォールバックします。"
+
+msgid "This email is already registered with another sign-in method, and the provider did not confirm it as verified. Sign in with the method you used before."
+msgstr "このメールアドレスは別のサインイン方法で既に登録されており、プロバイダーが確認済みとして認証しませんでした。以前使用した方法でサインインしてください。"
 
 msgid "This environment was promoted from a workspace, so its repositories are fixed. Promote a workspace again to change them."
 msgstr "この環境はワークスペースから昇格されたため、リポジトリは固定されています。変更するにはワークスペースを再度昇格してください。"

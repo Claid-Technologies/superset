@@ -4134,6 +4134,9 @@ msgstr "No se pudo cambiar la versión compartida"
 msgid "Could not change who can see this page"
 msgstr "No se pudo cambiar quién puede ver esta página"
 
+msgid "Could not check your plan. Check your connection and try again."
+msgstr "No se pudo comprobar tu plan. Revisa tu conexión e inténtalo de nuevo."
+
 msgid "Could not clear browsing data"
 msgstr "No se pudieron borrar los datos de navegación"
 
@@ -10574,9 +10577,6 @@ msgstr "¡URL de la organización actualizada!"
 msgid "Organization: <0>{0}</0>"
 msgstr "Organización: <0>{0}</0>"
 
-msgid "Organizations"
-msgstr "Organizaciones"
-
 msgid "Organizations with a second member vs single-member accounts; the line is teams per 1,000."
 msgstr "Organizaciones con un segundo miembro frente a cuentas de un solo miembro; la línea son equipos por cada 1000."
 
@@ -13532,6 +13532,9 @@ msgstr "La sesión ha caducado: ejecuta"
 msgid "Sign-in failed"
 msgstr "Error al iniciar sesión"
 
+msgid "Sign-in failed ({reason}). Please try again."
+msgstr "Error al iniciar sesión ({reason}). Inténtalo de nuevo."
+
 msgid "Signed in as {accountLabel}"
 msgstr "Sesión iniciada como {accountLabel}"
 
@@ -14208,8 +14211,8 @@ msgstr "Superset construye software que se mejora a sí mismo. Empieza por dar a
 msgid "Superset is building self-improving software. It starts with giving engineers the best tools that adapt to their needs over time. We're 3 ex-YC CTOs building a tool that we love."
 msgstr "Superset construye software que se mejora a sí mismo. Empieza por dar a los ingenieros las mejores herramientas, que se adaptan a sus necesidades con el tiempo. Somos 3 ex-CTO de YC construyendo una herramienta que nos encanta."
 
-msgid "Superset is built by a team based in San Francisco, California. For product support or account questions, email <0>{supportEmail}</0> and we'll get back to you within one business day. For partnerships, press, enterprise, or anything for the founding team, write to <1>{foundersEmail}</1>."
-msgstr "Superset lo desarrolla un equipo con sede en San Francisco, California. Para soporte del producto o dudas sobre tu cuenta, escribe a <0>{supportEmail}</0> y te responderemos en un día laborable. Para alianzas, prensa, enterprise o cualquier tema para el equipo fundador, escribe a <1>{foundersEmail}</1>."
+msgid "Superset is built by a team based in San Francisco, California. For product support or account questions, email <0>{supportEmail}</0> and we'll get back to you within one business day. For partnerships, press, enterprise, or anything else, write to <1>{teamEmail}</1>."
+msgstr "Superset lo desarrolla un equipo con sede en San Francisco, California. Para soporte del producto o dudas sobre tu cuenta, escribe a <0>{supportEmail}</0> y te responderemos en un día laborable. Para alianzas, prensa, enterprise o cualquier otro tema, escribe a <1>{teamEmail}</1>."
 
 msgid "Superset is built in Superset, so we're our own #1 users—you get paid to make your own life easier. If you've ever wanted to build a product you love to use, come build it with us."
 msgstr "Superset se desarrolla en Superset, así que somos nuestros propios usuarios principales: te pagan por hacerte la vida más fácil. Si alguna vez has querido crear un producto que te encante usar, ven a construirlo con nosotros."
@@ -15073,6 +15076,9 @@ msgstr "Este dispositivo no está conectado al relay de Superset, así que se om
 
 msgid "This directory does not exist. The terminal script will fall back to the workspace root."
 msgstr "Este directorio no existe. El script de terminal usará la raíz del espacio de trabajo."
+
+msgid "This email is already registered with another sign-in method, and the provider did not confirm it as verified. Sign in with the method you used before."
+msgstr "Este correo ya está registrado con otro método de inicio de sesión y el proveedor no lo confirmó como verificado. Inicia sesión con el método que usaste antes."
 
 msgid "This environment was promoted from a workspace, so its repositories are fixed. Promote a workspace again to change them."
 msgstr "Este entorno se promovió desde un espacio de trabajo, así que sus repositorios están fijados. Promueve de nuevo un espacio de trabajo para cambiarlos."

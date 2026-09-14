@@ -4134,6 +4134,9 @@ msgstr "无法更改分享的版本"
 msgid "Could not change who can see this page"
 msgstr "无法更改谁可以查看这个页面"
 
+msgid "Could not check your plan. Check your connection and try again."
+msgstr "无法检查您的套餐。请检查网络连接后重试。"
+
 msgid "Could not clear browsing data"
 msgstr "无法清除浏览数据"
 
@@ -10574,9 +10577,6 @@ msgstr "组织URL已更新！"
 msgid "Organization: <0>{0}</0>"
 msgstr "组织：<0>{0}</0>"
 
-msgid "Organizations"
-msgstr "组织"
-
 msgid "Organizations with a second member vs single-member accounts; the line is teams per 1,000."
 msgstr "拥有第二名成员的组织与单成员账户的对比；折线为每 1,000 个组织的团队数。"
 
@@ -13532,6 +13532,9 @@ msgstr "登录已过期——请运行"
 msgid "Sign-in failed"
 msgstr "登录失败"
 
+msgid "Sign-in failed ({reason}). Please try again."
+msgstr "登录失败（{reason}）。请重试。"
+
 msgid "Signed in as {accountLabel}"
 msgstr "已登录为{accountLabel}"
 
@@ -14208,8 +14211,8 @@ msgstr "Superset正在构建能自我改进的软件。第一步，是给工程�
 msgid "Superset is building self-improving software. It starts with giving engineers the best tools that adapt to their needs over time. We're 3 ex-YC CTOs building a tool that we love."
 msgstr "Superset正在构建能自我改进的软件。第一步，是给工程师最好的工具，并让它随需求一起演进。我们是3位YC出身的前CTO，在做一个自己喜欢的工具。"
 
-msgid "Superset is built by a team based in San Francisco, California. For product support or account questions, email <0>{supportEmail}</0> and we'll get back to you within one business day. For partnerships, press, enterprise, or anything for the founding team, write to <1>{foundersEmail}</1>."
-msgstr "Superset由一支位于加州旧金山的团队打造。产品支持或账户问题，请发邮件至<0>{supportEmail}</0>，我们会在一个工作日内回复。合作、媒体、企业版，或任何想直接找创始团队的事，请写信至<1>{foundersEmail}</1>。"
+msgid "Superset is built by a team based in San Francisco, California. For product support or account questions, email <0>{supportEmail}</0> and we'll get back to you within one business day. For partnerships, press, enterprise, or anything else, write to <1>{teamEmail}</1>."
+msgstr "Superset由一支位于加州旧金山的团队打造。产品支持或账户问题，请发邮件至<0>{supportEmail}</0>，我们会在一个工作日内回复。合作、媒体、企业版或其他任何事宜，请写信至<1>{teamEmail}</1>。"
 
 msgid "Superset is built in Superset, so we're our own #1 users—you get paid to make your own life easier. If you've ever wanted to build a product you love to use, come build it with us."
 msgstr "Superset 就是在 Superset 中构建的，因此我们自己就是它的头号用户——你可以通过让自己的工作更轻松来获得报酬。如果你一直想打造一款自己爱用的产品，就来和我们一起构建吧。"
@@ -15073,6 +15076,9 @@ msgstr "此设备没有连接到Superset中继，自动化的运行会被跳过�
 
 msgid "This directory does not exist. The terminal script will fall back to the workspace root."
 msgstr "此目录不存在。终端脚本将回退到工作区根目录。"
+
+msgid "This email is already registered with another sign-in method, and the provider did not confirm it as verified. Sign in with the method you used before."
+msgstr "此邮箱已通过其他登录方式注册，且提供方未将其确认为已验证。请使用你之前使用的方式登录。"
 
 msgid "This environment was promoted from a workspace, so its repositories are fixed. Promote a workspace again to change them."
 msgstr "此环境由工作区提升而来，因此其仓库已固定。请再次提升一个工作区以更改它们。"

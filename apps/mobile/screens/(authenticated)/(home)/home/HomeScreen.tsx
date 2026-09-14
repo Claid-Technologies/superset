@@ -1,10 +1,12 @@
 import { LegendList } from "@legendapp/list/react-native";
 import { useLingui } from "@lingui/react/macro";
 import { i18n } from "@superset/i18n";
+import { FEATURE_FLAGS } from "@superset/shared/constants";
 import { useQueryClient } from "@tanstack/react-query";
 import { isAfter } from "date-fns";
 import * as Haptics from "expo-haptics";
 import { Stack, useFocusEffect, useRouter } from "expo-router";
+import { useFeatureFlag } from "posthog-react-native";
 import { useCallback, useMemo, useRef, useState } from "react";
 import {
 	ActivityIndicator,
@@ -169,10 +171,14 @@ export function HomeScreen() {
 	// app is open. Foreground-only for now: nothing server-side knows an agent
 	// needs attention yet, so the card goes stale (and says so) once the app
 	// closes. ActivityKit push updates are the follow-up that fixes that.
+	const liveActivityEnabled = Boolean(
+		useFeatureFlag(FEATURE_FLAGS.MOBILE_LIVE_ACTIVITY),
+	);
 	useAgentLiveActivity({
 		terminalsByWorkspace,
 		workspaces,
 		projects,
+		enabled: liveActivityEnabled,
 	});
 	const pullRequests = usePullRequests();
 	const { query: hostsQuery } = useOrgHosts();
@@ -581,7 +587,7 @@ export function HomeScreen() {
 				logo={activeOrganization?.logo}
 				onPress={() => {
 					void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-					router.push("/(authenticated)/(home)/organizations");
+					router.push("/(authenticated)/settings");
 				}}
 			/>
 			{/* Search opens as a sheet rather than a search bar in this header: on
