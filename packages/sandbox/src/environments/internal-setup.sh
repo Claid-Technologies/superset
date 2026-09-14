@@ -8,6 +8,9 @@ set -uo pipefail
 
 log() { printf '[internal-setup] %s\n' "$1"; }
 
+# The sandbox API runs commands with no USER in their env; bash under set -u
+# exits 127 on the first reference.
+ME="$(id -un)"
 CONFIG_REPO="${SUPERSET_INTERNAL_CONFIG_REPO:-https://github.com/saddlepaddle/config.git}"
 CONFIG_DIR="$HOME/code/config"
 WORKSPACE="${SUPERSET_WORKSPACE_PATH:-/workspace}"
@@ -153,8 +156,8 @@ ZRC
   log ".zshrc wired to config repo"
 fi
 
-if command -v zsh >/dev/null && [ "$(getent passwd "$USER" | cut -d: -f7)" != "$(command -v zsh)" ]; then
-  sudo chsh -s "$(command -v zsh)" "$USER"
+if command -v zsh >/dev/null && [ "$(getent passwd "$ME" | cut -d: -f7)" != "$(command -v zsh)" ]; then
+  sudo chsh -s "$(command -v zsh)" "$ME"
   log "login shell set to zsh"
 fi
 
