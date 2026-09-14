@@ -10,6 +10,7 @@ import {
 import { LocalGitCredentialProvider } from "./providers/git";
 import { PskHostAuthProvider } from "./providers/host-auth";
 import { provisionAgentIntegrations } from "./runtime/agent-provisioning";
+import { processStartedAt, recordBootStamp } from "./runtime/boot-stamps";
 import { resolveBrowserBridgeFromEnv } from "./runtime/browser-bridge/env";
 import { applyLoginShellEnvToProcess } from "./runtime/login-shell-env";
 import { detachFromLaunchDirectory } from "./runtime/working-directory";
@@ -22,6 +23,7 @@ import { connectRelay, type TunnelClient } from "./tunnel";
 
 async function main(): Promise<void> {
 	installConsoleTimestamps();
+	recordBootStamp("host.process.start", processStartedAt());
 	initSentry({ organizationId: env.ORGANIZATION_ID });
 
 	// Before anything spawns a worker thread or a child process: a host
@@ -133,6 +135,7 @@ async function main(): Promise<void> {
 			? `[${info.address}]`
 			: info.address;
 		console.log(`[host-service] listening on http://${address}:${info.port}`);
+		recordBootStamp("host.listening");
 
 		startTerminalReaper(db);
 		// A cloud workspace created with an agent starts it now: the pty daemon

@@ -9,6 +9,15 @@
 # processes). Not the image's ENTRYPOINT: the platform runs none.
 set -uo pipefail
 
+# Every phase writes `<epoch ms> <phase>` here, and host-service reports the
+# lines of the current boot on health.check. A wake appends to the same file,
+# so each boot begins with its own `boot.start`.
+BOOT_LOG=/data/boot.log
+export SUPERSET_SANDBOX_BOOT_LOG="$BOOT_LOG"
+mkdir -p /data
+stamp() { printf '%s %s\n' "$(date +%s%3N)" "$1" >> "$BOOT_LOG"; }
+stamp boot.start
+
 WORKSPACE="${SUPERSET_SANDBOX_WORKSPACE_PATH:-/workspace}"
 BRANCH="${SUPERSET_SANDBOX_BRANCH:-}"
 REPO_URL="${SUPERSET_SANDBOX_REPO_URL:-}"
@@ -27,13 +36,14 @@ if [ -f /data/environment.env ]; then
   . /data/environment.env
   set +a
 fi
+stamp env.loaded
 
 # The schema is baked, so first boot has nothing to migrate. Copied rather than
 # used in place because /data is where a persistent volume would mount.
-mkdir -p /data
 if [ ! -f /data/host.db ] && [ -f /app/host.db.template ]; then
   cp /app/host.db.template /data/host.db
 fi
+stamp hostdb.ready
 
 # The image bakes no repo, but an environment forked from a configured sandbox
 # may carry one. When the workspace wants that repo, moving to its
@@ -46,14 +56,15 @@ fi
 # from the wrong origin leaves a sandbox serving somebody else's code, so the
 # URLs are compared rather than assumed to match.
 BOOTSTRAP_MARKER=/data/.workspace-bootstrapped
-BOOT_LOG=/data/boot.log
 
 if [ -n "$REPO_URL" ] && [ ! -f "$BOOTSTRAP_MARKER" ]; then
+  stamp checkout.start
   # A fork's filesystem comes from a snapshot; give a checkout that should be
   # there a moment to appear before concluding it is not.
   for _ in $(seq 1 60); do [ -e "$WORKSPACE/.git/config" ] && break; sleep 0.5; done
+  stamp checkout.git.visible
   BAKED_URL=$(git -C "$WORKSPACE" remote get-url origin 2>/dev/null || echo "")
-  echo "$(date -u +%FT%TZ) bootstrap baked='$BAKED_URL' requested='$REPO_URL' git=$([ -d "$WORKSPACE/.git" ] && echo yes || echo no) modules=$([ -d "$WORKSPACE/node_modules" ] && echo yes || echo no)" >> "$BOOT_LOG"
+  echo "$(date +%s%3N) checkout.info baked='$BAKED_URL' requested='$REPO_URL' git=$([ -d "$WORKSPACE/.git" ] && echo yes || echo no) modules=$([ -d "$WORKSPACE/node_modules" ] && echo yes || echo no)" >> "$BOOT_LOG"
   if [ -n "${SUPERSET_SANDBOX_GIT_TOKEN:-}" ]; then
     export GIT_ASKPASS=/app/git-askpass.sh
   fi
@@ -62,16 +73,21 @@ if [ -n "$REPO_URL" ] && [ ! -f "$BOOTSTRAP_MARKER" ]; then
       cd "$WORKSPACE" || exit 1
       git fetch --depth 1 origin "$BRANCH" >/dev/null 2>&1 &&
         git checkout -q -B "$BRANCH" FETCH_HEAD >/dev/null 2>&1
-    ) && touch "$BOOTSTRAP_MARKER"
+    ) && touch "$BOOTSTRAP_MARKER" && stamp checkout.end.fetch || stamp checkout.end.fetch-failed
   else
     rm -rf "$WORKSPACE"
     if git clone --depth 1 --single-branch --branch "$BRANCH" "$REPO_URL" "$WORKSPACE" \
       >/dev/null 2>&1 ||
       git clone --depth 1 "$REPO_URL" "$WORKSPACE" >/dev/null 2>&1; then
       touch "$BOOTSTRAP_MARKER"
+      stamp checkout.end.clone
+    else
+      stamp checkout.end.clone-failed
     fi
   fi
   unset GIT_ASKPASS
+else
+  stamp checkout.skipped
 fi
 
 # Docker for the projects that need it; the VM has no init to start it. A
@@ -79,12 +95,14 @@ fi
 if command -v dockerd >/dev/null 2>&1 && ! pgrep -x dockerd >/dev/null; then
   dockerd >/var/log/dockerd.log 2>&1 &
 fi
+stamp docker.started
 
 # The display for the desktop pane. Xvnc listens on loopback only; host-service
 # proxies /desktop/vnc onto it, so nothing here is reachable from outside the
 # sandbox. All fire-and-forget: a missing display costs the pane, not the
 # workspace.
 if command -v Xvnc >/dev/null 2>&1; then
+  stamp display.start
   export DISPLAY=:1
   # No GPU: GTK and Chrome render through llvmpipe instead of probing for one.
   export LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe
@@ -116,9 +134,11 @@ if command -v Xvnc >/dev/null 2>&1; then
   Xvnc :1 -geometry 1920x1200 -depth 24 -dpi 96 -rfbport 5900 -localhost \
     -SecurityTypes None -AlwaysShared -BlacklistThreshold 1000000 \
     -desktop superset >/dev/null 2>&1 &
+  stamp display.xvnc.spawned
   (
     # The socket appears before the server accepts connections.
     for _ in $(seq 1 80); do xdpyinfo -display :1 >/dev/null 2>&1 && break; sleep 0.25; done
+    stamp display.x.ready
     # The wallpaper is chosen once per workspace from the set the image ships,
     # by the workspace id, so it is the same on every wake and differs between
     # boxes. Written before the session starts: xfdesktop reads it on launch.
@@ -163,8 +183,10 @@ DESKTOP
     if command -v xfce4-session >/dev/null 2>&1; then
       dbus-launch --exit-with-session xfce4-session >/dev/null 2>&1 &
     fi
+    stamp display.session.spawned
   ) &
 fi
 
 cd /app
+stamp host.exec
 exec node host-service.js

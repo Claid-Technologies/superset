@@ -312,7 +312,11 @@ export const cloudWorkspaceRouter = {
 					cause: { kind: "CLOUD_WORKSPACE_NOT_READY", status: row.status },
 				});
 			}
-			let address: { target: string; running: boolean };
+			let address: {
+				target: string;
+				running: boolean;
+				healthyAt: Date | null;
+			};
 			try {
 				address = await resolveSandboxAddress({
 					providerSandboxId: row.providerSandboxId,
@@ -343,6 +347,21 @@ export const cloudWorkspaceRouter = {
 					message: "Cloud workspace is failed",
 					cause: { kind: "CLOUD_WORKSPACE_NOT_READY", status: "failed" },
 				});
+			}
+			// The first wake is the first time anything sees host-service answer,
+			// which closes the job's timeline; later wakes are reopens and leave it.
+			// Nudged so the desktop's copy of the row carries it when it reports.
+			if (address.healthyAt && !row.firstHealthyAt) {
+				await db
+					.update(cloudWorkspaces)
+					.set({ firstHealthyAt: address.healthyAt })
+					.where(
+						and(
+							eq(cloudWorkspaces.id, row.id),
+							isNull(cloudWorkspaces.firstHealthyAt),
+						),
+					);
+				nudge(row.organizationId, "cloud_workspaces");
 			}
 			const { url, token, expiresAt } = await mintSandboxGateAccess({
 				workspaceId: row.id,

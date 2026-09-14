@@ -153,9 +153,21 @@ function agentCredentialPolicy(workspaceEnv: Record<string, string>): {
 	return { envs, networkPolicy: { allow: { ...allow, "*": [] } } };
 }
 
+/**
+ * When the provider call that makes the sandbox started and returned, and
+ * when the boot script was fired into it. Job-side clock; the boot script's
+ * own phases are stamped inside the sandbox and read off health.check.
+ */
+export interface ProvisionStamps {
+	sandboxCreateStartedAt: Date;
+	sandboxCreateFinishedAt: Date;
+	bootFiredAt: Date;
+}
+
 export interface ProvisionedSandbox {
 	providerSandboxId: string;
 	sandboxUrl: string;
+	stamps: ProvisionStamps;
 }
 
 export interface SandboxEnvironment {
@@ -222,6 +234,7 @@ export async function provisionSandbox(args: {
 		tags: { kind: "workspace" },
 	};
 
+	const sandboxCreateStartedAt = new Date();
 	const sandbox =
 		(await getSandbox(args.name)) ??
 		(args.environment.sourceKind === "fork"
@@ -237,6 +250,7 @@ export async function provisionSandbox(args: {
 					region: env.VERCEL_SANDBOX_REGION as SandboxRegion,
 					resources: { vcpus: IMAGE_SANDBOX_VCPUS },
 				}));
+	const sandboxCreateFinishedAt = new Date();
 
 	const sandboxUrl = sandbox.domain(HOST_SERVICE_PORT);
 	// Before the boot script, which sources it; a re-delivered provision
@@ -250,7 +264,15 @@ export async function provisionSandbox(args: {
 	);
 	await writeEnvironmentFile(sandbox, environmentEnvBehindWorkspace);
 	await startHostService(sandbox);
-	return { providerSandboxId: args.name, sandboxUrl };
+	return {
+		providerSandboxId: args.name,
+		sandboxUrl,
+		stamps: {
+			sandboxCreateStartedAt,
+			sandboxCreateFinishedAt,
+			bootFiredAt: new Date(),
+		},
+	};
 }
 
 const HOST_READY_TIMEOUT_MS = 60_000;
@@ -309,6 +331,8 @@ export async function resolveSandboxAddress(args: {
 	 * requests out to every sandbox it lists must skip the ones that are not.
 	 */
 	running: boolean;
+	/** When host-service answered this wake; null when nothing was woken. */
+	healthyAt: Date | null;
 }> {
 	try {
 		const sandbox = await Sandbox.get({
@@ -318,7 +342,7 @@ export async function resolveSandboxAddress(args: {
 		});
 		const target = sandbox.domain(HOST_SERVICE_PORT);
 		const running = sandbox.status === "running";
-		if (!args.wake) return { target, running };
+		if (!args.wake) return { target, running, healthyAt: null };
 
 		if (running) {
 			const remaining = (sandbox.expiresAt?.getTime() ?? 0) - Date.now();
@@ -337,7 +361,7 @@ export async function resolveSandboxAddress(args: {
 			args.wake.hostSecret,
 			args.providerSandboxId,
 		);
-		return { target, running };
+		return { target, running, healthyAt: new Date() };
 	} catch (error) {
 		if (isUnavailable(error)) {
 			throw new SandboxUnavailableError(args.providerSandboxId, error);

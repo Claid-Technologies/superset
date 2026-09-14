@@ -2,8 +2,27 @@ import {
 	getHostInstallSource,
 	HOST_SERVICE_VERSION,
 } from "../../../install-source";
+import {
+	readBootStamps,
+	type SandboxBootReport,
+} from "../../../runtime/boot-stamps";
 import { getRegistrationState } from "../../../tunnel/registration-state";
 import { publicProcedure, router } from "../../index";
+
+/**
+ * A sandbox reports how its boot went: the boot script's phase stamps plus
+ * this process's own, and the runtime it landed on. A host on someone's
+ * machine has no boot script and reports nothing here.
+ */
+export function sandboxBootReport(
+	env: NodeJS.ProcessEnv = process.env,
+): SandboxBootReport | undefined {
+	if (env.SUPERSET_HOST_RUN_MODE !== "sandbox") return undefined;
+	return {
+		stamps: readBootStamps(),
+		runtime: { node: process.version, hostService: HOST_SERVICE_VERSION },
+	};
+}
 
 export const healthRouter = router({
 	check: publicProcedure.query(() => {
@@ -20,6 +39,7 @@ export const healthRouter = router({
 			installSource: getHostInstallSource(),
 			cloudRegistered: registration.registered,
 			registrationError: registration.lastError,
+			sandboxBoot: sandboxBootReport(),
 		};
 	}),
 });

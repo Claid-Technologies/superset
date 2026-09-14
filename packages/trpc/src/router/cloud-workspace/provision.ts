@@ -72,6 +72,7 @@ export async function provisionCloudWorkspace(
 	if (row.status !== "provisioning") return "skipped";
 
 	const providerSandboxId = sandboxNameFor(row.id);
+	const provisionStartedAt = new Date();
 	try {
 		// Naming is a model call (~0.7s) and the sandbox itself now comes up in
 		// about that long, so it is the longest thing here. Run it alongside the
@@ -158,6 +159,8 @@ export async function provisionCloudWorkspace(
 				providerSandboxId: sandbox.providerSandboxId,
 				sandboxUrl: sandbox.sandboxUrl,
 				status: "ready",
+				provisionStartedAt,
+				...sandbox.stamps,
 			})
 			.where(eq(cloudWorkspaces.id, row.id));
 		nudge(row.organizationId, "cloud_workspaces");
