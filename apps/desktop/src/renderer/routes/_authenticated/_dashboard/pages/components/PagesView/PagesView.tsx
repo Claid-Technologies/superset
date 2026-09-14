@@ -201,6 +201,23 @@ export function PagesView({
 						</div>
 					)}
 
+					{isFetchNextPageError && all.length > 0 && (
+						<div className="mt-4 flex items-center gap-2 rounded-md bg-destructive/10 px-3 py-1.5 text-destructive text-xs">
+							<span className="flex-1">
+								<Trans>
+									Some pages couldn't load, so this list is incomplete.
+								</Trans>
+							</span>
+							<button
+								type="button"
+								className="underline hover:no-underline"
+								onClick={() => void fetchNextPage()}
+							>
+								<Trans>Retry</Trans>
+							</button>
+						</div>
+					)}
+
 					<PagesGrid
 						pages={visible}
 						onCreate={handleCreateWithAgent}

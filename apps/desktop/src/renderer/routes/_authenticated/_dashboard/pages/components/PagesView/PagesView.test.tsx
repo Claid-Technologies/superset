@@ -176,6 +176,26 @@ describe("PagesView error surfacing", () => {
 		expect(gridProps.pages).toHaveLength(1);
 	});
 
+	test("says the list is short, and retries the batch on demand", async () => {
+		listResult.hasNextPage = true;
+		listResult.isFetchNextPageError = true;
+		listResult.error = { message: "network down" };
+		const view = await act(async () => renderView());
+		const retry = view.getByRole("button", { name: "Retry" });
+		expect(retry).toBeTruthy();
+		fetchNextPage.mockClear();
+		await act(async () => {
+			retry.click();
+		});
+		expect(fetchNextPage).toHaveBeenCalled();
+	});
+
+	test("stays quiet while the sweep is still going fine", async () => {
+		listResult.hasNextPage = true;
+		const view = await act(async () => renderView());
+		expect(view.queryByRole("button", { name: "Retry" })).toBeNull();
+	});
+
 	test("shows the error when the first batch failed and nothing loaded", async () => {
 		listResult.data = { pages: [] };
 		listResult.error = { message: "network down" };
