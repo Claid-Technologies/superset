@@ -292,6 +292,7 @@ msgid "{0} · behind"
 msgstr "{0} · cũ"
 
 #. placeholder {0}: creator.name
+#. placeholder {0}: option.name
 msgid "{0} (you)"
 msgstr "{0} (bạn)"
 
@@ -6476,6 +6477,9 @@ msgstr "Lọc agent..."
 
 msgid "Filter by @{normalizedSearch}"
 msgstr "Lọc theo @{normalizedSearch}"
+
+msgid "Filter by author: {label}"
+msgstr "Lọc theo tác giả: {label}"
 
 msgid "Filter by device"
 msgstr "Lọc theo thiết bị"
@@ -15643,6 +15647,9 @@ msgstr "Không rõ"
 msgctxt "person"
 msgid "Unknown"
 msgstr "Không rõ"
+
+msgid "Unknown author"
+msgstr "Tác giả không xác định"
 
 msgid "Unknown device"
 msgstr "Thiết bị không rõ"

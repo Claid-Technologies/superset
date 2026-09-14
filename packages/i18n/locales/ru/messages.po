@@ -292,6 +292,7 @@ msgid "{0} · behind"
 msgstr "{0} · устарел"
 
 #. placeholder {0}: creator.name
+#. placeholder {0}: option.name
 msgid "{0} (you)"
 msgstr "{0} (вы)"
 
@@ -6476,6 +6477,9 @@ msgstr "Фильтр агентов..."
 
 msgid "Filter by @{normalizedSearch}"
 msgstr "Фильтр по @{normalizedSearch}"
+
+msgid "Filter by author: {label}"
+msgstr "Фильтр по автору: {label}"
 
 msgid "Filter by device"
 msgstr "Фильтр по устройству"
@@ -15643,6 +15647,9 @@ msgstr "Неизвестно"
 msgctxt "person"
 msgid "Unknown"
 msgstr "Неизвестно"
+
+msgid "Unknown author"
+msgstr "Неизвестный автор"
 
 msgid "Unknown device"
 msgstr "Неизвестное устройство"

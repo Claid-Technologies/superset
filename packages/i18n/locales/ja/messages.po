@@ -292,6 +292,7 @@ msgid "{0} · behind"
 msgstr "{0} · 古い"
 
 #. placeholder {0}: creator.name
+#. placeholder {0}: option.name
 msgid "{0} (you)"
 msgstr "{0}（自分）"
 
@@ -6476,6 +6477,9 @@ msgstr "エージェントを絞り込み..."
 
 msgid "Filter by @{normalizedSearch}"
 msgstr "@{normalizedSearch}で絞り込む"
+
+msgid "Filter by author: {label}"
+msgstr "作成者で絞り込み: {label}"
 
 msgid "Filter by device"
 msgstr "デバイスで絞り込む"
@@ -15643,6 +15647,9 @@ msgstr "不明"
 msgctxt "person"
 msgid "Unknown"
 msgstr "不明"
+
+msgid "Unknown author"
+msgstr "不明な作成者"
 
 msgid "Unknown device"
 msgstr "不明なデバイス"

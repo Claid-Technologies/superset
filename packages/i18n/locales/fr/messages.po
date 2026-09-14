@@ -292,6 +292,7 @@ msgid "{0} · behind"
 msgstr "{0} · en retard"
 
 #. placeholder {0}: creator.name
+#. placeholder {0}: option.name
 msgid "{0} (you)"
 msgstr "{0} (vous)"
 
@@ -6476,6 +6477,9 @@ msgstr "Filtrer les agents..."
 
 msgid "Filter by @{normalizedSearch}"
 msgstr "Filtrer par @{normalizedSearch}"
+
+msgid "Filter by author: {label}"
+msgstr "Filtrer par auteur : {label}"
 
 msgid "Filter by device"
 msgstr "Filtrer par appareil"
@@ -15643,6 +15647,9 @@ msgstr "Inconnue"
 msgctxt "person"
 msgid "Unknown"
 msgstr "Inconnu"
+
+msgid "Unknown author"
+msgstr "Auteur inconnu"
 
 msgid "Unknown device"
 msgstr "Appareil inconnu"

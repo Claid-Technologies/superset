@@ -292,6 +292,7 @@ msgid "{0} · behind"
 msgstr "{0} · tertinggal"
 
 #. placeholder {0}: creator.name
+#. placeholder {0}: option.name
 msgid "{0} (you)"
 msgstr "{0} (Anda)"
 
@@ -6476,6 +6477,9 @@ msgstr "Filter agen..."
 
 msgid "Filter by @{normalizedSearch}"
 msgstr "Filter menurut @{normalizedSearch}"
+
+msgid "Filter by author: {label}"
+msgstr "Filter menurut penulis: {label}"
 
 msgid "Filter by device"
 msgstr "Filter berdasarkan perangkat"
@@ -15643,6 +15647,9 @@ msgstr "Tidak diketahui"
 msgctxt "person"
 msgid "Unknown"
 msgstr "Tidak diketahui"
+
+msgid "Unknown author"
+msgstr "Penulis tidak dikenal"
 
 msgid "Unknown device"
 msgstr "Perangkat tidak diketahui"

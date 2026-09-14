@@ -292,6 +292,7 @@ msgid "{0} · behind"
 msgstr "{0} · eski"
 
 #. placeholder {0}: creator.name
+#. placeholder {0}: option.name
 msgid "{0} (you)"
 msgstr "{0} (siz)"
 
@@ -6476,6 +6477,9 @@ msgstr "Ajanları filtrele..."
 
 msgid "Filter by @{normalizedSearch}"
 msgstr "@{normalizedSearch} ile filtrele"
+
+msgid "Filter by author: {label}"
+msgstr "Yazara göre filtrele: {label}"
 
 msgid "Filter by device"
 msgstr "Cihaza göre filtrele"
@@ -15643,6 +15647,9 @@ msgstr "Bilinmiyor"
 msgctxt "person"
 msgid "Unknown"
 msgstr "Bilinmiyor"
+
+msgid "Unknown author"
+msgstr "Bilinmeyen yazar"
 
 msgid "Unknown device"
 msgstr "Bilinmeyen cihaz"
