@@ -59,6 +59,7 @@ jobs:
           CDN_R2_SECRET_ACCESS_KEY: ${{ secrets.CDN_R2_SECRET_ACCESS_KEY }}
           CDN_R2_ENDPOINT: ${{ secrets.CDN_R2_ENDPOINT }}
           CDN_R2_BUCKET: ${{ secrets.CDN_R2_BUCKET }}
+          CDN_URL: ${{ secrets.CDN_URL }}
         run: bun run build --dry
 
       - name: Build the image locally
@@ -97,6 +98,7 @@ jobs:
           CDN_R2_SECRET_ACCESS_KEY: ${{ secrets.CDN_R2_SECRET_ACCESS_KEY }}
           CDN_R2_ENDPOINT: ${{ secrets.CDN_R2_ENDPOINT }}
           CDN_R2_BUCKET: ${{ secrets.CDN_R2_BUCKET }}
+          CDN_URL: ${{ secrets.CDN_URL }}
         run: bun run build --publish
 
   real-sandbox:
@@ -128,4 +130,5 @@ jobs:
           CDN_R2_SECRET_ACCESS_KEY: ${{ secrets.CDN_R2_SECRET_ACCESS_KEY }}
           CDN_R2_ENDPOINT: ${{ secrets.CDN_R2_ENDPOINT }}
           CDN_R2_BUCKET: ${{ secrets.CDN_R2_BUCKET }}
+          CDN_URL: ${{ secrets.CDN_URL }}
         run: bun run src/real-sandbox.ts
