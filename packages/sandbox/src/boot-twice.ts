@@ -3,9 +3,9 @@
  * must boot as a box would, and a second boot must install nothing, fetch
  * nothing and skip every step. Runs the real superset-boot in a container
  * with a stub identity the way the control plane does through the sandbox
- * API (as the image user, through sudo, the identity and the secret
- * preserved from the command's env), then reads the boot log and the step
- * markers.
+ * API (the identity written as a file, then boot as the image user through
+ * sudo with the secret preserved from the command's env), then reads the
+ * boot log and the step markers.
  *
  *   bun run src/boot-twice.ts            expects superset-sandbox:local
  *   SANDBOX_IMAGE=... bun run src/boot-twice.ts
@@ -65,11 +65,9 @@ function bootAsUser(): string {
 			"ubuntu",
 			"-e",
 			"HOST_SERVICE_SECRET=boot-twice-secret",
-			"-e",
-			`SUPERSET_SANDBOX_CONF=${identity}`,
 			NAME,
 			"sudo",
-			"--preserve-env=HOST_SERVICE_SECRET,SUPERSET_SANDBOX_CONF",
+			"--preserve-env=HOST_SERVICE_SECRET",
 			"/usr/local/bin/superset-boot",
 		],
 		{ stdout: "pipe", stderr: "pipe" },
@@ -113,6 +111,10 @@ docker([
 	"infinity",
 ]);
 try {
+	// The identity file, the way the control plane writes it before boot.
+	docker(["exec", "-i", NAME, "bash", "-c", `cat > ${SANDBOX_PATHS.conf}`], {
+		stdin: identity,
+	});
 	const boot = (_n: number) => {
 		const started = Date.now();
 		bootAsUser();

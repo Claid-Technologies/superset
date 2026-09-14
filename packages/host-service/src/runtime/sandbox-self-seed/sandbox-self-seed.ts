@@ -49,10 +49,10 @@ export interface SandboxIdentity {
 	hooks: SandboxHooks | null;
 }
 
+/** The hook overrides the box acts on; `setup` is the release's and never arrives here. */
 export interface SandboxHooks {
 	start?: string[];
 	ports?: number[];
-	setup?: string[];
 }
 
 function readSandboxHooks(raw: string | undefined): SandboxHooks | null {
@@ -67,7 +67,6 @@ function readSandboxHooks(raw: string | undefined): SandboxHooks | null {
 				: undefined;
 		return {
 			start: strings(hooks.start),
-			setup: strings(hooks.setup),
 			ports: Array.isArray(hooks.ports)
 				? hooks.ports.filter((port): port is number => typeof port === "number")
 				: undefined,

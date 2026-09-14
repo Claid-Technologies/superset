@@ -60,15 +60,17 @@ host-service is the last thing the boot script starts.
 Measured 2026-09-14 after `packages/sandbox` landed (`bun run --cwd
 packages/sandbox measure`, three creates and three reopens against the dev
 golden `env-internal-mu0xelrw`, sfo1, 8 vCPU, bundle `336c6f9e`). The control
-plane now makes one call to boot a box (identity and secret in the boot
-command's env), fires the policy update alongside it, polls health at 100 ms
-and, on a create, settles instead of re-running the wake.
+plane writes the identity file and fires the policy update together, then
+boots with the secret in the command's env, polls health at 100 ms and, on a
+create, settles instead of re-running the wake. (Measured with the identity
+in the boot command's env, one call fewer; the file write chosen afterwards
+adds about 0.3 s to these numbers.)
 
 | Stage | Where | Measured (median) |
 | --- | --- | --- |
 | Name, clone token, environment, repo hooks | job | 0.31 s |
 | `Sandbox.fork` | Vercel | 0.71 s |
-| Fire boot (the one call; the first to touch the VM waits for it) | Vercel | **13.2 s** (2.4 s on one of three: the VM was already up) |
+| Write the identity, fire boot (the first call to touch the VM waits for it) | Vercel | **13.2 s** (2.4 s on one of three: the VM was already up) |
 | `superset-boot` to `host.exec` (run dir, bundle check, three passes) | box | 0.27 s |
 | host-service process start → listening | box | 0.84 s |
 | boot fired → first healthy, as the job's own wake saw it | job | 1.28 s |
