@@ -372,16 +372,20 @@ let probeFailed = await probeBox({
 });
 if (ENV_FILE) {
 	const probeBox2 = await Sandbox.get({ ...credentials, name: probe });
+	// The stack listens where the env file says a laptop's would.
+	const apiPort = probeEnv.API_PORT || "3001";
 	let up = false;
 	for (let i = 0; i < 84 && !up; i++) {
 		const { logs } = await run(
 			probeBox2,
-			"curl -s -o /dev/null -w '%{http_code}' http://localhost:3001/api/auth/get-session",
+			`curl -s -o /dev/null -w '%{http_code}' http://localhost:${apiPort}/api/auth/get-session`,
 		);
 		up = /200/.test(logs);
 		if (!up) await new Promise((r) => setTimeout(r, 5000));
 	}
-	log(`${up ? "ok  " : "FAIL"} dev stack (api on :3001) from the start hook`);
+	log(
+		`${up ? "ok  " : "FAIL"} dev stack (api on :${apiPort}) from the start hook`,
+	);
 	if (!up) {
 		probeFailed++;
 		const { logs } = await run(

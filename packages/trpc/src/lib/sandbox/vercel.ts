@@ -322,6 +322,8 @@ export async function wakeSandbox(args: {
  */
 const INHERITED_IDENTITY = [
 	SANDBOX_PATHS.conf,
+	// A fork's logs start with its own boot, not the golden's.
+	SANDBOX_PATHS.logs,
 	SANDBOX_PATHS.hostDb,
 	`${SANDBOX_PATHS.hostDb}-wal`,
 	`${SANDBOX_PATHS.hostDb}-shm`,

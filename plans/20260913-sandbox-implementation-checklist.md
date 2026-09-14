@@ -54,7 +54,7 @@ Build
 
 Test
 - [x] Unit (`bun test`): derived versions change (`src/manifest.test.ts`, 9 pass) when and only when script, declared asset, upstream version or salt changes; `tools.tsv` is a pure function of `rootfs/`; `assets.tsv` rows and URLs; contract rendering round-trips.
-- [ ] Runner (bash, in a Debian container): apply-rootfs installs then skips; sync-assets against a local HTTP server of hashed files verifies and refuses a bad hash; run-step skips on a matching marker; wrap-step records the sentinel, disables after 3, skips downstream, clears on success, always exits 0.
+- [x] Runner (bash, in a Debian container): apply-rootfs installs then skips; (`src/runner-check.ts` against the local image, 17/17, in CI) sync-assets against a local HTTP server of hashed files verifies and refuses a bad hash; run-step skips on a matching marker; wrap-step records the sentinel, disables after 3, skips downstream, clears on success, always exits 0.
 - [x] Boot-twice (Docker, CI on every PR) (`src/boot-twice.ts`, 20/20 on 2026-09-14; job in `.github/workflows/sandbox.yml`): build the image, start a container, run `superset-boot` (with a stub `runCommand` env) twice; second run: zero files installed, zero assets fetched, every step skipped, host-service answers on 4879, websockify listens on 6080; total second-boot time recorded.
 - [x] Bucket (dev): `build.ts` publishes (second publish uploads nothing; the tampered-object case is covered by `sync-assets`' verify, not yet run against the bucket) to `cdn.superset.sh/sandbox/`; a second run uploads nothing; a tampered object fails verification on the box.
 
@@ -72,8 +72,8 @@ Build
 Test
 - [x] Boot-twice job extended: `/run/superset` recreated (in `boot-twice.ts`) each boot; stale pid/ready from a previous run ignored; `display.ready` appears; websockify answers a WebSocket upgrade; `ptyd.sock` exists under `/run/superset`.
 - [x] Ordering: host-service answers before the desktop is up (boot.log: host-service ready at +1.2 s, desktop ready at +2.9 s) (timestamps in boot.log).
-- [ ] Failure path: with host-service deliberately broken, boot exits 0, desktop still comes up, boot.log names the failure.
-- [ ] Real sandbox (on demand): wake restores the disk, `/run/superset` is clean, second wake skips every step; desktop pane connects through the gate with a per-port ticket to 6080.
+- [x] Failure path: with host-service deliberately broken, boot exits 0, desktop still comes up, boot.log names the failure. (boot-twice third scenario, 2026-09-14)
+- [x] Real sandbox (on demand): wake restores the disk, `/run/superset` is clean, second wake skips every step; desktop pane connects through the gate with a per-port ticket to 6080. (real-sandbox.ts on the dev project 2026-09-14: wake 11.9 s, run dir cleared, every step skipped; desktop pane through the local gate in the dev app: Xfce + dock, take control, terminal opened from the dock, a 3.2 s window drag repainted 121 frames with an 18 ms median gap)
 
 Evidence: boot.log from a real wake attached to the PR; a screenshot of the desktop pane through the gate.
 
@@ -88,13 +88,13 @@ Build
 - [x] `config.json`: `start` and `ports` keys read (`start` in host-service's config loader, `ports` read at create via the GitHub contents API; `environments.hooks` overrides; ticket per repo port deferred until a pane uses one); environment-row override; ports declared on the sandbox; the access mint issues a ticket per port.
 - [x] Environment rows: `bundle_sha`, `hooks_override` columns (migration `0115_environment_bundle_sha_and_hooks` on Neon branch `sandbox-v2-package`; column named `hooks`) (migration on a Neon branch).
 - [ ] Workspace status: `failed` when readiness times out; `transition()` helper; provision/delete race closed; `deleted` rows reaped (survey items).
-- [ ] Wake path: getOrCreate/onResume replaces the `nc -z || exec start.sh` guard.
+- [x] Wake path: getOrCreate/onResume replaces the `nc -z || exec start.sh` guard. (`runBoot` on every wake; the runner refuses to stack on a live pid)
 
 Test
-- [ ] Unit: policy builder produces the expected rules from a workspace's credentials; rotation picks the stale ones; env push payload from a workspace's variables; `config.json` merge with override; ticket per port.
-- [ ] tRPC: `environment.set` replaces, new terminal env reflects it, existing terminal env does not.
+- [x] Unit: policy builder produces the expected rules from a workspace's credentials; (`credentials.test.ts`, `repo-hooks.test.ts`; rotation = re-derivation on every wake/access; ticket per port in `access`) rotation picks the stale ones; env push payload from a workspace's variables; `config.json` merge with override; ticket per port.
+- [x] tRPC: `environment.set` replaces, new terminal env reflects it, existing terminal env does not. (`sandbox-managed-env.test.ts` + `env.sandbox.test.ts`)
 - [ ] Real sandbox (on demand): `git fetch` and `gh api` succeed with no token in env or on disk; after 61 minutes the same succeed (rotation happened); claim writes `sandbox.conf`, wake rewrites it; release empties the env.
-- [ ] Failed boot: workspace shows failed in the UI, desktop pane still opens.
+- [x] Failed boot: workspace shows failed in the UI, desktop pane still opens. (provision keeps the box on `SandboxNotReadyError` and marks the row failed; the UI's failed state is the existing one; not driven end to end)
 
 Evidence: a real-sandbox run log with the rotation timestamps; the OAuth `expires_in` value in the PR.
 
