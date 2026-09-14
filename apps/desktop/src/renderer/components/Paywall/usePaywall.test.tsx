@@ -9,17 +9,30 @@ if (!alreadyRegistered) GlobalRegistrator.register();
 
 // A plan fetch the test resolves by hand, so two clicks can land while the
 // gate is still waiting on it.
+let sessionOrganizationId = "org-1";
+let sessionPlan: string | null = null;
+let rejectPlan: (error: Error) => void = () => {};
 let resolvePlan: (plan: { plan: string } | null) => void = () => {};
 const ensureData = mock(
 	() =>
-		new Promise<{ plan: string } | null>((resolve) => {
+		new Promise<{ plan: string } | null>((resolve, reject) => {
+			rejectPlan = reject;
 			resolvePlan = resolve;
 		}),
 );
 const paywall = mock(() => {});
 
 mock.module("renderer/lib/auth-client", () => ({
-	authClient: { useSession: () => ({ data: { session: { plan: null } } }) },
+	authClient: {
+		useSession: () => ({
+			data: {
+				session: {
+					plan: sessionPlan,
+					activeOrganizationId: sessionOrganizationId,
+				},
+			},
+		}),
+	},
 }));
 mock.module("renderer/lib/cloud-trpc", () => ({
 	cloudTrpc: {
@@ -37,6 +50,8 @@ const { usePaywall } = await import("./usePaywall");
 
 afterEach(() => {
 	cleanup();
+	sessionOrganizationId = "org-1";
+	sessionPlan = null;
 	ensureData.mockClear();
 	paywall.mockClear();
 });
@@ -101,5 +116,38 @@ describe("gateFeature while the plan is still resolving", () => {
 			result.current.gateFeature("tasks", callback);
 		});
 		expect(ensureData).toHaveBeenCalledTimes(2);
+	});
+});
+
+describe("session plan organization", () => {
+	test("does not show another organization's Pro plan while loading", () => {
+		sessionOrganizationId = "other-org";
+		sessionPlan = "pro";
+		const { result } = renderHook(() => usePaywall());
+		expect(result.current.hasAccess("automations")).toBe(false);
+		expect(result.current.isReady).toBe(false);
+	});
+
+	test("does not grant access or show a paywall from another org after a fetch failure", async () => {
+		sessionOrganizationId = "other-org";
+		sessionPlan = "pro";
+		const { result } = renderHook(() => usePaywall());
+		const callback = mock(() => {});
+		act(() => result.current.gateFeature("automations", callback));
+		rejectPlan(new Error("offline"));
+		await settle();
+		expect(callback).not.toHaveBeenCalled();
+		expect(paywall).not.toHaveBeenCalled();
+	});
+
+	test("keeps the same organization's paid fallback after a fetch failure", async () => {
+		sessionPlan = "pro";
+		const { result } = renderHook(() => usePaywall());
+		const callback = mock(() => {});
+		act(() => result.current.gateFeature("automations", callback));
+		rejectPlan(new Error("offline"));
+		await settle();
+		expect(callback).toHaveBeenCalledTimes(1);
+		expect(paywall).not.toHaveBeenCalled();
 	});
 });

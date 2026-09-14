@@ -51,17 +51,26 @@ export function isPaidPlanTier(
  * so the session plan fills in until it arrives.
  */
 export function resolveCurrentPlan({
+	organizationId,
+	sessionOrganizationId,
 	subscriptionPlan,
 	sessionPlan,
 	subscriptionsLoaded,
 }: {
+	organizationId: string | null | undefined;
+	sessionOrganizationId: string | null | undefined;
 	subscriptionPlan?: string | null;
 	sessionPlan?: string | null;
 	subscriptionsLoaded: boolean;
 }): PlanTier {
 	if (isPaidPlanTier(subscriptionPlan)) return subscriptionPlan;
 	if (subscriptionsLoaded) return "free";
-	if (isPaidPlanTier(sessionPlan)) return sessionPlan;
+	if (
+		organizationId &&
+		organizationId === sessionOrganizationId &&
+		isPaidPlanTier(sessionPlan)
+	)
+		return sessionPlan;
 	return "free";
 }
 

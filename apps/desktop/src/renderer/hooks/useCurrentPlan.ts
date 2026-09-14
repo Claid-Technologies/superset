@@ -1,19 +1,48 @@
-import { type PlanTier, resolveCurrentPlan } from "@superset/shared/billing";
+import { resolveCurrentPlan } from "@superset/shared/billing";
 import { authClient } from "renderer/lib/auth-client";
 import { cloudTrpc } from "renderer/lib/cloud-trpc";
+import { useActiveOrganizationId } from "./useActiveOrganizationId";
 
-export function useCurrentPlan(): { plan: PlanTier; isReady: boolean } {
+export function useCurrentPlan() {
 	const { data: session } = authClient.useSession();
-
+	const organizationId = useActiveOrganizationId();
+	const utils = cloudTrpc.useUtils();
 	const { data: activePlan } = cloudTrpc.billing.activePlan.useQuery(undefined);
-
-	const subscriptionsLoaded = activePlan !== undefined;
-
-	const plan = resolveCurrentPlan({
-		subscriptionPlan: activePlan?.plan,
+	const isReady = activePlan !== undefined;
+	const sessionFallback = {
+		organizationId,
+		sessionOrganizationId: session?.session?.activeOrganizationId,
 		sessionPlan: session?.session?.plan,
-		subscriptionsLoaded,
+	};
+	const plan = resolveCurrentPlan({
+		...sessionFallback,
+		subscriptionPlan: activePlan?.plan,
+		subscriptionsLoaded: isReady,
 	});
 
-	return { plan, isReady: subscriptionsLoaded };
+	async function resolvePlanWhenKnown() {
+		if (isReady) return plan;
+		try {
+			const fetched = await utils.billing.activePlan.ensureData();
+			return resolveCurrentPlan({
+				...sessionFallback,
+				subscriptionPlan: fetched?.plan,
+				subscriptionsLoaded: true,
+			});
+		} catch (error) {
+			console.warn("[billing] Failed to fetch active plan:", error);
+			if (
+				!organizationId ||
+				organizationId !== sessionFallback.sessionOrganizationId
+			) {
+				return null;
+			}
+			return resolveCurrentPlan({
+				...sessionFallback,
+				subscriptionsLoaded: false,
+			});
+		}
+	}
+
+	return { plan, isReady, activePlan, resolvePlanWhenKnown };
 }
