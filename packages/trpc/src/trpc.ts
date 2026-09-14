@@ -98,34 +98,6 @@ function captureApiCall(
 	});
 }
 
-/**
- * A plan gate turned a request away. Never sampled: these are rare, and each
- * one is the evidence for a "but the badge says Pro" report — which
- * organization the gate actually checked, and whether the client named it or
- * the session default filled in.
- */
-export function capturePlanGateRejection(
-	ctx: Pick<TRPCContext, "headers" | "client"> & {
-		session: NonNullable<TRPCContext["session"]>;
-		activeOrganizationId: string | null;
-	},
-	properties: { feature: string; required_plan: string; plan: string },
-) {
-	posthog.capture({
-		distinctId: ctx.session.user.id,
-		event: "plan_gate_rejected",
-		properties: {
-			...properties,
-			organization_id: ctx.activeOrganizationId,
-			header_organization_id:
-				ctx.headers.get(ORGANIZATION_HEADER)?.trim() || null,
-			session_organization_id: ctx.session.session.activeOrganizationId ?? null,
-			client_product: ctx.client?.product ?? null,
-			client_version: ctx.client?.version ?? null,
-		},
-	});
-}
-
 const clientTelemetry = t.middleware(async ({ ctx, path, next }) => {
 	captureApiCall(
 		ctx.client,

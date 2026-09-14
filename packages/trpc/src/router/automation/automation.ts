@@ -23,12 +23,7 @@ import { TRPCError, type TRPCRouterRecord } from "@trpc/server";
 import { and, asc, desc, eq, ilike } from "drizzle-orm";
 import { z } from "zod";
 import { env } from "../../env";
-import {
-	capturePlanGateRejection,
-	planRequiredError,
-	protectedProcedure,
-	userError,
-} from "../../trpc";
+import { planRequiredError, protectedProcedure, userError } from "../../trpc";
 import { joinSlackTriggerChannels } from "../integration/slack/joinChannels";
 import {
 	requireActiveOrgMembership,
@@ -65,17 +60,11 @@ import { generateWebhookToken, hashWebhookToken } from "./webhookSecret";
  * those rows simply stop firing (the dispatchers apply the same tier map).
  */
 async function requireAutomationsPlan(
-	ctx: Parameters<typeof capturePlanGateRejection>[0],
+	ctx: Parameters<typeof requireActiveOrgMembershipWithSubscription>[0],
 ): Promise<string> {
 	const { organizationId, subscription } =
 		await requireActiveOrgMembershipWithSubscription(ctx);
-	const plan = planTierFromSubscription(subscription);
-	if (!planAllowsAutomations(plan)) {
-		capturePlanGateRejection(ctx, {
-			feature: "automations",
-			required_plan: AUTOMATIONS_REQUIRED_PLAN,
-			plan,
-		});
+	if (!planAllowsAutomations(planTierFromSubscription(subscription))) {
 		throw planRequiredError({
 			message: "Automations require the Pro plan.",
 			i18nKey: "serverError.automation.automationsRequireThePro",
