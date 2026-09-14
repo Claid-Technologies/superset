@@ -69,6 +69,10 @@ jobs:
         working-directory: packages/sandbox
         run: bun run src/boot-twice.ts
 
+      - name: Check the runner against a synthetic bundle
+        working-directory: packages/sandbox
+        run: bun run src/runner-check.ts
+
   publish-bundle:
     name: Publish the bundle
     if: github.event_name == 'push'

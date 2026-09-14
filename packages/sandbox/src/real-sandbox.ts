@@ -73,11 +73,26 @@ const claim = {
 log(
 	`provisioning ${name} from ${SANDBOX_IMAGE_NAME} on bundle ${bundle.sha256.slice(0, 12)}`,
 );
-await provisionSandbox({
-	name,
-	environment: { sourceKind: "image", sourceRef: SANDBOX_IMAGE_NAME },
-	claim,
-});
+// A freshly pushed image sits in `Preparing` while the registry optimises
+// it, and create answers 409 until then.
+const deadline = Date.now() + 20 * 60_000;
+for (;;) {
+	try {
+		await provisionSandbox({
+			name,
+			environment: { sourceKind: "image", sourceRef: SANDBOX_IMAGE_NAME },
+			claim,
+		});
+		break;
+	} catch (error) {
+		const notReady =
+			String(error).includes("409") ||
+			String(error).includes("image_not_ready");
+		if (!notReady || Date.now() > deadline) throw error;
+		log("image still preparing in the registry, waiting");
+		await new Promise((resolve) => setTimeout(resolve, 15_000));
+	}
+}
 const woken = await wakeSandbox({ providerSandboxId: name, claim });
 log(
 	`host-service answered at ${woken.hostTarget} (${Date.now() - started} ms since start)`,

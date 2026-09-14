@@ -123,9 +123,11 @@ async function writeIdentity(
  * a live one, so a wake that races a wake is harmless.
  */
 async function runBoot(sandbox: Sandbox, hostSecret: string): Promise<void> {
+	// The platform's own `sudo: true` resets the env; the image's sudoers
+	// grants SETENV so the secret crosses into root without touching argv.
 	await sandbox.runCommand({
-		cmd: BOOT_COMMAND,
-		sudo: true,
+		cmd: "sudo",
+		args: ["--preserve-env=HOST_SERVICE_SECRET", BOOT_COMMAND],
 		detached: true,
 		env: { HOST_SERVICE_SECRET: hostSecret },
 	});

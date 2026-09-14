@@ -116,7 +116,7 @@ run_step() {
 }
 
 read_sentinel() {
-	consecutive=0; failed_index=-1; failed_name=""; sentinel_version=""
+	consecutive=0; failed_index=-1; failed_name=""; failed_version=""; sentinel_version=""
 	[ -f "$SENTINEL" ] || return 0
 	while IFS='=' read -r key value; do
 		case "$key" in
@@ -124,9 +124,14 @@ read_sentinel() {
 			consecutiveFailures) consecutive="$value" ;;
 			failedStepIndex) failed_index="$value" ;;
 			failedStepName) failed_name="$value" ;;
+			failedStepVersion) failed_version="$value" ;;
 		esac
 	done < "$SENTINEL"
-	if [ "$sentinel_version" != "$SENTINEL_VERSION" ]; then consecutive=0; failed_index=-1; failed_name=""; fi
+	# A sentinel from another schema, or about a version of the step this
+	# bundle no longer carries, says nothing about this bundle: start over.
+	if [ "$sentinel_version" != "$SENTINEL_VERSION" ] || [ "$(step_version "$failed_name")" != "$failed_version" ]; then
+		rm -f "$SENTINEL"; consecutive=0; failed_index=-1; failed_name=""; failed_version=""
+	fi
 }
 
 write_sentinel() {
@@ -136,21 +141,22 @@ write_sentinel() {
 		printf 'consecutiveFailures=%s\n' "$1"
 		printf 'failedStepIndex=%s\n' "$2"
 		printf 'failedStepName=%s\n' "$3"
+		printf 'failedStepVersion=%s\n' "$(step_version "$3")"
 		printf 'lastFailureAtEpoch=%s\n' "$(date +%s)"
 	} > "$SENTINEL"
 }
 
 # Fail-open: a broken step never breaks the box. Three consecutive failures
-# disable the step until the bundle changes; steps after a failure are skipped
-# this boot; success at the failed step, or at the last step, clears the
-# sentinel. Always exits 0.
+# disable the step until its version changes; steps after a failure are
+# skipped, steps before it still run; success at the failed step, or at the
+# last step, clears the sentinel. Always exits 0.
 run_steps() {
 	local -a names=()
 	while IFS=$'\t' read -r name _; do [ -n "$name" ] && names+=("$name"); done < "${BUNDLE_DIR}/steps.tsv"
 	local total="${#names[@]}" index=0
 	read_sentinel
 	for name in "${names[@]}"; do
-		if [ "$consecutive" -ge "$MAX_CONSECUTIVE_FAILURES" ]; then
+		if [ "$consecutive" -ge "$MAX_CONSECUTIVE_FAILURES" ] && [ "$index" -ge "$failed_index" ]; then
 			log "step ${name} skipped: ${failed_name} disabled after ${consecutive} failures"
 		elif [ "$failed_index" -ge 0 ] && [ "$index" -gt "$failed_index" ]; then
 			log "step ${name} skipped: downstream of failed ${failed_name}"

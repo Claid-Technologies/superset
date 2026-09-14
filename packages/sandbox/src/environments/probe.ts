@@ -85,8 +85,8 @@ export async function probeBox(args: ProbeArgs): Promise<number> {
 	const bootLog = await run(`cat ${SANDBOX_PATHS.bootLog}`);
 	check(
 		"boot: host-service ready",
-		/host-service ready/.test(bootLog),
-		bootLog.match(/host-service ready.*/)?.[0],
+		/host\.ready/.test(bootLog),
+		bootLog.match(/host\.ready.*/)?.[0],
 	);
 	check(
 		"boot: no step failed",
@@ -97,8 +97,8 @@ export async function probeBox(args: ProbeArgs): Promise<number> {
 		const short = args.bundleSha.slice(0, 12);
 		check(
 			"boot: on the pinned bundle",
-			new RegExp(`bundle (current|installed) ${short}`).test(bootLog),
-			bootLog.match(/bundle .*/)?.[0],
+			new RegExp(`bundle\\.(current|installed) ${short}`).test(bootLog),
+			bootLog.match(/bundle\..*/)?.[0],
 		);
 	}
 	check(
@@ -224,18 +224,18 @@ export async function checkWakeLog(args: {
 		`cat ${SANDBOX_PATHS.bootLog}`,
 	]);
 	const text = await result.stdout();
-	const boots = text.split(/(?=^\d+ boot start)/m);
+	const boots = text.split(/(?=^\d+ boot\.start)/m);
 	const last = boots[boots.length - 1] ?? "";
 	let failed = 0;
 	const check = (label: string, ok: boolean) => {
 		args.log(`${ok ? "ok  " : "FAIL"} ${label}`);
 		if (!ok) failed++;
 	};
-	check("wake: run dir cleared", /run dir cleared/.test(last));
+	check("wake: run dir cleared", /run\.cleared/.test(last));
 	check("wake: nothing installed", /apply-rootfs installed=0/.test(last));
 	check("wake: nothing fetched", !/fetched \//.test(last));
 	check("wake: every step skipped", !/step \S+ running/.test(last));
-	check("wake: checkout kept", /checkout already done/.test(last));
-	check("wake: host-service ready", /host-service ready/.test(last));
+	check("wake: checkout kept", /checkout\.skipped/.test(last));
+	check("wake: host-service ready", /host\.ready/.test(last));
 	return failed;
 }

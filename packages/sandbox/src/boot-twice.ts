@@ -1,9 +1,10 @@
 /**
  * The boot-twice test: the locally built image (`bun run image --local`)
  * must boot as a box would, and a second boot must install nothing, fetch
- * nothing and skip every step. Runs the real superset-boot as root in a
- * container with a stub identity, the way the control plane would through
- * the sandbox API, then reads the boot log and the step markers.
+ * nothing and skip every step. Runs the real superset-boot in a container
+ * with a stub identity the way the control plane does through the sandbox
+ * API (as the image user, through sudo, the secret preserved from the
+ * command's env), then reads the boot log and the step markers.
  *
  *   bun run src/boot-twice.ts            expects superset-sandbox:local
  *   SANDBOX_IMAGE=... bun run src/boot-twice.ts
@@ -49,6 +50,29 @@ const exec = (cmd: string, opts: { user?: string; check?: boolean } = {}) =>
 		["exec", ...(opts.user ? ["-u", opts.user] : []), NAME, "bash", "-lc", cmd],
 		{ check: opts.check },
 	);
+
+/**
+ * The way the control plane starts boot: as the image user, through sudo
+ * with the secret preserved from the command's env, never on the argv.
+ */
+function bootAsUser(): string {
+	const proc = Bun.spawnSync(
+		[
+			"docker",
+			"exec",
+			"-u",
+			"ubuntu",
+			"-e",
+			"HOST_SERVICE_SECRET=boot-twice-secret",
+			NAME,
+			"sudo",
+			"--preserve-env=HOST_SERVICE_SECRET",
+			"/usr/local/bin/superset-boot",
+		],
+		{ stdout: "pipe", stderr: "pipe" },
+	);
+	return `${new TextDecoder().decode(proc.stdout)}${new TextDecoder().decode(proc.stderr)}exit=${proc.exitCode}`;
+}
 
 const failures: string[] = [];
 function expect(label: string, ok: boolean, detail = ""): void {
@@ -100,7 +124,7 @@ try {
 
 	const boot = (_n: number) => {
 		const started = Date.now();
-		exec(`HOST_SERVICE_SECRET=boot-twice-secret /usr/local/bin/superset-boot`);
+		bootAsUser();
 		// Wait for host-service (up to 60 s) so the second boot sees a clean run dir cleared by the first.
 		exec(
 			`for i in $(seq 1 600); do [ -f ${SANDBOX_PATHS.run}/host-service.ready ] && exit 0; sleep 0.1; done; exit 1`,
@@ -116,7 +140,7 @@ try {
 	// on the pin either way.
 	expect(
 		"first boot: bundle is the pinned one",
-		new RegExp(`bundle current ${bundleSha.slice(0, 12)}`).test(log1),
+		new RegExp(`bundle\\.(current|installed) ${bundleSha.slice(0, 12)}`).test(log1),
 		log1.match(/bundle .*/)?.[0],
 	);
 	expect(
@@ -126,7 +150,7 @@ try {
 	);
 	expect(
 		"first boot: host-service ready",
-		/host-service ready/.test(log1),
+		/host\.ready/.test(log1),
 		`${first} ms to ready`,
 	);
 	expect(
@@ -219,7 +243,7 @@ try {
 	exec(`: > ${SANDBOX_PATHS.bootLog}`);
 	const second = boot(2);
 	const log2 = exec(`cat ${SANDBOX_PATHS.bootLog}`);
-	expect("second boot: run dir cleared", /run dir cleared/.test(log2));
+	expect("second boot: run dir cleared", /run\.cleared/.test(log2));
 	expect(
 		"second boot: nothing installed",
 		/apply-rootfs installed=0/.test(log2),
@@ -228,15 +252,51 @@ try {
 	expect("second boot: every step skipped", !/step \S+ running/.test(log2));
 	expect(
 		"second boot: host-service ready",
-		/host-service ready/.test(log2),
+		/host\.ready/.test(log2),
 		`${second} ms to ready`,
 	);
 	expect(
 		"second boot: checkout marker respected",
-		/checkout already done|checkout fetched|checkout cloned/.test(log2),
-		log2.match(/checkout .*/)?.[0],
+		/checkout\.(skipped|fetched|cloned)/.test(log2),
+		log2.match(/checkout\..*/)?.[0],
 	);
 	console.log(`\nboot log (second boot):\n${log2}`);
+
+	// Third boot, with host-service deliberately broken: the box must stay
+	// alive, the desktop must still come up, and the log must say so.
+	exec(
+		`pkill -u ubuntu -TERM || true; sleep 1; pkill -u ubuntu -KILL || true; pkill -x Xvnc || true; rm -rf ${SANDBOX_PATHS.run}`,
+		{ check: false },
+	);
+	exec(
+		`: > ${SANDBOX_PATHS.bootLog}; mv ${SANDBOX_PATHS.hostRoot}/current/host-service.js ${SANDBOX_PATHS.hostRoot}/current/host-service.js.broken`,
+	);
+	const brokenExit = bootAsUser();
+	expect("broken host-service: boot exits 0", /exit=0/.test(brokenExit));
+	expect(
+		"broken host-service: desktop still comes up",
+		/ready/.test(
+			exec(
+				`for i in $(seq 1 300); do [ -f ${SANDBOX_PATHS.run}/display.ready ] && echo ready && exit 0; sleep 0.1; done; echo missing`,
+				{ check: false },
+			),
+		),
+	);
+	const log3 = exec(
+		`for i in $(seq 1 700); do grep -qE 'host\\.(timeout|missing)' ${SANDBOX_PATHS.bootLog} && break; sleep 0.1; done; cat ${SANDBOX_PATHS.bootLog}`,
+		{ check: false },
+	);
+	expect(
+		"broken host-service: boot log names the failure",
+		/host\.(timeout|missing)/.test(log3),
+		log3.match(/host\.(timeout|missing).*/)?.[0],
+	);
+	expect(
+		"broken host-service: no ready flag",
+		!/host-service\.ready/.test(
+			exec(`ls ${SANDBOX_PATHS.run}`, { check: false }),
+		),
+	);
 } finally {
 	docker(["rm", "-f", NAME], { check: false });
 }
