@@ -1,5 +1,6 @@
 import { plural } from "@lingui/core/macro";
 import { Trans, useLingui } from "@lingui/react/macro";
+import { useFormat } from "@superset/i18n/react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@superset/ui/tooltip";
 import { cn } from "@superset/ui/utils";
 import { useNavigate } from "@tanstack/react-router";
@@ -36,9 +37,11 @@ export const V2WorkspaceRow = memo(function V2WorkspaceRow({
 	workspace,
 	isCurrentRoute,
 }: V2WorkspaceRowProps) {
+	const { formatDateTime } = useFormat();
+
 	const { t } = useLingui();
 	const navigate = useNavigate();
-	const isMainWorkspace = workspace.type === "main";
+	const isLocalWorkspace = workspace.type === "local";
 	const DeviceIcon =
 		workspace.hostType === "local-device" ? LuLaptop : LuMonitor;
 	// The local device is the one running this app — it can't be offline from
@@ -62,7 +65,7 @@ export const V2WorkspaceRow = memo(function V2WorkspaceRow({
 	const timeLabel = getRelativeTime(workspaceActivityAt(workspace), {
 		format: "compact",
 	});
-	const createdAtLabel = workspace.createdAt.toLocaleString();
+	const createdAtLabel = formatDateTime(workspace.createdAt, undefined);
 	const timeTitle = [
 		creatorLabel
 			? t({
@@ -73,7 +76,7 @@ export const V2WorkspaceRow = memo(function V2WorkspaceRow({
 				}),
 		workspace.lastAgentEventAt
 			? t({
-					message: `Last agent activity ${new Date(workspace.lastAgentEventAt).toLocaleString()}`,
+					message: `Last agent activity ${formatDateTime(new Date(workspace.lastAgentEventAt), undefined)}`,
 				})
 			: null,
 	]
@@ -139,7 +142,7 @@ export const V2WorkspaceRow = memo(function V2WorkspaceRow({
 				>
 					<WorkspaceStateGlyph workspace={workspace} />
 
-					{isMainWorkspace ? (
+					{isLocalWorkspace ? (
 						<Tooltip delayDuration={300}>
 							<TooltipTrigger asChild>
 								{/* The wrapping span (not the icon itself — react-icons
@@ -153,13 +156,13 @@ export const V2WorkspaceRow = memo(function V2WorkspaceRow({
 									<CgLaptop
 										className="size-3.5 shrink-0 text-muted-foreground"
 										aria-label={t({
-											message: "Main workspace",
+											message: "Local workspace",
 										})}
 									/>
 								</span>
 							</TooltipTrigger>
 							<TooltipContent side="top">
-								<Trans>Main workspace</Trans>
+								<Trans>Local workspace</Trans>
 							</TooltipContent>
 						</Tooltip>
 					) : null}

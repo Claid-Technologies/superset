@@ -27,11 +27,10 @@ import { terminalRuntimeRegistry } from "renderer/lib/terminal/terminal-runtime-
 import { showWorkspaceAutoNameWarningToast } from "renderer/lib/workspaces/showWorkspaceAutoNameWarningToast";
 import { InitGitDialog } from "renderer/react-query/projects/InitGitDialog";
 import { DaemonAutoUpdateFailureDialog } from "renderer/routes/_authenticated/components/DaemonAutoUpdateFailureDialog";
-import { DashboardNewWorkspaceModal } from "renderer/routes/_authenticated/components/DashboardNewWorkspaceModal";
 import { DiffThemeSync } from "renderer/routes/_authenticated/components/DiffThemeSync";
 import { LeaderboardAutoPublish } from "renderer/routes/_authenticated/components/LeaderboardAutoPublish";
-import { LeaderboardFirstRunDialog } from "renderer/routes/_authenticated/components/LeaderboardFirstRunDialog";
 import { PendingDeletionScreen } from "renderer/routes/_authenticated/components/PendingDeletionScreen";
+import { RealtimeNudges } from "renderer/routes/_authenticated/components/RealtimeNudges";
 import { StarNagObserver } from "renderer/routes/_authenticated/components/StarNagObserver";
 import {
 	V1AutoMigration,
@@ -319,7 +318,7 @@ function AuthenticatedLayout() {
 								<DockBadgeController />
 								<StarNagObserver />
 								<LeaderboardAutoPublish />
-								<LeaderboardFirstRunDialog />
+								<RealtimeNudges />
 								<DaemonAutoUpdateFailureDialog />
 								<Outlet />
 								<V1ImportModal />
@@ -333,11 +332,8 @@ function AuthenticatedLayout() {
 								)}
 								<V1AutoMigration />
 								<WorkspaceInitEffects />
-								{isV2CloudEnabled ? (
-									<DashboardNewWorkspaceModal />
-								) : (
-									<NewWorkspaceModal />
-								)}
+								{/* v2 creates from the /new-workspace route; only v1 has a modal. */}
+								{!isV2CloudEnabled && <NewWorkspaceModal />}
 								<InitGitDialog />
 								<GitInitConfirmDialog />
 								<TeardownLogsDialog />

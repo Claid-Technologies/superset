@@ -8,10 +8,7 @@ import {
 	JwtApiAuthProvider,
 } from "./providers/auth";
 import { LocalGitCredentialProvider } from "./providers/git";
-import {
-	EdgeGuardedHostAuthProvider,
-	PskHostAuthProvider,
-} from "./providers/host-auth";
+import { PskHostAuthProvider } from "./providers/host-auth";
 import { provisionAgentIntegrations } from "./runtime/agent-provisioning";
 import { resolveBrowserBridgeFromEnv } from "./runtime/browser-bridge/env";
 import { applyLoginShellEnvToProcess } from "./runtime/login-shell-env";
@@ -82,15 +79,15 @@ async function main(): Promise<void> {
 			dbPath: env.HOST_DB_PATH,
 			cloudApiUrl: env.SUPERSET_API_URL,
 			migrationsFolder: env.HOST_MIGRATIONS_FOLDER,
-			allowedOrigins: env.CORS_ORIGINS ?? [],
+			allowedOrigins:
+				env.SUPERSET_HOST_RUN_MODE === "sandbox"
+					? "*"
+					: (env.CORS_ORIGINS ?? []),
 			browserBridge: resolveBrowserBridgeFromEnv(env),
 		},
 		providers: {
 			auth: authProvider,
-			hostAuth:
-				env.SUPERSET_HOST_RUN_MODE === "sandbox"
-					? new EdgeGuardedHostAuthProvider()
-					: new PskHostAuthProvider(env.HOST_SERVICE_SECRET),
+			hostAuth: new PskHostAuthProvider(env.HOST_SERVICE_SECRET),
 			credentials: new LocalGitCredentialProvider(),
 		},
 	});

@@ -782,15 +782,36 @@
     {
       "idx": 111,
       "version": "7",
-      "when": 1788863500663,
-      "tag": "0111_plugin_oauth_clients",
+      "when": 1788934235832,
+      "tag": "0111_page_comment_thread_intent",
       "breakpoints": true
     },
     {
       "idx": 112,
       "version": "7",
-      "when": 1789145494567,
-      "tag": "0112_add_connectors_registry",
+      "when": 1789074124482,
+      "tag": "0112_automation_continue_agent_session",
+      "breakpoints": true
+    },
+    {
+      "idx": 113,
+      "version": "7",
+      "when": 1789162453342,
+      "tag": "0113_agent_credentials_and_vercel_sandboxes",
+      "breakpoints": true
+    },
+    {
+      "idx": 114,
+      "version": "7",
+      "when": 1789162454064,
+      "tag": "0114_retire_blaxel_sandboxes",
+      "breakpoints": true
+    },
+    {
+      "idx": 115,
+      "version": "7",
+      "when": 1789389701506,
+      "tag": "0115_plugin_oauth_clients_and_connectors",
       "breakpoints": true
     }
   ]

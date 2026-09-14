@@ -1,5 +1,5 @@
 {
-  "id": "90a793c5-305f-4c4c-88e1-dcf019aae683",
+  "id": "daef7ae2-0416-4ead-8e07-616a382a6299",
   "prevId": "df6c76a9-0d7a-4fe3-8de4-c23f11074cb1",
   "version": "7",
   "dialect": "postgresql",
@@ -3863,110 +3863,6 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.plugin_oauth_clients": {
-      "name": "plugin_oauth_clients",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "issuer": {
-          "name": "issuer",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "redirect_uri": {
-          "name": "redirect_uri",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "client_id": {
-          "name": "client_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "client_secret": {
-          "name": "client_secret",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "client_secret_expires_at": {
-          "name": "client_secret_expires_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "registration_access_token": {
-          "name": "registration_access_token",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "registration_client_uri": {
-          "name": "registration_client_uri",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "token_endpoint_auth_method": {
-          "name": "token_endpoint_auth_method",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {
-        "plugin_oauth_clients_issuer_redirect_unique": {
-          "name": "plugin_oauth_clients_issuer_redirect_unique",
-          "columns": [
-            {
-              "expression": "issuer",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "redirect_uri",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": true,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
     "public.handles": {
       "name": "handles",
       "schema": "",
@@ -7249,6 +7145,13 @@
           "primaryKey": false,
           "notNull": true
         },
+        "intent": {
+          "name": "intent",
+          "type": "page_comment_intent",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
         "anchor": {
           "name": "anchor",
           "type": "jsonb",
@@ -10242,6 +10145,14 @@
       "values": [
         "human",
         "agent"
+      ]
+    },
+    "public.page_comment_intent": {
+      "name": "page_comment_intent",
+      "schema": "public",
+      "values": [
+        "delete",
+        "approve"
       ]
     },
     "public.page_visibility": {
