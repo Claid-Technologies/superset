@@ -1413,9 +1413,6 @@ msgstr "Aggiungine uno dal menu nella barra laterale per iniziare."
 msgid "Add photos or files"
 msgstr "Aggiungi foto o file"
 
-msgid "Add plugin"
-msgstr "Aggiungi plugin"
-
 msgid "Add project"
 msgstr "Aggiungi progetto"
 
@@ -2127,9 +2124,6 @@ msgstr "Log di audit"
 msgid "Aug 2026"
 msgstr "Ago 2026"
 
-msgid "Authenticate your {displayName} account"
-msgstr "Autentica il tuo account {displayName}"
-
 msgid "Authentication"
 msgstr "Autenticazione"
 
@@ -2156,6 +2150,12 @@ msgstr "Autorizza"
 
 msgid "Authorize {displayName}"
 msgstr "Autorizza {displayName}"
+
+msgid "Authorize Superset so your plugins, automations and triggers can act on your behalf."
+msgstr "Autorizza Superset affinché i tuoi plugin, automazioni e trigger possano agire per tuo conto."
+
+msgid "Authorize Superset to act on your behalf."
+msgstr "Autorizza Superset ad agire per tuo conto."
 
 msgid "Authorizing..."
 msgstr "Autorizzazione..."
@@ -3514,6 +3514,12 @@ msgstr "Chiedi conferma prima di uscire"
 msgid "Connect"
 msgstr "Collega"
 
+msgid "Connect {displayName}"
+msgstr "Connetti {displayName}"
+
+msgid "Connect {name}"
+msgstr "Collega {name}"
+
 msgid "Connect a device"
 msgstr "Collega un dispositivo"
 
@@ -3586,10 +3592,6 @@ msgstr "Collega il tuo workspace Slack per gestire i task dalle conversazioni."
 msgid "Connected"
 msgstr "Collegato"
 
-#. placeholder {0}: formatDate(new Date(connection.createdAt))
-msgid "connected {0}"
-msgstr "collegato {0}"
-
 msgid "Connected {label}"
 msgstr "{label} connesso"
 
@@ -3613,6 +3615,9 @@ msgstr "Collegato. L'accesso è stato annullato, quindi i trigger su \"Io\" non 
 
 msgid "Connecting"
 msgstr "Connessione"
+
+msgid "Connecting lets your agents read and act in {name} on your behalf. Review what you are granting before you continue."
+msgstr "Collegandolo, i tuoi agenti potranno leggere e agire in {name} per tuo conto. Controlla cosa stai concedendo prima di continuare."
 
 msgid "Connecting to the desktop…"
 msgstr "Connessione al desktop…"
@@ -3642,8 +3647,17 @@ msgstr "Connessione rifiutata"
 msgid "Connection Timed Out"
 msgstr "Connessione scaduta"
 
-msgid "Connections"
-msgstr "Connessioni"
+msgid "Connector"
+msgstr "Connettore"
+
+msgid "Connectors carry risk"
+msgstr "I connettori comportano rischi"
+
+msgid "Connects for your whole team."
+msgstr "Si connette per tutto il tuo team."
+
+msgid "Connects your account. Teammates connect their own."
+msgstr "Connette il tuo account. I colleghi connettono il proprio."
 
 msgid "consecutive active days"
 msgstr "giorni attivi consecutivi"
@@ -3695,6 +3709,10 @@ msgstr "Continua"
 
 msgid "Continue or fork session"
 msgstr "Continua o biforca la sessione"
+
+#. placeholder {0}: connector.displayName
+msgid "Continue to {0}"
+msgstr "Continua su {0}"
 
 msgid "Continue update"
 msgstr "Continua l'aggiornamento"
@@ -4422,6 +4440,9 @@ msgstr "Creazione del worktree"
 msgid "Creating..."
 msgstr "Creazione..."
 
+msgid "Credentials stay on the server"
+msgstr "Le credenziali restano sul server"
+
 msgid "Cross-feature components living outside packages/ui — check here before building a new one"
 msgstr "Componenti trasversali che vivono fuori da packages/ui — controlla qui prima di crearne uno nuovo"
 
@@ -4864,6 +4885,9 @@ msgstr "Accesso di sviluppo"
 msgid "Dev sign-in failed"
 msgstr "Accesso di sviluppo non riuscito"
 
+msgid "Developed by {author}"
+msgstr "Sviluppato da {author}"
+
 msgid "Developer"
 msgstr "Sviluppatore"
 
@@ -4978,10 +5002,6 @@ msgstr "Scartate — non te lo chiederò più"
 
 msgid "Disconnect"
 msgstr "Disconnetti"
-
-#. placeholder {0}: connection.account ?? displayName
-msgid "Disconnect {0}"
-msgstr "Disconnetti {0}"
 
 msgid "Disconnect GitHub?"
 msgstr "Scollegare GitHub?"
@@ -7233,6 +7253,9 @@ msgstr "Approfondimenti del team Superset su agenti di programmazione in paralle
 msgid "Inspecting {0}"
 msgstr "Ispezione di {0}"
 
+msgid "Install"
+msgstr "Installa"
+
 msgid "Install & restart"
 msgstr "Installa e riavvia"
 
@@ -7245,11 +7268,17 @@ msgstr "Installazione non riuscita"
 msgid "Install GitHub App"
 msgstr "Installa la GitHub App"
 
+msgid "Install plugin"
+msgstr "Installa plugin"
+
 msgid "Install Superset MCP in your client"
 msgstr "Installa Superset MCP nel tuo client"
 
 msgid "Install the desktop app"
 msgstr "Installa l'app desktop"
+
+msgid "Install the plugin to connect"
+msgstr "Installa il plugin per collegarti"
 
 msgid "Install the Superset GitHub App to connect your repositories."
 msgstr "Installa la GitHub App di Superset per collegare i tuoi repository."
@@ -13585,6 +13614,9 @@ msgstr "Superset Mobile esegue gli agenti sui computer che colleghi."
 msgid "Superset needs Full Disk Access to read another browser's data. Grant it in System Settings, then check again."
 msgstr "Superset ha bisogno dell'Accesso completo al disco per leggere i dati di un altro browser. Concedilo in Impostazioni di Sistema, poi controlla di nuovo."
 
+msgid "Superset only receives the permissions this connector asks for. Disconnect at any time to revoke them."
+msgstr "Superset riceve solo i permessi richiesti da questo connettore. Scollegalo in qualsiasi momento per revocarli."
+
 msgid "Superset originals"
 msgstr "Originali Superset"
 
@@ -14428,9 +14460,6 @@ msgstr "Questo percorso esiste, ma non è una directory."
 msgid "This path is a directory"
 msgstr "Questo percorso è una directory"
 
-msgid "This plugin needs no account — its skills are ready to use."
-msgstr "Questo plugin non richiede un account — le sue Skill sono pronte all'uso."
-
 msgid "This port is still in use"
 msgstr "Questa porta è ancora in uso"
 
@@ -14665,6 +14694,9 @@ msgstr "Utilizzo dei token"
 
 msgid "Tokens"
 msgstr "Token"
+
+msgid "Tokens are held by Superset and attached to requests there. They are never written into your local agent config."
+msgstr "I token sono conservati da Superset e allegati alle richieste lì. Non vengono mai scritti nella configurazione locale del tuo agente."
 
 msgid "Tokens per session"
 msgstr "Token per sessione"
@@ -15942,6 +15974,9 @@ msgstr "Non sei classificato finché {0} giorni non registrano attività. Il pun
 msgid "You can't undo this action. Terminal panes will show \"Process exited\" and can be restarted."
 msgstr "Non puoi annullare questa azione. I pannelli del terminale mostreranno \"Processo terminato\" e potranno essere riavviati."
 
+msgid "You control the access"
+msgstr "Controlli tu l'accesso"
+
 msgid "You declined the {plugin} authorization request."
 msgstr "Hai rifiutato la richiesta di autorizzazione di {plugin}."
 
@@ -15953,6 +15988,9 @@ msgstr "Non hai accesso a questo terminale."
 
 msgid "You don't have permission to remove this member"
 msgstr "Non hai il permesso di rimuovere questo membro"
+
+msgid "You need to be part of an organization to connect accounts."
+msgstr "Devi far parte di un'organizzazione per connettere account."
 
 msgid "You need to be part of an organization to use integrations."
 msgstr "Devi far parte di un'organizzazione per usare le integrazioni."

@@ -28,6 +28,12 @@ export const pluginStateSchema = z.object({
 
 export type PluginState = z.infer<typeof pluginStateSchema>;
 
+export const connectorStateSchema = basePayloadSchema.extend({
+	codeVerifier: z.string().optional(),
+});
+
+export type ConnectorState = z.infer<typeof connectorStateSchema>;
+
 function sign(body: string): string {
 	return createHmac("sha256", env.BETTER_AUTH_SECRET)
 		.update(body)

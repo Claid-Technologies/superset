@@ -32,41 +32,7 @@ export const FIRST_PARTY_MANIFESTS = {
 					"category": "Developer tools",
 					"icon": "github"
 				},
-				"auth": [
-					{
-						"type": "oauth2",
-						"provider": "github",
-						"authorization_url": "https://github.com/login/oauth/authorize",
-						"token_url": "https://github.com/login/oauth/access_token",
-						"scopes": [
-							"repo",
-							"read:org",
-							"workflow"
-						],
-						"scope_separator": " ",
-						"token_request_auth_method": "client_secret_post",
-						"requires_env": [
-							"PLUGIN_GITHUB_CLIENT_ID",
-							"PLUGIN_GITHUB_CLIENT_SECRET"
-						],
-						"identity": {
-							"url": "https://api.github.com/user",
-							"method": "GET",
-							"headers": {
-								"Authorization": "Bearer ${config.access_token}",
-								"Accept": "application/vnd.github+json"
-							},
-							"id": "$.id",
-							"label": "$.login"
-						},
-						"label": "OAuth 2.0",
-						"bind": {
-							"headers": {
-								"Authorization": "Bearer ${config.access_token}"
-							}
-						}
-					}
-				],
+				"connector": "github",
 				"mcp": {
 					"type": "streamable-http",
 					"url": "https://api.githubcopilot.com/mcp/"
@@ -109,69 +75,7 @@ export const FIRST_PARTY_MANIFESTS = {
 					"category": "Productivity",
 					"icon": "linear"
 				},
-				"auth": [
-					{
-						"type": "oauth2",
-						"label": "OAuth 2.0",
-						"provider": "linear",
-						"client": "dynamic",
-						"scopes": [
-							"read",
-							"write"
-						],
-						"identity": {
-							"url": "https://api.linear.app/graphql",
-							"method": "POST",
-							"headers": {
-								"Authorization": "Bearer ${config.access_token}",
-								"Content-Type": "application/json"
-							},
-							"body": {
-								"query": "query { viewer { id name organization { id name } } }"
-							},
-							"id": "$.data.viewer.organization.id",
-							"label": "$.data.viewer.organization.name"
-						},
-						"bind": {
-							"headers": {
-								"Authorization": "Bearer ${config.access_token}"
-							}
-						}
-					},
-					{
-						"type": "api_key",
-						"label": "Personal API key",
-						"credential_input": "api_key",
-						"inputs": [
-							{
-								"name": "api_key",
-								"label": "Linear API key",
-								"placeholder": "lin_api_…",
-								"description": "Linear → Settings → Security & access → Personal API keys",
-								"required": true,
-								"secret": true
-							}
-						],
-						"identity": {
-							"url": "https://api.linear.app/graphql",
-							"method": "POST",
-							"headers": {
-								"Authorization": "${config.access_token}",
-								"Content-Type": "application/json"
-							},
-							"body": {
-								"query": "query { viewer { id name organization { id name } } }"
-							},
-							"id": "$.data.viewer.organization.id",
-							"label": "$.data.viewer.organization.name"
-						},
-						"bind": {
-							"headers": {
-								"Authorization": "Bearer ${config.access_token}"
-							}
-						}
-					}
-				],
+				"connector": "linear",
 				"mcp": {
 					"type": "streamable-http",
 					"url": "https://mcp.linear.app/mcp"
@@ -219,28 +123,7 @@ export const FIRST_PARTY_MANIFESTS = {
 					"category": "Productivity",
 					"icon": "notion"
 				},
-				"auth": [
-					{
-						"type": "oauth2",
-						"label": "OAuth 2.0",
-						"provider": "notion",
-						"client": "dynamic",
-						"identity": {
-							"url": "https://api.notion.com/v1/users/me",
-							"headers": {
-								"Authorization": "Bearer ${config.access_token}",
-								"Notion-Version": "2022-06-28"
-							},
-							"id": "$.id",
-							"label": "$.bot.workspace_name"
-						},
-						"bind": {
-							"headers": {
-								"Authorization": "Bearer ${config.access_token}"
-							}
-						}
-					}
-				],
+				"connector": "notion",
 				"mcp": {
 					"type": "streamable-http",
 					"url": "https://mcp.notion.com/mcp"
@@ -284,58 +167,7 @@ export const FIRST_PARTY_MANIFESTS = {
 					"category": "Communication",
 					"icon": "slack"
 				},
-				"auth": [
-					{
-						"type": "oauth2",
-						"label": "OAuth 2.0",
-						"provider": "slack",
-						"pkce": true,
-						"authorization_url": "https://slack.com/oauth/v2/authorize",
-						"token_url": "https://slack.com/api/oauth.v2.user.access",
-						"scopes": [
-							"channels:history",
-							"channels:read",
-							"channels:write",
-							"groups:history",
-							"groups:read",
-							"groups:write",
-							"im:history",
-							"im:read",
-							"im:write",
-							"mpim:history",
-							"mpim:read",
-							"mpim:write",
-							"chat:write",
-							"reactions:read",
-							"reactions:write",
-							"users:read",
-							"users:read.email",
-							"users:write",
-							"search:read",
-							"team:read"
-						],
-						"scope_separator": ",",
-						"token_request_auth_method": "client_secret_post",
-						"requires_env": [
-							"PLUGIN_SLACK_CLIENT_ID",
-							"PLUGIN_SLACK_CLIENT_SECRET"
-						],
-						"identity": {
-							"url": "https://slack.com/api/auth.test",
-							"method": "GET",
-							"headers": {
-								"Authorization": "Bearer ${config.access_token}"
-							},
-							"id": "$.team_id",
-							"label": "$.team"
-						},
-						"bind": {
-							"headers": {
-								"Authorization": "Bearer ${config.access_token}"
-							}
-						}
-					}
-				],
+				"connector": "slack",
 				"server": {
 					"path": "plugins/slack/server/index.mjs",
 					"integrity": "sha256-v6jbpX7Wl57RBS2IU1mk2s4qrnnYIf68AUF3GtV3gxw=",
@@ -371,46 +203,7 @@ export const FIRST_PARTY_MANIFESTS = {
 					"category": "Communication",
 					"icon": "gmail"
 				},
-				"auth": [
-					{
-						"type": "oauth2",
-						"label": "OAuth 2.0",
-						"provider": "google",
-						"pkce": true,
-						"authorization_url": "https://accounts.google.com/o/oauth2/v2/auth",
-						"token_url": "https://oauth2.googleapis.com/token",
-						"scopes": [
-							"openid",
-							"email",
-							"https://www.googleapis.com/auth/gmail.readonly",
-							"https://www.googleapis.com/auth/gmail.compose",
-							"https://www.googleapis.com/auth/gmail.modify",
-							"https://www.googleapis.com/auth/gmail.labels",
-							"https://www.googleapis.com/auth/gmail.settings.basic",
-							"https://mail.google.com/"
-						],
-						"scope_separator": " ",
-						"token_request_auth_method": "client_secret_post",
-						"token_expiration_buffer": 300,
-						"authorization_params": {
-							"access_type": "offline",
-							"prompt": "consent"
-						},
-						"requires_env": [
-							"PLUGIN_GOOGLE_CLIENT_ID",
-							"PLUGIN_GOOGLE_CLIENT_SECRET"
-						],
-						"identity": {
-							"url": "https://openidconnect.googleapis.com/v1/userinfo",
-							"method": "GET",
-							"headers": {
-								"Authorization": "Bearer ${config.access_token}"
-							},
-							"id": "$.sub",
-							"label": "$.email"
-						}
-					}
-				],
+				"connector": "google",
 				"server": {
 					"path": "plugins/gmail/server/index.mjs",
 					"integrity": "sha256-j3X7Hn0q6evz96JrEycg5e1BkbUVxZGJ2/IjwyDlkxc=",

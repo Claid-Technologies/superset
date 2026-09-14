@@ -99,6 +99,7 @@ export interface PluginBind {
 
 export interface SupersetExtension {
 	interface?: { displayName: string; category?: string; icon?: string };
+	connector?: string;
 	auth?: PluginAuth;
 	bind?: PluginBind;
 	mcp?: PluginMcp;

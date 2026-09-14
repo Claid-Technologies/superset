@@ -8,6 +8,10 @@
 			"types": "./src/index.ts",
 			"default": "./src/index.ts"
 		},
+		"./connectors": {
+			"types": "./src/lib/connectors/index.ts",
+			"default": "./src/lib/connectors/index.ts"
+		},
 		"./page-schema": {
 			"types": "./src/router/page/schema.ts",
 			"default": "./src/router/page/schema.ts"

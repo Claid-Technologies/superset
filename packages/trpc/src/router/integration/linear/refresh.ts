@@ -1,9 +1,7 @@
 import { LinearClient } from "@linear/sdk";
-import { db } from "@superset/db/client";
-import { integrationConnections } from "@superset/db/schema";
-import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 import { env } from "../../../env";
+import { orgConnection } from "../../../lib/connectors";
 import {
 	markDisconnected,
 	type RefreshedToken,
@@ -87,11 +85,8 @@ export async function callLinear<T>(
 	} catch (error) {
 		if (!isLinearAuthError(error)) throw error;
 
-		const connection = await db.query.integrationConnections.findFirst({
-			where: and(
-				eq(integrationConnections.organizationId, organizationId),
-				eq(integrationConnections.provider, "linear"),
-			),
+		const connection = await orgConnection(organizationId, "linear", {
+			includeDisconnected: true,
 		});
 		if (!connection) return null;
 		if (!connection.refreshToken) {

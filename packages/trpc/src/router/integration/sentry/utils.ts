@@ -1,4 +1,3 @@
-import type { SentryConfig } from "@superset/db/schema";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { env } from "../../../env";
@@ -152,8 +151,10 @@ export async function getSentryAccessToken(
 			// The install uuid is the token endpoint's path segment; without it
 			// there is nothing to refresh against, so the current token is all
 			// there is.
-			const installationUuid = (connection.config as SentryConfig | null)
-				?.installationUuid;
+			const installationUuid =
+				connection.state?.provider === "sentry"
+					? connection.state.installationUuid
+					: undefined;
 			if (!installationUuid) return { keep: true };
 
 			const response = await fetch(authorizationsUrl(installationUuid), {

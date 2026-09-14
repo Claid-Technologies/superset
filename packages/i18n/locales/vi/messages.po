@@ -1413,9 +1413,6 @@ msgstr "Thêm một agent từ menu ở thanh bên để bắt đầu."
 msgid "Add photos or files"
 msgstr "Thêm ảnh hoặc tệp"
 
-msgid "Add plugin"
-msgstr "Thêm plugin"
-
 msgid "Add project"
 msgstr "Thêm dự án"
 
@@ -2127,9 +2124,6 @@ msgstr "Nhật ký kiểm toán"
 msgid "Aug 2026"
 msgstr "Th8 2026"
 
-msgid "Authenticate your {displayName} account"
-msgstr "Xác thực tài khoản {displayName} của bạn"
-
 msgid "Authentication"
 msgstr "Xác thực"
 
@@ -2156,6 +2150,12 @@ msgstr "Cấp quyền"
 
 msgid "Authorize {displayName}"
 msgstr "Cấp quyền cho {displayName}"
+
+msgid "Authorize Superset so your plugins, automations and triggers can act on your behalf."
+msgstr "Ủy quyền cho Superset để các plugin, tự động hóa và trình kích hoạt có thể hành động thay bạn."
+
+msgid "Authorize Superset to act on your behalf."
+msgstr "Cho phép Superset thay mặt bạn thực hiện thao tác."
 
 msgid "Authorizing..."
 msgstr "Đang cấp quyền..."
@@ -3514,6 +3514,12 @@ msgstr "Xác nhận trước khi thoát"
 msgid "Connect"
 msgstr "Kết nối"
 
+msgid "Connect {displayName}"
+msgstr "Kết nối {displayName}"
+
+msgid "Connect {name}"
+msgstr "Kết nối {name}"
+
 msgid "Connect a device"
 msgstr "Kết nối một thiết bị"
 
@@ -3586,10 +3592,6 @@ msgstr "Kết nối workspace Slack của bạn để quản lý tác vụ ngay 
 msgid "Connected"
 msgstr "Đã kết nối"
 
-#. placeholder {0}: formatDate(new Date(connection.createdAt))
-msgid "connected {0}"
-msgstr "đã kết nối {0}"
-
 msgid "Connected {label}"
 msgstr "Đã kết nối {label}"
 
@@ -3613,6 +3615,9 @@ msgstr "Đã kết nối. Việc đăng nhập bị hủy nên các trigger theo
 
 msgid "Connecting"
 msgstr "Đang kết nối"
+
+msgid "Connecting lets your agents read and act in {name} on your behalf. Review what you are granting before you continue."
+msgstr "Kết nối cho phép các tác nhân của bạn đọc và thao tác trong {name} thay mặt bạn. Hãy xem lại những gì bạn đang cấp trước khi tiếp tục."
 
 msgid "Connecting to the desktop…"
 msgstr "Đang kết nối tới màn hình nền…"
@@ -3642,8 +3647,17 @@ msgstr "Kết nối bị từ chối"
 msgid "Connection Timed Out"
 msgstr "Kết nối quá thời gian"
 
-msgid "Connections"
-msgstr "Kết nối"
+msgid "Connector"
+msgstr "Trình kết nối"
+
+msgid "Connectors carry risk"
+msgstr "Trình kết nối có rủi ro"
+
+msgid "Connects for your whole team."
+msgstr "Kết nối cho toàn bộ nhóm của bạn."
+
+msgid "Connects your account. Teammates connect their own."
+msgstr "Kết nối tài khoản của bạn. Đồng nghiệp kết nối tài khoản riêng của họ."
 
 msgid "consecutive active days"
 msgstr "ngày hoạt động liên tiếp"
@@ -3695,6 +3709,10 @@ msgstr "Tiếp tục"
 
 msgid "Continue or fork session"
 msgstr "Tiếp tục hoặc fork phiên"
+
+#. placeholder {0}: connector.displayName
+msgid "Continue to {0}"
+msgstr "Tiếp tục đến {0}"
 
 msgid "Continue update"
 msgstr "Tiếp tục cập nhật"
@@ -4422,6 +4440,9 @@ msgstr "Đang tạo worktree"
 msgid "Creating..."
 msgstr "Đang tạo..."
 
+msgid "Credentials stay on the server"
+msgstr "Thông tin xác thực được giữ trên máy chủ"
+
 msgid "Cross-feature components living outside packages/ui — check here before building a new one"
 msgstr "Các component dùng chung nhiều tính năng, nằm ngoài packages/ui — hãy xem ở đây trước khi dựng cái mới"
 
@@ -4864,6 +4885,9 @@ msgstr "Đăng nhập dev"
 msgid "Dev sign-in failed"
 msgstr "Đăng nhập dev thất bại"
 
+msgid "Developed by {author}"
+msgstr "Phát triển bởi {author}"
+
 msgid "Developer"
 msgstr "Lập trình viên"
 
@@ -4978,10 +5002,6 @@ msgstr "Đã bỏ — sẽ không hỏi lại"
 
 msgid "Disconnect"
 msgstr "Ngắt kết nối"
-
-#. placeholder {0}: connection.account ?? displayName
-msgid "Disconnect {0}"
-msgstr "Ngắt kết nối {0}"
 
 msgid "Disconnect GitHub?"
 msgstr "Ngắt kết nối GitHub?"
@@ -7233,6 +7253,9 @@ msgstr "Góc nhìn từ đội ngũ Superset về coding agent chạy song song 
 msgid "Inspecting {0}"
 msgstr "Đang kiểm tra {0}"
 
+msgid "Install"
+msgstr "Cài đặt"
+
 msgid "Install & restart"
 msgstr "Cài đặt & khởi động lại"
 
@@ -7245,11 +7268,17 @@ msgstr "Cài đặt thất bại"
 msgid "Install GitHub App"
 msgstr "Cài GitHub App"
 
+msgid "Install plugin"
+msgstr "Cài đặt plugin"
+
 msgid "Install Superset MCP in your client"
 msgstr "Cài Superset MCP vào client của bạn"
 
 msgid "Install the desktop app"
 msgstr "Cài ứng dụng máy tính"
+
+msgid "Install the plugin to connect"
+msgstr "Cài đặt plugin để kết nối"
 
 msgid "Install the Superset GitHub App to connect your repositories."
 msgstr "Hãy cài Superset GitHub App để kết nối các repository của bạn."
@@ -13585,6 +13614,9 @@ msgstr "Superset Mobile chạy agent trên những máy tính bạn kết nối.
 msgid "Superset needs Full Disk Access to read another browser's data. Grant it in System Settings, then check again."
 msgstr "Superset cần quyền Full Disk Access để đọc dữ liệu của trình duyệt khác. Cấp quyền trong System Settings rồi kiểm tra lại."
 
+msgid "Superset only receives the permissions this connector asks for. Disconnect at any time to revoke them."
+msgstr "Superset chỉ nhận các quyền mà trình kết nối này yêu cầu. Ngắt kết nối bất cứ lúc nào để thu hồi."
+
 msgid "Superset originals"
 msgstr "Thành phần riêng của Superset"
 
@@ -14428,9 +14460,6 @@ msgstr "Đường dẫn này tồn tại nhưng không phải thư mục."
 msgid "This path is a directory"
 msgstr "Đường dẫn này là một thư mục"
 
-msgid "This plugin needs no account — its skills are ready to use."
-msgstr "Plugin này không cần tài khoản — các Skill của nó đã sẵn sàng dùng."
-
 msgid "This port is still in use"
 msgstr "Cổng này vẫn đang được dùng"
 
@@ -14665,6 +14694,9 @@ msgstr "Mức dùng token"
 
 msgid "Tokens"
 msgstr "Token"
+
+msgid "Tokens are held by Superset and attached to requests there. They are never written into your local agent config."
+msgstr "Superset giữ các token và đính kèm chúng vào yêu cầu tại máy chủ. Chúng không bao giờ được ghi vào cấu hình tác nhân cục bộ của bạn."
 
 msgid "Tokens per session"
 msgstr "Token mỗi phiên"
@@ -15942,6 +15974,9 @@ msgstr "Bạn chưa được xếp hạng cho đến khi có {0} ngày hoạt đ
 msgid "You can't undo this action. Terminal panes will show \"Process exited\" and can be restarted."
 msgstr "Không thể hoàn tác thao tác này. Các khung terminal sẽ hiện \"Process exited\" và có thể khởi động lại."
 
+msgid "You control the access"
+msgstr "Bạn kiểm soát quyền truy cập"
+
 msgid "You declined the {plugin} authorization request."
 msgstr "Bạn đã từ chối yêu cầu ủy quyền của {plugin}."
 
@@ -15953,6 +15988,9 @@ msgstr "Bạn không có quyền truy cập terminal này."
 
 msgid "You don't have permission to remove this member"
 msgstr "Bạn không có quyền gỡ thành viên này"
+
+msgid "You need to be part of an organization to connect accounts."
+msgstr "Bạn cần thuộc về một tổ chức để kết nối tài khoản."
 
 msgid "You need to be part of an organization to use integrations."
 msgstr "Bạn cần thuộc một tổ chức để dùng tích hợp."

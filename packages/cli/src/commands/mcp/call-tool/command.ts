@@ -1,6 +1,6 @@
 import { CLIError, positional, string } from "@superset/cli-framework";
 import { command } from "../../../lib/command";
-import { resolveConnectionId } from "../../../lib/plugins/connection-ref";
+import { resolvePluginName } from "../../../lib/plugins/connection-ref";
 import { readStdin } from "../../../lib/plugins/inputs";
 
 export default command({
@@ -12,12 +12,14 @@ export default command({
 		),
 	],
 	options: {
-		connection: string().desc("Connection id from `superset plugins list`"),
-		pluginId: string().desc("Deprecated alias for --connection"),
+		plugin: string().desc("Plugin name from `superset plugins list`"),
+		connection: string().desc("Deprecated alias for --plugin"),
+		pluginId: string().desc("Deprecated alias for --plugin"),
 	},
 	run: async ({ ctx, args, options }) => {
 		const tool = args.tool as string;
-		const connectionId = resolveConnectionId({
+		const pluginName = resolvePluginName({
+			plugin: options.plugin as string | undefined,
 			connection: options.connection as string | undefined,
 			pluginId: options.pluginId as string | undefined,
 		});
@@ -34,7 +36,7 @@ export default command({
 		}
 
 		const { result } = await ctx.api.plugins.tools.call.mutate({
-			connectionId,
+			plugin: pluginName,
 			tool,
 			arguments: parsed,
 		});

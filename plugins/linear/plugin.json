@@ -10,7 +10,12 @@
 	"homepage": "https://docs.superset.sh",
 	"repository": "https://github.com/superset-sh/superset",
 	"license": "MIT",
-	"keywords": ["linear", "issues", "project-management", "planning"],
+	"keywords": [
+		"linear",
+		"issues",
+		"project-management",
+		"planning"
+	],
 	"extensions": {
 		"superset": {
 			"interface": {
@@ -18,66 +23,7 @@
 				"category": "Productivity",
 				"icon": "linear"
 			},
-			"auth": [
-				{
-					"type": "oauth2",
-					"label": "OAuth 2.0",
-					"provider": "linear",
-					"client": "dynamic",
-					"scopes": ["read", "write"],
-					"identity": {
-						"url": "https://api.linear.app/graphql",
-						"method": "POST",
-						"headers": {
-							"Authorization": "Bearer ${config.access_token}",
-							"Content-Type": "application/json"
-						},
-						"body": {
-							"query": "query { viewer { id name organization { id name } } }"
-						},
-						"id": "$.data.viewer.organization.id",
-						"label": "$.data.viewer.organization.name"
-					},
-					"bind": {
-						"headers": {
-							"Authorization": "Bearer ${config.access_token}"
-						}
-					}
-				},
-				{
-					"type": "api_key",
-					"label": "Personal API key",
-					"credential_input": "api_key",
-					"inputs": [
-						{
-							"name": "api_key",
-							"label": "Linear API key",
-							"placeholder": "lin_api_…",
-							"description": "Linear → Settings → Security & access → Personal API keys",
-							"required": true,
-							"secret": true
-						}
-					],
-					"identity": {
-						"url": "https://api.linear.app/graphql",
-						"method": "POST",
-						"headers": {
-							"Authorization": "${config.access_token}",
-							"Content-Type": "application/json"
-						},
-						"body": {
-							"query": "query { viewer { id name organization { id name } } }"
-						},
-						"id": "$.data.viewer.organization.id",
-						"label": "$.data.viewer.organization.name"
-					},
-					"bind": {
-						"headers": {
-							"Authorization": "Bearer ${config.access_token}"
-						}
-					}
-				}
-			],
+			"connector": "linear",
 			"mcp": {
 				"type": "streamable-http",
 				"url": "https://mcp.linear.app/mcp"

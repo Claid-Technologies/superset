@@ -280,6 +280,73 @@ export type InsertIntegrationConnection =
 export type SelectIntegrationConnection =
 	typeof integrationConnections.$inferSelect;
 
+export const connections = pgTable(
+	"connections",
+	{
+		id: uuid().primaryKey().defaultRandom(),
+		organizationId: uuid("organization_id")
+			.notNull()
+			.references(() => organizations.id, { onDelete: "cascade" }),
+		connectedByUserId: uuid("connected_by_user_id")
+			.notNull()
+			.references(() => users.id, { onDelete: "cascade" }),
+
+		connector: text().notNull(),
+		ownerKind: text("owner_kind").notNull(),
+		authMethod: text("auth_method").notNull(),
+
+		accessToken: text("access_token").notNull(),
+		refreshToken: text("refresh_token"),
+		tokenExpiresAt: timestamp("token_expires_at"),
+		scopes: text().array(),
+
+		issuer: text(),
+		resource: text(),
+
+		externalAccountId: text("external_account_id").notNull(),
+		externalAccountLabel: text("external_account_label"),
+		externalUserId: text("external_user_id"),
+		externalUserLabel: text("external_user_label"),
+
+		config: jsonb().$type<Record<string, string | null>>(),
+		state: jsonb().$type<IntegrationConfig>(),
+
+		disconnectedAt: timestamp("disconnected_at"),
+		disconnectReason: text("disconnect_reason"),
+
+		createdAt: timestamp("created_at").notNull().defaultNow(),
+		updatedAt: timestamp("updated_at")
+			.notNull()
+			.defaultNow()
+			.$onUpdate(() => new Date()),
+	},
+	(table) => [
+		uniqueIndex("connections_org_connector_unique")
+			.on(table.organizationId, table.connector)
+			.where(sql`${table.ownerKind} = 'org'`),
+		uniqueIndex("connections_user_connector_unique")
+			.on(
+				table.organizationId,
+				table.connector,
+				table.connectedByUserId,
+				table.externalAccountId,
+			)
+			.where(sql`${table.ownerKind} = 'user'`),
+		index("connections_org_idx").on(table.organizationId),
+		index("connections_external_account_idx").on(
+			table.connector,
+			table.externalAccountId,
+		),
+		check(
+			"connections_user_identity_present",
+			sql`owner_kind <> 'user' OR external_user_id IS NOT NULL`,
+		),
+	],
+);
+
+export type InsertConnection = typeof connections.$inferInsert;
+export type SelectConnection = typeof connections.$inferSelect;
+
 // Stripe subscriptions (org-based billing)
 export const subscriptions = pgTable(
 	"subscriptions",
@@ -1015,7 +1082,7 @@ export const automationEvents = pgTable(
 		// Which connection produced this. Null for webhook and superset events.
 		// Not backfillable later: provider payloads do not always name it.
 		integrationConnectionId: uuid("integration_connection_id").references(
-			() => integrationConnections.id,
+			() => connections.id,
 			{ onDelete: "set null" },
 		),
 

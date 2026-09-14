@@ -4,7 +4,7 @@ import {
 	isFullUser,
 	iteratePaginatedAPI,
 } from "@notionhq/client";
-import { activeConnection } from "../connections";
+import { connectionAccessToken, orgConnection } from "../../../lib/connectors";
 import type { TriggerOption, TriggerOptionSource } from "../trigger-options";
 import { notionClient, plainText } from "./client";
 
@@ -18,10 +18,9 @@ const MAX_OPTIONS = 500;
  * the chip keeps its "anyone / me" entries rather than the editor going red.
  */
 async function connectedClient(organizationId: string): Promise<Client | null> {
-	const connection = await activeConnection(organizationId, "notion", {
-		accessToken: true,
-	});
-	return connection ? notionClient(connection.accessToken) : null;
+	const connection = await orgConnection(organizationId, "notion");
+	if (!connection) return null;
+	return notionClient(await connectionAccessToken(connection));
 }
 
 /**

@@ -1,22 +1,32 @@
 import { CLIError } from "@superset/cli-framework";
 
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 /**
- * The connection to act on, always named outright. Resolving a plugin name to
- * "its" connection used to be allowed, which made the id and the name two
- * handles for the same slot: a stray positional could land in the name slot
- * and be silently discarded in favour of the id, so a mistyped call ran a tool
- * nobody asked for. One handle, and it is the id.
+ * The plugin to act on. Credentials now live on the connector a plugin names,
+ * and a person holds one connection per connector — so the plugin name is the
+ * handle again, and a connection id no longer identifies which plugin was
+ * meant (one connector can back several).
  */
-export function resolveConnectionId(opts: {
+export function resolvePluginName(opts: {
+	plugin?: string;
 	connection?: string;
 	pluginId?: string;
 }): string {
-	const id = opts.connection ?? opts.pluginId;
-	if (!id) {
+	const legacy = opts.connection ?? opts.pluginId;
+	if (!opts.plugin && legacy && UUID.test(legacy)) {
 		throw new CLIError(
-			"Pass --connection <id>.",
-			"Run: superset plugins list  (the PLUGIN ID column holds the id, one per connected account)",
+			"--connection takes a plugin name now, not a connection id.",
+			"Run: superset mcp tools --plugin <name>",
 		);
 	}
-	return id;
+
+	const name = opts.plugin ?? legacy;
+	if (!name) {
+		throw new CLIError(
+			"Pass --plugin <name>.",
+			"Run: superset plugins list  (the PLUGIN column holds the name)",
+		);
+	}
+	return name;
 }

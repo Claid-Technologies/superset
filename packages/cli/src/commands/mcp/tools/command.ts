@@ -1,13 +1,14 @@
 import { string, table } from "@superset/cli-framework";
 import { command } from "../../../lib/command";
-import { resolveConnectionId } from "../../../lib/plugins/connection-ref";
+import { resolvePluginName } from "../../../lib/plugins/connection-ref";
 
 export default command({
 	description: "List the tools a connected plugin exposes",
 	args: [],
 	options: {
-		connection: string().desc("Connection id from `superset plugins list`"),
-		pluginId: string().desc("Deprecated alias for --connection"),
+		plugin: string().desc("Plugin name from `superset plugins list`"),
+		connection: string().desc("Deprecated alias for --plugin"),
+		pluginId: string().desc("Deprecated alias for --plugin"),
 	},
 	display: (data) =>
 		table(
@@ -17,13 +18,14 @@ export default command({
 			[16, 30, 70],
 		),
 	run: async ({ ctx, options }) => {
-		const connectionId = resolveConnectionId({
+		const pluginName = resolvePluginName({
+			plugin: options.plugin as string | undefined,
 			connection: options.connection as string | undefined,
 			pluginId: options.pluginId as string | undefined,
 		});
 
 		const { plugin, tools } = await ctx.api.plugins.tools.list.query({
-			connectionId,
+			plugin: pluginName,
 		});
 
 		return {

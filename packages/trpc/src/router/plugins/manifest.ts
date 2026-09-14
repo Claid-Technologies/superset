@@ -3,72 +3,6 @@ export const SUPERSET_EXTENSION = "superset";
 /** The marketplace whose manifests we ship and review. */
 export const FIRST_PARTY_MARKETPLACE = "superset";
 
-export interface AuthInput {
-	name: string;
-	label?: string;
-	placeholder?: string;
-	description?: string;
-	required?: boolean;
-	secret?: boolean;
-}
-
-export interface AuthIdentity {
-	url: string;
-	method?: "GET" | "POST";
-	headers?: Record<string, string>;
-	body?: unknown;
-	id: string;
-	label?: string;
-}
-
-export interface PluginAuthMethod {
-	type: "oauth2" | "api_key";
-	label?: string;
-	provider?: string;
-	inputs?: AuthInput[];
-	credential_input?: string;
-	authorization_url?: string;
-	token_url?: string;
-	scopes?: string[];
-	scope_separator?: string;
-	token_request_auth_method?: string;
-	token_expiration_buffer?: number;
-	requires_env?: string[];
-	identity?: AuthIdentity;
-	bind?: PluginBind;
-	client?: "static" | "dynamic";
-	pkce?: boolean;
-	authorization_params?: Record<string, string>;
-	token_params?: Record<string, string>;
-}
-
-export function usesDynamicClient(auth: PluginAuthMethod): boolean {
-	return auth.type === "oauth2" && auth.client === "dynamic";
-}
-
-export function usesPkce(auth: PluginAuthMethod): boolean {
-	return auth.pkce === true || usesDynamicClient(auth);
-}
-
-export function tokenAuthentication(
-	auth: PluginAuthMethod,
-): "basic" | "post" | undefined {
-	if (auth.token_request_auth_method === "client_secret_basic") return "basic";
-	if (auth.token_request_auth_method === "client_secret_post") return "post";
-	return undefined;
-}
-
-export type PluginAuth = PluginAuthMethod[];
-
-export function authMethod(
-	auth: PluginAuth | undefined,
-	type?: string,
-): PluginAuthMethod | undefined {
-	if (!auth?.length) return undefined;
-	if (!type) return auth.length === 1 ? auth[0] : undefined;
-	return auth.find((method) => method.type === type);
-}
-
 export interface PluginMcp {
 	type: "streamable-http";
 	url: string;
@@ -88,10 +22,14 @@ export interface PluginServer {
 
 export interface SupersetExtension {
 	interface?: { displayName: string; category?: string; icon?: string };
-	auth?: PluginAuth;
+	connector?: string;
 	bind?: PluginBind;
 	mcp?: PluginMcp;
 	server?: PluginServer;
+}
+
+export function pluginConnector(manifest: PluginManifest): string | undefined {
+	return supersetExtension(manifest)?.connector;
 }
 
 export interface PluginManifest {
@@ -134,17 +72,10 @@ export function resolveTemplate(value: string, scope: TemplateScope): string {
 export function resolveUrlTemplate(
 	value: string,
 	scope: TemplateScope,
-	auth?: PluginAuthMethod,
+	secretInputs?: readonly string[],
 	what = "URL",
 ): string {
-	const secrets = new Set(
-		(auth?.inputs ?? [])
-			.filter((input) => input.secret)
-			.map((input) => input.name),
-	);
-	if (auth?.type === "api_key") {
-		secrets.add(auth.credential_input ?? DEFAULT_CREDENTIAL_INPUT);
-	}
+	const secrets = new Set(secretInputs ?? []);
 	return value.replace(TEMPLATE, (whole, root: string, key: string) => {
 		if (root === "config") {
 			throw new Error(

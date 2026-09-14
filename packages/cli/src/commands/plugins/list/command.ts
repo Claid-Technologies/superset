@@ -27,7 +27,7 @@ export default command({
 		const status = (plugin: CatalogPlugin) => {
 			if (!plugin.installed) return "available";
 			if (!plugin.enabled) return "disabled";
-			if (plugin.authMethods.length > 0 && plugin.connections.length === 0) {
+			if (plugin.connector && plugin.connections.length === 0) {
 				return "needs connection";
 			}
 			return plugin.accounts.length

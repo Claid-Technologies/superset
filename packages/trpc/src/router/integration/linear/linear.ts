@@ -1,6 +1,6 @@
 import { db, dbWs } from "@superset/db/client";
 import {
-	integrationConnections,
+	connections,
 	type LinearConfig,
 	taskStatuses,
 	tasks,
@@ -9,6 +9,7 @@ import { seedDefaultStatuses } from "@superset/db/seed-default-statuses";
 import type { TRPCRouterRecord } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
+import { orgConnection } from "../../../lib/connectors";
 import { protectedProcedure } from "../../../trpc";
 import { disconnectProcedure } from "../connections";
 import { verifyOrgAdmin, verifyOrgMembership } from "../utils";
@@ -19,21 +20,13 @@ export const linearRouter = {
 		.input(z.object({ organizationId: z.uuid() }))
 		.query(async ({ ctx, input }) => {
 			await verifyOrgMembership(ctx.session.user.id, input.organizationId);
-			const connection = await db.query.integrationConnections.findFirst({
-				where: and(
-					eq(integrationConnections.organizationId, input.organizationId),
-					eq(integrationConnections.provider, "linear"),
-				),
-				columns: {
-					id: true,
-					config: true,
-					disconnectedAt: true,
-					disconnectReason: true,
-				},
+			const connection = await orgConnection(input.organizationId, "linear", {
+				includeDisconnected: true,
 			});
 			if (!connection) return null;
 			return {
-				config: connection.config as LinearConfig | null,
+				config:
+					connection.state?.provider === "linear" ? connection.state : null,
 				needsReconnect: !!connection.disconnectedAt,
 				disconnectReason: connection.disconnectReason,
 			};
@@ -128,12 +121,12 @@ export const linearRouter = {
 			};
 
 			await db
-				.update(integrationConnections)
-				.set({ config })
+				.update(connections)
+				.set({ state: config })
 				.where(
 					and(
-						eq(integrationConnections.organizationId, input.organizationId),
-						eq(integrationConnections.provider, "linear"),
+						eq(connections.organizationId, input.organizationId),
+						eq(connections.connector, "linear"),
 					),
 				);
 

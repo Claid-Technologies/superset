@@ -3,6 +3,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
+import { getConnector, secretInputNames } from "@superset/shared/connectors";
 import type { BundledSource } from "./connections";
 import {
 	credentialFetch,
@@ -175,17 +176,27 @@ function remoteTarget(
 	const mcp = extension?.mcp;
 	if (!mcp?.url) return null;
 
-	const authMethod = method
-		? extension?.auth?.find((entry) => entry.type === method)
+	const connector = extension?.connector
+		? getConnector(extension.connector)
 		: undefined;
-	const methodBind = authMethod?.bind;
+	const connectorMethod = method
+		? connector?.methods.find((entry) => entry.type === method)
+		: connector?.methods[0];
 
 	const headers: Record<string, string> = {
 		...resolveTemplateDeep(mcp.headers ?? {}, scope),
-		...resolveTemplateDeep(methodBind ?? extension?.bind ?? {}, scope).headers,
+		...resolveTemplateDeep(
+			connectorMethod?.bind ?? extension?.bind ?? {},
+			scope,
+		).headers,
 	};
 	return {
-		url: resolveUrlTemplate(mcp.url, scope, authMethod, "mcp.url"),
+		url: resolveUrlTemplate(
+			mcp.url,
+			scope,
+			connectorMethod ? secretInputNames(connectorMethod) : undefined,
+			"mcp.url",
+		),
 		headers,
 	};
 }

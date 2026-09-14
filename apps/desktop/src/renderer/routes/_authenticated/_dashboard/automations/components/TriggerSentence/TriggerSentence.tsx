@@ -2,12 +2,10 @@ import type {
 	DraftTrigger,
 	TriggerProblem,
 } from "@superset/shared/automation-triggers";
-import { INTEGRATIONS } from "@superset/shared/integrations";
 import { Button } from "@superset/ui/button";
 import type { ReactNode } from "react";
-import { LuArrowUpRight, LuTrash2 } from "react-icons/lu";
-import { env } from "renderer/env.renderer";
-import { type ProviderOptions, providerFor } from "../providers";
+import { LuTrash2 } from "react-icons/lu";
+import { connectorFor, type ProviderOptions, providerFor } from "../providers";
 import { triggerEventLabel } from "../providers/eventLabel";
 import type { OptionGroupState } from "../providers/types";
 import { CHIP_INVALID } from "./chipStyles";
@@ -22,6 +20,8 @@ interface TriggerSentenceProps {
 	problems?: TriggerProblem[];
 	/** Trailing "Next run ..." text for a schedule row. */
 	nextRun?: ReactNode;
+	/** Opens the connect dialog for this row's connector. */
+	onConnect?: (connector: string) => void;
 	/**
 	 * True when this provider needs an integration nobody has connected yet.
 	 * The row collapses to the trigger's name and the way to fix it: with no
@@ -50,6 +50,7 @@ export function TriggerSentence({
 	nextRun,
 	requiresConnection,
 	disabled,
+	onConnect,
 }: TriggerSentenceProps) {
 	const config = trigger.config;
 	const provider = providerFor(config);
@@ -59,11 +60,7 @@ export function TriggerSentence({
 	// could each be the empty one.
 	const invalid = new Set((problems ?? []).map((p) => p.field));
 
-	// The web app owns every connect flow, because that is where the browser
-	// session lives; this only has to point at the right page.
-	const webPath = INTEGRATIONS.find(
-		(integration) => integration.provider === provider.connectionProvider,
-	)?.webPath;
+	const connector = connectorFor(provider);
 
 	// Always the first element of the right-hand cluster, so whatever follows
 	// it — nothing, or a Connect button — is what sits against the row's right
@@ -100,18 +97,15 @@ export function TriggerSentence({
 						Requires connection
 					</span>
 					{removeButton}
-					{webPath && (
+					{connector && onConnect && (
 						<Button
 							type="button"
 							variant="outline"
 							size="sm"
-							onClick={() =>
-								window.open(`${env.NEXT_PUBLIC_WEB_URL}${webPath}`, "_blank")
-							}
+							onClick={() => onConnect(connector)}
 							className="h-7 shrink-0 gap-1 border-amber-500/40 bg-amber-500/10 px-2.5 text-amber-700 text-xs hover:bg-amber-500/20 dark:text-amber-400"
 						>
 							Connect
-							<LuArrowUpRight className="size-3.5" />
 						</Button>
 					)}
 				</>

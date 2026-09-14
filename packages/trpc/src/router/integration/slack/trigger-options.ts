@@ -3,7 +3,7 @@ import {
 	type UsersListResponse,
 	WebClient,
 } from "@slack/web-api";
-import { activeConnection } from "../connections";
+import { connectionBotToken, orgConnection } from "../../../lib/connectors";
 import type { TriggerOption, TriggerOptionSource } from "../trigger-options";
 
 /** A hard stop, not a page size: enough for any workspace this is pointed at. */
@@ -17,11 +17,9 @@ const MAX_PEOPLE = 1000;
  * procedure, which shows an empty list.
  */
 async function slackClient(organizationId: string): Promise<WebClient | null> {
-	const connection = await activeConnection(organizationId, "slack", {
-		accessToken: true,
-	});
+	const connection = await orgConnection(organizationId, "slack");
 	if (!connection) return null;
-	return new WebClient(connection.accessToken, {
+	return new WebClient(await connectionBotToken(connection), {
 		timeout: 5_000,
 		retryConfig: { retries: 0 },
 	});
