@@ -1,7 +1,6 @@
 import crypto from "node:crypto";
 import { AUTH_PROVIDERS } from "@superset/shared/constants";
 import { getHostId, getHostName } from "@superset/shared/host-info";
-import { TRPCError } from "@trpc/server";
 import { observable } from "@trpc/server/observable";
 import { shell } from "electron";
 import { env } from "main/env.main";
@@ -18,24 +17,7 @@ import {
 	saveToken,
 	stateStore,
 } from "./utils/auth-functions";
-
-// Token writes create a lock directory next to the token file, which is where
-// a full disk surfaces. That is the user's environment, not a bug.
-async function writeAuth<Result>(
-	operation: () => Promise<Result>,
-): Promise<Result> {
-	try {
-		return await operation();
-	} catch (error) {
-		if ((error as NodeJS.ErrnoException | null)?.code === "ENOSPC") {
-			throw new TRPCError({
-				code: "PRECONDITION_FAILED",
-				message: error instanceof Error ? error.message : String(error),
-			});
-		}
-		throw error;
-	}
-}
+import { writeAuth } from "./utils/write-auth";
 
 export const createAuthRouter = () => {
 	return router({
