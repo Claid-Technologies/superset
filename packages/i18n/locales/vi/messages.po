@@ -13429,6 +13429,9 @@ msgstr "Đăng nhập đã hết hạn — hãy chạy"
 msgid "Sign-in failed"
 msgstr "Đăng nhập thất bại"
 
+msgid "Sign-in failed ({reason}). Please try again."
+msgstr "Đăng nhập thất bại ({reason}). Vui lòng thử lại."
+
 msgid "Signed in as {accountLabel}"
 msgstr "Đã đăng nhập với {accountLabel}"
 
@@ -14958,6 +14961,9 @@ msgstr "Thiết bị này chưa kết nối tới relay của Superset nên các
 
 msgid "This directory does not exist. The terminal script will fall back to the workspace root."
 msgstr "Thư mục này không tồn tại. Script terminal sẽ quay về thư mục gốc của workspace."
+
+msgid "This email is already registered with another sign-in method, and the provider did not confirm it as verified. Sign in with the method you used before."
+msgstr "Email này đã được đăng ký bằng phương thức đăng nhập khác và nhà cung cấp chưa xác nhận email đã được xác minh. Hãy đăng nhập bằng phương thức bạn đã dùng trước đây."
 
 msgid "this file"
 msgstr "tệp này"

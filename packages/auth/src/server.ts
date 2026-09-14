@@ -136,6 +136,10 @@ function serializeCancellationDetails(
 export const auth = betterAuth({
 	baseURL: env.NEXT_PUBLIC_API_URL,
 	secret: env.BETTER_AUTH_SECRET,
+	onAPIError: {
+		// Without this, production better-auth sends OAuth failures to the API root, a 404.
+		errorURL: `${env.NEXT_PUBLIC_WEB_URL}/sign-in`,
+	},
 	disabledPaths: [],
 	database: drizzleAdapter(db, {
 		provider: "pg",

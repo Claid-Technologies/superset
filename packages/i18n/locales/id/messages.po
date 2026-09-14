@@ -13429,6 +13429,9 @@ msgstr "Sesi masuk kedaluwarsa — jalankan"
 msgid "Sign-in failed"
 msgstr "Gagal masuk"
 
+msgid "Sign-in failed ({reason}). Please try again."
+msgstr "Gagal masuk ({reason}). Silakan coba lagi."
+
 msgid "Signed in as {accountLabel}"
 msgstr "Masuk sebagai {accountLabel}"
 
@@ -14958,6 +14961,9 @@ msgstr "Perangkat ini tidak terhubung ke relay Superset, jadi run otomatisasi ak
 
 msgid "This directory does not exist. The terminal script will fall back to the workspace root."
 msgstr "Direktori ini tidak ada. Skrip terminal akan memakai root workspace."
+
+msgid "This email is already registered with another sign-in method, and the provider did not confirm it as verified. Sign in with the method you used before."
+msgstr "Email ini sudah terdaftar dengan metode masuk lain, dan penyedia tidak mengonfirmasinya sebagai terverifikasi. Masuk dengan metode yang Anda gunakan sebelumnya."
 
 msgid "this file"
 msgstr "file ini"

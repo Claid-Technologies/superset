@@ -13429,6 +13429,9 @@ msgstr "La sesión ha caducado: ejecuta"
 msgid "Sign-in failed"
 msgstr "Error al iniciar sesión"
 
+msgid "Sign-in failed ({reason}). Please try again."
+msgstr "Error al iniciar sesión ({reason}). Inténtalo de nuevo."
+
 msgid "Signed in as {accountLabel}"
 msgstr "Sesión iniciada como {accountLabel}"
 
@@ -14958,6 +14961,9 @@ msgstr "Este dispositivo no está conectado al relay de Superset, así que se om
 
 msgid "This directory does not exist. The terminal script will fall back to the workspace root."
 msgstr "Este directorio no existe. El script de terminal usará la raíz del espacio de trabajo."
+
+msgid "This email is already registered with another sign-in method, and the provider did not confirm it as verified. Sign in with the method you used before."
+msgstr "Este correo ya está registrado con otro método de inicio de sesión y el proveedor no lo confirmó como verificado. Inicia sesión con el método que usaste antes."
 
 msgid "this file"
 msgstr "este archivo"

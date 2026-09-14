@@ -13429,6 +13429,9 @@ msgstr "サインインの期限切れ — 次を実行:"
 msgid "Sign-in failed"
 msgstr "サインインに失敗しました"
 
+msgid "Sign-in failed ({reason}). Please try again."
+msgstr "サインインに失敗しました（{reason}）。もう一度お試しください。"
+
 msgid "Signed in as {accountLabel}"
 msgstr "{accountLabel}としてサインイン中"
 
@@ -14958,6 +14961,9 @@ msgstr "このデバイスはSupersetリレーに接続されていないため�
 
 msgid "This directory does not exist. The terminal script will fall back to the workspace root."
 msgstr "このディレクトリは存在しません。ターミナルスクリプトはワークスペースルートにフォールバックします。"
+
+msgid "This email is already registered with another sign-in method, and the provider did not confirm it as verified. Sign in with the method you used before."
+msgstr "このメールアドレスは別のサインイン方法で既に登録されており、プロバイダーが確認済みとして認証しませんでした。以前使用した方法でサインインしてください。"
 
 msgid "this file"
 msgstr "このファイル"

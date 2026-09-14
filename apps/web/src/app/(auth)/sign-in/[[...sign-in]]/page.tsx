@@ -46,9 +46,24 @@ export default function SignInPage() {
 		? `${env.NEXT_PUBLIC_WEB_URL}${redirect}`
 		: env.NEXT_PUBLIC_WEB_URL;
 
+	const callbackError = searchParams.get("error");
+	const callbackErrorDescription = searchParams.get("error_description");
+
 	const [isLoadingGoogle, setIsLoadingGoogle] = useState(false);
 	const [isLoadingGithub, setIsLoadingGithub] = useState(false);
-	const [error, setError] = useState<string | null>(null);
+	const [error, setError] = useState<string | null>(() => {
+		if (!callbackError) return null;
+		if (callbackError === "account_not_linked") {
+			return t({
+				message:
+					"This email is already registered with another sign-in method, and the provider did not confirm it as verified. Sign in with the method you used before.",
+			});
+		}
+		const reason = callbackErrorDescription ?? callbackError;
+		return t({
+			message: `Sign-in failed (${reason}). Please try again.`,
+		});
+	});
 	const [lastUsedMethod, setLastUsedMethod] = useState<AuthMethod | null>(null);
 
 	useEffect(() => {

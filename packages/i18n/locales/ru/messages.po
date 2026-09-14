@@ -13429,6 +13429,9 @@ msgstr "Срок входа истёк — выполните"
 msgid "Sign-in failed"
 msgstr "Не удалось войти"
 
+msgid "Sign-in failed ({reason}). Please try again."
+msgstr "Не удалось войти ({reason}). Попробуйте ещё раз."
+
 msgid "Signed in as {accountLabel}"
 msgstr "Вы вошли как {accountLabel}"
 
@@ -14958,6 +14961,9 @@ msgstr "Это устройство не подключено к реле Supers
 
 msgid "This directory does not exist. The terminal script will fall back to the workspace root."
 msgstr "Такой папки не существует. Скрипт терминала запустится в корне рабочей области."
+
+msgid "This email is already registered with another sign-in method, and the provider did not confirm it as verified. Sign in with the method you used before."
+msgstr "Этот адрес электронной почты уже зарегистрирован с другим способом входа, и провайдер не подтвердил его как проверенный. Войдите тем способом, которым пользовались раньше."
 
 msgid "this file"
 msgstr "этот файл"

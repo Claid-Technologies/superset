@@ -13429,6 +13429,9 @@ msgstr "Anmeldung abgelaufen — führe"
 msgid "Sign-in failed"
 msgstr "Anmeldung fehlgeschlagen"
 
+msgid "Sign-in failed ({reason}). Please try again."
+msgstr "Anmeldung fehlgeschlagen ({reason}). Bitte versuche es erneut."
+
 msgid "Signed in as {accountLabel}"
 msgstr "Angemeldet als {accountLabel}"
 
@@ -14958,6 +14961,9 @@ msgstr "Dieses Gerät ist nicht mit dem Superset-Relay verbunden, daher werden A
 
 msgid "This directory does not exist. The terminal script will fall back to the workspace root."
 msgstr "Dieses Verzeichnis existiert nicht. Das Terminal-Skript greift auf die Wurzel des Arbeitsbereichs zurück."
+
+msgid "This email is already registered with another sign-in method, and the provider did not confirm it as verified. Sign in with the method you used before."
+msgstr "Diese E-Mail-Adresse ist bereits mit einer anderen Anmeldemethode registriert, und der Anbieter hat sie nicht als verifiziert bestätigt. Melde dich mit der zuvor verwendeten Methode an."
 
 msgid "this file"
 msgstr "diese Datei"

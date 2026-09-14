@@ -13429,6 +13429,9 @@ msgstr "Connexion expirée — exécutez"
 msgid "Sign-in failed"
 msgstr "Échec de la connexion"
 
+msgid "Sign-in failed ({reason}). Please try again."
+msgstr "Échec de la connexion ({reason}). Veuillez réessayer."
+
 msgid "Signed in as {accountLabel}"
 msgstr "Connecté en tant que {accountLabel}"
 
@@ -14958,6 +14961,9 @@ msgstr "Cet appareil n'est pas connecté au relais Superset, les exécutions d'a
 
 msgid "This directory does not exist. The terminal script will fall back to the workspace root."
 msgstr "Ce répertoire n'existe pas. Le script de terminal se rabattra sur la racine de l'espace de travail."
+
+msgid "This email is already registered with another sign-in method, and the provider did not confirm it as verified. Sign in with the method you used before."
+msgstr "Cet e-mail est déjà enregistré avec une autre méthode de connexion et le fournisseur ne l'a pas confirmé comme vérifié. Connectez-vous avec la méthode utilisée précédemment."
 
 msgid "this file"
 msgstr "ce fichier"
