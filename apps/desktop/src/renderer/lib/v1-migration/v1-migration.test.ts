@@ -76,6 +76,52 @@ describe("decideProjectImport", () => {
 		).toEqual({ kind: "import" });
 	});
 
+	test("older host without the origin flags keeps importing a lone candidate", () => {
+		expect(
+			decideProjectImport(findByPath([{ id: "a", source: "remote" }])),
+		).toEqual({ kind: "import" });
+	});
+
+	test("a folder that is no longer a git repo wins over a secondary-only candidate", () => {
+		expect(
+			decideProjectImport({
+				...findByPath(
+					[{ id: "a", source: "remote", viaOrigin: false }],
+					[],
+					true,
+				),
+				needsGitInit: true,
+			}),
+		).toEqual({ kind: "skip", reason: "not-a-git-repo" });
+	});
+
+	test("several candidates still need a pick even when the first is origin-derived", () => {
+		expect(
+			decideProjectImport(
+				findByPath(
+					[
+						{ id: "own", source: "remote", viaOrigin: true },
+						{ id: "other", source: "remote", viaOrigin: false },
+					],
+					[],
+					true,
+				),
+			),
+		).toEqual({ kind: "skip", reason: "multiple-candidates" });
+	});
+
+	test("secondary-only candidate next to a failed origin lookup is skipped for the origin reason", () => {
+		expect(
+			decideProjectImport(
+				findByPath(
+					[{ id: "a", source: "remote", viaOrigin: false }],
+					[{ url: "https://github.com/owner/b", message: "cloud down" }],
+					true,
+				),
+			),
+		).toEqual({ kind: "skip", reason: "non-origin-only" });
+	});
+
 	test("lone secondary-remote candidate imports when the repo has no origin", () => {
 		expect(
 			decideProjectImport(
@@ -166,6 +212,47 @@ describe("importV1Project link target", () => {
 		expect(setupCalls).toEqual([
 			expect.objectContaining({ projectId: "project-a" }),
 		]);
+	});
+
+	test("links implicitly when the repo has no origin remote", async () => {
+		const { client, setupCalls } = recordingHostClient();
+		const noOrigin = {
+			...secondaryOnly,
+			hasOriginRemote: false,
+		} as ProjectFindByPathResult;
+		await importV1Project({
+			hostClient: client,
+			project: v1Project,
+			findByPathResult: noOrigin,
+		});
+		expect(setupCalls).toHaveLength(1);
+	});
+
+	test("the host's origin-mismatch CONFLICT surfaces as an error, never as needs-relocate", async () => {
+		const client = {
+			project: {
+				setup: {
+					mutate: async () => {
+						throw new Error(
+							'/tmp/b is a checkout of git@github.com:owner/b.git (origin), not owner/a; its "a" remote only references that repository. Import the folder as its own project instead.',
+						);
+					},
+				},
+				create: {
+					mutate: async () => {
+						throw new Error("create should not be called");
+					},
+				},
+			},
+		} as unknown as HostServiceClient;
+		await expect(
+			importV1Project({
+				hostClient: client,
+				project: v1Project,
+				findByPathResult: secondaryOnly,
+				linkToProjectId: "project-a",
+			}),
+		).rejects.toThrow("is a checkout of");
 	});
 
 	test("links implicitly to an origin-derived candidate", async () => {

@@ -238,6 +238,204 @@ describe("findByPath walkAllRemotes (v1 importer)", () => {
 		]);
 	});
 
+	it("origin-only repo: lone candidate is origin-derived", async () => {
+		const db = createTestDb();
+		const { api, byRemoteUrl } = createRecordingApiStub();
+		const ctx = createTestContext(db, api);
+		const root = await createTempGitRepo();
+		await addRemotes(root, { origin: "git@github.com:owner/a.git" });
+		byRemoteUrl.set("https://github.com/owner/a", ["project-a"]);
+
+		const caller = createCallerFactory(projectRouter)(ctx);
+		const result = await caller.findByPath({
+			repoPath: root,
+			walkAllRemotes: true,
+		});
+
+		expect(result.hasOriginRemote).toBe(true);
+		expect(result.candidates).toEqual([
+			expect.objectContaining({ id: "project-a", viaOrigin: true }),
+		]);
+	});
+
+	it("repo with no remotes: nothing to match, no origin", async () => {
+		const db = createTestDb();
+		const { api, calls } = createRecordingApiStub();
+		const ctx = createTestContext(db, api);
+		const root = await createTempGitRepo();
+
+		const caller = createCallerFactory(projectRouter)(ctx);
+		const result = await caller.findByPath({
+			repoPath: root,
+			walkAllRemotes: true,
+		});
+
+		expect(result).toMatchObject({
+			candidates: [],
+			cloudErrors: [],
+			hasOriginRemote: false,
+		});
+		expect(calls).toHaveLength(0);
+	});
+
+	it("secondary-only clone (no origin): candidate is not origin-derived but nothing marks it secondary", async () => {
+		const db = createTestDb();
+		const { api, byRemoteUrl } = createRecordingApiStub();
+		const ctx = createTestContext(db, api);
+		const root = await createTempGitRepo();
+		await addRemotes(root, { upstream: "git@github.com:owner/a.git" });
+		byRemoteUrl.set("https://github.com/owner/a", ["project-a"]);
+
+		const caller = createCallerFactory(projectRouter)(ctx);
+		const result = await caller.findByPath({
+			repoPath: root,
+			walkAllRemotes: true,
+		});
+
+		expect(result.hasOriginRemote).toBe(false);
+		expect(result.candidates[0]).toMatchObject({
+			id: "project-a",
+			viaOrigin: false,
+		});
+	});
+
+	it("ssh vs https and mixed case for the same repo collapse into one origin-derived candidate", async () => {
+		const db = createTestDb();
+		const { api, byRemoteUrl, calls } = createRecordingApiStub();
+		const ctx = createTestContext(db, api);
+		const root = await createTempGitRepo();
+		await addRemotes(root, {
+			backup: "https://github.com/Owner/A.git",
+			origin: "git@github.com:owner/a.git",
+		});
+		byRemoteUrl.set("https://github.com/owner/a", ["project-a"]);
+
+		const caller = createCallerFactory(projectRouter)(ctx);
+		const result = await caller.findByPath({
+			repoPath: root,
+			walkAllRemotes: true,
+		});
+
+		expect(calls).toHaveLength(1);
+		expect(result.candidates).toEqual([
+			expect.objectContaining({ id: "project-a", viaOrigin: true }),
+		]);
+	});
+
+	it("origin ranking beats an expectedRemoteUrl hint that points at the secondary's project", async () => {
+		const db = createTestDb();
+		const { api, byRemoteUrl } = createRecordingApiStub();
+		const ctx = createTestContext(db, api);
+		const root = await createTempGitRepo();
+		await addRemotes(root, {
+			origin: "git@github.com:owner/b.git",
+			a: "git@github.com:owner/a.git",
+		});
+		byRemoteUrl.set("https://github.com/owner/a", ["project-a"]);
+		byRemoteUrl.set("https://github.com/owner/b", ["project-b"]);
+
+		const caller = createCallerFactory(projectRouter)(ctx);
+		const result = await caller.findByPath({
+			repoPath: root,
+			walkAllRemotes: true,
+			expectedRemoteUrl: "https://github.com/owner/a",
+		});
+
+		expect(
+			result.candidates.map((c) => [c.id, c.viaOrigin, c.matchesExpected]),
+		).toEqual([
+			["project-b", true, false],
+			["project-a", false, true],
+		]);
+	});
+
+	it("origin lookup failing while the secondary succeeds still marks the survivor secondary", async () => {
+		const db = createTestDb();
+		const { byRemoteUrl } = createRecordingApiStub();
+		const api = {
+			v2Project: {
+				findByGitHubRemote: {
+					query: async ({ repoCloneUrl }: { repoCloneUrl: string }) => {
+						if (repoCloneUrl.toLowerCase() === "https://github.com/owner/b") {
+							throw new Error("cloud down");
+						}
+						const ids = byRemoteUrl.get(repoCloneUrl.toLowerCase()) ?? [];
+						return { candidates: ids.map((id) => ({ id, name: id })) };
+					},
+				},
+			},
+		};
+		const ctx = createTestContext(db, api);
+		const root = await createTempGitRepo();
+		await addRemotes(root, {
+			origin: "git@github.com:owner/b.git",
+			a: "git@github.com:owner/a.git",
+		});
+		byRemoteUrl.set("https://github.com/owner/a", ["project-a"]);
+
+		const caller = createCallerFactory(projectRouter)(ctx);
+		const result = await caller.findByPath({
+			repoPath: root,
+			walkAllRemotes: true,
+		});
+
+		expect(result.hasOriginRemote).toBe(true);
+		expect(result.candidates).toEqual([
+			expect.objectContaining({ id: "project-a", viaOrigin: false }),
+		]);
+		expect(result.cloudErrors).toEqual([
+			expect.objectContaining({ url: "https://github.com/owner/b" }),
+		]);
+	});
+
+	it("keeps the origin URL when origin resolves the project before a secondary remote does", async () => {
+		const db = createTestDb();
+		const { api, byRemoteUrl } = createRecordingApiStub();
+		const ctx = createTestContext(db, api);
+		const root = await createTempGitRepo();
+		await addRemotes(root, {
+			origin: "git@github.com:owner/a.git",
+			mirror: "git@github.com:owner/mirror.git",
+		});
+		byRemoteUrl.set("https://github.com/owner/a", ["project-a"]);
+		byRemoteUrl.set("https://github.com/owner/mirror", ["project-a"]);
+
+		const caller = createCallerFactory(projectRouter)(ctx);
+		const result = await caller.findByPath({
+			repoPath: root,
+			walkAllRemotes: true,
+		});
+
+		expect(result.candidates).toEqual([
+			expect.objectContaining({
+				id: "project-a",
+				viaOrigin: true,
+				repoCloneUrl: "https://github.com/owner/a",
+			}),
+		]);
+	});
+
+	it("an origin that is a local path still counts as the repo's identity", async () => {
+		const db = createTestDb();
+		const { api, byRemoteUrl } = createRecordingApiStub();
+		const ctx = createTestContext(db, api);
+		const root = await createTempGitRepo();
+		await addRemotes(root, {
+			origin: "/srv/git/b.git",
+			a: "git@github.com:owner/a.git",
+		});
+		byRemoteUrl.set("https://github.com/owner/a", ["project-a"]);
+
+		const caller = createCallerFactory(projectRouter)(ctx);
+		const result = await caller.findByPath({
+			repoPath: root,
+			walkAllRemotes: true,
+		});
+
+		expect(result.hasOriginRemote).toBe(true);
+		expect(result.candidates[0]?.viaOrigin).toBe(false);
+	});
+
 	it("reports hasOriginRemote for a non-GitHub origin", async () => {
 		const db = createTestDb();
 		const { api, byRemoteUrl } = createRecordingApiStub();
@@ -316,6 +514,69 @@ describe("setup import refuses to move a project between repos (#7241)", () => {
 			.where(eq(projects.id, projectA))
 			.get();
 		expect(row?.repoPath).toBe(repoA);
+		expect(row?.repoUrl).toBe("https://github.com/owner/a");
+	});
+
+	it("rejects without allowRelocate too, and never as a relocate prompt", async () => {
+		const db = createTestDb();
+		const { api } = createRecordingApiStub();
+		const ctx = createTestContext(db, api);
+		const repoA = await createTempGitRepo();
+		await addRemotes(repoA, { origin: "git@github.com:owner/a.git" });
+		const repoB = await createTempGitRepo();
+		await addRemotes(repoB, {
+			origin: "git@github.com:owner/b.git",
+			a: "git@github.com:owner/a.git",
+		});
+		db.insert(projects)
+			.values({ id: projectA, repoPath: repoA, name: "a", updatedAt: 1 })
+			.run();
+
+		const caller = createCallerFactory(projectRouter)(ctx);
+		const err = await caller.setup(setupInput(repoB)).catch((e) => e);
+		expect(err).toMatchObject({ code: "CONFLICT" });
+		// The wizard turns this phrase into "Use this folder"; the origin
+		// mismatch must never be offered as a relocate.
+		expect(err.message).not.toContain("already set up on this device at");
+		expect(err.message).toContain("git@github.com:owner/b.git");
+	});
+
+	it("accepts a secondary-only clone that has no origin", async () => {
+		const db = createTestDb();
+		const { api } = createRecordingApiStub();
+		const ctx = createTestContext(db, api);
+		const repo = await createTempGitRepo();
+		await addRemotes(repo, { upstream: "git@github.com:owner/a.git" });
+
+		const caller = createCallerFactory(projectRouter)(ctx);
+		const result = await caller.setup(setupInput(repo));
+		expect(result.repoPath).toBe(repo);
+		const row = db
+			.select()
+			.from(projects)
+			.where(eq(projects.id, projectA))
+			.get();
+		expect(row?.remoteName).toBe("upstream");
+	});
+
+	it("records origin when a duplicate secondary remote precedes it in config order", async () => {
+		const db = createTestDb();
+		const { api } = createRecordingApiStub();
+		const ctx = createTestContext(db, api);
+		const repo = await createTempGitRepo();
+		await addRemotes(repo, {
+			backup: "https://github.com/owner/a.git",
+			origin: "git@github.com:owner/a.git",
+		});
+
+		const caller = createCallerFactory(projectRouter)(ctx);
+		await caller.setup(setupInput(repo));
+		const row = db
+			.select()
+			.from(projects)
+			.where(eq(projects.id, projectA))
+			.get();
+		expect(row?.remoteName).toBe("origin");
 		expect(row?.repoUrl).toBe("https://github.com/owner/a");
 	});
 
