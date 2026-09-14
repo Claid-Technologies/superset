@@ -2287,6 +2287,9 @@ msgstr "Automaticky spustit na nové kartě"
 msgid "Auto-run on workspace creation"
 msgstr "Automaticky spustit při vytvoření pracovního prostoru"
 
+msgid "Auto-updates are disabled by the DISABLE_UPDATE_CHECK environment variable."
+msgstr "Automatické aktualizace jsou vypnuté proměnnou prostředí DISABLE_UPDATE_CHECK."
+
 msgid "Auto-updates are disabled in development mode."
 msgstr "Automatické aktualizace jsou ve vývojovém režimu vypnuté."
 

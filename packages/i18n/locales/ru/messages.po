@@ -2287,6 +2287,9 @@ msgstr "Автозапуск в новой вкладке"
 msgid "Auto-run on workspace creation"
 msgstr "Автозапуск при создании рабочей области"
 
+msgid "Auto-updates are disabled by the DISABLE_UPDATE_CHECK environment variable."
+msgstr "Автообновления отключены переменной окружения DISABLE_UPDATE_CHECK."
+
 msgid "Auto-updates are disabled in development mode."
 msgstr "Автообновления отключены в режиме разработки."
 

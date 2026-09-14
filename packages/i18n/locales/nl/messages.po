@@ -2287,6 +2287,9 @@ msgstr "Automatisch uitvoeren bij nieuw tabblad"
 msgid "Auto-run on workspace creation"
 msgstr "Automatisch uitvoeren bij aanmaken werkruimte"
 
+msgid "Auto-updates are disabled by the DISABLE_UPDATE_CHECK environment variable."
+msgstr "Automatische updates zijn uitgeschakeld door de omgevingsvariabele DISABLE_UPDATE_CHECK."
+
 msgid "Auto-updates are disabled in development mode."
 msgstr "Automatische updates zijn uitgeschakeld in de ontwikkelmodus."
 

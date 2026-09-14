@@ -2287,6 +2287,9 @@ msgstr "新しいタブで自動実行"
 msgid "Auto-run on workspace creation"
 msgstr "ワークスペース作成時に自動実行"
 
+msgid "Auto-updates are disabled by the DISABLE_UPDATE_CHECK environment variable."
+msgstr "環境変数 DISABLE_UPDATE_CHECK により自動アップデートは無効です。"
+
 msgid "Auto-updates are disabled in development mode."
 msgstr "開発モードでは自動アップデートは無効です。"
 

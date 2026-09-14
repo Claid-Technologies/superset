@@ -2287,6 +2287,9 @@ msgstr "Avvio automatico in una nuova scheda"
 msgid "Auto-run on workspace creation"
 msgstr "Avvio automatico alla creazione del workspace"
 
+msgid "Auto-updates are disabled by the DISABLE_UPDATE_CHECK environment variable."
+msgstr "Gli aggiornamenti automatici sono disattivati dalla variabile d'ambiente DISABLE_UPDATE_CHECK."
+
 msgid "Auto-updates are disabled in development mode."
 msgstr "Gli aggiornamenti automatici sono disattivati in modalità sviluppo."
 

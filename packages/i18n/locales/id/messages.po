@@ -2287,6 +2287,9 @@ msgstr "Jalankan otomatis di tab baru"
 msgid "Auto-run on workspace creation"
 msgstr "Jalankan otomatis saat workspace dibuat"
 
+msgid "Auto-updates are disabled by the DISABLE_UPDATE_CHECK environment variable."
+msgstr "Pembaruan otomatis dinonaktifkan oleh variabel lingkungan DISABLE_UPDATE_CHECK."
+
 msgid "Auto-updates are disabled in development mode."
 msgstr "Pembaruan otomatis dinonaktifkan di mode development."
 

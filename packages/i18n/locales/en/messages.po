@@ -2287,6 +2287,9 @@ msgstr "Auto-run on new tab"
 msgid "Auto-run on workspace creation"
 msgstr "Auto-run on workspace creation"
 
+msgid "Auto-updates are disabled by the DISABLE_UPDATE_CHECK environment variable."
+msgstr "Auto-updates are disabled by the DISABLE_UPDATE_CHECK environment variable."
+
 msgid "Auto-updates are disabled in development mode."
 msgstr "Auto-updates are disabled in development mode."
 

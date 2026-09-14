@@ -2287,6 +2287,9 @@ msgstr "新建标签页时自动运行"
 msgid "Auto-run on workspace creation"
 msgstr "创建工作区时自动运行"
 
+msgid "Auto-updates are disabled by the DISABLE_UPDATE_CHECK environment variable."
+msgstr "自动更新已被 DISABLE_UPDATE_CHECK 环境变量禁用。"
+
 msgid "Auto-updates are disabled in development mode."
 msgstr "开发模式下已禁用自动更新。"
 

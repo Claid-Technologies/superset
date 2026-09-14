@@ -2287,6 +2287,9 @@ msgstr "Exécution auto. à l'ouverture d'un onglet"
 msgid "Auto-run on workspace creation"
 msgstr "Exécution auto. à la création d'un espace de travail"
 
+msgid "Auto-updates are disabled by the DISABLE_UPDATE_CHECK environment variable."
+msgstr "Les mises à jour automatiques sont désactivées par la variable d'environnement DISABLE_UPDATE_CHECK."
+
 msgid "Auto-updates are disabled in development mode."
 msgstr "Les mises à jour automatiques sont désactivées en mode développement."
 

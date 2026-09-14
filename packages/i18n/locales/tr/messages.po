@@ -2287,6 +2287,9 @@ msgstr "Yeni sekmede otomatik çalıştır"
 msgid "Auto-run on workspace creation"
 msgstr "Çalışma alanı oluşturulunca otomatik çalıştır"
 
+msgid "Auto-updates are disabled by the DISABLE_UPDATE_CHECK environment variable."
+msgstr "Otomatik güncellemeler DISABLE_UPDATE_CHECK ortam değişkeni tarafından devre dışı bırakıldı."
+
 msgid "Auto-updates are disabled in development mode."
 msgstr "Geliştirme modunda otomatik güncellemeler devre dışıdır."
 

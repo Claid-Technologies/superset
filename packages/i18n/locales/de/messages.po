@@ -2287,6 +2287,9 @@ msgstr "Automatisch bei neuem Tab starten"
 msgid "Auto-run on workspace creation"
 msgstr "Automatisch beim Erstellen eines Arbeitsbereichs starten"
 
+msgid "Auto-updates are disabled by the DISABLE_UPDATE_CHECK environment variable."
+msgstr "Auto-Updates sind durch die Umgebungsvariable DISABLE_UPDATE_CHECK deaktiviert."
+
 msgid "Auto-updates are disabled in development mode."
 msgstr "Auto-Updates sind im Entwicklungsmodus deaktiviert."
 

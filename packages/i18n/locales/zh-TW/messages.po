@@ -2287,6 +2287,9 @@ msgstr "新建分頁時自動執行"
 msgid "Auto-run on workspace creation"
 msgstr "建立工作區時自動執行"
 
+msgid "Auto-updates are disabled by the DISABLE_UPDATE_CHECK environment variable."
+msgstr "自動更新已被 DISABLE_UPDATE_CHECK 環境變數停用。"
+
 msgid "Auto-updates are disabled in development mode."
 msgstr "開發模式下已停用自動更新。"
 

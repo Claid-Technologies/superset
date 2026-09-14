@@ -2287,6 +2287,9 @@ msgstr "Ejecutar al abrir una pestaña"
 msgid "Auto-run on workspace creation"
 msgstr "Ejecutar al crear un espacio de trabajo"
 
+msgid "Auto-updates are disabled by the DISABLE_UPDATE_CHECK environment variable."
+msgstr "Las actualizaciones automáticas están desactivadas por la variable de entorno DISABLE_UPDATE_CHECK."
+
 msgid "Auto-updates are disabled in development mode."
 msgstr "Las actualizaciones automáticas están desactivadas en modo de desarrollo."
 

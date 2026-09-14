@@ -2287,6 +2287,9 @@ msgstr "Uruchamiaj automatycznie w nowej karcie"
 msgid "Auto-run on workspace creation"
 msgstr "Uruchamiaj automatycznie przy tworzeniu obszaru roboczego"
 
+msgid "Auto-updates are disabled by the DISABLE_UPDATE_CHECK environment variable."
+msgstr "Automatyczne aktualizacje są wyłączone przez zmienną środowiskową DISABLE_UPDATE_CHECK."
+
 msgid "Auto-updates are disabled in development mode."
 msgstr "Automatyczne aktualizacje są wyłączone w trybie deweloperskim."
 
