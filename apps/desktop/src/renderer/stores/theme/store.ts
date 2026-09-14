@@ -159,7 +159,8 @@ function applyTheme(theme: Theme): {
 
 	// The window-controls overlay (Windows, Linux) is painted by the window,
 	// not the page, so it follows the theme from here. Electron parses only
-	// hex, rgb() and hsl(), so oklch() theme colours go over as hex.
+	// hex, rgb(), hsl() and named colours, so oklch() theme colours go over
+	// as hex.
 	electronTrpcClient.window.setTitleBarOverlay
 		.mutate({
 			color: toHex(theme.ui.background),
