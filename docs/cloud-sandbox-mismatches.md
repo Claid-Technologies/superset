@@ -375,6 +375,18 @@ The in-sandbox materializer skipped values containing newlines, so the dev
 stack's API failed env validation on `GH_APP_PRIVATE_KEY`. It now writes them
 double-quoted with `\n`, which dotenv reads back as newlines.
 
+**The client keys a workspace's tickets by URL, so each port needs its own
+gate URL.** `cloudWorkspace.access` mints one ticket for host-service and one
+for the desktop stream, and the renderer stores each under the gate URL it
+was minted for. Production's origin carries a `*` that becomes
+`<workspace>-<port>`, so the two never meet. The dev setup used to write a
+bare `http://127.0.0.1:<port>` origin: both tickets landed under one URL,
+the desktop's ticket overwrote the host's, and every host-service call was
+answered by websockify on 6080 (`501 Not Implemented` on POST, a happy
+`101` on `/events`). The dev origin is now `http://*.localhost:<port>`,
+which Chromium resolves to loopback without a hosts entry; the CSP is built
+from the same value.
+
 **Ports answer at a random per-sandbox domain.** `sandbox.domain(4879)` is
 `https://sb-<random>.vercel.run`, unrelated to the sandbox's name and stable
 for the sandbox's life. There is no per-port authentication — see the auth
