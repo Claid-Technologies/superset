@@ -136,7 +136,7 @@
 		"version": "3.5.1"
 	},
 	"host-service": {
-		"sha256": "c894c95452a925a4d217fbc233b97d8d01b6e2c410e1426e00a4ac1763a2f094",
+		"sha256": "1abecee0c3b3326cdc946aceeeb8eb5242e15433de2b92ed02e0f5a0d8d64d51",
 		"suffix": ".tar.gz",
 		"dest": "/usr/local/share/superset/media/host-service-1.29.0+cfad85bd4.tar.gz",
 		"mode": "0644",

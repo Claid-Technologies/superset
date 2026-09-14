@@ -55,6 +55,37 @@ Two structural facts drive the plan: the identity of a workspace rides in the
 sandbox's create-time env, so nothing can exist before the create call; and
 host-service is the last thing the boot script starts.
 
+## Where the time goes on the v2 layout
+
+Measured 2026-09-14 after `packages/sandbox` landed (`bun run --cwd
+packages/sandbox measure`, three creates and three reopens against the dev
+golden `env-internal-mu0xelrw`, sfo1, 8 vCPU, bundle `336c6f9e`). The control
+plane now makes one call to boot a box (identity and secret in the boot
+command's env), fires the policy update alongside it, polls health at 100 ms
+and, on a create, settles instead of re-running the wake.
+
+| Stage | Where | Measured (median) |
+| --- | --- | --- |
+| Name, clone token, environment, repo hooks | job | 0.31 s |
+| `Sandbox.fork` | Vercel | 0.71 s |
+| Fire boot (the one call; the first to touch the VM waits for it) | Vercel | **13.2 s** (2.4 s on one of three: the VM was already up) |
+| `superset-boot` to `host.exec` (run dir, bundle check, three passes) | box | 0.27 s |
+| host-service process start → listening | box | 0.84 s |
+| boot fired → first healthy, as the job's own wake saw it | job | 1.28 s |
+| create → job returned (row ready, env pushed) | | **15.6 s** median, 17.1 s max; 2.7 s on the warm one |
+| reopen: wake → `boot.start` (the resume) | Vercel | **15.0 s** |
+| reopen: `boot.start` → host-service listening | box | 1.33 s |
+| reopen: wake → first 200 | | **16.4 s** median, 19.3 s max |
+
+Against the first table: the box's own share of a create fell from 3.2 s to
+1.3 s (no checkout on a fork of a golden that carries one, host-service
+first, three hash-compare passes at 0.27 s), the control plane's from ~1.5 s
+of sequential calls to one round trip plus a 0.3 s claim, and the whole
+create from 19.6 s to 15.6 s. The remaining 13–15 s on both paths is the
+platform bringing the VM up, the same floor the first table found. P5 (a
+member already booted) is now the only lever left on either path; the
+in-sandbox and control-plane items of P1–P3 are done by the layout itself.
+
 ## Plan, one PR each
 
 **P0 — Measure. Done 2026-09-14.** One trace per create. `start.sh` stamps
