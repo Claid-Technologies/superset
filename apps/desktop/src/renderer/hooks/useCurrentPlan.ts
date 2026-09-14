@@ -43,6 +43,11 @@ export function useCurrentPlan() {
 		const fetched = isPlanFor(cached, organizationId)
 			? cached
 			: await utils.billing.activePlan.fetch(undefined, { staleTime: 0 });
+		if (fetched.organizationId !== organizationId) {
+			throw new Error(
+				`Active plan answered for ${fetched.organizationId}, not ${organizationId}`,
+			);
+		}
 		return planTierFromSubscription(fetched);
 	}
 

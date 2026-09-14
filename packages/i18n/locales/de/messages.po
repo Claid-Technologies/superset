@@ -4114,7 +4114,7 @@ msgid "Could not change who can see this page"
 msgstr "Es konnte nicht geändert werden, wer diese Seite sehen kann"
 
 msgid "Could not check your plan. Check your connection and try again."
-msgstr "Dein Plan konnte nicht überprüft werden. Prüfe deine Verbindung und versuche es erneut."
+msgstr "Dein Tarif konnte nicht überprüft werden. Prüfe deine Verbindung und versuche es erneut."
 
 msgid "Could not clear browsing data"
 msgstr "Browserdaten konnten nicht gelöscht werden"

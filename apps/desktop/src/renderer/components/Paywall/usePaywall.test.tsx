@@ -174,6 +174,19 @@ describe("whose plan the window is holding", () => {
 		expect(result.current.hasAccess("automations")).toBe(false);
 	});
 
+	test("does not grant access on a refetch that still answers for another organization", async () => {
+		fetch.mockImplementationOnce(async () => proPlanFor("other-org"));
+		const { result } = renderHook(() => usePaywall());
+		const callback = mock(() => {});
+
+		act(() => result.current.gateFeature("automations", callback));
+		resolvePlan(proPlanFor("other-org"));
+		await settle();
+		expect(callback).not.toHaveBeenCalled();
+		expect(paywall).not.toHaveBeenCalled();
+		expect(toastErrors).toHaveLength(1);
+	});
+
 	test("refetches when the awaited plan belongs to another organization", async () => {
 		const { result } = renderHook(() => usePaywall());
 		const callback = mock(() => {});
