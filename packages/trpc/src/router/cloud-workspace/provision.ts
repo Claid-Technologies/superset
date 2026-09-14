@@ -7,9 +7,11 @@ import {
 	buildSandboxClaim,
 	deleteSandbox,
 	provisionSandbox,
+	SandboxNotReadyError,
 	settleSandbox,
 } from "../../lib/sandbox";
 import { generateCloudWorkspaceName } from "./generate-name";
+import { transitionCloudWorkspace } from "./transition";
 
 export const FALLBACK_NAME = "Cloud workspace";
 
@@ -82,16 +84,24 @@ export async function provisionCloudWorkspace(
 			environment,
 			claim,
 		});
-		await db
-			.update(cloudWorkspaces)
-			.set({
+		const ready = await transitionCloudWorkspace({
+			id: row.id,
+			from: ["provisioning"],
+			to: "ready",
+			set: {
 				providerSandboxId: sandbox.providerSandboxId,
 				sandboxUrl: sandbox.sandboxUrl,
-				status: "ready",
 				provisionStartedAt,
 				...sandbox.stamps,
-			})
-			.where(eq(cloudWorkspaces.id, row.id));
+			},
+		});
+		if (!ready) {
+			// Deleted while the box was being made: the delete won the row, so
+			// the box it never knew about goes with it.
+			await deleteSandbox(providerSandboxId);
+			await naming.catch(() => {});
+			return "skipped";
+		}
 		nudge(row.organizationId, "cloud_workspaces");
 		// The box is booting; the environment it needs arrives once host-service
 		// answers. The client's own wake pushes it again, so a workspace nobody
@@ -116,17 +126,25 @@ export async function provisionCloudWorkspace(
 		return "provisioned";
 	} catch (error) {
 		await naming.catch(() => {});
-		// Billing starts at provision: a failure after it must not leak a box.
-		await deleteSandbox(providerSandboxId).catch((teardownError) => {
-			console.error(
-				`[cloud-workspace] leaked sandbox ${providerSandboxId}`,
-				teardownError,
-			);
+		// A box that booted but whose host-service never answered stays up for
+		// diagnosis: its desktop is reachable and its boot log says what
+		// happened, and a delete from the sidebar still removes it. Any other
+		// failure must not leak a box, since billing started at provision.
+		const keepForDiagnosis = error instanceof SandboxNotReadyError;
+		if (!keepForDiagnosis) {
+			await deleteSandbox(providerSandboxId).catch((teardownError) => {
+				console.error(
+					`[cloud-workspace] leaked sandbox ${providerSandboxId}`,
+					teardownError,
+				);
+			});
+		}
+		await transitionCloudWorkspace({
+			id: row.id,
+			from: ["provisioning", "ready"],
+			to: "failed",
+			set: keepForDiagnosis ? { providerSandboxId } : {},
 		});
-		await db
-			.update(cloudWorkspaces)
-			.set({ status: "failed" })
-			.where(eq(cloudWorkspaces.id, row.id));
 		nudge(row.organizationId, "cloud_workspaces");
 		console.error(`[cloud-workspace] provisioning failed for ${row.id}`, error);
 		return "failed";

@@ -29,6 +29,7 @@ import {
 	provisionCloudWorkspace,
 	sandboxNameFor,
 } from "./provision";
+import { transitionCloudWorkspace } from "./transition";
 
 const qstash = new Client({ token: env.QSTASH_TOKEN });
 
@@ -226,10 +227,11 @@ export const cloudWorkspaceRouter = {
 			} catch (error) {
 				// Nothing was provisioned, so there is no sandbox to tear down —
 				// but the row must not sit in `provisioning` with no job coming.
-				await db
-					.update(cloudWorkspaces)
-					.set({ status: "failed" })
-					.where(eq(cloudWorkspaces.id, row.id));
+				await transitionCloudWorkspace({
+					id: row.id,
+					from: ["provisioning"],
+					to: "failed",
+				});
 				console.error(
 					`[cloud-workspace] could not queue provisioning for ${row.id}`,
 					error,
@@ -343,10 +345,12 @@ export const cloudWorkspaceRouter = {
 				// The sandbox is gone or can never resume. A `ready` row nothing
 				// can open would sit in the sidebar forever; failed is the state
 				// the client already renders with a way out.
-				await db
-					.update(cloudWorkspaces)
-					.set({ status: "failed", sandboxUrl: null })
-					.where(eq(cloudWorkspaces.id, row.id));
+				await transitionCloudWorkspace({
+					id: row.id,
+					from: ["ready"],
+					to: "failed",
+					set: { sandboxUrl: null },
+				});
 				nudge(row.organizationId, "cloud_workspaces");
 				console.error(`[cloud-workspace] ${row.id} sandbox unavailable`, error);
 				throw new TRPCError({
@@ -406,10 +410,14 @@ export const cloudWorkspaceRouter = {
 			if (row.providerSandboxId && row.provider === "vercel") {
 				await deleteSandbox(row.providerSandboxId);
 			}
-			await db
-				.update(cloudWorkspaces)
-				.set({ status: "deleted", sandboxUrl: null })
-				.where(eq(cloudWorkspaces.id, row.id));
+			// From any state, provisioning included: the job checks the row
+			// before it marks it ready and tears its box down when this won.
+			await transitionCloudWorkspace({
+				id: row.id,
+				from: ["provisioning", "ready", "failed"],
+				to: "deleted",
+				set: { sandboxUrl: null },
+			});
 			nudge(row.organizationId, "cloud_workspaces");
 			return { deleted: true };
 		}),
