@@ -1,13 +1,13 @@
 import { db } from "@superset/db/client";
 import { cloudWorkspaces } from "@superset/db/schema";
 import type { CloudAgentLaunch } from "@superset/shared/cloud-agent-launch";
-import { eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 import { nudge } from "../../lib/realtime";
 import {
 	buildSandboxClaim,
 	deleteSandbox,
 	provisionSandbox,
-	wakeSandbox,
+	settleSandbox,
 } from "../../lib/sandbox";
 import { generateCloudWorkspaceName } from "./generate-name";
 
@@ -57,6 +57,7 @@ export async function provisionCloudWorkspace(
 	if (row.status !== "provisioning") return "skipped";
 
 	const providerSandboxId = sandboxNameFor(row.id);
+	const provisionStartedAt = new Date();
 	const naming =
 		input.namingPrompt === undefined
 			? Promise.resolve()
@@ -87,13 +88,28 @@ export async function provisionCloudWorkspace(
 				providerSandboxId: sandbox.providerSandboxId,
 				sandboxUrl: sandbox.sandboxUrl,
 				status: "ready",
+				provisionStartedAt,
+				...sandbox.stamps,
 			})
 			.where(eq(cloudWorkspaces.id, row.id));
 		nudge(row.organizationId, "cloud_workspaces");
 		// The box is booting; the environment it needs arrives once host-service
 		// answers. The client's own wake pushes it again, so a workspace nobody
 		// opens still gets it (an agent launched at boot waits for this).
-		await wakeSandbox({ providerSandboxId, claim });
+		const { healthyAt } = await settleSandbox({
+			providerSandboxId,
+			hostTarget: sandbox.hostTarget,
+			claim,
+		});
+		await db
+			.update(cloudWorkspaces)
+			.set({ firstHealthyAt: healthyAt })
+			.where(
+				and(
+					eq(cloudWorkspaces.id, row.id),
+					isNull(cloudWorkspaces.firstHealthyAt),
+				),
+			);
 		await naming.catch((error) =>
 			console.error(`[cloud-workspace] naming failed for ${row.id}`, error),
 		);

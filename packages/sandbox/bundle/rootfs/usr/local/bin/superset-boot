@@ -30,8 +30,15 @@ as_user() { runuser -u "$SUPERSET_USER" -- "$@"; }
 mkdir -p "$SUPERSET_LOG_DIR" "$SUPERSET_STATE_DIR"
 stamp "boot.start pid=$$ bundle=$(cat "${SUPERSET_BUNDLE_ROOT}/current.bundle-hash" 2>/dev/null | cut -c1-12)"
 
-# --- identity
-[ -f "$SUPERSET_CONF" ] || refuse "no ${SUPERSET_CONF}; the control plane writes it at claim"
+# --- identity: handed over in the boot command's env on every create and
+# wake (one round trip with the secret, no file write from outside), kept
+# on disk world-readable for host-service and the steps.
+if [ -n "${SUPERSET_SANDBOX_CONF:-}" ]; then
+	install -d -m 0755 "$(dirname "$SUPERSET_CONF")"
+	printf '%s' "$SUPERSET_SANDBOX_CONF" > "${SUPERSET_CONF}.tmp" && chmod 0644 "${SUPERSET_CONF}.tmp" && mv -f "${SUPERSET_CONF}.tmp" "$SUPERSET_CONF"
+	stamp "identity.written"
+fi
+[ -f "$SUPERSET_CONF" ] || refuse "no ${SUPERSET_CONF}; the control plane hands it to boot at claim"
 set -a
 # shellcheck source=/dev/null
 . "$SUPERSET_CONF"

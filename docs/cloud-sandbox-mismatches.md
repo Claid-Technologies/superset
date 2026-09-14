@@ -341,8 +341,11 @@ storage bill) unless `deleteOrphanSnapshots` is passed; `deleteSandbox` does.
 the internal environment's variables alone are ~9 KB (Blaxel took 98 keys
 without comment). The v2 layout creates every sandbox with an empty env. The
 workspace's identity (ids, repo, branch, bundle pin, hook overrides) is a
-world-readable file, `/etc/superset/sandbox.conf`, written by the API at
-claim and rewritten on every wake; the environment's variables are pushed
+world-readable file, `/etc/superset/sandbox.conf`, rendered by the API into
+the boot command's env at claim and on every wake and written by the boot
+runner (one round trip, no file written from outside; a wake is `get`,
+then the policy update and the boot command together, then a health poll
+and the env push); the environment's variables are pushed
 into host-service after boot (see the runtime section); the only secret, the
 host secret the gate presents, rides in the boot command's env. A golden has
 the identity file, host.db and the markers removed before its snapshot

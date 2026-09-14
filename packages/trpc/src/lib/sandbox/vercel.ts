@@ -104,38 +104,41 @@ function publishedPorts(extra: readonly number[] = []): number[] {
 	return [...new Set([...SANDBOX_PUBLISHED_PORTS, ...extra])];
 }
 
-async function writeIdentity(
-	sandbox: Sandbox,
-	identity: SandboxIdentity,
-): Promise<void> {
-	await sandbox.writeFiles([
-		{
-			path: SANDBOX_PATHS.conf,
-			content: renderSandboxConf(identity),
-			mode: 0o644,
-		},
-	]);
-}
-
 /**
- * Starts boot. Root, detached, with the host secret in the command's env and
- * nowhere else. The runner itself refuses to stack a second host-service on
- * a live one, so a wake that races a wake is harmless.
+ * Starts boot: root, detached, one call. The identity file and the host
+ * secret both ride in the command's env (the platform's own `sudo: true`
+ * resets the env; the image's sudoers grants SETENV, so they cross into
+ * root without touching argv or a file written from outside). The runner
+ * writes the identity to disk itself and refuses to stack a second
+ * host-service on a live one, so a wake that races a wake is harmless.
  */
-async function runBoot(sandbox: Sandbox, hostSecret: string): Promise<void> {
-	// The platform's own `sudo: true` resets the env; the image's sudoers
-	// grants SETENV so the secret crosses into root without touching argv.
+async function runBoot(sandbox: Sandbox, claim: SandboxClaim): Promise<void> {
 	await sandbox.runCommand({
 		cmd: "sudo",
-		args: ["--preserve-env=HOST_SERVICE_SECRET", BOOT_COMMAND],
+		args: [`--preserve-env=${BOOT_ENV_KEYS.join(",")}`, BOOT_COMMAND],
 		detached: true,
-		env: { HOST_SERVICE_SECRET: hostSecret },
+		env: {
+			HOST_SERVICE_SECRET: claim.hostSecret,
+			SUPERSET_SANDBOX_CONF: renderSandboxConf(claim.identity),
+		},
 	});
+}
+const BOOT_ENV_KEYS = ["HOST_SERVICE_SECRET", "SUPERSET_SANDBOX_CONF"];
+
+/**
+ * When the provider call that makes the sandbox started and returned, and
+ * when boot was fired into it. Job-side clock; the boot runner's own phases
+ * are stamped inside the sandbox and read off health.check.
+ */
+export interface ProvisionStamps {
+	sandboxCreateStartedAt: Date;
+	sandboxCreateFinishedAt: Date;
+	bootFiredAt: Date;
 }
 
 /**
- * Creates the sandbox, writes its identity and starts boot. Returns once the
- * sandbox's address exists, not once anything listens on it; `wakeSandbox`
+ * Creates the sandbox and starts boot with its identity. Returns once the
+ * sandbox's address exists, not once anything listens on it; `settleSandbox`
  * is how a caller waits for that. Idempotent on the name: a re-delivered
  * provision finds the sandbox it already made.
  */
@@ -145,7 +148,13 @@ export async function provisionSandbox(args: {
 	claim: SandboxClaim;
 	/** A golden under construction keeps its snapshots until its row goes. */
 	kind?: "workspace" | "environment";
-}): Promise<{ providerSandboxId: string; sandboxUrl: string }> {
+}): Promise<{
+	providerSandboxId: string;
+	sandboxUrl: string;
+	hostTarget: string;
+	desktopTarget: string;
+	stamps: ProvisionStamps;
+}> {
 	const kind = args.kind ?? "workspace";
 	const config = {
 		...credentials(),
@@ -160,6 +169,7 @@ export async function provisionSandbox(args: {
 		keepLastSnapshots: { count: 1 },
 		tags: { kind },
 	};
+	const sandboxCreateStartedAt = new Date();
 	const sandbox =
 		(await getSandbox(args.name)) ??
 		(args.environment.sourceKind === "fork"
@@ -175,16 +185,23 @@ export async function provisionSandbox(args: {
 					region: env.VERCEL_SANDBOX_REGION as SandboxRegion,
 					resources: { vcpus: IMAGE_SANDBOX_VCPUS },
 				}));
-	await writeIdentity(sandbox, args.claim.identity);
-	await runBoot(sandbox, args.claim.hostSecret);
+	const sandboxCreateFinishedAt = new Date();
+	await runBoot(sandbox, args.claim);
 	return {
 		providerSandboxId: args.name,
 		sandboxUrl: sandbox.domain(HOST_SERVICE_PORT),
+		hostTarget: sandbox.domain(HOST_SERVICE_PORT),
+		desktopTarget: sandbox.domain(DESKTOP_PORT),
+		stamps: {
+			sandboxCreateStartedAt,
+			sandboxCreateFinishedAt,
+			bootFiredAt: new Date(),
+		},
 	};
 }
 
 const HOST_READY_TIMEOUT_MS = 60_000;
-const HOST_READY_POLL_MS = 500;
+const HOST_READY_POLL_MS = 100;
 
 export class SandboxNotReadyError extends Error {
 	constructor(providerSandboxId: string) {
@@ -208,6 +225,26 @@ async function waitForHostService(
 		await new Promise((resolve) => setTimeout(resolve, HOST_READY_POLL_MS));
 	}
 	throw new SandboxNotReadyError(providerSandboxId);
+}
+
+/**
+ * The half of a wake after boot is fired: wait for host-service to answer,
+ * then push the managed environment. What a create runs once its box is
+ * booted, so it never re-runs the wake's own calls on a box it just made.
+ */
+export async function settleSandbox(args: {
+	providerSandboxId: string;
+	hostTarget: string;
+	claim: SandboxClaim;
+}): Promise<{ healthyAt: Date }> {
+	await waitForHostService(args.hostTarget, args.providerSandboxId);
+	const healthyAt = new Date();
+	await pushManagedEnv(
+		args.hostTarget,
+		args.claim.hostSecret,
+		args.claim.managedEnv,
+	);
+	return { healthyAt };
 }
 
 /**
@@ -274,6 +311,8 @@ export async function wakeSandbox(args: {
 	hostTarget: string;
 	desktopTarget: string;
 	wasRunning: boolean;
+	/** When host-service answered this wake. */
+	healthyAt: Date;
 }> {
 	try {
 		const sandbox = await Sandbox.get({
@@ -292,23 +331,26 @@ export async function wakeSandbox(args: {
 				await sandbox.extendTimeout(SESSION_TIMEOUT_MS).catch(() => {});
 			}
 		}
-		await sandbox
-			.update({ networkPolicy: args.claim.networkPolicy })
-			.catch((error) =>
-				console.warn(
-					`[sandbox] policy update failed for ${args.providerSandboxId}`,
-					error,
+		// The policy and the boot command go out together: the first call to
+		// touch a stopped session pays the resume, and the rules are in place
+		// long before anything on the box makes a request.
+		await Promise.all([
+			sandbox
+				.update({ networkPolicy: args.claim.networkPolicy })
+				.catch((error) =>
+					console.warn(
+						`[sandbox] policy update failed for ${args.providerSandboxId}`,
+						error,
+					),
 				),
-			);
-		await writeIdentity(sandbox, args.claim.identity);
-		await runBoot(sandbox, args.claim.hostSecret);
-		await waitForHostService(hostTarget, args.providerSandboxId);
-		await pushManagedEnv(
+			runBoot(sandbox, args.claim),
+		]);
+		const { healthyAt } = await settleSandbox({
+			providerSandboxId: args.providerSandboxId,
 			hostTarget,
-			args.claim.hostSecret,
-			args.claim.managedEnv,
-		);
-		return { hostTarget, desktopTarget, wasRunning };
+			claim: args.claim,
+		});
+		return { hostTarget, desktopTarget, wasRunning, healthyAt };
 	} catch (error) {
 		if (isUnavailable(error))
 			throw new SandboxUnavailableError(args.providerSandboxId, error);
@@ -394,8 +436,7 @@ export async function promoteSandboxToEnvironment(args: {
 	await golden.stop();
 	await waitForStopSnapshot(args.goldenName, created);
 	if (wasRunning) {
-		await writeIdentity(source, args.claim.identity);
-		await runBoot(source, args.claim.hostSecret);
+		await runBoot(source, args.claim);
 	}
 	return args.goldenName;
 }
