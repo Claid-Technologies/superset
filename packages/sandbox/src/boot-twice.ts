@@ -207,6 +207,21 @@ try {
 			),
 		),
 	);
+	// The control plane's push, so the runner's hook sequencing runs: this
+	// checkout declares no start hook, which the log must say.
+	exec(
+		`curl -fs -X POST -H 'Authorization: Bearer boot-twice-secret' -H 'Content-Type: application/json' -d '{"json":{"variables":{"FOO":"bar"}}}' http://127.0.0.1:${SANDBOX_PORTS.hostService}/trpc/sandbox.setEnvironment`,
+		{ check: false },
+	);
+	expect(
+		"start hook: the runner asked host-service once the push landed",
+		/hook\.(none|started)/.test(
+			exec(
+				`for i in $(seq 1 600); do grep -qE 'hook.' ${SANDBOX_PATHS.bootLog} && break; sleep 0.1; done; cat ${SANDBOX_PATHS.bootLog}`,
+				{ check: false },
+			),
+		),
+	);
 	expect(
 		"no secret on disk",
 		!/boot-twice-secret/.test(

@@ -105,27 +105,23 @@ export function readSandboxIdentity(
 const START_HOOK_MARKER = join(SANDBOX_PATHS.run, "start-hook.pid");
 const START_HOOK_LOG = join(SANDBOX_PATHS.logs, "start-hook.log");
 
+export type StartHookOutcome =
+	| { started: true; pid: number; command: string }
+	| { started: false; reason: "already-started" | "no-hook" };
+
 /**
- * The repository's `start` hook: the services a workspace needs on every
- * boot. Runs from here rather than from the boot runner because it needs
- * the managed environment, which only arrives once host-service answers,
- * and the checkout, which lands beside it. Once per boot: the marker lives
- * in the run directory the boot runner clears.
+ * Runs the repository's `start` hook: the services a workspace needs on
+ * every boot. The boot runner asks for it once host-service answers, the
+ * managed environment has been pushed and the checkout is in; it runs here
+ * because this process is the only one holding that environment, and the
+ * variables never leave it. Once per boot: the marker lives in the run
+ * directory the boot runner clears.
  */
-export async function runSandboxStartHookOnce(
+export function runSandboxStartHook(
 	identity: SandboxIdentity,
-): Promise<void> {
-	if (existsSync(START_HOOK_MARKER)) return;
-	const [pushed, checkedOut] = await Promise.all([
-		waitForManagedEnv(120_000),
-		waitForFlag(join(SANDBOX_PATHS.run, "checkout.ready"), 300_000),
-	]);
-	if (!checkedOut) {
-		console.warn(
-			"[sandbox] start hook skipped: the checkout never reported ready",
-		);
-		return;
-	}
+): StartHookOutcome {
+	if (existsSync(START_HOOK_MARKER))
+		return { started: false, reason: "already-started" };
 	const commands =
 		identity.hooks?.start ??
 		(() => {
@@ -138,13 +134,10 @@ export async function runSandboxStartHookOnce(
 				? resolved.commands
 				: [`bash ${shellSingleQuote(resolved.scriptPath)}`];
 		})();
-	if (!commands?.length) return;
-	if (!pushed)
-		console.warn(
-			"[sandbox] start hook running without a managed environment push",
-		);
+	if (!commands?.length) return { started: false, reason: "no-hook" };
+	const command = commands.join(" && ");
 	const log = openSync(START_HOOK_LOG, "a");
-	const child = spawn("bash", ["-lc", commands.join(" && ")], {
+	const child = spawn("bash", ["-lc", command], {
 		cwd: identity.worktreePath,
 		env: { ...process.env, ...getManagedEnv(), IS_SANDBOX: "1" },
 		stdio: ["ignore", log, log],
@@ -152,9 +145,8 @@ export async function runSandboxStartHookOnce(
 	});
 	child.unref();
 	writeFileSync(START_HOOK_MARKER, `${child.pid ?? 0}\n`);
-	console.log(
-		`[sandbox] start hook running (pid ${child.pid}): ${commands.join(" && ")}`,
-	);
+	console.log(`[sandbox] start hook running (pid ${child.pid}): ${command}`);
+	return { started: true, pid: child.pid ?? 0, command };
 }
 
 /**

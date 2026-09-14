@@ -101,9 +101,11 @@ archives; `superset-desktop-init` as its own process beside host-service (the re
   boot command's env saved one provider call (~0.3 s); Satya chose the file on 2026-09-14: a file on the box
   is legible, has no size ceiling, and the runner's inputs keep one shape. The box receives only the `start`
   and `ports` hook overrides; `setup` is the release's.
-- The `start` hook runs from host-service, not the boot runner (amends Decision 9's "boot runs
-  it"): it needs the managed environment, which only arrives once host-service answers, and the
-  checkout, which lands beside it. Once per boot, marker in `/run/superset`.
+- The `start` hook is sequenced by the boot runner and executed by host-service (settled with
+  Satya 2026-09-14): the environment the hook needs is pushed into host-service and never
+  leaves it, so host-service spawns; the runner decides when (host-service up, push landed,
+  checkout in) through `sandbox.runStartHook`, so every boot-time action reads in `boot.log`.
+  Once per boot, marker in `/run/superset`.
 - Repository `ports` are read from `.superset/config.json` at create (GitHub contents API, the
   installation token) and published on the sandbox; the access mint still issues tickets for
   the two platform ports only. A ticket per repo port waits for a pane that uses one.

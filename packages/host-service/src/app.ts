@@ -26,7 +26,6 @@ import {
 	launchSandboxAgentOnce,
 	readSandboxIdentity,
 	runSandboxSelfSeed,
-	runSandboxStartHookOnce,
 } from "./runtime/sandbox-self-seed";
 import {
 	isLiveTerminalSession,
@@ -416,11 +415,7 @@ export function createApp(options: CreateAppOptions): CreateAppResult {
 	};
 
 	const launchSandboxAgent = async () => {
-		if (!sandboxIdentity) return;
-		void runSandboxStartHookOnce(sandboxIdentity).catch((error: unknown) =>
-			console.error("[sandbox] start hook failed", error),
-		);
-		if (!sandboxIdentity.launch) return;
+		if (!sandboxIdentity?.launch) return;
 		await launchSandboxAgentOnce(
 			{
 				git,

@@ -370,8 +370,10 @@ because Chrome is single-instance per profile, not as a boundary. The stream
 is TigerVNC's Xvnc on loopback with websockify from apt on its own published
 port (6080); the desktop pane connects to that port through the gate with
 its own ticket, and host-service no longer proxies VNC. The internal golden's
-dev stack is the environment's `start` hook (`superset-dev-stack`), which
-host-service runs once the managed environment and the checkout are in. In
+dev stack is the environment's `start` hook (`superset-dev-stack`): the boot
+runner asks host-service to run it once host-service answers, the managed
+environment has been pushed and the checkout is in, and host-service runs
+it with that environment, which never leaves it. In
 the app, the Desktop pane connects view-only and only forwards input after
 "Take control" — an agent may be driving that desktop, and a pane that merely
 has focus must not type into its browser.
