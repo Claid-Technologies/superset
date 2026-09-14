@@ -119,4 +119,24 @@ describe("listPagesSchema", () => {
 			false,
 		);
 	});
+
+	test("refuses a timestamp Postgres would reject, rather than passing it to the cast", () => {
+		expect(
+			listPagesSchema.safeParse({
+				cursor: { updatedAt: "not-a-timestamp", id: PAGE },
+			}).success,
+		).toBe(false);
+	});
+
+	test("accepts the offsets Postgres emits, whole-hour and half-hour alike", () => {
+		for (const updatedAt of [
+			"2026-09-14 10:00:00+00",
+			"2026-09-14 10:00:00.123456+05:30",
+			"2026-09-14 10:00:00.1-08",
+		]) {
+			expect(
+				listPagesSchema.safeParse({ cursor: { updatedAt, id: PAGE } }),
+			).toMatchObject({ success: true });
+		}
+	});
 });

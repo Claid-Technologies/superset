@@ -2,6 +2,7 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import {
 	PAGE_LIST_DEFAULT_LIMIT,
 	PAGE_LIST_MAX_LIMIT,
+	pageListCursorSchema,
 } from "@superset/trpc/page-schema";
 import { z } from "zod";
 import { createMcpCaller } from "../../caller";
@@ -38,8 +39,7 @@ export function register(server: McpServer): void {
 				.describe(
 					`How many pages to return, 1-${PAGE_LIST_MAX_LIMIT} (default ${PAGE_LIST_DEFAULT_LIMIT}).`,
 				),
-			cursor: z
-				.object({ updatedAt: z.string(), id: z.string().uuid() })
+			cursor: pageListCursorSchema
 				.nullish()
 				.describe(
 					"The `nextCursor` object from a previous call, passed back unchanged, to fetch the next batch. Omit for the first batch.",

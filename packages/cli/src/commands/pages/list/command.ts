@@ -1,4 +1,4 @@
-import { CLIError, number, string, table } from "@superset/cli-framework";
+import { number, string, table } from "@superset/cli-framework";
 import { PAGE_LIST_MAX_LIMIT } from "@superset/trpc/page-schema";
 import { command } from "../../../lib/command";
 import {
@@ -20,23 +20,16 @@ export default command({
 		search: string()
 			.alias("q")
 			.desc("Only pages whose title or slug contains this text"),
-		limit: number().desc(
-			`Return one batch of this many pages (1-${PAGE_LIST_MAX_LIMIT}) plus a cursor, instead of every page`,
-		),
+		limit: number()
+			.int()
+			.min(1)
+			.max(PAGE_LIST_MAX_LIMIT)
+			.desc(
+				`Return one batch of this many pages (1-${PAGE_LIST_MAX_LIMIT}) plus a cursor, instead of every page`,
+			),
 		cursor: string().desc("Continue from a previous run's nextCursor"),
 	},
 	run: async ({ ctx, options }) => {
-		if (options.limit !== undefined) {
-			if (!Number.isInteger(options.limit)) {
-				throw new CLIError(`--limit must be a whole number`);
-			}
-			if (options.limit < 1 || options.limit > PAGE_LIST_MAX_LIMIT) {
-				throw new CLIError(
-					`--limit must be between 1 and ${PAGE_LIST_MAX_LIMIT}`,
-				);
-			}
-		}
-
 		const workspace = options.workspace ?? process.env.SUPERSET_WORKSPACE_ID;
 		const workspaceId = workspace
 			? await resolveWorkspaceId({

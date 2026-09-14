@@ -17,14 +17,17 @@ export function usePagesQuery(): UseQueryResult<OrgPage[]> {
 	return useQuery({
 		queryKey: ["cloud", "page", "list", organizationId],
 		enabled: organizationId !== null,
-		queryFn: async () => {
+		queryFn: async ({ signal }) => {
 			const items: OrgPage[] = [];
 			let cursor: { updatedAt: string; id: string } | undefined;
 			do {
-				const result = await apiClient.page.list.query({
-					limit: PAGES_PER_REQUEST,
-					...(cursor ? { cursor } : {}),
-				});
+				const result = await apiClient.page.list.query(
+					{
+						limit: PAGES_PER_REQUEST,
+						...(cursor ? { cursor } : {}),
+					},
+					{ signal },
+				);
 				items.push(...result.items);
 				cursor = result.nextCursor ?? undefined;
 			} while (cursor);

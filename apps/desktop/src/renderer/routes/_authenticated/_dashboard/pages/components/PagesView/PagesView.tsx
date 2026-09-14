@@ -125,7 +125,11 @@ export function PagesView({
 		[counts.pinned, scope],
 	);
 
-	const pinnedEmpty = !hasNextPage && scope === "pinned" && counts.pinned === 0;
+	const pinnedEmpty =
+		pages.data !== undefined &&
+		!hasNextPage &&
+		scope === "pinned" &&
+		counts.pinned === 0;
 	const activeScope = pinnedEmpty ? "all" : scope;
 
 	useEffect(() => {
@@ -204,7 +208,7 @@ export function PagesView({
 						pinnedPageIds={favoritePageIdSet}
 						currentUserId={session?.user.id}
 						isPending={pages.isPending}
-						error={pages.error?.message}
+						error={all.length === 0 ? pages.error?.message : undefined}
 						hasFilters={
 							!orgEmpty && (Boolean(search.trim()) || activeScope !== "all")
 						}
