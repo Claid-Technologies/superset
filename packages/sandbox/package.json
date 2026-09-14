@@ -11,7 +11,8 @@
 		"release": "bun run src/environments/release.ts",
 		"seed": "bun run src/environments/seed.ts",
 		"test": "bun test",
-		"typecheck": "tsc --noEmit --emitDeclarationOnly false"
+		"typecheck": "tsc --noEmit --emitDeclarationOnly false",
+		"measure": "bun run src/measure.ts"
 	},
 	"dependencies": {
 		"@superset/db": "workspace:*",

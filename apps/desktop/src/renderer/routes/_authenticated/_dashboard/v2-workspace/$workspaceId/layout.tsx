@@ -19,6 +19,7 @@ import { WorkspaceNotFoundState } from "../components/WorkspaceNotFoundState";
 import { useRemoteHostStatus } from "../hooks/useRemoteHostStatus";
 import { useWorkspaceMissVerdict } from "../hooks/useWorkspaceMissVerdict";
 import { WorkspaceProvider } from "../providers/WorkspaceProvider";
+import { useCloudWorkspaceOpenedEvent } from "./hooks/useCloudWorkspaceOpenedEvent";
 
 export const Route = createFileRoute(
 	"/_authenticated/_dashboard/v2-workspace/$workspaceId",
@@ -69,14 +70,21 @@ function V2WorkspaceLayout() {
 	// cloud workspace is found the same way as any other — but it has no
 	// v2_hosts row for the remote version gate to check.
 	const { targets: sandboxes } = useSandboxAccess();
-	const isCloud = sandboxes.some(
-		(sandbox) => sandbox.workspaceId === workspaceId,
-	);
+	const sandbox =
+		sandboxes.find((candidate) => candidate.workspaceId === workspaceId) ??
+		null;
+	const isCloud = sandbox !== null;
 	// The cloud row exists from the moment the workspace is created, which is
 	// well before there is a sandbox to serve it.
 	const { workspaces: cloudWorkspaces = [] } = useCloudWorkspaces();
 	const cloudWorkspace =
 		cloudWorkspaces.find((row) => row.id === workspaceId) ?? null;
+	useCloudWorkspaceOpenedEvent({
+		workspaceId,
+		cloudWorkspace,
+		sandbox,
+		hostAnswered: workspace !== null,
+	});
 	const { data: failedEntries } = useLiveQuery(
 		(q) =>
 			q

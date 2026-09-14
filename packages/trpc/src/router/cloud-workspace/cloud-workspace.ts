@@ -318,6 +318,7 @@ export const cloudWorkspaceRouter = {
 				hostTarget: string;
 				desktopTarget: string;
 				running: boolean;
+				healthyAt?: Date;
 			};
 			try {
 				if (input.wake) {
@@ -353,6 +354,20 @@ export const cloudWorkspaceRouter = {
 					message: "Cloud workspace is failed",
 					cause: { kind: "CLOUD_WORKSPACE_NOT_READY", status: "failed" },
 				});
+			}
+			// The first wake is the first time anything sees host-service answer,
+			// which closes the job's timeline; later wakes are reopens and leave it.
+			if (address.healthyAt && !row.firstHealthyAt) {
+				await db
+					.update(cloudWorkspaces)
+					.set({ firstHealthyAt: address.healthyAt })
+					.where(
+						and(
+							eq(cloudWorkspaces.id, row.id),
+							isNull(cloudWorkspaces.firstHealthyAt),
+						),
+					);
+				nudge(row.organizationId, "cloud_workspaces");
 			}
 			const [host, desktop] = await Promise.all([
 				mintSandboxGateAccess({

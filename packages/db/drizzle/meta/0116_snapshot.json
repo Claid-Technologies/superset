@@ -1,6 +1,6 @@
 {
-  "id": "2ce43977-82d6-4b56-8d6b-5d85519057c2",
-  "prevId": "76f117a5-f0c0-408f-a65d-475d36bc87f8",
+  "id": "8b3d5a90-394f-4a6b-8a98-e32a73e1a98e",
+  "prevId": "2ce43977-82d6-4b56-8d6b-5d85519057c2",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -6850,6 +6850,18 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true
+        },
+        "bundle_sha": {
+          "name": "bundle_sha",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hooks": {
+          "name": "hooks",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
         },
         "archived_at": {
           "name": "archived_at",

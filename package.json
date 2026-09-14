@@ -56,7 +56,8 @@
 		"db:seed-dev": "NODE_ENV=development bun run packages/auth/src/seed-dev.ts",
 		"db:generate:desktop": "bun run --cwd packages/local-db generate",
 		"db:seed-shared-environments": "bun run --cwd packages/sandbox seed",
-		"sandbox:release": "bun run --cwd packages/sandbox release"
+		"sandbox:release": "bun run --cwd packages/sandbox release",
+		"sandbox:measure": "bun run --cwd packages/sandbox measure"
 	},
 	"type": "module",
 	"workspaces": [

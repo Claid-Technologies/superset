@@ -26,15 +26,15 @@ Checked 2026-09-13 on this machine; values never printed, names only.
 ## PR 1 — P0 measurement
 
 Build
-- [ ] `start.sh` stamps every phase to the boot log with millisecond timestamps (today's script, before the runner replaces it).
-- [ ] host-service `health.check` returns the boot stamps and the runtime version.
-- [ ] API records job stamps on the row: job start, fork start and end, boot fired, first 200.
-- [ ] Desktop emits `cloud_workspace_opened` with create→ready and ready→first-200.
-- [ ] `scripts/sandbox/measure.ts`: five creates and five reopens on the dev golden, prints the table.
+- [x] `start.sh` stamps every phase to the boot log with millisecond timestamps (today's script, before the runner replaces it). Evidence: image rebuilt and released as golden `env-internal-mu0tzcdu` 2026-09-14; a fork's `health.check` returned 14 stamps from `boot.start` to `host.listening`.
+- [x] host-service `health.check` returns the boot stamps and the runtime version. Evidence: `measure.ts` printed `runtime 1.29.0 on node v24.21.0` for every boot, from `sandboxBoot` on the response.
+- [x] API records job stamps on the row: job start, fork start and end, boot fired, first 200. Evidence: migration 0115 on the worktree Neon branch; row c63d7f9b (desktop create) carried `provision_started_at` 06:08:12.634, create 13.343→14.221, boot fired 15.210, first healthy 18.175.
+- [x] Desktop emits `cloud_workspace_opened` with create→ready and ready→first-200. Evidence: CDP-driven create and reopen on 2026-09-14 captured `kind: create` (4104 / 3880 ms) and `kind: reopen` (null / 18560 ms) through the renderer's PostHog client.
+- [x] `scripts/sandbox/measure.ts`: five creates and five reopens on the dev golden, prints the table. Evidence: `bun run sandbox:measure` 2026-09-14, 308 s, five sandboxes created, stopped, woken and deleted; table in the start-time plan.
 
 Test
-- [ ] Unit: health route serialises stamps; the desktop event carries both durations.
-- [ ] Real: run `measure.ts` against dev; every stage in the start-time plan's table has a number.
+- [x] Unit: health route serialises stamps; the desktop event carries both durations. Evidence: `health.test.ts`, `boot-stamps.test.ts` (host-service, 6 pass) and `cloud-workspace-open-timeline.test.ts` (desktop, 3 pass).
+- [x] Real: run `measure.ts` against dev; every stage in the start-time plan's table has a number. Evidence: the "Where the time goes today" table in `plans/20260913-sandbox-start-time.md`; the QStash hop is the one prod-only row and is marked as such.
 
 Evidence: the table pasted into the start-time plan, replacing the ~ entries.
 
