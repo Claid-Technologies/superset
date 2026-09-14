@@ -10,12 +10,7 @@
 	"homepage": "https://docs.superset.sh",
 	"repository": "https://github.com/superset-sh/superset",
 	"license": "MIT",
-	"keywords": [
-		"linear",
-		"issues",
-		"project-management",
-		"planning"
-	],
+	"keywords": ["linear", "issues", "project-management", "planning"],
 	"extensions": {
 		"superset": {
 			"interface": {

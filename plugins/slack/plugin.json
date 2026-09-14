@@ -10,13 +10,7 @@
 	"homepage": "https://docs.superset.sh",
 	"repository": "https://github.com/superset-sh/superset",
 	"license": "MIT",
-	"keywords": [
-		"slack",
-		"chat",
-		"messages",
-		"communication",
-		"search"
-	],
+	"keywords": ["slack", "chat", "messages", "communication", "search"],
 	"extensions": {
 		"superset": {
 			"interface": {

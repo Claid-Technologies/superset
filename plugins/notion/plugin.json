@@ -10,13 +10,7 @@
 	"homepage": "https://docs.superset.sh",
 	"repository": "https://github.com/superset-sh/superset",
 	"license": "MIT",
-	"keywords": [
-		"notion",
-		"docs",
-		"notes",
-		"knowledge-base",
-		"wiki"
-	],
+	"keywords": ["notion", "docs", "notes", "knowledge-base", "wiki"],
 	"extensions": {
 		"superset": {
 			"interface": {

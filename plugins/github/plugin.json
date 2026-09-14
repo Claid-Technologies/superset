@@ -10,13 +10,7 @@
 	"homepage": "https://docs.superset.sh",
 	"repository": "https://github.com/superset-sh/superset",
 	"license": "MIT",
-	"keywords": [
-		"github",
-		"issues",
-		"pull-requests",
-		"ci",
-		"code-review"
-	],
+	"keywords": ["github", "issues", "pull-requests", "ci", "code-review"],
 	"extensions": {
 		"superset": {
 			"interface": {

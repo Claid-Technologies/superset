@@ -10,13 +10,7 @@
 	"homepage": "https://docs.superset.sh",
 	"repository": "https://github.com/superset-sh/superset",
 	"license": "MIT",
-	"keywords": [
-		"gmail",
-		"email",
-		"mail",
-		"google",
-		"inbox"
-	],
+	"keywords": ["gmail", "email", "mail", "google", "inbox"],
 	"extensions": {
 		"superset": {
 			"interface": {
