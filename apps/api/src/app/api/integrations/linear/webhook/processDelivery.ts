@@ -16,8 +16,8 @@ import {
 	accountConnections,
 } from "@superset/trpc/connectors";
 import {
-	getLinearClient,
 	isLinearAuthError,
+	linearClientFor,
 	mapPriorityFromLinear,
 } from "@superset/trpc/integrations/linear";
 import { and, eq, sql } from "drizzle-orm";
@@ -253,10 +253,10 @@ async function ingest(
 // rethrown so the webhook-event retry path re-runs the sync instead of
 // recording a processed event with a stale branch.
 async function fetchIssueBranchName(
-	organizationId: string,
+	connection: SelectConnection,
 	issueId: string,
 ): Promise<string | null> {
-	const client = await getLinearClient(organizationId);
+	const client = await linearClientFor(connection);
 	if (!client) return null;
 	try {
 		const response = await client.client.request<
@@ -356,10 +356,7 @@ async function processIssueEvent(
 			assigneeAvatarUrl = issue.assignee.avatarUrl ?? null;
 		}
 
-		const branchName = await fetchIssueBranchName(
-			connection.organizationId,
-			issue.id,
-		);
+		const branchName = await fetchIssueBranchName(connection, issue.id);
 
 		const taskData = {
 			slug: issue.identifier,

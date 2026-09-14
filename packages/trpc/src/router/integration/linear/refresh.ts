@@ -1,7 +1,7 @@
 import { LinearClient } from "@linear/sdk";
 import { z } from "zod";
 import { env } from "../../../env";
-import { orgConnection } from "../../../lib/connectors";
+import { connectionById, userConnection } from "../../../lib/connectors";
 import {
 	markDisconnected,
 	type RefreshedToken,
@@ -9,7 +9,7 @@ import {
 	withRefreshedToken,
 } from "../token-refresh";
 import { REFRESH_TOKEN_TIMEOUT_MS } from "./constants";
-import { getLinearClient } from "./utils";
+import { getLinearClient, linearClientFor } from "./utils";
 
 export const linearTokenResponseSchema = z.object({
 	access_token: z.string(),
@@ -73,11 +73,30 @@ export async function refreshLinearToken(
 	});
 }
 
-export async function callLinear<T>(
-	organizationId: string,
+export async function callLinearForConnection<T>(
+	connectionId: string,
 	fn: (client: LinearClient) => Promise<T>,
 ): Promise<T | null> {
-	const client = await getLinearClient(organizationId);
+	const connection = await connectionById(connectionId, {
+		includeDisconnected: true,
+	});
+	if (!connection) return null;
+	const client = await linearClientFor(connection);
+	if (!client) return null;
+	try {
+		return await fn(client);
+	} catch (error) {
+		if (isLinearAuthError(error)) return null;
+		throw error;
+	}
+}
+
+export async function callLinear<T>(
+	organizationId: string,
+	userId: string,
+	fn: (client: LinearClient) => Promise<T>,
+): Promise<T | null> {
+	const client = await getLinearClient(organizationId, userId);
 	if (!client) return null;
 
 	try {
@@ -85,7 +104,7 @@ export async function callLinear<T>(
 	} catch (error) {
 		if (!isLinearAuthError(error)) throw error;
 
-		const connection = await orgConnection(organizationId, "linear", {
+		const connection = await userConnection(organizationId, "linear", userId, {
 			includeDisconnected: true,
 		});
 		if (!connection) return null;

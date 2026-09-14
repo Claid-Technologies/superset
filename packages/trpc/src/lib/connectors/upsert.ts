@@ -178,12 +178,15 @@ export async function connectionSecrets(row: {
 export async function activeConnection(
 	userId: string,
 	connector: string,
+	organizationId: string | null,
 ): Promise<SelectConnection | null> {
+	if (!organizationId) return null;
 	const [row] = await db
 		.select()
 		.from(connections)
 		.where(
 			and(
+				eq(connections.organizationId, organizationId),
 				eq(connections.connector, connector),
 				eq(connections.connectedByUserId, userId),
 				isNull(connections.disconnectedAt),

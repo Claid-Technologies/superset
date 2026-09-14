@@ -1,5 +1,6 @@
 import { LinearClient } from "@linear/sdk";
-import { decryptSecret, orgConnection } from "../../../lib/connectors";
+import type { SelectConnection } from "@superset/db/schema";
+import { decryptSecret, userConnection } from "../../../lib/connectors";
 import { markDisconnected, REFRESH_BUFFER_MS } from "../token-refresh";
 import { isLinearAuthError, refreshLinearToken } from "./refresh";
 
@@ -37,12 +38,18 @@ export function mapPriorityFromLinear(linearPriority: number): Priority {
 
 export async function getLinearClient(
 	organizationId: string,
+	userId: string,
 ): Promise<LinearClient | null> {
-	const connection = await orgConnection(organizationId, "linear", {
+	const connection = await userConnection(organizationId, "linear", userId, {
 		includeDisconnected: true,
 	});
+	return connection ? linearClientFor(connection) : null;
+}
 
-	if (!connection || connection.disconnectedAt) {
+export async function linearClientFor(
+	connection: SelectConnection,
+): Promise<LinearClient | null> {
+	if (connection.disconnectedAt) {
 		return null;
 	}
 

@@ -1,17 +1,10 @@
 import { db } from "@superset/db/client";
 import { connections, githubInstallations } from "@superset/db/schema";
+import { getConnector } from "@superset/shared/connectors";
 import { and, eq, isNull } from "drizzle-orm";
 import { z } from "zod";
 import { protectedProcedure } from "../../trpc";
 import { verifyOrgMembership } from "./utils";
-
-/**
- * Connectors whose deliveries are dispatched to one member's automations
- * rather than the organization's. Another member's Google account is not this
- * caller's to trigger on, so it must not read as connected for them. Every
- * other connector routes by workspace, and fires for everyone in the org.
- */
-const PER_MEMBER_CONNECTORS = new Set(["google"]);
 
 /**
  * Which integrations this caller can actually build a trigger on.
@@ -48,7 +41,7 @@ export const connectionStatusProcedure = protectedProcedure
 		const connected: Record<string, boolean> = {};
 		for (const row of connectorRows) {
 			if (
-				PER_MEMBER_CONNECTORS.has(row.connector) &&
+				getConnector(row.connector)?.scope === "user" &&
 				row.connectedByUserId !== ctx.session.user.id
 			)
 				continue;

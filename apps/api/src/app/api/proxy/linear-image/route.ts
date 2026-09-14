@@ -1,7 +1,7 @@
 import { auth } from "@superset/auth/server";
 import {
 	connectionAccessToken,
-	orgConnection,
+	userConnection,
 } from "@superset/trpc/connectors";
 
 const LINEAR_IMAGE_HOST = "uploads.linear.app";
@@ -43,7 +43,11 @@ export async function GET(request: Request): Promise<Response> {
 	}
 
 	// Get the org's Linear access token
-	const connection = await orgConnection(organizationId, "linear");
+	const connection = await userConnection(
+		organizationId,
+		"linear",
+		sessionData.user.id,
+	);
 
 	if (!connection) {
 		return new Response("Linear integration not connected", { status: 400 });

@@ -23,6 +23,7 @@ mock.module("@superset/trpc/connectors", () => ({
 
 mock.module("@superset/trpc/integrations/linear", () => ({
 	getLinearClient: mock(async () => null),
+	linearClientFor: mock(async () => null),
 	isLinearAuthError: () => false,
 	mapPriorityFromLinear: () => null,
 }));
@@ -46,7 +47,10 @@ mock.module("@/lib/automations/ingestAutomationEvent", () => ({
 	ingestAutomationEvent: mock(async (_db: unknown, delivery: never) => {
 		const d = delivery as {
 			skip?: string;
-			event?: { integrationConnectionId: string | null; externalEventId: string };
+			event?: {
+				integrationConnectionId: string | null;
+				externalEventId: string;
+			};
 			dispatch?: { ownerUserId?: string } | null;
 		};
 		if (d.skip) return { status: "skipped", reason: d.skip };
@@ -100,9 +104,6 @@ describe("one Linear delivery, two connections in the same organization", () => 
 
 	test("narrows each dispatch to the member who owns that connection", async () => {
 		await processDelivery({ payload: DELIVERY, deliveryId: "delivery-1" });
-		expect(ingestCalls.map((c) => c.ownerUserId)).toEqual([
-			"user-a",
-			"user-b",
-		]);
+		expect(ingestCalls.map((c) => c.ownerUserId)).toEqual(["user-a", "user-b"]);
 	});
 });

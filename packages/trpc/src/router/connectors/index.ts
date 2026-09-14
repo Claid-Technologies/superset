@@ -16,7 +16,7 @@ import {
 	upsertConnection,
 } from "../../lib/connectors";
 import { protectedProcedure } from "../../trpc";
-import { verifyOrgMembership } from "../integration/utils";
+import { verifyOrgAdmin, verifyOrgMembership } from "../integration/utils";
 
 function methodSummary(method: ConnectorMethod) {
 	return {
@@ -156,6 +156,29 @@ export const connectorsRouter = {
 		.input(z.object({ organizationId: z.uuid(), connectionId: z.uuid() }))
 		.mutation(async ({ ctx, input }) => {
 			await verifyOrgMembership(ctx.session.user.id, input.organizationId);
+
+			const [existing] = await db
+				.select({
+					ownerKind: connections.ownerKind,
+					connectedByUserId: connections.connectedByUserId,
+				})
+				.from(connections)
+				.where(
+					and(
+						eq(connections.id, input.connectionId),
+						eq(connections.organizationId, input.organizationId),
+						isNull(connections.disconnectedAt),
+					),
+				)
+				.limit(1);
+
+			if (!existing)
+				throw new TRPCError({ code: "NOT_FOUND", message: "No connection" });
+
+			if (existing.ownerKind === "org")
+				await verifyOrgAdmin(ctx.session.user.id, input.organizationId);
+			else if (existing.connectedByUserId !== ctx.session.user.id)
+				throw new TRPCError({ code: "NOT_FOUND", message: "No connection" });
 
 			const [row] = await db
 				.update(connections)

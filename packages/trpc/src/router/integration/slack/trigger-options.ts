@@ -3,7 +3,7 @@ import {
 	type UsersListResponse,
 	WebClient,
 } from "@slack/web-api";
-import { connectionBotToken, orgConnection } from "../../../lib/connectors";
+import { connectionBotToken, userConnection } from "../../../lib/connectors";
 import type { TriggerOption, TriggerOptionSource } from "../trigger-options";
 
 /** A hard stop, not a page size: enough for any workspace this is pointed at. */
@@ -16,8 +16,11 @@ const MAX_PEOPLE = 1000;
  * (until the app is reinstalled with the scope) throws to the shared
  * procedure, which shows an empty list.
  */
-async function slackClient(organizationId: string): Promise<WebClient | null> {
-	const connection = await orgConnection(organizationId, "slack");
+async function slackClient(
+	organizationId: string,
+	userId: string,
+): Promise<WebClient | null> {
+	const connection = await userConnection(organizationId, "slack", userId);
 	if (!connection) return null;
 	return new WebClient(await connectionBotToken(connection), {
 		timeout: 5_000,
@@ -33,8 +36,8 @@ function byLabel(options: TriggerOption[]): TriggerOption[] {
  * Public and private channels both — a private channel the bot has been
  * invited to is where "a message in #incidents" most often means something.
  */
-const channels: TriggerOptionSource = async ({ organizationId }) => {
-	const client = await slackClient(organizationId);
+const channels: TriggerOptionSource = async ({ organizationId, userId }) => {
+	const client = await slackClient(organizationId, userId);
 	if (!client) return [];
 
 	const options: TriggerOption[] = [];
@@ -65,8 +68,8 @@ const channels: TriggerOptionSource = async ({ organizationId }) => {
  * The workspace's human members, keyed by Slack user id — what an event's
  * `user` carries and the matcher compares against.
  */
-const people: TriggerOptionSource = async ({ organizationId }) => {
-	const client = await slackClient(organizationId);
+const people: TriggerOptionSource = async ({ organizationId, userId }) => {
+	const client = await slackClient(organizationId, userId);
 	if (!client) return [];
 
 	const options: TriggerOption[] = [];

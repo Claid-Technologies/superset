@@ -1,6 +1,6 @@
 import { WebClient } from "@slack/web-api";
 import type { DraftTrigger } from "@superset/shared/automation-triggers";
-import { connectionBotToken, orgConnection } from "../../../lib/connectors";
+import { connectionBotToken, userConnection } from "../../../lib/connectors";
 
 /**
  * Joins the bot to every channel a Slack trigger watches, so saving a trigger
@@ -13,6 +13,7 @@ import { connectionBotToken, orgConnection } from "../../../lib/connectors";
  */
 export async function joinSlackTriggerChannels(
 	organizationId: string,
+	userId: string,
 	triggers: DraftTrigger[],
 ): Promise<void> {
 	const channelIds = new Set<string>();
@@ -28,7 +29,7 @@ export async function joinSlackTriggerChannels(
 	// throw here would reject a mutation whose write already landed.
 	let client: WebClient;
 	try {
-		const connection = await orgConnection(organizationId, "slack");
+		const connection = await userConnection(organizationId, "slack", userId);
 		if (!connection) return;
 		client = new WebClient(await connectionBotToken(connection), {
 			timeout: 5_000,
