@@ -1106,12 +1106,7 @@ export const automationEvents = pgTable(
 
 		// Text, not integration_provider: this must hold "webhook" and
 		// "superset", which have no connection behind them.
-		// Which connection produced this. Null for webhook and superset events.
-		// Not backfillable later: provider payloads do not always name it.
-		integrationConnectionId: uuid("integration_connection_id").references(
-			() => connections.id,
-			{ onDelete: "set null" },
-		),
+		integrationConnectionId: uuid("integration_connection_id"),
 
 		provider: text().notNull(),
 		eventType: text("event_type").notNull(),

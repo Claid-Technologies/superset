@@ -1,5 +1,5 @@
 {
-  "id": "713c3810-47f7-40c0-90df-81e7c6bb3489",
+  "id": "65ec6c81-e9cf-4d86-89df-ef2760086253",
   "prevId": "76f117a5-f0c0-408f-a65d-475d36bc87f8",
   "version": "7",
   "dialect": "postgresql",
@@ -5003,19 +5003,6 @@
             "id"
           ],
           "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "automation_events_integration_connection_id_connections_id_fk": {
-          "name": "automation_events_integration_connection_id_connections_id_fk",
-          "tableFrom": "automation_events",
-          "tableTo": "connections",
-          "columnsFrom": [
-            "integration_connection_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "set null",
           "onUpdate": "no action"
         }
       },

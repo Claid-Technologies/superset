@@ -49,5 +49,4 @@ CREATE UNIQUE INDEX "plugin_oauth_clients_issuer_redirect_unique" ON "plugin_oau
 CREATE UNIQUE INDEX "connections_org_connector_unique" ON "connections" USING btree ("organization_id","connector") WHERE "connections"."owner_kind" = 'org';--> statement-breakpoint
 CREATE UNIQUE INDEX "connections_user_connector_unique" ON "connections" USING btree ("organization_id","connector","connected_by_user_id","external_account_id") WHERE "connections"."owner_kind" = 'user';--> statement-breakpoint
 CREATE INDEX "connections_org_idx" ON "connections" USING btree ("organization_id");--> statement-breakpoint
-CREATE INDEX "connections_external_account_idx" ON "connections" USING btree ("connector","external_account_id");--> statement-breakpoint
-ALTER TABLE "automation_events" ADD CONSTRAINT "automation_events_integration_connection_id_connections_id_fk" FOREIGN KEY ("integration_connection_id") REFERENCES "public"."connections"("id") ON DELETE set null ON UPDATE no action;
+CREATE INDEX "connections_external_account_idx" ON "connections" USING btree ("connector","external_account_id");
