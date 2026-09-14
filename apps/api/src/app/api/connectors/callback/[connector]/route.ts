@@ -3,15 +3,13 @@ import {
 	connectorMethod,
 	exchangeCode,
 	probeIdentity,
+	redirectUriFor,
 	requireConnector,
 	UnknownConnectorError,
 	upsertConnection,
 } from "@superset/trpc/connectors";
 import { decryptSecret } from "@superset/trpc/integrations/plugins";
-import {
-	redirectUriFor,
-	STATE_COOKIE,
-} from "@/app/api/connectors/[connector]/connect/route";
+import { STATE_COOKIE } from "@/app/api/connectors/[connector]/connect/route";
 import { env } from "@/env";
 import { resolveCallback } from "@/lib/integrations/resolveCallback";
 import { connectorStateSchema, verifySignedState } from "@/lib/oauth-state";

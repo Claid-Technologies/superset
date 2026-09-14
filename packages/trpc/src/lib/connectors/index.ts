@@ -6,7 +6,7 @@ import {
 } from "@superset/shared/connectors";
 import { generateCodeChallenge } from "better-auth/oauth2";
 import { credentialFetch, readPath } from "../../router/plugins/manifest";
-import { resolveClientIdentity } from "./client-identity";
+import { forgetClient, resolveClientIdentity } from "./client-identity";
 import { discoverServer } from "./discovery";
 
 const TEMPLATE = /\$\{(env|params|config)\.([\w.-]+)\}/g;
@@ -101,6 +101,7 @@ export interface ResolvedEndpoints {
 	authentication?: "basic" | "post";
 	resource?: string;
 	pkce: boolean;
+	issuer?: string;
 }
 
 export async function resolveEndpoints(
@@ -112,11 +113,11 @@ export async function resolveEndpoints(
 		throw new Error(`Connector "${slug}" is not an oauth2 method.`);
 
 	if (method.client === "dynamic") {
-		if (!method.resource)
+		if (!method.authorization_url)
 			throw new Error(
-				`Connector "${slug}" uses a dynamic client but names no resource to discover from.`,
+				`Connector "${slug}" uses a dynamic client but names no authorization_url to discover from.`,
 			);
-		const server = await discoverServer(method.resource);
+		const server = await discoverServer(method.authorization_url);
 		const identity = await resolveClientIdentity(
 			slug,
 			server,
@@ -133,6 +134,7 @@ export async function resolveEndpoints(
 				: {}),
 			resource: server.resource,
 			pkce: true,
+			issuer: server.issuer,
 		};
 	}
 
@@ -307,10 +309,13 @@ export async function exchangeCode(
 		`Connector "${slug}" token`,
 	);
 	const payload = (await response.json()) as Record<string, unknown>;
-	if (!response.ok)
+	if (!response.ok) {
+		if (endpoints?.issuer && payload.error === "invalid_client")
+			await forgetClient(endpoints.issuer, options.redirectUri, clientId);
 		throw new Error(
 			`Connector "${slug}" token exchange failed: ${response.status} ${JSON.stringify(payload).slice(0, 200)}`,
 		);
+	}
 
 	const tokenPath = method.type === "oauth2" ? method.token : "$.access_token";
 	const accessToken = readPath(payload, tokenPath);
@@ -416,7 +421,11 @@ export {
 	encryptOptional,
 	encryptSecret,
 } from "../../router/plugins/crypto";
-export { clientMetadataUrl, forgetClient } from "./client-identity";
+export {
+	clientMetadataUrl,
+	forgetClient,
+	redirectUriFor,
+} from "./client-identity";
 export { type DiscoveredServer, discoverServer } from "./discovery";
 export {
 	accountConnection,

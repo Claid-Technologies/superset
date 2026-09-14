@@ -64,13 +64,15 @@ that must not change under them.
 
 ### OAuth with no client to register
 
-`"client": "dynamic"` on an oauth2 method drops `authorization_url`, `token_url`, and
-`requires_env` entirely: the API takes all three from the MCP server at connect time. It reads
-`/.well-known/oauth-protected-resource` for the server the `mcp.url` names, follows that to the
+`"client": "dynamic"` on an oauth2 method drops `token_url` and `requires_env`, and repoints
+`authorization_url` at the MCP server itself rather than an authorize endpoint: the API takes the
+endpoints and the client identity from that server at connect time. It reads
+`/.well-known/oauth-protected-resource` for the server named there, follows that to the
 authorization server's metadata for the endpoints, and then gets a client identity one of two ways:
 
 - the server advertises `client_id_metadata_document_supported`, so the client id is the URL of a
-  document we host at `/api/plugins/<name>/client-metadata` — nothing is registered or stored; or
+  document we host at `/api/connectors/<connector>/client-metadata` — nothing is registered or
+  stored; or
 - the server offers a `registration_endpoint`, so we register once per authorization server
   (RFC 7591) and keep the result in `plugin_oauth_clients`, keyed by issuer and redirect URI so
   every user shares one registration.

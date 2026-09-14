@@ -51,7 +51,6 @@ const oauth2Method = z.object({
 	pkce: z.boolean().default(false),
 	scope_identifier: z.string().default("scope"),
 	client: z.enum(["static", "dynamic"]).default("static"),
-	resource: z.string().optional(),
 	token: z.string().default("$.access_token"),
 	store: z.record(z.string(), z.string()).default({}),
 	...shared,

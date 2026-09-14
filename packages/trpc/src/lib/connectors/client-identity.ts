@@ -18,6 +18,10 @@ export function clientMetadataUrl(connectorSlug: string): string {
 	return `${base}/api/connectors/${connectorSlug}/client-metadata`;
 }
 
+export function redirectUriFor(connectorSlug: string): string {
+	return `${env.NEXT_PUBLIC_API_URL}/api/connectors/callback/${connectorSlug}`;
+}
+
 function pickAuthMethod(
 	supported: string[] | undefined,
 ): "client_secret_post" | "client_secret_basic" | "none" {

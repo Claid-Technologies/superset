@@ -78,7 +78,7 @@ export function GET() {
 				enum: ["static", "dynamic"],
 				default: "static",
 				description:
-					'oauth2 only: where the client identity comes from. "static" reads the client id and secret named in requires_env and uses the declared endpoints. "dynamic" takes both from the MCP server at connect time — its protected-resource and authorization-server metadata name the endpoints, and the client is either a hosted client id metadata document or an RFC 7591 registration, whichever the server advertises. A dynamic method declares no authorization_url, token_url, or requires_env.',
+					'oauth2 only: where the client identity comes from. "static" reads the client id and secret named in requires_env and uses the declared endpoints. "dynamic" takes both from the MCP server at connect time — its protected-resource and authorization-server metadata name the endpoints, and the client is either a hosted client id metadata document or an RFC 7591 registration, whichever the server advertises. A dynamic method points authorization_url at the MCP server to discover from, and declares no token_url or requires_env.',
 			},
 			pkce: {
 				type: "boolean",
@@ -96,7 +96,11 @@ export function GET() {
 				additionalProperties: { type: "string" },
 				description: "Extra form parameters for the token request.",
 			},
-			authorization_url: { type: "string" },
+			authorization_url: {
+				type: "string",
+				description:
+					"static: the authorize endpoint. dynamic: the MCP server URL to discover the authorization server from.",
+			},
 			token_url: { type: "string" },
 			scopes: { type: "array", items: { type: "string" } },
 			scope_separator: {

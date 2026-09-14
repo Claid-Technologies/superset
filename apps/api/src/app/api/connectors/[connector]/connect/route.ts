@@ -4,6 +4,7 @@ import {
 	connectorMethod,
 	createCodeVerifier,
 	MissingConnectorEnvError,
+	redirectUriFor,
 	requireConnector,
 	resolveEndpoints,
 	UnknownConnectorError,
@@ -15,10 +16,6 @@ import { requireOrgMember } from "@/lib/integrations/requireOrgMember";
 import { createSignedState } from "@/lib/oauth-state";
 
 export const STATE_COOKIE = "connector_oauth_state";
-
-export function redirectUriFor(slug: string): string {
-	return `${env.NEXT_PUBLIC_API_URL}/api/connectors/callback/${slug}`;
-}
 
 export async function GET(
 	request: Request,

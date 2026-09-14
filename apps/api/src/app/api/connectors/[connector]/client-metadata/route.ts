@@ -1,7 +1,5 @@
 import { getConnector } from "@superset/shared/connectors";
-import { clientMetadataUrl } from "@superset/trpc/connectors";
-
-import { redirectUriFor } from "../connect/route";
+import { clientMetadataUrl, redirectUriFor } from "@superset/trpc/connectors";
 
 export async function GET(
 	_request: Request,

@@ -1,5 +1,5 @@
-import { db } from "@superset/db/client";
 import { connections, type SelectConnection } from "@superset/db/schema";
+import { withConnectionLock } from "@superset/db/utils";
 import { and, eq, isNull } from "drizzle-orm";
 import {
 	decryptOptional,
@@ -8,6 +8,7 @@ import {
 	encryptSecret,
 } from "../../router/plugins/crypto";
 import { credentialFetch } from "../../router/plugins/manifest";
+import { forgetClient, redirectUriFor } from "./client-identity";
 import { connectorMethod, requireConnector, resolveEndpoints } from "./index";
 
 const DEFAULT_EXPIRY_BUFFER_SECONDS = 60;
@@ -40,54 +41,78 @@ export async function ensureFreshConnection(
 		method.token_expiration_buffer ?? DEFAULT_EXPIRY_BUFFER_SECONDS;
 	if (!expiringSoon(row.tokenExpiresAt, buffer)) return row;
 
-	const refreshToken = await decryptOptional(row.refreshToken);
-	if (!refreshToken) throw new UnrefreshableConnectionError(row.connector);
+	return withConnectionLock(row.id, async (tx) => {
+		const [current] = await tx
+			.select()
+			.from(connections)
+			.where(
+				and(eq(connections.id, row.id), isNull(connections.disconnectedAt)),
+			)
+			.limit(1);
+		if (!current) return row;
+		if (!expiringSoon(current.tokenExpiresAt, buffer)) return current;
 
-	const endpoints = await resolveEndpoints(row.connector, method, "");
-	const { clientId, clientSecret } = endpoints;
+		const refreshToken = await decryptOptional(current.refreshToken);
+		if (!refreshToken)
+			throw new UnrefreshableConnectionError(current.connector);
 
-	const body = new URLSearchParams({
-		grant_type: "refresh_token",
-		refresh_token: refreshToken,
+		const endpoints = await resolveEndpoints(
+			current.connector,
+			method,
+			redirectUriFor(current.connector),
+		);
+		const { clientId, clientSecret } = endpoints;
+
+		const body = new URLSearchParams({
+			grant_type: "refresh_token",
+			refresh_token: refreshToken,
+		});
+		const headers: Record<string, string> = {
+			"Content-Type": "application/x-www-form-urlencoded",
+			Accept: "application/json",
+		};
+		if (endpoints.authentication === "basic")
+			headers.Authorization = `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString("base64")}`;
+		else {
+			body.set("client_id", clientId);
+			if (clientSecret) body.set("client_secret", clientSecret);
+		}
+
+		const response = await credentialFetch(
+			endpoints.tokenEndpoint,
+			{ method: "POST", headers, body },
+			`Connector "${current.connector}" refresh`,
+		);
+		const payload = (await response.json()) as Record<string, unknown>;
+		if (!response.ok || typeof payload.access_token !== "string") {
+			if (endpoints.issuer && payload.error === "invalid_client")
+				await forgetClient(
+					endpoints.issuer,
+					redirectUriFor(current.connector),
+					clientId,
+				);
+			throw new UnrefreshableConnectionError(current.connector);
+		}
+
+		const expiresIn = payload.expires_in;
+		const [updated] = await tx
+			.update(connections)
+			.set({
+				accessToken: await encryptSecret(payload.access_token),
+				refreshToken:
+					typeof payload.refresh_token === "string"
+						? await encryptSecret(payload.refresh_token)
+						: await encryptOptional(refreshToken),
+				tokenExpiresAt:
+					typeof expiresIn === "number"
+						? new Date(Date.now() + expiresIn * 1000)
+						: null,
+			})
+			.where(eq(connections.id, current.id))
+			.returning();
+
+		return updated ?? current;
 	});
-	const headers: Record<string, string> = {
-		"Content-Type": "application/x-www-form-urlencoded",
-		Accept: "application/json",
-	};
-	if (endpoints.authentication === "basic")
-		headers.Authorization = `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString("base64")}`;
-	else {
-		body.set("client_id", clientId);
-		if (clientSecret) body.set("client_secret", clientSecret);
-	}
-
-	const response = await credentialFetch(
-		endpoints.tokenEndpoint,
-		{ method: "POST", headers, body },
-		`Connector "${row.connector}" refresh`,
-	);
-	const payload = (await response.json()) as Record<string, unknown>;
-	if (!response.ok || typeof payload.access_token !== "string")
-		throw new UnrefreshableConnectionError(row.connector);
-
-	const expiresIn = payload.expires_in;
-	const [updated] = await db
-		.update(connections)
-		.set({
-			accessToken: await encryptSecret(payload.access_token),
-			refreshToken:
-				typeof payload.refresh_token === "string"
-					? await encryptSecret(payload.refresh_token)
-					: await encryptOptional(refreshToken),
-			tokenExpiresAt:
-				typeof expiresIn === "number"
-					? new Date(Date.now() + expiresIn * 1000)
-					: null,
-		})
-		.where(and(eq(connections.id, row.id), isNull(connections.disconnectedAt)))
-		.returning();
-
-	return updated ?? row;
 }
 
 export async function connectionAccessToken(

@@ -145,11 +145,10 @@
 				{
 					"type": "oauth2",
 					"label": "OAuth 2.0",
-					"authorization_url": "https://api.notion.com/v1/oauth/authorize",
-					"token_url": "https://api.notion.com/v1/oauth/token",
+					"client": "dynamic",
+					"authorization_url": "https://mcp.notion.com/mcp",
 					"scopes": [],
 					"token_request_auth_method": "client_secret_basic",
-					"requires_env": ["NOTION_CLIENT_ID", "NOTION_CLIENT_SECRET"],
 					"authorization_params": {
 						"owner": "user"
 					},
