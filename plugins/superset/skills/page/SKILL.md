@@ -314,12 +314,15 @@ superset pages pull <page-id-or-slug> --version 2 > v2.html
 have, or to diff what actually shipped against what you have locally.
 
 `list` returns every page it can see, so reach for `--search` before you reach
-for a pipe into `grep`. Two flags change that: `--limit <1-200>` returns one
-batch, and `--cursor` continues from where a batch stopped. Passing either one
-also changes the output shape — plain `list` prints a bare array, while a
-batched run prints `{ items, nextCursor }` and you pass that `nextCursor` back
-as `--cursor` until it comes back `null`. Scripts that expect an array should
-just not pass the flags.
+for a pipe into `grep`. Two flags change that: `--limit <1-200>` returns a
+single batch, and `--cursor` continues from where a batch stopped.
+
+They also change the JSON. Under `--json`, a plain `list` is a bare array, but
+passing either flag wraps it as `{ items, nextCursor }` — feed that `nextCursor`
+back as `--cursor` until it comes back `null`. Parsing the output? Either don't
+pass the flags, or handle the envelope. The other two modes are unaffected: the
+default table looks the same and tells you when there's more, and `--quiet`
+prints ids either way.
 
 ## Answer comments
 
