@@ -209,18 +209,18 @@ Automated, on every PR that touches the sandbox (`.github/workflows/sandbox.yml`
 On demand (`workflow_dispatch` → `bun run src/real-sandbox.ts`, or the
 release's probe):
 
-- [ ] **11.4 A real box** — provisioned from the registry image on this
+- [x] **11.4 A real box** — provisioned from the registry image on this
   checkout's bundle, woken through `wakeSandbox`: health 200, `/events` 401,
   boot.log on the pinned bundle with no failed step, host-service as `ubuntu`
   with no brokered credential in its `/proc/<pid>/environ`, checkout on the
   branch, Xvnc + xfce4-session + plank up, an `RFB` handshake over
   `wss://<domain 6080>/websockify`, the gate admitting a ticket and refusing
   a forged one; then stop + wake: run dir cleared, nothing installed or
-  fetched, every step skipped, checkout kept.
-- [ ] **11.5 Desktop pane through the gate** — the pane connects to the
+  fetched, every step skipped, checkout kept. (2026-09-14 on the dev project: all checks, wake in 11.9 s)
+- [x] **11.5 Desktop pane through the gate** — the pane connects to the
   desktop port's gate address with its own ticket (`access` returns
   `desktop.url` + `desktop.token`); a screenshot of the Xfce session in the
-  pane.
+  pane. (2026-09-14 in the dev app through the local gate: Xfce + dock, take control both ways, terminal from the dock, a 3.2 s window drag repainted 121 frames with an 18 ms median gap)
 - [ ] **11.6 Release** — `bun run sandbox:release` against dev: runtime asset
   rewritten, bundle published, golden built with the internal `setup` hook,
   probe fork passes 11.4 plus the dev stack from the `start` hook, rows
