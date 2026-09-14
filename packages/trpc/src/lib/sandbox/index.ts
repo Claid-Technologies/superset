@@ -23,6 +23,7 @@ export {
 	SandboxUnavailableError,
 	settleSandbox,
 	stopAndSnapshot,
+	stopSandbox,
 	stripWorkspaceIdentity,
 	waitForStopSnapshot,
 	wakeSandbox,
