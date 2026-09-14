@@ -5,7 +5,14 @@ import {
 	sandboxManagedEnvSchema,
 } from "@superset/shared/sandbox-contract";
 import { TRPCError } from "@trpc/server";
-import { setManagedEnv } from "../../../runtime/sandbox-managed-env";
+import {
+	hasManagedEnv,
+	setManagedEnv,
+} from "../../../runtime/sandbox-managed-env/sandbox-managed-env.ts";
+import {
+	readSandboxIdentity,
+	runSandboxStartHook,
+} from "../../../runtime/sandbox-self-seed";
 import { protectedProcedure, router } from "../../index";
 
 const BOOT_LOG_TAIL_LINES = 200;
@@ -29,9 +36,12 @@ export function readSandboxBootStatus(): {
 	runtime: string | null;
 	bootLog: string[];
 	ready: Record<string, boolean>;
+	/** Whether the control plane has pushed the managed environment this process. */
+	environmentPushed: boolean;
 } {
 	const log = readTrimmed(SANDBOX_PATHS.bootLog);
 	return {
+		environmentPushed: hasManagedEnv(),
 		bundle: readTrimmed(`${SANDBOX_PATHS.bundleRoot}/current.bundle-hash`),
 		runtime: readTrimmed(`${SANDBOX_PATHS.hostRoot}/current.version`),
 		bootLog: log ? log.split("\n").slice(-BOOT_LOG_TAIL_LINES) : [],
@@ -61,5 +71,23 @@ export const sandboxRouter = router({
 	status: protectedProcedure.query(() => {
 		sandboxOnly();
 		return readSandboxBootStatus();
+	}),
+
+	/**
+	 * Runs the repository's `start` hook with the managed environment. The
+	 * boot runner calls it once host-service answers, the environment has
+	 * been pushed and the checkout is in, so every boot-time action is
+	 * sequenced from one place and reads in one log.
+	 */
+	runStartHook: protectedProcedure.mutation(() => {
+		sandboxOnly();
+		const identity = readSandboxIdentity();
+		if (!identity) {
+			throw new TRPCError({
+				code: "PRECONDITION_FAILED",
+				message: "This host-service has no sandbox identity",
+			});
+		}
+		return runSandboxStartHook(identity);
 	}),
 });

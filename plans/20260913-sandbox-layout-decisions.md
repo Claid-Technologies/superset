@@ -32,7 +32,7 @@ was put to Satya and settled, per the rule that we emulate first and deviate onl
 | 18 | Desktop stream | TigerVNC's Xvnc as the display, websockify from apt on its own port with no local auth, the gate's per-port ticket as the wall, noVNC in the pane. The reference's exact stack minus its zips (we own the image). Own process so the stream stays off the runtime's event loop and survives a host-service restart. WebRTC is out (only HTTP reaches the box); KasmVNC noted as a same-shape swap if Tight/JPEG ever proves insufficient, not a parallel implementation |
 | 19 | Env push RPC | One host-service procedure that replaces the whole managed set atomically; claim and wake push the full set, release pushes empty; idempotent; new terminals and spawns inherit, open terminals unchanged |
 | 20 | Contract | The zod schema shared through tRPC (identity file, env push) is the contract for the API and host-service; `build.ts` renders the handful of shell-visible constants (bundle sha, asset base, paths, ports, contract version) into `rootfs/etc/superset/contract.sh` for `superset-boot` |
-| 21 | host-service fails to start | The box stays alive: boot finishes the desktop and hooks, logs the failure, the API marks the workspace failed after its readiness wait; the desktop stays reachable for diagnosis (Decision 18) |
+| 21 | host-service fails to start | The box is kept and stopped (settled 2026-09-14): boot finishes the desktop and hooks and logs the failure; the API marks the workspace failed after its readiness wait and stops the session, so the box costs storage, not compute, until someone resumes it to look at the boot log and desktop or deletes it from the sidebar. Any other provisioning failure deletes the box |
 | 22 | Release job | Holds bucket write, registry push, a Vercel token for the sandboxes project and the production database URL; writes the environment row only after the probe passes, so a failed build leaves the previous one live |
 | 23 | Asset bucket | A new R2 bucket, public read, behind `cdn.superset.sh` (a wildcard on superset.sh currently answers every name; a specific record overrides it); sandbox objects under `/sandbox/<sha256><suffix>`; the firewall allowlist must include the host |
 | 24 | End-to-end tests | Every PR builds the image and boots it twice in a Docker container (steps, markers, hooks, secret handoff via env; second boot skips everything); `workflow_dispatch` and the release job boot a real dev-project sandbox for wake, gate and firewall checks |
@@ -101,9 +101,11 @@ archives; `superset-desktop-init` as its own process beside host-service (the re
   boot command's env saved one provider call (~0.3 s); Satya chose the file on 2026-09-14: a file on the box
   is legible, has no size ceiling, and the runner's inputs keep one shape. The box receives only the `start`
   and `ports` hook overrides; `setup` is the release's.
-- The `start` hook runs from host-service, not the boot runner (amends Decision 9's "boot runs
-  it"): it needs the managed environment, which only arrives once host-service answers, and the
-  checkout, which lands beside it. Once per boot, marker in `/run/superset`.
+- The `start` hook is sequenced by the boot runner and executed by host-service (settled with
+  Satya 2026-09-14): the environment the hook needs is pushed into host-service and never
+  leaves it, so host-service spawns; the runner decides when (host-service up, push landed,
+  checkout in) through `sandbox.runStartHook`, so every boot-time action reads in `boot.log`.
+  Once per boot, marker in `/run/superset`.
 - Repository `ports` are read from `.superset/config.json` at create (GitHub contents API, the
   installation token) and published on the sandbox; the access mint still issues tickets for
   the two platform ports only. A ticket per repo port waits for a pane that uses one.

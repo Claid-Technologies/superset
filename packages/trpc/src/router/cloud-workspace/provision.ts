@@ -9,6 +9,7 @@ import {
 	provisionSandbox,
 	SandboxNotReadyError,
 	settleSandbox,
+	stopSandbox,
 } from "../../lib/sandbox";
 import { generateCloudWorkspaceName } from "./generate-name";
 import { transitionCloudWorkspace } from "./transition";
@@ -126,19 +127,20 @@ export async function provisionCloudWorkspace(
 		return "provisioned";
 	} catch (error) {
 		await naming.catch(() => {});
-		// A box that booted but whose host-service never answered stays up for
-		// diagnosis: its desktop is reachable and its boot log says what
-		// happened, and a delete from the sidebar still removes it. Any other
-		// failure must not leak a box, since billing started at provision.
+		// A box that booted but whose host-service never answered is kept for
+		// diagnosis, stopped: its boot log, desktop and shell are a resume
+		// away, it costs storage rather than compute meanwhile, and a delete
+		// from the sidebar still removes it. Any other failure must not leak
+		// a box, since billing started at provision.
 		const keepForDiagnosis = error instanceof SandboxNotReadyError;
-		if (!keepForDiagnosis) {
-			await deleteSandbox(providerSandboxId).catch((teardownError) => {
-				console.error(
-					`[cloud-workspace] leaked sandbox ${providerSandboxId}`,
-					teardownError,
-				);
-			});
-		}
+		await (keepForDiagnosis ? stopSandbox : deleteSandbox)(
+			providerSandboxId,
+		).catch((teardownError) => {
+			console.error(
+				`[cloud-workspace] ${keepForDiagnosis ? "could not stop" : "leaked"} sandbox ${providerSandboxId}`,
+				teardownError,
+			);
+		});
 		await transitionCloudWorkspace({
 			id: row.id,
 			from: ["provisioning", "ready"],

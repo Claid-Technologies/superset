@@ -2,6 +2,7 @@ export {
 	launchSandboxAgentOnce,
 	readSandboxIdentity,
 	runSandboxSelfSeed,
-	runSandboxStartHookOnce,
+	runSandboxStartHook,
 	type SandboxIdentity,
+	type StartHookOutcome,
 } from "./sandbox-self-seed";

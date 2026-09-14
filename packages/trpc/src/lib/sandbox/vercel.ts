@@ -480,6 +480,17 @@ export async function waitForStopSnapshot(
 	throw new Error(`${name} did not snapshot in time`);
 }
 
+/**
+ * Ends the session without waiting for its snapshot: what a failed create
+ * does to the box it keeps, so it costs storage rather than compute until
+ * someone resumes it to look or deletes it.
+ */
+export async function stopSandbox(providerSandboxId: string): Promise<void> {
+	const sandbox = await getSandbox(providerSandboxId);
+	if (!sandbox || sandbox.status !== "running") return;
+	await sandbox.stop();
+}
+
 /** Best-effort: a sandbox already gone is the state we wanted. */
 export async function deleteSandbox(providerSandboxId: string): Promise<void> {
 	const sandbox = await getSandbox(providerSandboxId);
