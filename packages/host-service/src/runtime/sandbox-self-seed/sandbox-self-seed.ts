@@ -14,7 +14,10 @@ import { projects, workspaces } from "../../db/schema";
 import { runAgentInWorkspace } from "../../trpc/router/agents/agents";
 import { seedDefaultsIfEmpty } from "../../trpc/router/settings/agent-configs";
 import type { HostServiceContext } from "../../types";
-import { getManagedEnv, waitForManagedEnv } from "../sandbox-managed-env/sandbox-managed-env.ts";
+import {
+	getManagedEnv,
+	waitForManagedEnv,
+} from "../sandbox-managed-env/sandbox-managed-env.ts";
 import { resolveScript, shellSingleQuote } from "../setup/config";
 
 /**
