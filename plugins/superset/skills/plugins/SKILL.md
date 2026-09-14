@@ -46,24 +46,24 @@ echo '{"api_key":"..."}' | superset plugins connect sentry --inputs -
 
 Prefer stdin for a real credential: an argument is visible in `ps` and in shell history.
 OAuth cannot finish headlessly: hand the URL to the user, then confirm with
-`superset plugins connections --plugin linear`.
+`superset plugins list`.
 
 If a plugin offers more than one method, the command says so and lists them. Ask the user
 which they want rather than picking.
 
 ## 4. Call its tools
 
-Address a connection by id, from the `PLUGIN ID` column of `superset plugins list`. That is a
-*connection* id, so a plugin with two connected accounts has two, one per account. Pick the
-account deliberately; there is no default, and a plugin name is not accepted here.
+Address a plugin by name, from the `PLUGIN` column of `superset plugins list`. A connection id
+is not accepted: credentials live on the connector a plugin names, and one connector can back
+several plugins, so an id no longer says which plugin was meant.
 
 Arguments are the last positional, not an option, and `-` reads them from stdin.
 
 ```bash
-superset mcp tools --connection <id>
-superset mcp call-tool list_issues --connection <id>
-superset mcp call-tool create_issue --connection <id> '{"team":"ENG","title":"Export 500s"}'
-echo '{"team":"ENG","title":"..."}' | superset mcp call-tool create_issue --connection <id> -
+superset mcp tools --plugin linear
+superset mcp call-tool list_issues --plugin linear
+superset mcp call-tool create_issue --plugin linear '{"team":"ENG","title":"Export 500s"}'
+echo '{"team":"ENG","title":"..."}' | superset mcp call-tool create_issue --plugin linear -
 ```
 
 List the tools before calling one. Names and argument schemas come from the plugin's server,
@@ -98,7 +98,7 @@ superset plugins marketplace remove <name>
 are left alone. It removes the plugin locally even when the account call fails, and says so.
 Read that message: the stored credential is revoked as part of the account removal, so an
 unconfirmed removal means the skills are gone from this machine while the connection lives
-on. Check with `superset plugins connections --plugin <name>` and run `uninstall` again.
+on. Check with `superset plugins list` and run `uninstall` again.
 
 ## Anti-patterns
 

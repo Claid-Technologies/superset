@@ -161,7 +161,7 @@ export default command({
 				`Open this URL to authorize ${name}:`,
 				`  ${url}`,
 				"",
-				`Then confirm with: superset plugins connections --plugin ${name}`,
+				`Then confirm with: superset plugins list`,
 			].join("\n"),
 		};
 	},

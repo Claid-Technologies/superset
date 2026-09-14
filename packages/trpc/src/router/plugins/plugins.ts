@@ -1,6 +1,7 @@
 import { db } from "@superset/db/client";
 import {
 	connections,
+	members,
 	pluginInstalls,
 	pluginMarketplaces,
 } from "@superset/db/schema";
@@ -9,7 +10,7 @@ import {
 	firstPartyManifest,
 } from "@superset/shared/plugins";
 import type { TRPCError, TRPCRouterRecord } from "@trpc/server";
-import { and, asc, eq, isNull } from "drizzle-orm";
+import { and, asc, desc, eq, isNull } from "drizzle-orm";
 import { z } from "zod";
 import { userError } from "../../i18n-error";
 import {
@@ -76,7 +77,24 @@ function notInstalled(name: string): TRPCError {
 	});
 }
 
-async function connectionContext(userId: string, pluginName: string) {
+async function dispatchOrganizationId(
+	userId: string,
+	activeOrganizationId: string | null,
+): Promise<string | null> {
+	if (activeOrganizationId) return activeOrganizationId;
+	const membership = await db.query.members.findFirst({
+		where: eq(members.userId, userId),
+		orderBy: desc(members.createdAt),
+		columns: { organizationId: true },
+	});
+	return membership?.organizationId ?? null;
+}
+
+async function connectionContext(
+	userId: string,
+	pluginName: string,
+	activeOrganizationId: string | null,
+) {
 	const install = await installedPlugin(userId, pluginName).catch(ambiguous);
 	if (!install) throw notInstalled(pluginName);
 
@@ -84,7 +102,11 @@ async function connectionContext(userId: string, pluginName: string) {
 	const source = await bundledSource(userId, install.marketplace);
 	if (!slug) return { install, source, scope: {}, authMethod: null };
 
-	const row = await activeConnection(userId, slug);
+	const organizationId = await dispatchOrganizationId(
+		userId,
+		activeOrganizationId,
+	);
+	const row = await activeConnection(userId, slug, organizationId);
 	if (!row) {
 		throw userError({
 			code: "UNAUTHORIZED",
@@ -358,6 +380,7 @@ const toolsRouter = {
 			const { install, source, scope, authMethod } = await connectionContext(
 				ctx.session.user.id,
 				input.plugin,
+				ctx.activeOrganizationId,
 			);
 			try {
 				const tools = await listTools(
@@ -384,6 +407,7 @@ const toolsRouter = {
 			const { install, source, scope, authMethod } = await connectionContext(
 				ctx.session.user.id,
 				input.plugin,
+				ctx.activeOrganizationId,
 			);
 			try {
 				const result = await callTool(
@@ -459,6 +483,38 @@ export const pluginsRouter = createTRPCRouter({
 			installs.map((row) => `${row.marketplace}/${row.pluginName}`),
 		);
 
+		const claimed = new Set(
+			installs
+				.map((row) => pluginConnector(row.manifest as PluginManifest))
+				.filter((slug): slug is string => slug !== undefined),
+		);
+
+		const orphaned = [...held.entries()]
+			.filter(([slug]) => !claimed.has(slug))
+			.map(([slug, rows]) => ({
+				name: slug,
+				version: "",
+				description: "",
+				marketplace: FIRST_PARTY,
+				displayName: slug,
+				category: "Developer tools",
+				icon: undefined,
+				connector: slug,
+				mcpUrl: null,
+				skills: [] as string[],
+				homepage: null,
+				author: null,
+				license: null,
+				installed: false,
+				enabled: false,
+				installedAt: null as Date | null,
+				latestVersion: null,
+				connections: rows,
+				accounts: rows
+					.map((connection) => connection.user ?? connection.account)
+					.filter((account): account is string => account !== null),
+			}));
+
 		const available = Object.values(FIRST_PARTY_MANIFESTS)
 			.filter(
 				(manifest) => !installedKeys.has(`${FIRST_PARTY}/${manifest.name}`),
@@ -473,7 +529,7 @@ export const pluginsRouter = createTRPCRouter({
 				accounts: [] as string[],
 			}));
 
-		return [...installed, ...available];
+		return [...installed, ...orphaned, ...available];
 	}),
 
 	install: protectedProcedure
@@ -584,29 +640,48 @@ export const pluginsRouter = createTRPCRouter({
 
 			const { id, marketplace } = install;
 
+			const [uninstalled] = await db
+				.select({ manifest: pluginInstalls.manifest })
+				.from(pluginInstalls)
+				.where(eq(pluginInstalls.id, id))
+				.limit(1);
+
 			await db.delete(pluginInstalls).where(eq(pluginInstalls.id, id));
 
-			const connector = pluginConnector(
-				firstPartyManifest(input.name) ?? { name: input.name, version: "" },
-			);
+			const connector = uninstalled
+				? pluginConnector(uninstalled.manifest as PluginManifest)
+				: null;
 
-			const disconnected = connector
-				? await db
-						.update(connections)
-						.set({
-							disconnectedAt: new Date(),
-							disconnectReason: "plugin_uninstalled",
-						})
-						.where(
-							and(
-								eq(connections.connector, connector),
-								eq(connections.ownerKind, "user"),
-								eq(connections.connectedByUserId, ctx.session.user.id),
-								isNull(connections.disconnectedAt),
-							),
-						)
-						.returning({ id: connections.id })
-				: [];
+			const stillShared =
+				connector &&
+				(
+					await db
+						.select({ manifest: pluginInstalls.manifest })
+						.from(pluginInstalls)
+						.where(eq(pluginInstalls.userId, ctx.session.user.id))
+				).some(
+					(entry) =>
+						pluginConnector(entry.manifest as PluginManifest) === connector,
+				);
+
+			const disconnected =
+				connector && !stillShared
+					? await db
+							.update(connections)
+							.set({
+								disconnectedAt: new Date(),
+								disconnectReason: "plugin_uninstalled",
+							})
+							.where(
+								and(
+									eq(connections.connector, connector),
+									eq(connections.ownerKind, "user"),
+									eq(connections.connectedByUserId, ctx.session.user.id),
+									isNull(connections.disconnectedAt),
+								),
+							)
+							.returning({ id: connections.id })
+					: [];
 
 			return {
 				uninstalled: input.name,
