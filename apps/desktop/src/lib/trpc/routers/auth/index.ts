@@ -19,8 +19,8 @@ import {
 	stateStore,
 } from "./utils/auth-functions";
 
-// Every token write takes a lock directory next to the token file, so a full
-// disk is the user's environment, not a bug.
+// Token writes create a lock directory next to the token file, which is where
+// a full disk surfaces. That is the user's environment, not a bug.
 async function writeAuth<Result>(
 	operation: () => Promise<Result>,
 ): Promise<Result> {
