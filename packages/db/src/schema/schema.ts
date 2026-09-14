@@ -51,7 +51,7 @@ import type {
 	TriggerConfig,
 	UserIdentityMetadata,
 } from "./types";
-import type { EnvironmentHooks, WorkspaceConfig } from "./zod";
+import type { WorkspaceConfig } from "./zod";
 
 export const taskStatus = pgEnum("task_status", taskStatusEnumValues);
 export const taskPriority = pgEnum("task_priority", taskPriorityValues);
@@ -573,8 +573,6 @@ export const environments = pgTable(
 		sourceRef: text("source_ref").notNull(),
 		/** The sandbox bundle every workspace of this environment boots on; null keeps the image's own. */
 		bundleSha: text("bundle_sha"),
-		/** Overrides for the repository's `.superset/config.json` hooks. */
-		hooks: jsonb().$type<EnvironmentHooks>(),
 		/**
 		 * Which of the environment's repositories carries the `.superset/config.json`
 		 * the box acts on; null means none does and only `hooks` applies.
@@ -620,7 +618,6 @@ export const environmentRepositories = pgTable(
 		repositoryId: uuid("repository_id")
 			.notNull()
 			.references(() => githubRepositories.id, { onDelete: "cascade" }),
-		position: integer().notNull().default(0),
 	},
 	(table) => [
 		unique("environment_repositories_environment_id_repository_id_unique").on(
@@ -690,22 +687,6 @@ export const cloudWorkspaces = pgTable(
 			.notNull()
 			.references(() => environments.id),
 		hostVersion: text("host_version"),
-		// The provisioning job's own clock, written with `ready`: when the job
-		// began, when the provider call to create the sandbox started and
-		// returned, when the boot script was fired into it, and when a wake
-		// first saw host-service answer. The boot script's own phases live in
-		// the sandbox's boot log and are read from health.check.
-		provisionStartedAt: timestamp("provision_started_at", {
-			withTimezone: true,
-		}),
-		sandboxCreateStartedAt: timestamp("sandbox_create_started_at", {
-			withTimezone: true,
-		}),
-		sandboxCreateFinishedAt: timestamp("sandbox_create_finished_at", {
-			withTimezone: true,
-		}),
-		bootFiredAt: timestamp("boot_fired_at", { withTimezone: true }),
-		firstHealthyAt: timestamp("first_healthy_at", { withTimezone: true }),
 		deletedAt: timestamp("deleted_at", { withTimezone: true }),
 		createdByUserId: uuid("created_by_user_id").references(() => users.id, {
 			onDelete: "set null",
@@ -742,9 +723,7 @@ export const cloudWorkspaceRepositories = pgTable(
 		repositoryId: uuid("repository_id")
 			.notNull()
 			.references(() => githubRepositories.id, { onDelete: "cascade" }),
-		branch: text().notNull(),
 		path: text().notNull(),
-		position: integer().notNull().default(0),
 	},
 	(table) => [
 		unique("cloud_workspace_repositories_workspace_repository_unique").on(

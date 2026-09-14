@@ -1,7 +1,9 @@
+import * as Sentry from "@sentry/core";
 import { db } from "@superset/db/client";
 import { cloudWorkspaces } from "@superset/db/schema";
 import type { CloudAgentLaunch } from "@superset/shared/cloud-agent-launch";
-import { and, eq, isNull } from "drizzle-orm";
+import { CLOUD_WORKSPACE_PROVISION_TRANSACTION } from "@superset/shared/constants";
+import { eq } from "drizzle-orm";
 import { nudge } from "../../lib/realtime";
 import {
 	buildSandboxClaim,
@@ -53,6 +55,24 @@ export type ProvisionCloudWorkspaceOutcome =
 export async function provisionCloudWorkspace(
 	input: ProvisionCloudWorkspaceInput,
 ): Promise<ProvisionCloudWorkspaceOutcome> {
+	const outcome = await Sentry.startSpan(
+		{
+			name: CLOUD_WORKSPACE_PROVISION_TRANSACTION,
+			op: "job",
+			forceTransaction: true,
+			attributes: { "cloud_workspace.id": input.cloudWorkspaceId },
+		},
+		() => provision(input),
+	);
+	// The job runs after its request has answered, so nothing else flushes
+	// the transaction before the runtime moves on.
+	await Sentry.flush(2_000).catch(() => false);
+	return outcome;
+}
+
+async function provision(
+	input: ProvisionCloudWorkspaceInput,
+): Promise<ProvisionCloudWorkspaceOutcome> {
 	const row = await db.query.cloudWorkspaces.findFirst({
 		where: eq(cloudWorkspaces.id, input.cloudWorkspaceId),
 	});
@@ -60,7 +80,6 @@ export async function provisionCloudWorkspace(
 	if (row.status !== "provisioning") return "skipped";
 
 	const providerSandboxId = sandboxNameFor(row.id);
-	const provisionStartedAt = new Date();
 	const naming =
 		input.namingPrompt === undefined
 			? Promise.resolve()
@@ -75,16 +94,15 @@ export async function provisionCloudWorkspace(
 					},
 				);
 	try {
-		const { claim, environment } = await buildSandboxClaim({
-			row,
-			launch: input.launch,
-			withRepoHooks: true,
-		});
-		const sandbox = await provisionSandbox({
-			name: providerSandboxId,
-			environment,
-			claim,
-		});
+		const { claim, environment } = await Sentry.startSpan(
+			{ name: "claim", op: "sandbox" },
+			() =>
+				buildSandboxClaim({ row, launch: input.launch, withRepoHooks: true }),
+		);
+		const sandbox = await Sentry.startSpan(
+			{ name: "create", op: "sandbox" },
+			() => provisionSandbox({ name: providerSandboxId, environment, claim }),
+		);
 		const ready = await transitionCloudWorkspace({
 			id: row.id,
 			from: ["provisioning"],
@@ -92,8 +110,6 @@ export async function provisionCloudWorkspace(
 			set: {
 				providerSandboxId: sandbox.providerSandboxId,
 				sandboxUrl: sandbox.sandboxUrl,
-				provisionStartedAt,
-				...sandbox.stamps,
 			},
 		});
 		if (!ready) {
@@ -107,20 +123,13 @@ export async function provisionCloudWorkspace(
 		// The box is booting; the environment it needs arrives once host-service
 		// answers. The client's own wake pushes it again, so a workspace nobody
 		// opens still gets it (an agent launched at boot waits for this).
-		const { healthyAt } = await settleSandbox({
-			providerSandboxId,
-			hostTarget: sandbox.hostTarget,
-			claim,
-		});
-		await db
-			.update(cloudWorkspaces)
-			.set({ firstHealthyAt: healthyAt })
-			.where(
-				and(
-					eq(cloudWorkspaces.id, row.id),
-					isNull(cloudWorkspaces.firstHealthyAt),
-				),
-			);
+		await Sentry.startSpan({ name: "settle", op: "sandbox" }, () =>
+			settleSandbox({
+				providerSandboxId,
+				hostTarget: sandbox.hostTarget,
+				claim,
+			}),
+		);
 		await naming.catch((error) =>
 			console.error(`[cloud-workspace] naming failed for ${row.id}`, error),
 		);

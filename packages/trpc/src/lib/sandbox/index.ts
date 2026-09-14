@@ -6,15 +6,17 @@ export {
 	type RemoteBranch,
 	type RemoteBranchPage,
 } from "./list-branches";
-export { mergeHooks, readRepoHooks } from "./repo-hooks";
+export { readRepoHooks } from "./repo-hooks";
 export {
 	cloneUrl,
 	environmentRepositoryRows,
 	installationTokenFor,
 	loadRepositories,
+	primaryRepository,
 	RepositoryError,
 	type RepositoryRow,
 	recordWorkspaceRepositories,
+	sortRepositories,
 	toSandboxRepositories,
 	type WorkspaceRepository,
 	workspaceRepositories,
@@ -24,7 +26,6 @@ export {
 	deleteSandbox,
 	describeSandbox,
 	HOST_SERVICE_PORT,
-	type ProvisionStamps,
 	promoteSandboxToEnvironment,
 	provisionSandbox,
 	pushManagedEnv,

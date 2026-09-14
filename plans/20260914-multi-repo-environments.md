@@ -11,8 +11,11 @@ and an agent that onboards the checkout. Each call below was mine; overturn any 
   first is the primary: the checkout a workspace opens on. The shared `Default` environment
   lists none and takes its repositories at workspace create, so anyone can start from the
   base image with any connected repository.
-- **A workspace fixes its checkouts at create.** `cloud_workspace_repositories`: repository,
-  branch, path. The environment's repositories if it has any, else the ones picked in the
+- **A workspace fixes its checkouts at create.** `cloud_workspace_repositories`: repository and
+  path. No branch is stored: the primary checks out the workspace's own branch
+  (`cloud_workspaces.branch`, set from the create form) and the rest their default branch, read
+  from the repository catalog when the box is claimed; after the first checkout the live branch
+  is whatever git says. The environment's repositories if it has any, else the ones picked in the
   form. The primary gets the chosen branch; the rest their default branch. The box's
   checkouts, the firewall rule and the desktop's rows all follow from this and never drift.
 - **One installation per workspace.** The firewall carries one header rule per host, so
@@ -20,9 +23,10 @@ and an agent that onboards the checkout. Each call below was mine; overturn any 
   installation (`repositoryNames` on the mint). The API refuses an environment or workspace
   that mixes installations.
 - **The hooks repository.** `environments.hooks_repository_id` names which checkout's
-  `.superset/config.json` the box acts on (the "config location" in the form); null means only
-  the row's `hooks` override applies. The API reads that repository's config at create for
-  `ports`; the box runs its `start` hook there.
+  `.superset/config.json` the box acts on (the "config location" in the form). The API reads that
+  repository's config at create for `ports`; the box runs its `start` hook there. There is no
+  per-environment hook override: the internal environment's `start` is the monorepo's own
+  cloud-only `start` key, and its `setup` is run by the release.
 - **Scope.** `environments.scope` is `organization` or `personal`; a personal environment is
   listed and usable by its creator alone (`created_by_user_id`). Promote copies the source
   environment's scope, hooks and repositories onto the golden's row.
@@ -82,6 +86,35 @@ and branch pills on both kinds of environment; a real "Start agent" create on tw
 repositories (box healthy 12.8 s after provisioning started, both checkouts under
 `/workspace`, two projects seeded, the agent in the primary). boot-twice and runner-check on
 the multi-repo runner. Records: the implementation checklist, PR 6.
+
+## Decided 2026-09-14 late, with Satya
+
+- **No `position`.** Repositories read alphabetically everywhere; the workspace opens on the
+  environment's config location (`hooks_repository_id`), else the first repository by name.
+  Two columns and one concept fewer.
+- **Boot timing leaves the row.** No stamp columns; the desktop's `cloud_workspace_opened` event
+  and its terminal attach notifier are removed. The provision job is one Sentry transaction with
+  a span per stage (claim, create, settle), sampled by name so nothing else in the API is traced.
+  Whether it arrives is checked after the production deploy; no fallback is kept.
+- **One migration.** The branch's six incremental migrations were regenerated into
+  `0115_cloud_environments_repositories` before `main`.
+
+## TODO: `.superset/config.json` for cloud
+
+The file grew `start` and `ports` beside the local `setup`, `teardown` and `run` as flat keys.
+It wants a redesign that makes the cloud part explicit (Satya 2026-09-14): which keys run where,
+how an environment's setup is declared, and how several repositories' configs combine.
+
+## TODO: multi-repository as a product
+
+Today a multi-repository workspace opens on one checkout (the config location). What it should
+do, and is not built yet:
+
+- Terminals and the agent open at `/workspace`, so an agent sees every checkout.
+- The sidebar offers a repository picker under a multi-repository workspace, and the git
+  panels (changes, branch, pull request) follow the picked repository; the cloud workspace
+  row itself points at the root, which is not a git checkout.
+- One sibling workspace row per repository already exists on the box for that purpose.
 
 ## Not built
 
