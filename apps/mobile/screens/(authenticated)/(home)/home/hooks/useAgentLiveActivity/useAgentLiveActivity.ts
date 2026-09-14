@@ -65,10 +65,13 @@ export function useAgentLiveActivity({
 	const cachedIcons = useRef<Map<string, string>>(new Map());
 
 	useEffect(() => {
-		if (!LiveActivity.areActivitiesEnabled()) return;
 		if (!enabled) {
 			// A card started before the gate closed (an older build, or the flag
 			// flipping) would otherwise sit on the Lock Screen until it expired.
+			// Bumping the generation also drops a delivery already in flight, so
+			// it cannot start the card again right after this ends it.
+			runId.current += 1;
+			queued.current = null;
 			if (activityId.current || LiveActivity.activeIds().length > 0) {
 				void LiveActivity.endAll();
 				activityId.current = null;
@@ -76,6 +79,7 @@ export function useAgentLiveActivity({
 			}
 			return;
 		}
+		if (!LiveActivity.areActivitiesEnabled()) return;
 		// A Live Activity can only be started from the foreground —
 		// `ActivityAuthorizationError.visibility` otherwise.
 		if (AppState.currentState !== "active") return;
