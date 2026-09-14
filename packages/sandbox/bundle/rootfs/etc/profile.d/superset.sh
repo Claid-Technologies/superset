@@ -1,0 +1,8 @@
+# Login shells on a cloud workspace sandbox. The image ships no locale
+# database; C.UTF-8 is built into glibc and keeps prompt glyphs rendering.
+export LANG="${LANG:-C.UTF-8}" LC_ALL="${LC_ALL:-C.UTF-8}"
+[ -f /etc/superset/contract.sh ] && . /etc/superset/contract.sh
+export SUPERSET_WORKSPACE_PATH="${SUPERSET_WORKSPACE_DIR:-/workspace}"
+export BROWSER=/usr/local/bin/google-chrome
+export DISPLAY="${DISPLAY:-${SUPERSET_DISPLAY:-:1}}"
+case ":$PATH:" in *":/usr/local/go/bin:"*) ;; *) export PATH="$PATH:/usr/local/go/bin" ;; esac

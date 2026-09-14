@@ -17,7 +17,7 @@ export interface CloudAgentLaunch {
 
 /**
  * The presets a sandbox can actually run: the CLIs the image installs
- * (`scripts/sandbox/image.ts`, AGENT_CLI_VERSIONS). Adding one there is what
+ * (`packages/sandbox/src/image.ts`, AGENT_CLI_VERSIONS). Adding one there is what
  * makes it launchable here.
  */
 const INSTALLED_IN_SANDBOX = new Set(["claude", "codex"]);

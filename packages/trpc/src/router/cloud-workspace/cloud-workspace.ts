@@ -11,15 +11,17 @@ import { env } from "../../env";
 import { assertCloudAccess, assertMember } from "../../lib/cloud-guards";
 import { nudge } from "../../lib/realtime";
 import {
+	buildSandboxClaim,
 	cloudRepo,
+	DESKTOP_PORT,
 	deleteSandbox,
+	describeSandbox,
 	HOST_SERVICE_PORT,
 	listRemoteBranches,
 	mintSandboxGateAccess,
-	resolveSandboxAddress,
 	SandboxNotReadyError,
 	SandboxUnavailableError,
-	sandboxHostSecretFor,
+	wakeSandbox,
 } from "../../lib/sandbox";
 import { jwtProcedure, userError } from "../../trpc";
 import {
@@ -275,18 +277,18 @@ export const cloudWorkspaceRouter = {
 		}),
 
 	/**
-	 * Checks org membership, then signs a short-lived token for this workspace.
+	 * Checks org membership, then mints the tickets for this workspace's ports.
 	 *
-	 * This is the *only* gate. A sandbox's URL is public and host-service
-	 * inside it checks exactly this token (`SandboxAccessHostAuthProvider`),
-	 * so whoever holds an unexpired one has terminals, git and the filesystem.
-	 * Hence the short TTL, and hence the checks running before it is minted
-	 * rather than anywhere later.
+	 * This is the *only* gate. A sandbox's ports are public URLs; the gate
+	 * Worker admits a request by ticket and presents the host secret to the
+	 * box, so whoever holds an unexpired ticket has terminals, git, files and
+	 * the desktop. Hence the checks running before anything is minted.
 	 *
 	 * `wake` is the difference between addressing a workspace and using it: a
 	 * client keeps a live address for everything it lists, and that must not
-	 * keep every sandbox running. Only the workspace someone has open asks to
-	 * be woken, which resumes a stopped session and keeps a running one alive.
+	 * keep every sandbox running. Only the open workspace asks to be woken,
+	 * which resumes a stopped session, re-applies the credential rules,
+	 * extends a running session, and pushes the managed environment again.
 	 */
 	access: jwtProcedure
 		.input(
@@ -312,14 +314,22 @@ export const cloudWorkspaceRouter = {
 					cause: { kind: "CLOUD_WORKSPACE_NOT_READY", status: row.status },
 				});
 			}
-			let address: { target: string; running: boolean };
+			let address: {
+				hostTarget: string;
+				desktopTarget: string;
+				running: boolean;
+			};
 			try {
-				address = await resolveSandboxAddress({
-					providerSandboxId: row.providerSandboxId,
-					wake: input.wake
-						? { hostSecret: await sandboxHostSecretFor(row.id) }
-						: false,
-				});
+				if (input.wake) {
+					const { claim } = await buildSandboxClaim({ row });
+					const woken = await wakeSandbox({
+						providerSandboxId: row.providerSandboxId,
+						claim,
+					});
+					address = { ...woken, running: true };
+				} else {
+					address = await describeSandbox(row.providerSandboxId);
+				}
 			} catch (error) {
 				if (error instanceof SandboxNotReadyError) {
 					throw new TRPCError({
@@ -344,13 +354,27 @@ export const cloudWorkspaceRouter = {
 					cause: { kind: "CLOUD_WORKSPACE_NOT_READY", status: "failed" },
 				});
 			}
-			const { url, token, expiresAt } = await mintSandboxGateAccess({
-				workspaceId: row.id,
-				userId: ctx.userId,
-				port: HOST_SERVICE_PORT,
-				target: address.target,
-			});
-			return { url, running: address.running, token, expiresAt };
+			const [host, desktop] = await Promise.all([
+				mintSandboxGateAccess({
+					workspaceId: row.id,
+					userId: ctx.userId,
+					port: HOST_SERVICE_PORT,
+					target: address.hostTarget,
+				}),
+				mintSandboxGateAccess({
+					workspaceId: row.id,
+					userId: ctx.userId,
+					port: DESKTOP_PORT,
+					target: address.desktopTarget,
+				}),
+			]);
+			return {
+				url: host.url,
+				token: host.token,
+				expiresAt: host.expiresAt,
+				running: address.running,
+				desktop: { url: desktop.url, token: desktop.token },
+			};
 		}),
 
 	delete: jwtProcedure

@@ -1,0 +1,8 @@
+#!/bin/sh
+# What xdg-open, x-www-browser, $BROWSER and the dock run. The flags: no
+# GPU (SwiftShader WebGL, no /dev/shm tiles), no first-run or crash-restore
+# bubbles (a stopped sandbox kills Chrome mid-session), the debugging port
+# an agent drives the visible browser through, and --no-sandbox, which this
+# VM needs regardless of user (--test-type hides the bar that flag adds).
+. /etc/superset/contract.sh 2>/dev/null || SUPERSET_CHROME_DEBUG_PORT=9222
+exec /usr/bin/google-chrome-stable --no-sandbox --test-type --no-first-run --no-default-browser-check --disable-dev-shm-usage --password-store=basic --start-maximized --disable-session-crashed-bubble --hide-crash-restore-bubble "--remote-debugging-port=${SUPERSET_CHROME_DEBUG_PORT}" --use-angle=swiftshader-webgl --enable-unsafe-swiftshader "$@"

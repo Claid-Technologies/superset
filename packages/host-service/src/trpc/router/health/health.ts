@@ -4,6 +4,7 @@ import {
 } from "../../../install-source";
 import { getRegistrationState } from "../../../tunnel/registration-state";
 import { publicProcedure, router } from "../../index";
+import { readSandboxBootStatus } from "../sandbox";
 
 export const healthRouter = router({
 	check: publicProcedure.query(() => {
@@ -20,6 +21,11 @@ export const healthRouter = router({
 			installSource: getHostInstallSource(),
 			cloudRegistered: registration.registered,
 			registrationError: registration.lastError,
+			// A cloud workspace sandbox: which bundle and runtime it runs and
+			// what its boot did, so create-to-terminal is measurable from outside.
+			...(process.env.SUPERSET_HOST_RUN_MODE === "sandbox"
+				? { sandbox: readSandboxBootStatus() }
+				: {}),
 		};
 	}),
 });

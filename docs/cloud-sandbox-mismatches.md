@@ -127,31 +127,40 @@ forwards them (`SANDBOX_FIREWALL_CA_KEYS`).
 
 ## Runtime environment
 
-**No user, no login shell, no rc files.** host-service builds PTY env from a
-login-shell snapshot and deliberately never from its own `process.env`. In a
-sandbox that yields a terminal with no credentials at all — the symptom is
-Claude reporting "Not logged in" while the key is plainly in the sandbox env.
-`buildV2TerminalEnv` forwards an explicit credential allowlist in sandbox mode
-only.
+**No login shell, no rc files, and the variables are not in the process env.**
+host-service builds PTY env from a login-shell snapshot and deliberately never
+from its own `process.env`. In a sandbox that yielded a terminal with no
+credentials at all — the symptom was Claude reporting "Not logged in" while
+the key was plainly in the sandbox env. Since the v2 layout (2026-09-13) the
+environment's variables are not in any process env on the box: the control
+plane pushes them into host-service over `sandbox.setEnvironment` after every
+boot, host-service holds them in memory (`sandbox-managed-env`) and
+`buildV2TerminalEnv` lays them over the base env in sandbox mode. New
+terminals and agent launches inherit the pushed set; open terminals keep the
+one they started with; nothing is written to disk. A host-service restart
+comes up with an empty set until the next push, which every wake performs.
 
 **Agent CLIs are pre-configured in the image.** A first run otherwise opens a
 theme picker, an API-key approval and a workspace trust dialog — three
-confirmations no one is there to answer. The image bakes `/root/.claude.json`.
+confirmations no one is there to answer. The bundle carries
+`/home/ubuntu/.claude.json` (`packages/sandbox/bundle/rootfs/home/ubuntu/`).
 Note that a headless `-p` run writes none of those keys, so a smoke test passes
 while the interactive TUI still blocks.
 
-**Claude refuses its own launch flags under root. Open until the image is
-rebuilt.** The builtin agent runs `claude --dangerously-skip-permissions`, and
-a sandbox runs as root, so picking Claude in a cloud workspace printed
+**Claude refuses its own launch flags under root. Fixed by the v2 layout:
+everything a person touches runs as `ubuntu`.** The builtin agent runs
+`claude --dangerously-skip-permissions`, and a sandbox used to run as root, so
+picking Claude in a cloud workspace printed
 "--dangerously-skip-permissions cannot be used with root/sudo privileges" and
 exited — found from the mobile app, but the desktop launches the same
 command. Claude allows the flag under root when `IS_SANDBOX=1` is in its
 environment (verified from a sandbox terminal), and then asks once to accept
 Bypass Permissions mode, another dialog a headless smoke test never reaches.
-host-service now sets `IS_SANDBOX=1` in sandbox-mode PTY env and the image
-bakes `bypassPermissionsModeAccepted: true` into `/root/.claude.json`; neither
-reaches an existing sandbox, and neither reaches a new one until the image is
-rebuilt.
+host-service sets `IS_SANDBOX=1` in sandbox-mode PTY env and the bundle
+bakes `bypassPermissionsModeAccepted: true` into the user's `.claude.json`.
+The root case is gone: the boot runner is the only thing that runs as root,
+and it drops to `ubuntu` (passwordless sudo) for host-service, the desktop,
+the checkout and every hook.
 
 **The checkout is the workspace.** No worktrees, no base repo, no branch
 creation — anything assuming a worktree can be created or discarded next to a
@@ -222,10 +231,31 @@ long-lived workspace.
 
 ## Provider constraints
 
-**The platform runs no ENTRYPOINT or CMD for a custom image.** `/app/start.sh`
-is launched through `runCommand` (detached) after create, and again on every
-wake, guarded by a port check so two wakes can't stack two servers.
-(Blaxel was the opposite: its own `sandbox-api` owned the entrypoint slot.)
+**The platform runs no ENTRYPOINT or CMD for a custom image.** The boot
+runner (`/usr/local/bin/superset-boot`, from the bundle) is launched through
+`runCommand` as root, detached, after create and again on every wake, with
+`HOST_SERVICE_SECRET` in that command's env and nowhere else. It refuses to
+stack a second host-service on a live one (pid file in `/run/superset`), so
+a wake racing a wake is harmless. (Blaxel was the opposite: its own
+`sandbox-api` owned the entrypoint slot.)
+
+**A wake restores the disk, and no init clears anything.** `/run/superset`
+after a resume holds the previous session's pid file, ready flags and pty
+socket, all describing processes that no longer exist. The boot runner
+deletes and recreates it first thing; anything that reads a flag there must
+tolerate a stale one for the milliseconds before that.
+
+**The control plane's command runs from the image's workdir, which the
+checkout replaces.** The first boot cloned `/workspace` by deleting and
+recreating it, and every child of the boot command — host-service, git,
+websockify — had inherited that directory as its cwd. host-service died on
+`process.cwd()` (ENOENT), websockify on `os.path.abspath`, git with "Unable
+to read current working directory". The runner now `cd /` before anything,
+host-service starts in the user's home, and the checkout empties the
+directory instead of replacing it so a shell already sitting in it keeps a
+live cwd. An interrupted clone (a wake that ends the session mid-fetch)
+leaves a repository that can fetch nothing; the runner reclones rather than
+failing every boot.
 
 **A freshly pushed image is not usable for a few minutes.** VCR reports the
 tag `Preparing` while it optimises a `linux/amd64` build (a gigabyte takes
@@ -306,30 +336,39 @@ token for the API project cannot see it, hence the separate
 `VERCEL_SANDBOX_TOKEN`. Deleting a sandbox keeps its snapshots (and their
 storage bill) unless `deleteOrphanSnapshots` is passed; `deleteSandbox` does.
 
-**The sandbox's config env is capped at 4 KB.** `Sandbox.create`/`fork`
-answer `400 env payload too large` past that, and the internal environment's
-variables alone are ~9 KB (Blaxel took 98 keys without comment). So the
-sandbox env carries only the workspace's identity and credentials (checked
-against the cap at provision), and the environment's variables are written
-to `/data/environment.env` (root-only) right after create, which
-`/app/start.sh` sources on every boot before host-service and the desktop
-session start. A golden has that file removed at promote; a fork gets its
-own. Same delivery as before from the sandbox's point of view: everything
-below the boot script sees them as process env.
+**The sandbox's config env is capped at 4 KB, and nothing uses it now.**
+`Sandbox.create`/`fork` answer `400 env payload too large` past that, and
+the internal environment's variables alone are ~9 KB (Blaxel took 98 keys
+without comment). The v2 layout creates every sandbox with an empty env. The
+workspace's identity (ids, repo, branch, bundle pin, hook overrides) is a
+world-readable file, `/etc/superset/sandbox.conf`, written by the API at
+claim and rewritten on every wake; the environment's variables are pushed
+into host-service after boot (see the runtime section); the only secret, the
+host secret the gate presents, rides in the boot command's env. A golden has
+the identity file, host.db and the markers removed before its snapshot
+(`stripWorkspaceIdentity`); a fork writes its own.
 
 **The desktop is an Xfce session, view-only until taken.** The display is
 1920×1200 at 96 DPI and runs `xfce4-session` (panel, xfwm4, xfdesktop,
 Thunar, xfce4-terminal) with Plank for the dock (Chrome, Files, Terminal) and
-one of eight generated wallpapers chosen by the workspace id, so it is stable
-across wakes and differs between boxes. Chrome runs as root and so launches
-with `--no-sandbox` (plus `--test-type`, which hides the bar that flag
-otherwise adds to every window); its first run is pre-answered — the `First
-Run` sentinel and `--no-first-run` skip the terms dialog, and a managed
-policy turns off sign-in, sync and the default-browser prompt. The golden's
-dev stack is an Xfce autostart entry (`superset-dev-stack`) rather than an
-openbox autostart. In the app, the Desktop pane connects view-only and only
-forwards input after "Take control" — an agent may be driving that desktop,
-and a pane that merely has focus must not type into its browser.
+one of eight photographic wallpapers chosen by the workspace id, so it is
+stable across wakes and differs between boxes. Chrome runs as `ubuntu` and
+still launches with `--no-sandbox` (this VM needs it regardless of user; plus
+`--test-type`, which hides the bar that flag otherwise adds to every window)
+with remote debugging on 9222 for an agent; its first run is pre-answered —
+the `First Run` sentinel and `--no-first-run` skip the terms dialog, and a
+managed policy turns off sign-in, sync and the default-browser prompt. Two
+profiles are seeded identically (`google-chrome` for the visible instance,
+`google-chrome-playwright` for automation that launches its own Chrome),
+because Chrome is single-instance per profile, not as a boundary. The stream
+is TigerVNC's Xvnc on loopback with websockify from apt on its own published
+port (6080); the desktop pane connects to that port through the gate with
+its own ticket, and host-service no longer proxies VNC. The internal golden's
+dev stack is the environment's `start` hook (`superset-dev-stack`), which
+host-service runs once the managed environment and the checkout are in. In
+the app, the Desktop pane connects view-only and only forwards input after
+"Take control" — an agent may be driving that desktop, and a pane that merely
+has focus must not type into its browser.
 
 **A multi-line variable (a PEM key) did not survive into `/workspace/.env`.**
 The in-sandbox materializer skipped values containing newlines, so the dev
@@ -383,5 +422,5 @@ shared memory there.
 `CreateSharedImageForSoftwareCompositor` every time (minidump on the bench,
 2026-09-11); a few heavy Chrome tabs get there too.
 
-**What we did:** `start.sh` remounts `/dev/shm` at 50% of RAM at boot, after
-which four windows open without a crash.
+**What we did:** `superset-desktop-init` remounts `/dev/shm` at 50% of RAM
+at boot, after which four windows open without a crash.

@@ -11,7 +11,7 @@ was put to Satya and settled, per the rule that we emulate first and deviate onl
 | # | Decision | Choice |
 | --- | --- | --- |
 | 1 | User model | `ubuntu` with passwordless sudo (NOPASSWD); a root boot runner starts services and drops to `ubuntu` for everything else |
-| 2 | Credentials | Every outbound credential is a firewall header rule the box never sees, rotated as a side effect of session extension: the API re-mints and calls `sandbox.update({networkPolicy})` inside the keepalive it already performs every 10 minutes (and on every wake) whenever a token is older than ~45 min. GitHub installation token (github.com and api.github.com, `GH_TOKEN` placeholder in env so `gh` will call), the organization's provider keys (as today), and the user's Claude OAuth access token with our API holding the refresh token. Amended 2026-09-13 from an earlier forward-endpoint variant: the endpoint would put every model token through a Vercel function (the expensive case) and the reference's askpass model exists only because it has no firewall. One check outstanding: the Claude OAuth access token must live an hour or more; if not, that one credential goes through Vercel's forward endpoint (`forwardURL` + `defineSandboxProxy`). Every path that extends a session must rotate, not only the desktop keepalive |
+| 2 | Credentials | Every outbound credential is a firewall header rule the box never sees, rotated as a side effect of session extension: the API re-mints and calls `sandbox.update({networkPolicy})` inside the keepalive it already performs every 10 minutes (and on every wake) whenever a token is older than ~45 min. GitHub installation token (github.com and api.github.com, `GH_TOKEN` placeholder in env so `gh` will call), the organization's provider keys (as today), and the user's Claude OAuth access token with our API holding the refresh token. Amended 2026-09-13 from an earlier forward-endpoint variant: the endpoint would put every model token through a Vercel function (the expensive case) and the reference's askpass model exists only because it has no firewall. The Claude OAuth check closed 2026-09-14: the credential a person saves is the long-lived token `claude setup-token` mints (a year), not a short-lived access token, so it is a plain `Bearer` header rule with nothing to refresh and no forward endpoint. Rotation is a side effect of `buildSandboxClaim`: every wake and every `access` keepalive re-mints the GitHub installation token (`refresh: true`) and re-applies the whole policy |
 | 3 | sudo | Unrestricted, as in the reference and Vercel's own images. Root separation is hygiene, not a wall; the firewall carries the adversarial protection |
 | 4 | Package root | `/opt/superset/bundle/<sha256>/` with `current` symlink and `current.bundle-hash`; step markers and the fail-open sentinel under `/usr/local/share/superset/steps/` |
 | 5 | Runtime | `/opt/superset/host/<sha256>/` with `current` and `current.version`; previous version kept for rollback |
@@ -95,10 +95,16 @@ archives; `superset-desktop-init` as its own process beside host-service (the re
 
 ## Still open
 
-- Contract names shared by the API, host-service and the shell-side boot runner: generate the
-  shell list from the module at build time, or one duplicated list with a test.
-- Verify the Claude OAuth access-token lifetime (≥ 1 h means header rules cover it; otherwise the
-  forward endpoint for that one credential).
+- ~~Contract names shared by the API, host-service and the shell-side boot runner~~ done:
+  `build.ts` renders `contract.sh` from `@superset/shared/sandbox-contract` (Decision 20).
+- The `start` hook runs from host-service, not the boot runner (amends Decision 9's "boot runs
+  it"): it needs the managed environment, which only arrives once host-service answers, and the
+  checkout, which lands beside it. Once per boot, marker in `/run/superset`.
+- Repository `ports` are read from `.superset/config.json` at create (GitHub contents API, the
+  installation token) and published on the sandbox; the access mint still issues tickets for
+  the two platform ports only. A ticket per repo port waits for a pane that uses one.
+- ~~Verify the Claude OAuth access-token lifetime~~ closed: the stored credential is the
+  long-lived `claude setup-token` token; nothing to refresh (Decision 2).
 - Per-variable brokering ("send this variable to domain X") for the user's project env, later.
 
 ## Next

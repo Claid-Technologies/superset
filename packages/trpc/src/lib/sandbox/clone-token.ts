@@ -57,7 +57,12 @@ export async function resolveCloneTarget(
 
 	try {
 		const octokit = await installationOctokit(installation.installationId);
-		const { token } = (await octokit.auth({ type: "installation" })) as {
+		// The cached token would be re-applied to the firewall on every wake;
+		// minting each time keeps every rule's token an hour from expiry.
+		const { token } = (await octokit.auth({
+			type: "installation",
+			refresh: true,
+		})) as {
 			token: string;
 		};
 		return { cloneUrl, token, defaultBranch: repo.defaultBranch };
