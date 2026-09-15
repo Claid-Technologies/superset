@@ -146,4 +146,4 @@ await client.terminals.send({
 });
 ```
 
-Terminal and agent calls go straight to the workspace's sandbox. The SDK keeps the ticket for it fresh, which also keeps the sandbox awake while the script runs.
+Terminal and agent calls go straight to the workspace's sandbox. The SDK keeps the ticket for it fresh and wakes the sandbox only when it has stopped, so calls don't extend a running sandbox's session.

@@ -1,5 +1,6 @@
 import { spawn } from "node:child_process";
 import { boolean, CLIError, positional, string } from "@superset/cli-framework";
+import type { ApiClient } from "../../../lib/api-client";
 import { command } from "../../../lib/command";
 import { resolveWorkspaceTarget } from "../../../lib/host-workspaces";
 
@@ -38,16 +39,23 @@ export default command({
 			throw new CLIError("No active organization", "Run: superset auth login");
 		}
 
-		const { workspace } = await resolveWorkspaceTarget(
-			{
-				organizationId,
-				userJwt: ctx.bearer,
-				api: ctx.api,
-				host: options.host ?? undefined,
-				local: options.local ?? undefined,
-			},
-			id,
-		);
+		// Opening only needs the id and name: a cloud workspace's come from the
+		// API, so the desktop, not this command, wakes its sandbox.
+		const workspace =
+			options.host || options.local
+				? (
+						await resolveWorkspaceTarget(
+							{
+								organizationId,
+								userJwt: ctx.bearer,
+								api: ctx.api,
+								host: options.host ?? undefined,
+								local: options.local ?? undefined,
+							},
+							id,
+						)
+					).workspace
+				: await cloudWorkspaceRow(ctx.api, organizationId, id);
 
 		const url = `superset://v2-workspace/${workspace.id}`;
 
@@ -70,3 +78,20 @@ export default command({
 		};
 	},
 });
+
+async function cloudWorkspaceRow(
+	api: ApiClient,
+	organizationId: string,
+	id: string,
+): Promise<{ id: string; name: string }> {
+	const row = (await api.cloudWorkspace.list.query({ organizationId })).find(
+		(candidate) => candidate.id === id,
+	);
+	if (!row) {
+		throw new CLIError(
+			`No cloud workspace ${id} in this organization`,
+			"Pass --local for a workspace on this machine, or --host <id> for another host",
+		);
+	}
+	return row;
+}

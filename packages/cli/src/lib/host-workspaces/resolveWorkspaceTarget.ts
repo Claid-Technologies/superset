@@ -63,29 +63,12 @@ async function inCloud(
 	options: Omit<HostWorkspacesOptions, "hostId">,
 	workspaceId: string,
 ): Promise<ResolvedWorkspaceTarget> {
-	const rows = await options.api.cloudWorkspace.list.query({
-		organizationId: options.organizationId,
-	});
-	const row = rows.find((candidate) => candidate.id === workspaceId);
-	if (!row) {
-		throw new CLIError(
-			`No cloud workspace ${workspaceId} in this organization`,
-			"Pass --local for a workspace on this machine, or --host <id> for another host",
-		);
-	}
-	if (row.status !== "ready") {
-		throw new CLIError(
-			`Cloud workspace ${workspaceId} is ${row.status}`,
-			row.status === "provisioning"
-				? "Its sandbox is still being created; try again shortly"
-				: "Check it with: superset workspaces list",
-		);
-	}
-	const target = await resolveCloudWorkspaceTarget({
+	const { target, workspaces } = await resolveCloudWorkspaceTarget({
 		api: options.api,
+		organizationId: options.organizationId,
 		workspaceId,
 	});
-	const workspace = (await target.client.workspace.list.query()).find(
+	const workspace = workspaces.find(
 		(candidate) => candidate.id === workspaceId,
 	);
 	if (!workspace) {
@@ -96,8 +79,7 @@ async function inCloud(
 	}
 	return {
 		hostId: workspace.hostId,
-		// host-service names its row a placeholder; the API owns the name.
-		workspace: { ...workspace, name: row.name },
+		workspace,
 		target: { ...target, hostId: workspace.hostId },
 	};
 }

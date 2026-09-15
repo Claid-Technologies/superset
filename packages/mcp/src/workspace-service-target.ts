@@ -15,18 +15,27 @@ export const workspaceLocationInput = {
 };
 
 /**
- * A cloud workspace is reached by waking its sandbox and presenting a gate
- * ticket; a host workspace through the relay.
+ * A cloud workspace is reached through its sandbox gate with a ticket, waking
+ * the sandbox only when it is stopped; a host workspace through the relay.
  */
 export async function workspaceServiceTarget(
 	input: { hostId?: string; workspaceId: string },
 	ctx: McpContext,
 ): Promise<HostServiceCallOptions> {
 	if (!input.hostId) {
-		const access = await createMcpCaller(ctx).cloudWorkspace.access({
+		// Waking re-runs the whole open sequence and costs seconds; a running
+		// sandbox only needs its address and a ticket.
+		const caller = createMcpCaller(ctx);
+		const described = await caller.cloudWorkspace.access({
 			id: input.workspaceId,
-			wake: true,
+			wake: false,
 		});
+		const access = described.running
+			? described
+			: await caller.cloudWorkspace.access({
+					id: input.workspaceId,
+					wake: true,
+				});
 		return {
 			gateUrl: access.url,
 			ticket: access.token,

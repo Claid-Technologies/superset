@@ -31,43 +31,10 @@ export default command({
 			throw new CLIError("No active organization", "Run: superset auth login");
 		}
 
-		// The row carries its host-served project name; the host id is
-		// enriched with its cloud name for display only.
-		const [{ workspace }, hosts] = await Promise.all([
-			resolveWorkspaceTarget(
-				{
-					organizationId,
-					userJwt: ctx.bearer,
-					api: ctx.api,
-					host: options.host ?? undefined,
-					local: options.local ?? undefined,
-				},
-				id,
-			),
-			ctx.api.host.list
-				.query({ organizationId })
-				.catch(() => [] as Array<{ id: string; name: string }>),
-		]);
-
-		const projectName = workspace.projectName ?? workspace.projectId;
-		const hostName =
-			hosts.find((host) => host.id === workspace.hostId)?.name ??
-			workspace.hostId;
-
-		const detail = {
-			id: workspace.id,
-			name: workspace.name,
-			branch: workspace.branch,
-			type: workspace.type,
-			projectId: workspace.projectId,
-			projectName,
-			hostId: workspace.hostId,
-			hostName,
-			taskId: workspace.taskId,
-			worktreePath: workspace.worktreePath,
-			worktreeExists: workspace.worktreeExists,
-			createdAt: workspace.createdAt,
-		};
+		const detail =
+			options.host || options.local
+				? await hostDetail(ctx, organizationId, id, options)
+				: await cloudDetail(ctx, organizationId, id);
 
 		if (options.field) {
 			if (!Object.hasOwn(detail, options.field)) {
@@ -76,7 +43,7 @@ export default command({
 					`Available fields: ${Object.keys(detail).join(", ")}`,
 				);
 			}
-			const value = detail[options.field as keyof typeof detail];
+			const value = (detail as Record<string, unknown>)[options.field];
 			return {
 				data: detail,
 				message: value === null || value === undefined ? "" : String(value),
@@ -94,3 +61,66 @@ export default command({
 		return { data: detail, message };
 	},
 });
+
+type Ctx = Parameters<Parameters<typeof command>[0]["run"]>[0]["ctx"];
+
+/** A cloud workspace's details are the API's row; reading them never wakes its sandbox. */
+async function cloudDetail(ctx: Ctx, organizationId: string, id: string) {
+	const rows = await ctx.api.cloudWorkspace.list.query({ organizationId });
+	const row = rows.find((candidate) => candidate.id === id);
+	if (!row) {
+		throw new CLIError(
+			`No cloud workspace ${id} in this organization`,
+			"Pass --local for a workspace on this machine, or --host <id> for another host",
+		);
+	}
+	return {
+		id: row.id,
+		name: row.name,
+		branch: row.branch,
+		status: row.status,
+		environmentId: row.environmentId,
+		createdByUserId: row.createdByUserId,
+		createdAt: row.createdAt,
+	};
+}
+
+/** The row carries its host-served project name; the host id is enriched with its cloud name for display only. */
+async function hostDetail(
+	ctx: Ctx,
+	organizationId: string,
+	id: string,
+	options: { host?: string | null; local?: boolean | null },
+) {
+	const [{ workspace }, hosts] = await Promise.all([
+		resolveWorkspaceTarget(
+			{
+				organizationId,
+				userJwt: ctx.bearer,
+				api: ctx.api,
+				host: options.host ?? undefined,
+				local: options.local ?? undefined,
+			},
+			id,
+		),
+		ctx.api.host.list
+			.query({ organizationId })
+			.catch(() => [] as Array<{ id: string; name: string }>),
+	]);
+	return {
+		id: workspace.id,
+		name: workspace.name,
+		branch: workspace.branch,
+		type: workspace.type,
+		projectId: workspace.projectId,
+		projectName: workspace.projectName ?? workspace.projectId,
+		hostId: workspace.hostId,
+		hostName:
+			hosts.find((host) => host.id === workspace.hostId)?.name ??
+			workspace.hostId,
+		taskId: workspace.taskId,
+		worktreePath: workspace.worktreePath,
+		worktreeExists: workspace.worktreeExists,
+		createdAt: workspace.createdAt,
+	};
+}

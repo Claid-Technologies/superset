@@ -59,7 +59,7 @@ function invoke(args: { id?: string }, options: { field?: string } = {}) {
 	return getCommand.run({
 		ctx: makeCtx(),
 		args: args as never,
-		options: options as never,
+		options: { local: true, ...options } as never,
 		signal: new AbortController().signal,
 	});
 }
@@ -156,7 +156,7 @@ describe("workspaces get", () => {
 				authSource: "oauth",
 			} as never,
 			args: { id: WORKSPACE.id } as never,
-			options: {} as never,
+			options: { local: true } as never,
 			signal: new AbortController().signal,
 		})) as { data: Record<string, unknown> };
 		expect(result.data.projectName).toBe("proj-1");

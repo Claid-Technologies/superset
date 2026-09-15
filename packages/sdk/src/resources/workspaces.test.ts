@@ -45,18 +45,19 @@ test("create names the startable environments when the requested one has no repo
 	);
 });
 
-test("workspace calls go through the gate with one cached ticket and no API key", async () => {
+test("workspace calls reach a running sandbox without waking it, with one cached ticket and no API key", async () => {
 	const requests: Array<{ url: URL; headers: Headers }> = [];
 	const client = clientWith((url, init) => {
 		requests.push({ url, headers: new Headers(init?.headers) });
 		if (url.pathname === "/api/trpc/cloudWorkspace.access") {
 			expect(JSON.parse(String(init?.body))).toEqual({
-				json: { id: "ws", wake: true },
+				json: { id: "ws", wake: false },
 			});
 			return envelope({
 				url: "https://gate.invalid",
 				token: "ticket",
 				expiresAt: new Date(Date.now() + 3_600_000).toISOString(),
+				running: true,
 			});
 		}
 		return envelope({ terminalId: "t1", status: "ok" });

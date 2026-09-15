@@ -211,11 +211,11 @@ interface WorkspaceAccess {
 /** Re-mint this long before the ticket expires. */
 const ACCESS_EXPIRY_MARGIN_MS = 60_000;
 /**
- * A sandbox session stops after hours without a wake, and a ticket minted
- * before that points at a session that no longer answers. Re-waking this
- * often keeps a long-running script's sandbox up, as the desktop does.
+ * A ticket names the sandbox's address, which can change when a stopped
+ * session resumes; asking again this often keeps a long-running script
+ * pointed at the session that answers.
  */
-const ACCESS_REWAKE_MS = 10 * 60_000;
+const ACCESS_REFRESH_MS = 10 * 60_000;
 
 /**
  * API Client for interfacing with the Superset API.
@@ -530,7 +530,10 @@ export class Superset {
 				headers: this._gateHeaders(access, options),
 			}),
 		);
-		return this._trackedRequest<Rsp>(call, "host", optsPromise);
+		return this._forgetAccessOnFailure(
+			workspaceId,
+			this._trackedRequest<Rsp>(call, "host", optsPromise),
+		);
 	}
 
 	/**
@@ -556,7 +559,21 @@ export class Superset {
 				headers: this._gateHeaders(access, options),
 			}),
 		);
-		return this._trackedRequest<Rsp>(call, "host", optsPromise);
+		return this._forgetAccessOnFailure(
+			workspaceId,
+			this._trackedRequest<Rsp>(call, "host", optsPromise),
+		);
+	}
+
+	/** A failed gate call may mean a stopped or moved sandbox: the next call asks again. */
+	private _forgetAccessOnFailure<Rsp>(
+		workspaceId: string,
+		promise: APIPromise<Rsp>,
+	): APIPromise<Rsp> {
+		promise.then(undefined, () => {
+			this._workspaceAccess.delete(workspaceId);
+		});
+		return promise;
 	}
 
 	private _gateHeaders(access: WorkspaceAccess, options?: RequestOptions) {
@@ -659,18 +676,31 @@ export class Superset {
 		workspaceId: string,
 	): Promise<WorkspaceAccess> {
 		const mintedAt = Date.now();
-		const envelope = await this.post<
-			TRPCEnvelope<{ url: string; token: string; expiresAt: string }>
-		>("/api/trpc/cloudWorkspace.access", {
-			body: { json: { id: workspaceId, wake: true } },
-		});
-		const { url, token, expiresAt } = envelope.result.data.json;
+		// Waking re-runs the whole open sequence and costs seconds; a running
+		// sandbox only needs its address and a ticket.
+		const ask = async (wake: boolean) =>
+			(
+				await this.post<
+					TRPCEnvelope<{
+						url: string;
+						token: string;
+						expiresAt: string;
+						running: boolean;
+					}>
+				>("/api/trpc/cloudWorkspace.access", {
+					body: { json: { id: workspaceId, wake } },
+				})
+			).result.data.json;
+		const described = await ask(false);
+		const { url, token, expiresAt } = described.running
+			? described
+			: await ask(true);
 		const access: WorkspaceAccess = {
 			url,
 			token,
 			staleAt: Math.min(
 				new Date(expiresAt).getTime() - ACCESS_EXPIRY_MARGIN_MS,
-				mintedAt + ACCESS_REWAKE_MS,
+				mintedAt + ACCESS_REFRESH_MS,
 			),
 		};
 		this._workspaceAccess.set(workspaceId, access);
