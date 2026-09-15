@@ -1,4 +1,6 @@
-export type PageVisibility = "just_me" | "org" | "everyone";
+import type { PageVisibility } from "@superset/shared/usercontent";
+
+export type { PageVisibility } from "@superset/shared/usercontent";
 
 export interface PageHeaderOwner {
 	id: string;

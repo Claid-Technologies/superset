@@ -9,7 +9,7 @@ import {
 import { useMutation } from "@tanstack/react-query";
 import { usePathname, useRouter } from "next/navigation";
 import { useTRPC } from "@/trpc/react";
-import { OpenInSupersetButton } from "./components/OpenInSupersetButton";
+import { OpenInSupersetButton } from "../OpenInSupersetButton";
 import { PageWatchBadge } from "./components/PageWatchBadge";
 
 interface PageHeaderBarProps {

@@ -21,8 +21,12 @@ export function PagePane({
 	onDataChange,
 	onFocus,
 }: PagePaneProps) {
-	const { commentsEnabled, setCommentsEnabled, previewVersion } =
-		usePagePaneUi(paneId);
+	const {
+		commentsEnabled,
+		setCommentsEnabled,
+		previewVersion,
+		setPreviewVersion,
+	} = usePagePaneUi(paneId);
 
 	const onDataChangeRef = useRef(onDataChange);
 	onDataChangeRef.current = onDataChange;
@@ -49,6 +53,7 @@ export function PagePane({
 			onCommentsEnabledChange={setCommentsEnabled}
 			onResolved={handleResolved}
 			onFramePointerDown={onFocus}
+			onExitPreview={() => setPreviewVersion(null)}
 		/>
 	);
 }

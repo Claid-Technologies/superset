@@ -27,6 +27,7 @@ import {
 import { useFramePointerDown } from "../../../../hooks/useFramePointerDown";
 import { relativeTime } from "../../../../utils/relativeTime";
 import type { PageHeaderPage, PageHeaderVersion } from "../../types";
+import { VersionThumbnail } from "./components/VersionThumbnail";
 
 interface PageTitleMenuProps {
 	page: PageHeaderPage;
@@ -144,17 +145,7 @@ export function PageTitleMenu({
 									className="gap-2.5 p-1.5"
 									onSelect={run(() => onPreviewVersion(entry.version))}
 								>
-									{entry.thumbnailUrl ? (
-										<img
-											src={entry.thumbnailUrl}
-											alt=""
-											className="h-10 w-14 shrink-0 rounded-sm border border-border object-cover object-top"
-										/>
-									) : (
-										<span className="flex h-10 w-14 shrink-0 items-center justify-center rounded-sm border border-border bg-muted">
-											<FileText className="size-4 text-muted-foreground" />
-										</span>
-									)}
+									<VersionThumbnail src={entry.thumbnailUrl} />
 									<span className="flex min-w-0 flex-col">
 										<span className="truncate text-sm">
 											{entry.label ?? page.title}

@@ -22,12 +22,7 @@ import { TRPCError, type TRPCRouterRecord } from "@trpc/server";
 import { and, desc, eq, inArray, or, type SQL, sql } from "drizzle-orm";
 import { z } from "zod";
 import { env } from "../../env";
-import {
-	deleteObjects,
-	listObjectKeys,
-	objectExists,
-	presignedGetUrl,
-} from "../../lib/r2";
+import { deleteObjects, objectExists, presignedGetUrl } from "../../lib/r2";
 import { protectedProcedure, publicProcedure, userError } from "../../trpc";
 import { requireActiveOrgMembership } from "../utils/active-org";
 import { assertPageReadable, assertPageWritable } from "./access";
@@ -35,6 +30,7 @@ import { pageAssetRouter } from "./assets";
 import { pageUrl } from "./page-url";
 import { publishPage } from "./publish";
 import { isEntryPathConflict } from "./publish-rules";
+import { enforcePublicPageRead } from "./rate-limit";
 import {
 	clearPageWatchSchema,
 	createPageSchema,
@@ -694,21 +690,19 @@ export const pageRouter = {
 				.where(eq(pageVersions.pageId, page.id))
 				.orderBy(desc(pageVersions.version));
 
-			const captured = await listObjectKeys(`pages/${page.id}/versions/`).catch(
-				() => new Set<string>(),
-			);
 			const baseUrl = env.USERCONTENT_URL;
+			// Emitted unchecked, like `list` does: this runs on every page render
+			// and every header, and an R2 listing per call buys nothing the
+			// client's own `onError` placeholder does not already handle.
 			return await Promise.all(
 				rows.map(async (row) => ({
 					...row,
-					thumbnailUrl: captured.has(pageThumbnailKey(page.id, row.version))
-						? pageThumbnailUrl({
-								baseUrl,
-								pageId: page.id,
-								version: row.version,
-								ticket: await mintPageTicket(page, { version: row.version }),
-							})
-						: null,
+					thumbnailUrl: pageThumbnailUrl({
+						baseUrl,
+						pageId: page.id,
+						version: row.version,
+						ticket: await mintPageTicket(page, { version: row.version }),
+					}),
 				})),
 			);
 		}),
@@ -803,7 +797,9 @@ export const pageRouter = {
 
 	publicView: publicProcedure
 		.input(publicPageSchema)
-		.query(async ({ input }) => {
+		.query(async ({ ctx, input }) => {
+			await enforcePublicPageRead(ctx.headers);
+
 			const [page] = await db
 				.select()
 				.from(pages)

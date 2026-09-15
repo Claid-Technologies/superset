@@ -7,6 +7,7 @@ import {
 	CommentProvider,
 	CommentsPanel,
 	PageCommentsView,
+	PageVersionBanner,
 } from "@superset/ui/page-comments";
 import { toast } from "@superset/ui/sonner";
 import { Spinner } from "@superset/ui/spinner";
@@ -33,6 +34,12 @@ interface PageViewerProps {
 	onResolved?: (page: ResolvedPage) => void;
 	onFramePointerDown?: () => void;
 	version?: number | null;
+	/**
+	 * Leaves the historical version. Surfaces that already carry the banner
+	 * themselves — the detail view's `PageHeader` — leave this unset so the
+	 * viewer does not render a second one.
+	 */
+	onExitPreview?: () => void;
 }
 
 export function PageViewer({
@@ -44,6 +51,7 @@ export function PageViewer({
 	onResolved,
 	onFramePointerDown,
 	version,
+	onExitPreview,
 }: PageViewerProps) {
 	const { t } = useLingui();
 	const { data: session } = authClient.useSession();
@@ -112,28 +120,43 @@ export function PageViewer({
 		);
 	}
 
+	// A historical version is read-only, so comment mode stays off: a new
+	// thread here would be anchored to content the page no longer serves, and
+	// a watching agent would be asked to act on it.
+	const previewing =
+		pull.data.servedVersion !== null &&
+		pull.data.version !== pull.data.servedVersion;
+
 	return (
 		<CommentProvider
 			key={resolvedPageId}
 			store={store}
-			enabled={commentsEnabled}
+			enabled={commentsEnabled && !previewing}
 			onEnabledChange={onCommentsEnabledChange}
 			user={user}
 			pageOwnerId={pull.data?.createdByUserId}
 		>
-			<div className="relative flex h-full w-full">
-				<div className="min-h-0 min-w-0 flex-1">
-					<PageCommentsView
-						pinchZoomEnabled
-						src={pull.data.viewUrl}
-						title={resolvedTitle}
-						initialScrollY={scrollPositions.get(scrollKey) ?? 0}
-						onScrollYChange={(y) => scrollPositions.set(scrollKey, y)}
-						onFramePointerDown={onFramePointerDown}
+			<div className="flex h-full w-full flex-col">
+				{previewing && onExitPreview ? (
+					<PageVersionBanner
+						version={pull.data.version}
+						onExit={onExitPreview}
 					/>
+				) : null}
+				<div className="relative flex min-h-0 w-full flex-1">
+					<div className="min-h-0 min-w-0 flex-1">
+						<PageCommentsView
+							pinchZoomEnabled
+							src={pull.data.viewUrl}
+							title={resolvedTitle}
+							initialScrollY={scrollPositions.get(scrollKey) ?? 0}
+							onScrollYChange={(y) => scrollPositions.set(scrollKey, y)}
+							onFramePointerDown={onFramePointerDown}
+						/>
+					</div>
+					<AllCommentsButton />
+					<CommentsPanel servedVersion={pull.data?.version ?? null} />
 				</div>
-				<AllCommentsButton />
-				<CommentsPanel servedVersion={pull.data?.version ?? null} />
 			</div>
 		</CommentProvider>
 	);

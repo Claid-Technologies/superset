@@ -25,8 +25,11 @@ interface PageProps {
 }
 
 // `api()` caches the client, not the result — this cache is what keeps
-// generateMetadata and the component to a single pull.
-const pullPage = cache(async (slug: string, version?: number) => {
+// generateMetadata and the component to a single pull. React keys on the
+// argument count as well as the values, so `version` is required: passing it
+// from one caller and omitting it from the other made two entries, and every
+// render pulled twice.
+const pullPage = cache(async (slug: string, version: number | undefined) => {
 	const trpc = await api();
 	return trpc.page.pull.query({ slug, version });
 });
@@ -35,6 +38,11 @@ function previewVersionOf(raw: string | undefined): number | undefined {
 	const parsed = Number(raw);
 	return Number.isInteger(parsed) && parsed > 0 ? parsed : undefined;
 }
+
+// "Anyone with the link" is not "index me": usercontent already answers
+// `X-Robots-Tag: noindex`, and this wrapper has to say the same. Unfurlers
+// ignore robots, so link previews still work.
+const ROBOTS = { index: false, follow: false } as const;
 
 const pullVersions = cache(async (slug: string) => {
 	const trpc = await api();
@@ -46,22 +54,23 @@ const pullAccess = cache(async (slug: string) => {
 	return trpc.page.access.query({ slug });
 });
 
+// Answers null for anything that is not public. A throw here is a real
+// failure — a DB or R2 outage — and must not read as "not public".
 const pullPublicPage = cache(async (slug: string) => {
 	const trpc = await api();
-	try {
-		return await trpc.page.publicView.query({ slug });
-	} catch {
-		return null;
-	}
+	return trpc.page.publicView.query({ slug });
 });
 
 export async function generateMetadata({
 	params,
+	searchParams,
 }: PageProps): Promise<Metadata> {
 	const { slug } = await params;
+	const requestedVersion = previewVersionOf((await searchParams).v);
 	const i18n = await initServerI18n();
 
-	const shared = await pullPublicPage(slug);
+	// Metadata is best-effort: a card still renders when the lookup fails.
+	const shared = await pullPublicPage(slug).catch(() => null);
 	if (shared) {
 		const description = shared.description ?? undefined;
 		const images = shared.thumbnailUrl
@@ -70,6 +79,7 @@ export async function generateMetadata({
 		return {
 			title: shared.title,
 			description,
+			robots: ROBOTS,
 			openGraph: {
 				type: "website",
 				siteName: "Superset",
@@ -89,15 +99,20 @@ export async function generateMetadata({
 
 	const { hasPagesAccess } = await getPagesAccess();
 	if (hasPagesAccess) {
-		const page = await pullPage(slug).catch(() => null);
+		const page = await pullPage(slug, requestedVersion).catch(() => null);
 		if (page) {
-			return { title: page.title, description: page.description ?? undefined };
+			return {
+				title: page.title,
+				description: page.description ?? undefined,
+				robots: ROBOTS,
+			};
 		}
 	}
 
 	return {
 		title: "Superset",
 		description: i18n._(msg({ message: "Sign in to view this page" })),
+		robots: ROBOTS,
 	};
 }
 
@@ -119,6 +134,7 @@ export default async function PublishedPage({
 				title={shared.title}
 				viewUrl={shared.viewUrl}
 				slug={slug}
+				signedIn={Boolean(session)}
 			/>
 		) : null;
 	};
@@ -134,10 +150,15 @@ export default async function PublishedPage({
 	try {
 		page = await pullPage(slug, requestedVersion);
 	} catch (error) {
-		const view = await publicView();
+		// Only a missing or forbidden page might still be readable publicly.
+		// A presign failure is an error for a member of the organization, not a
+		// reason to show them anonymous chrome — and neither is a `?v` that does
+		// not resolve, which would silently drop them onto the served version.
+		if (!isNotFound(error) && !isForbidden(error)) throw error;
+		const view = requestedVersion === undefined ? await publicView() : null;
 		if (view) return view;
 		if (isNotFound(error)) notFound();
-		if (isForbidden(error) && error instanceof TRPCClientError) {
+		if (error instanceof TRPCClientError) {
 			return <WrongOrganization message={error.message} />;
 		}
 		throw error;
@@ -148,11 +169,14 @@ export default async function PublishedPage({
 		pullAccess(slug),
 	]);
 
+	const previewing = page.version !== page.servedVersion;
+
 	return (
 		<PageCommentsShell
 			pageId={page.id}
 			version={page.version}
 			pageOwnerId={page.createdByUserId}
+			readOnly={previewing}
 			user={pageCommentUser(session, i18n._(msg({ message: "You" })))}
 		>
 			<div className="flex h-dvh flex-col bg-background">
