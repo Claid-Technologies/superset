@@ -135,10 +135,9 @@ export function PageDetailScreen({
 		send({
 			type: "track",
 			anchors: [
-				...unresolvedThreads.map((thread) => ({
-					id: thread.id,
-					anchor: thread.anchor,
-				})),
+				...unresolvedThreads.flatMap((thread) =>
+					thread.anchor ? [{ id: thread.id, anchor: thread.anchor }] : [],
+				),
 				...(selection
 					? [{ id: PENDING_ANCHOR_ID, anchor: selection.anchor }]
 					: []),
@@ -192,7 +191,7 @@ export function PageDetailScreen({
 		const out: Array<{ id: string; point: { x: number; y: number } }> = [];
 		for (const thread of unresolvedThreads) {
 			const rect = rects[thread.id];
-			if (rect)
+			if (rect && thread.anchor)
 				out.push({ id: thread.id, point: pinPointOf(rect, thread.anchor) });
 		}
 		return out;
