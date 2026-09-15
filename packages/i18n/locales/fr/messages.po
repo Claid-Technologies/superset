@@ -2003,6 +2003,9 @@ msgstr "N'importe qui"
 msgid "Anyone in your organization"
 msgstr "Toute personne de votre organisation"
 
+msgid "Anyone with the link"
+msgstr "Toute personne disposant du lien"
+
 msgid "anything"
 msgstr "n'importe quoi"
 
@@ -13267,6 +13270,9 @@ msgstr "Des fichiers JSON de thèmes partagés que vous pouvez importer dans Sup
 msgid "Shared version"
 msgstr "Version partagée"
 
+msgid "Shared with everyone"
+msgstr "Partagée avec tout le monde"
+
 msgid "Shares the project's checkout — files, git index and branch — with its other local workspaces"
 msgstr "Partage le checkout du projet — fichiers, index git et branche — avec ses autres espaces de travail locaux"
 
@@ -13474,6 +13480,9 @@ msgstr "Connectez-vous pour continuer vers Superset"
 
 msgid "Sign in to get started"
 msgstr "Connectez-vous pour commencer"
+
+msgid "Sign in to view this page"
+msgstr "Connectez-vous pour voir cette page"
 
 msgid "Sign in with email"
 msgstr "Se connecter par e-mail"

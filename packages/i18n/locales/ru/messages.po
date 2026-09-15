@@ -2003,6 +2003,9 @@ msgstr "Кто угодно"
 msgid "Anyone in your organization"
 msgstr "Любой в вашей организации"
 
+msgid "Anyone with the link"
+msgstr "Все, у кого есть ссылка"
+
 msgid "anything"
 msgstr "что угодно"
 
@@ -13267,6 +13270,9 @@ msgstr "Общие JSON-файлы тем, которые можно импор�
 msgid "Shared version"
 msgstr "Общедоступная версия"
 
+msgid "Shared with everyone"
+msgstr "Доступна всем"
+
 msgid "Shares the project's checkout — files, git index and branch — with its other local workspaces"
 msgstr "Использует checkout проекта — файлы, индекс git и ветку — совместно с другими локальными рабочими областями"
 
@@ -13474,6 +13480,9 @@ msgstr "Войдите, чтобы продолжить в Superset"
 
 msgid "Sign in to get started"
 msgstr "Войдите, чтобы начать"
+
+msgid "Sign in to view this page"
+msgstr "Войдите, чтобы открыть эту страницу"
 
 msgid "Sign in with email"
 msgstr "Войти по email"

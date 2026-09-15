@@ -2003,6 +2003,9 @@ msgstr "Ktokolwiek"
 msgid "Anyone in your organization"
 msgstr "Wszyscy w Twojej organizacji"
 
+msgid "Anyone with the link"
+msgstr "Każdy, kto ma link"
+
 msgid "anything"
 msgstr "cokolwiek"
 
@@ -13267,6 +13270,9 @@ msgstr "Udostępnione pliki JSON motywów, które można zaimportować do Supers
 msgid "Shared version"
 msgstr "Udostępniona wersja"
 
+msgid "Shared with everyone"
+msgstr "Udostępniona wszystkim"
+
 msgid "Shares the project's checkout — files, git index and branch — with its other local workspaces"
 msgstr "Współdzieli checkout projektu — pliki, indeks git i gałąź — z pozostałymi lokalnymi obszarami roboczymi"
 
@@ -13474,6 +13480,9 @@ msgstr "Zaloguj się, aby przejść do Superset"
 
 msgid "Sign in to get started"
 msgstr "Zaloguj się, aby zacząć"
+
+msgid "Sign in to view this page"
+msgstr "Zaloguj się, aby zobaczyć tę stronę"
 
 msgid "Sign in with email"
 msgstr "Zaloguj się e-mailem"

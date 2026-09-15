@@ -2003,6 +2003,9 @@ msgstr "任何人"
 msgid "Anyone in your organization"
 msgstr "你组织中的任何人"
 
+msgid "Anyone with the link"
+msgstr "知道链接的任何人"
+
 msgid "anything"
 msgstr "任意内容"
 
@@ -13267,6 +13270,9 @@ msgstr "可导入Superset的共享主题JSON文件。"
 msgid "Shared version"
 msgstr "分享的版本"
 
+msgid "Shared with everyone"
+msgstr "已与所有人共享"
+
 msgid "Shares the project's checkout — files, git index and branch — with its other local workspaces"
 msgstr "与该项目的其他本地工作区共享项目的检出（文件、git 索引和分支）"
 
@@ -13474,6 +13480,9 @@ msgstr "登录以继续使用Superset"
 
 msgid "Sign in to get started"
 msgstr "登录即可开始"
+
+msgid "Sign in to view this page"
+msgstr "登录以查看此页面"
 
 msgid "Sign in with email"
 msgstr "使用邮箱登录"

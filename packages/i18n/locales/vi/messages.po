@@ -2003,6 +2003,9 @@ msgstr "Bất kỳ ai"
 msgid "Anyone in your organization"
 msgstr "Bất kỳ ai trong tổ chức của bạn"
 
+msgid "Anyone with the link"
+msgstr "Bất kỳ ai có liên kết"
+
 msgid "anything"
 msgstr "bất kỳ điều gì"
 
@@ -13267,6 +13270,9 @@ msgstr "Các tệp JSON chủ đề được chia sẻ, bạn có thể nhập v
 msgid "Shared version"
 msgstr "Phiên bản được chia sẻ"
 
+msgid "Shared with everyone"
+msgstr "Đã chia sẻ với mọi người"
+
 msgid "Shares the project's checkout — files, git index and branch — with its other local workspaces"
 msgstr "Dùng chung checkout của dự án — tệp, chỉ mục git và nhánh — với các workspace cục bộ khác"
 
@@ -13474,6 +13480,9 @@ msgstr "Đăng nhập để tiếp tục vào Superset"
 
 msgid "Sign in to get started"
 msgstr "Đăng nhập để bắt đầu"
+
+msgid "Sign in to view this page"
+msgstr "Đăng nhập để xem trang này"
 
 msgid "Sign in with email"
 msgstr "Đăng nhập bằng email"

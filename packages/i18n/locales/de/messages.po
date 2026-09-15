@@ -2003,6 +2003,9 @@ msgstr "Beliebige Person"
 msgid "Anyone in your organization"
 msgstr "Alle in deiner Organisation"
 
+msgid "Anyone with the link"
+msgstr "Alle mit dem Link"
+
 msgid "anything"
 msgstr "beliebig"
 
@@ -13267,6 +13270,9 @@ msgstr "Geteilte Theme-JSON-Dateien, die du in Superset importieren kannst."
 msgid "Shared version"
 msgstr "Geteilte Version"
 
+msgid "Shared with everyone"
+msgstr "Mit allen geteilt"
+
 msgid "Shares the project's checkout — files, git index and branch — with its other local workspaces"
 msgstr "Teilt den Checkout des Projekts – Dateien, Git-Index und Branch – mit seinen anderen lokalen Arbeitsbereichen"
 
@@ -13474,6 +13480,9 @@ msgstr "Melde dich an, um zu Superset zu gelangen"
 
 msgid "Sign in to get started"
 msgstr "Melde dich an, um loszulegen"
+
+msgid "Sign in to view this page"
+msgstr "Melde dich an, um diese Seite zu sehen"
 
 msgid "Sign in with email"
 msgstr "Mit E-Mail anmelden"

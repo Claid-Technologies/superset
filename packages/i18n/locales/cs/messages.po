@@ -2003,6 +2003,9 @@ msgstr "Kdokoli"
 msgid "Anyone in your organization"
 msgstr "Kdokoli ve vaší organizaci"
 
+msgid "Anyone with the link"
+msgstr "Kdokoli s odkazem"
+
 msgid "anything"
 msgstr "cokoli"
 
@@ -13267,6 +13270,9 @@ msgstr "Sdílené JSON soubory motivů, které si můžete naimportovat do Super
 msgid "Shared version"
 msgstr "Sdílená verze"
 
+msgid "Shared with everyone"
+msgstr "Sdíleno se všemi"
+
 msgid "Shares the project's checkout — files, git index and branch — with its other local workspaces"
 msgstr "Sdílí checkout projektu — soubory, git index a větev — s ostatními lokálními pracovními prostory"
 
@@ -13474,6 +13480,9 @@ msgstr "Přihlaste se a pokračujte do Superset"
 
 msgid "Sign in to get started"
 msgstr "Přihlaste se a můžete začít"
+
+msgid "Sign in to view this page"
+msgstr "Přihlaste se, abyste zobrazili tuto stránku"
 
 msgid "Sign in with email"
 msgstr "Přihlásit se e-mailem"

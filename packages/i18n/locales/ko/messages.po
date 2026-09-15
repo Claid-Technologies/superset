@@ -2003,6 +2003,9 @@ msgstr "모든 사람"
 msgid "Anyone in your organization"
 msgstr "조직 내 모든 사람"
 
+msgid "Anyone with the link"
+msgstr "링크가 있는 모든 사용자"
+
 msgid "anything"
 msgstr "모든 내용"
 
@@ -13267,6 +13270,9 @@ msgstr "Superset으로 가져올 수 있는 공유 테마 JSON 파일입니다."
 msgid "Shared version"
 msgstr "공유 버전"
 
+msgid "Shared with everyone"
+msgstr "전체 공개로 공유됨"
+
 msgid "Shares the project's checkout — files, git index and branch — with its other local workspaces"
 msgstr "프로젝트의 체크아웃(파일, git 인덱스, 브랜치)을 다른 로컬 워크스페이스와 공유합니다"
 
@@ -13474,6 +13480,9 @@ msgstr "Superset을 계속 사용하려면 로그인하세요"
 
 msgid "Sign in to get started"
 msgstr "로그인하고 시작하세요"
+
+msgid "Sign in to view this page"
+msgstr "이 페이지를 보려면 로그인하세요"
 
 msgid "Sign in with email"
 msgstr "이메일로 로그인"

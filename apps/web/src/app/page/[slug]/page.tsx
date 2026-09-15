@@ -13,6 +13,8 @@ import { initServerI18n } from "@/lib/i18n-server";
 import { api } from "../../../trpc/server";
 import { PageCommentsShell } from "./components/PageCommentsShell";
 import { PageHeaderBar } from "./components/PageHeaderBar";
+import { PageUnavailable } from "./components/PageUnavailable";
+import { PublicPageView } from "./components/PublicPageView";
 import { WrongOrganization } from "./components/WrongOrganization";
 import { getPagesAccess } from "./utils/getPagesAccess";
 import { isForbidden, isNotFound } from "./utils/trpcErrors";
@@ -38,18 +40,59 @@ const pullAccess = cache(async (slug: string) => {
 	return trpc.page.access.query({ slug });
 });
 
+const pullPublicPage = cache(async (slug: string) => {
+	const trpc = await api();
+	try {
+		return await trpc.page.publicView.query({ slug });
+	} catch {
+		return null;
+	}
+});
+
 export async function generateMetadata({
 	params,
 }: PageProps): Promise<Metadata> {
 	const { slug } = await params;
-	const { hasPagesAccess } = await getPagesAccess();
-	if (!hasPagesAccess) return { title: "Page" };
-	try {
-		const page = await pullPage(slug);
-		return { title: page.title, description: page.description ?? undefined };
-	} catch {
-		return { title: "Page" };
+	const i18n = await initServerI18n();
+
+	const shared = await pullPublicPage(slug);
+	if (shared) {
+		const description = shared.description ?? undefined;
+		const images = shared.thumbnailUrl
+			? [{ url: shared.thumbnailUrl, width: 1280, height: 880 }]
+			: undefined;
+		return {
+			title: shared.title,
+			description,
+			openGraph: {
+				type: "website",
+				siteName: "Superset",
+				url: shared.url,
+				title: shared.title,
+				description,
+				images,
+			},
+			twitter: {
+				card: images ? "summary_large_image" : "summary",
+				title: shared.title,
+				description,
+				images,
+			},
+		};
 	}
+
+	const { hasPagesAccess } = await getPagesAccess();
+	if (hasPagesAccess) {
+		const page = await pullPage(slug).catch(() => null);
+		if (page) {
+			return { title: page.title, description: page.description ?? undefined };
+		}
+	}
+
+	return {
+		title: "Superset",
+		description: i18n._(msg({ message: "Sign in to view this page" })),
+	};
 }
 
 export default async function PublishedPage({ params }: PageProps) {
@@ -58,12 +101,31 @@ export default async function PublishedPage({ params }: PageProps) {
 	const { slug } = await params;
 
 	const { hasPagesAccess, session } = await getPagesAccess();
-	if (!hasPagesAccess) notFound();
+
+	const publicView = async () => {
+		const shared = await pullPublicPage(slug);
+		return shared ? (
+			<PublicPageView
+				title={shared.title}
+				viewUrl={shared.viewUrl}
+				slug={slug}
+			/>
+		) : null;
+	};
+
+	if (!hasPagesAccess) {
+		const view = await publicView();
+		if (view) return view;
+		if (session) notFound();
+		return <PageUnavailable slug={slug} />;
+	}
 
 	let page: Awaited<ReturnType<typeof pullPage>>;
 	try {
 		page = await pullPage(slug);
 	} catch (error) {
+		const view = await publicView();
+		if (view) return view;
 		if (isNotFound(error)) notFound();
 		if (isForbidden(error) && error instanceof TRPCClientError) {
 			return <WrongOrganization message={error.message} />;
@@ -89,7 +151,7 @@ export default async function PublishedPage({ params }: PageProps) {
 						id: page.id,
 						title: page.title,
 						url: page.url,
-						visibility: page.visibility === "just_me" ? "just_me" : "org",
+						visibility: page.visibility,
 						createdByUserId: page.createdByUserId,
 						owner: access.owner,
 						updatedAt: page.updatedAt,

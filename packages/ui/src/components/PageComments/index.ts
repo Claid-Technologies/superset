@@ -17,6 +17,7 @@ export {
 } from "./components/CommentModeToggle";
 export { CommentsPanel } from "./components/CommentsPanel";
 export { PageCommentsView } from "./components/PageCommentsView";
+export { PageFrame } from "./components/PageCommentsView/components/PageFrame";
 export {
 	DeletePageDialog,
 	PageHeader,

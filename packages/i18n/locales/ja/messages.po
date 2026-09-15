@@ -2003,6 +2003,9 @@ msgstr "全員"
 msgid "Anyone in your organization"
 msgstr "組織内の全員"
 
+msgid "Anyone with the link"
+msgstr "リンクを知っている全員"
+
 msgid "anything"
 msgstr "何でも"
 
@@ -13267,6 +13270,9 @@ msgstr "Supersetにインポートできる、共有されたテーマJSONファ
 msgid "Shared version"
 msgstr "共有バージョン"
 
+msgid "Shared with everyone"
+msgstr "全員と共有中"
+
 msgid "Shares the project's checkout — files, git index and branch — with its other local workspaces"
 msgstr "プロジェクトのチェックアウト（ファイル、git インデックス、ブランチ）を他のローカルワークスペースと共有します"
 
@@ -13474,6 +13480,9 @@ msgstr "サインインしてSupersetに進む"
 
 msgid "Sign in to get started"
 msgstr "サインインして始めましょう"
+
+msgid "Sign in to view this page"
+msgstr "サインインしてこのページを表示"
 
 msgid "Sign in with email"
 msgstr "メールでサインイン"

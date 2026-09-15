@@ -2003,6 +2003,9 @@ msgstr "Herkes"
 msgid "Anyone in your organization"
 msgstr "Kuruluşunuzdaki herkes"
 
+msgid "Anyone with the link"
+msgstr "Bağlantıya sahip herkes"
+
 msgid "anything"
 msgstr "herhangi bir şey"
 
@@ -13267,6 +13270,9 @@ msgstr "Superset'e içe aktarabileceğiniz paylaşılan tema JSON dosyaları."
 msgid "Shared version"
 msgstr "Paylaşılan sürüm"
 
+msgid "Shared with everyone"
+msgstr "Herkesle paylaşıldı"
+
 msgid "Shares the project's checkout — files, git index and branch — with its other local workspaces"
 msgstr "Projenin checkout'unu (dosyalar, git indeksi ve dal) diğer yerel çalışma alanlarıyla paylaşır"
 
@@ -13474,6 +13480,9 @@ msgstr "Superset'e devam etmek için oturum açın"
 
 msgid "Sign in to get started"
 msgstr "Başlamak için oturum açın"
+
+msgid "Sign in to view this page"
+msgstr "Bu sayfayı görmek için oturum açın"
 
 msgid "Sign in with email"
 msgstr "E-posta ile oturum aç"

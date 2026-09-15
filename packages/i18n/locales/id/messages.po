@@ -2003,6 +2003,9 @@ msgstr "Siapa pun"
 msgid "Anyone in your organization"
 msgstr "Siapa pun di organisasi Anda"
 
+msgid "Anyone with the link"
+msgstr "Siapa saja yang memiliki tautan"
+
 msgid "anything"
 msgstr "apa saja"
 
@@ -13267,6 +13270,9 @@ msgstr "File JSON tema bersama yang bisa Anda impor ke Superset."
 msgid "Shared version"
 msgstr "Versi yang dibagikan"
 
+msgid "Shared with everyone"
+msgstr "Dibagikan ke semua orang"
+
 msgid "Shares the project's checkout — files, git index and branch — with its other local workspaces"
 msgstr "Berbagi checkout proyek — file, indeks git, dan branch — dengan workspace lokal lainnya"
 
@@ -13474,6 +13480,9 @@ msgstr "Masuk untuk melanjutkan ke Superset"
 
 msgid "Sign in to get started"
 msgstr "Masuk untuk memulai"
+
+msgid "Sign in to view this page"
+msgstr "Masuk untuk melihat halaman ini"
 
 msgid "Sign in with email"
 msgstr "Masuk dengan email"

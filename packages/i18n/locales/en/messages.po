@@ -2003,6 +2003,9 @@ msgstr "Anyone"
 msgid "Anyone in your organization"
 msgstr "Anyone in your organization"
 
+msgid "Anyone with the link"
+msgstr "Anyone with the link"
+
 msgid "anything"
 msgstr "anything"
 
@@ -13267,6 +13270,9 @@ msgstr "Shared theme JSON files you can import into Superset."
 msgid "Shared version"
 msgstr "Shared version"
 
+msgid "Shared with everyone"
+msgstr "Shared with everyone"
+
 msgid "Shares the project's checkout — files, git index and branch — with its other local workspaces"
 msgstr "Shares the project's checkout — files, git index and branch — with its other local workspaces"
 
@@ -13474,6 +13480,9 @@ msgstr "Sign in to continue to Superset"
 
 msgid "Sign in to get started"
 msgstr "Sign in to get started"
+
+msgid "Sign in to view this page"
+msgstr "Sign in to view this page"
 
 msgid "Sign in with email"
 msgstr "Sign in with email"
