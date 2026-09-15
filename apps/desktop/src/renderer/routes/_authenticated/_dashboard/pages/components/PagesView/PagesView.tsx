@@ -90,7 +90,7 @@ export function PagesView({
 			byAuthor.set(page.createdByUserId, {
 				userId: page.createdByUserId,
 				name:
-					page.ownerName ??
+					page.ownerName ||
 					t({
 						message: "Unknown",
 					}),
