@@ -129,6 +129,7 @@ function V2WorkspaceLayout() {
 					name={cloudWorkspace.name}
 					branch={cloudWorkspace.branch}
 					status={cloudWorkspace.status}
+					createdAt={cloudWorkspace.createdAt}
 				/>
 			</StateScreenShell>
 		);
