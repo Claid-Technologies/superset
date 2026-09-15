@@ -19,7 +19,11 @@ const REFRESH_MARGIN_MS = 15 * 60_000;
 const STATE_AAD = "github-user-connect";
 
 export class GithubUserConnectionError extends Error {
-	constructor(message: string) {
+	constructor(
+		message: string,
+		/** GitHub's OAuth `error` code, when it gave one. */
+		readonly code?: string,
+	) {
 		super(message);
 		this.name = "GithubUserConnectionError";
 	}
@@ -110,11 +114,14 @@ async function exchange(
 	const body: unknown = await response.json().catch(() => null);
 	const parsed = tokenResponseSchema.safeParse(body);
 	if (!response.ok || !parsed.success) {
-		const reason =
+		const code =
 			body && typeof body === "object" && "error" in body
 				? String((body as { error: unknown }).error)
-				: `HTTP ${response.status}`;
-		throw new GithubUserConnectionError(`GitHub refused the token: ${reason}`);
+				: undefined;
+		throw new GithubUserConnectionError(
+			`GitHub refused the token: ${code ?? `HTTP ${response.status}`}`,
+			code,
+		);
 	}
 	return parsed.data;
 }
@@ -242,14 +249,22 @@ export async function githubUserTokenFor(
 				.where(eq(githubUserConnections.userId, userId));
 			return tokens.access_token;
 		} catch (error) {
-			if (!(error instanceof GithubUserConnectionError)) throw error;
+			if (
+				error instanceof GithubUserConnectionError &&
+				error.code === "bad_refresh_token"
+			) {
+				console.warn(
+					`[github-user] GitHub rejected ${userId}'s refresh token; the connection is removed`,
+				);
+				await tx
+					.delete(githubUserConnections)
+					.where(eq(githubUserConnections.userId, userId));
+				return null;
+			}
 			console.warn(
-				`[github-user] refresh failed for ${userId}; the connection is removed`,
-				error.message,
+				`[github-user] refresh failed for ${userId}; kept for the next attempt`,
+				error instanceof Error ? error.message : error,
 			);
-			await tx
-				.delete(githubUserConnections)
-				.where(eq(githubUserConnections.userId, userId));
 			return null;
 		}
 	});

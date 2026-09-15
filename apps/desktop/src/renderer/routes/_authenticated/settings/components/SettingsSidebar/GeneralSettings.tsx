@@ -333,20 +333,13 @@ export function GeneralSettings({ matchCounts }: GeneralSettingsProps) {
 	const { data: platform } = electronTrpc.window.getPlatform.useQuery();
 	const isMac = platform === "darwin";
 	const isV2CloudEnabled = useIsV2CloudEnabled();
-	// Cloud workspaces are a flagged feature on top of the v2 variant: the
-	// server refuses their procedures without the flag, so the pages are not
-	// offered either.
 	const cloudWorkspacesEnabled =
 		useFeatureFlagEnabled(FEATURE_FLAGS.CLOUD_WORKSPACES) === true;
-	const allowedSections = useMemo(() => {
-		const sections = getAllowedSectionsForVariant(isV2CloudEnabled);
-		if (!cloudWorkspacesEnabled) {
-			sections.delete("environments");
-			sections.delete("agents");
-			sections.delete("connections");
-		}
-		return sections;
-	}, [isV2CloudEnabled, cloudWorkspacesEnabled]);
+	const allowedSections = useMemo(
+		() =>
+			getAllowedSectionsForVariant(isV2CloudEnabled, cloudWorkspacesEnabled),
+		[isV2CloudEnabled, cloudWorkspacesEnabled],
+	);
 
 	return (
 		<>

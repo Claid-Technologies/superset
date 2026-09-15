@@ -26,19 +26,25 @@ import {
 import { jwtProcedure, userError } from "../../trpc";
 import { secretsRouter } from "./secrets";
 
-export async function loadEnvironment(id: string, organizationIds: string[]) {
+/** An environment the caller may see; another member's personal one does not exist to them. */
+export async function loadEnvironment(
+	id: string,
+	ctx: { organizationIds: string[]; userId: string },
+) {
 	const row = await db.query.environments.findFirst({
 		where: and(eq(environments.id, id), isNull(environments.archivedAt)),
 	});
-	if (!row) {
+	const visible =
+		row &&
+		(row.organizationId === SHARED_ENVIRONMENT_ORGANIZATION_ID ||
+			ctx.organizationIds.includes(row.organizationId)) &&
+		(row.scope !== "personal" || row.createdByUserId === ctx.userId);
+	if (!visible) {
 		throw userError({
 			code: "NOT_FOUND",
 			message: "Environment not found",
 			i18nKey: "serverError.environment.environmentNotFound",
 		});
-	}
-	if (row.organizationId !== SHARED_ENVIRONMENT_ORGANIZATION_ID) {
-		assertMember(organizationIds, row.organizationId);
 	}
 	return row;
 }
@@ -202,14 +208,7 @@ export const environmentRouter = {
 		.input(z.object({ id: z.string().uuid() }))
 		.query(async ({ ctx, input }) => {
 			await assertCloudAccess(ctx);
-			const row = await loadEnvironment(input.id, ctx.organizationIds);
-			if (row.scope === "personal" && row.createdByUserId !== ctx.userId) {
-				throw userError({
-					code: "NOT_FOUND",
-					message: "Environment not found",
-					i18nKey: "serverError.environment.environmentNotFound",
-				});
-			}
+			const row = await loadEnvironment(input.id, ctx);
 			const repos = await repositoriesByEnvironment([row]);
 			return { ...row, repositories: repos.get(row.id) ?? [] };
 		}),
@@ -338,13 +337,6 @@ export const environmentRouter = {
 			z.object({
 				id: z.string().uuid(),
 				name: z.string().min(1).max(100).optional(),
-				sourceRef: z.string().min(1).optional(),
-				/** Null pins nothing: workspaces boot on the image's own bundle. */
-				bundleSha: z
-					.string()
-					.regex(/^[0-9a-f]{64}$/)
-					.nullable()
-					.optional(),
 				repositoryIds: z.array(z.string().uuid()).min(1).max(20).optional(),
 				hooksRepositoryId: z.string().uuid().nullable().optional(),
 				scope: z.enum(environmentScopeValues).optional(),
@@ -352,7 +344,7 @@ export const environmentRouter = {
 		)
 		.mutation(async ({ ctx, input }) => {
 			await assertCloudAccess(ctx);
-			const current = await loadEnvironment(input.id, ctx.organizationIds);
+			const current = await loadEnvironment(input.id, ctx);
 			assertOwned(current);
 			// A golden was built for its repositories: cloned, set up, snapshotted.
 			// A different set means a different golden, so it is promoted again.
@@ -375,6 +367,22 @@ export const environmentRouter = {
 							: input.hooksRepositoryId,
 				});
 			} else if (input.hooksRepositoryId !== undefined) {
+				if (input.hooksRepositoryId) {
+					const included = await db.query.environmentRepositories.findFirst({
+						where: and(
+							eq(environmentRepositories.environmentId, input.id),
+							eq(environmentRepositories.repositoryId, input.hooksRepositoryId),
+						),
+					});
+					if (!included) {
+						throw userError({
+							code: "BAD_REQUEST",
+							message:
+								"The hooks repository must be one of the environment's repositories",
+							i18nKey: "serverError.environment.hooksRepositoryNotIncluded",
+						});
+					}
+				}
 				await db
 					.update(environments)
 					.set({ hooksRepositoryId: input.hooksRepositoryId })
@@ -382,14 +390,10 @@ export const environmentRouter = {
 			}
 			const patch = {
 				...(input.name ? { name: input.name } : {}),
-				...(input.sourceRef ? { sourceRef: input.sourceRef } : {}),
-				...(input.bundleSha !== undefined
-					? { bundleSha: input.bundleSha }
-					: {}),
 				...(input.scope ? { scope: input.scope } : {}),
 			};
 			if (Object.keys(patch).length === 0) {
-				return loadEnvironment(input.id, ctx.organizationIds);
+				return loadEnvironment(input.id, ctx);
 			}
 			const [row] = await db
 				.update(environments)
@@ -403,7 +407,7 @@ export const environmentRouter = {
 		.input(z.object({ id: z.string().uuid() }))
 		.mutation(async ({ ctx, input }) => {
 			await assertCloudAccess(ctx);
-			assertOwned(await loadEnvironment(input.id, ctx.organizationIds));
+			assertOwned(await loadEnvironment(input.id, ctx));
 			await db
 				.update(environments)
 				.set({ archivedAt: new Date() })
