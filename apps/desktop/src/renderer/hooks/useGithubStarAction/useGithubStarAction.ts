@@ -32,7 +32,7 @@ export const STAR_SUCCESS_ANIMATION_MS = 1700;
 // the celebration anyway.
 export const JUST_STARRED_ATTRIBUTION_WINDOW_MS = 5_000;
 
-// When this session's star mutation last confirmed a star; null if it never
+// performance.now() of this session's last confirmed star; null if it never
 // has. Deliberately module-level (per renderer window, like the query cache
 // it shadows): every mounted surface must agree on it, and it's the ONLY
 // thing separating a real "the user just clicked star" transition from a
@@ -62,7 +62,8 @@ export function shouldCelebrateStarTransition(params: {
 	if (state !== "starred") return false;
 	if (prevState !== "not_starred" && prevState !== "unknown") return false;
 	if (starConfirmedAt === null) return false;
-	return now - starConfirmedAt <= JUST_STARRED_ATTRIBUTION_WINDOW_MS;
+	const elapsed = now - starConfirmedAt;
+	return elapsed >= 0 && elapsed <= JUST_STARRED_ATTRIBUTION_WINDOW_MS;
 }
 
 /**
@@ -79,7 +80,7 @@ export function isCelebratableStarTransition(
 		prevState,
 		state,
 		starConfirmedAt: lastStarConfirmedAt,
-		now: Date.now(),
+		now: performance.now(),
 	});
 }
 
@@ -263,7 +264,42 @@ export function useGithubStarAction(options?: UseGithubStarActionOptions) {
 			refetchOnWindowFocus: false,
 			refetchOnMount: options?.alwaysFreshOnMount ? "always" : true,
 		});
-	const starMutation = electronTrpc.githubStar.star.useMutation();
+	// Handlers live on useMutation, not on the mutate() call: react-query
+	// skips mutate()-level callbacks when the calling component has unmounted
+	// by the time `gh` resolves (toast closed, sidebar collapsed, navigated
+	// off the empty view), which would drop both the cache write and the
+	// attribution stamp for a star that actually succeeded.
+	const starMutation = electronTrpc.githubStar.star.useMutation({
+		onSuccess: async (starred) => {
+			// Stamped before the awaited cancel() below so the "starred" cache
+			// write can never outrun it — the transition watchers attribute the
+			// flip to this click only while the stamp is fresh.
+			if (starred) lastStarConfirmedAt = performance.now();
+			// Cancel any in-flight checkStarred fetch first: it may have
+			// started before this mutation resolved (e.g. Settings'
+			// alwaysFreshOnMount, or a fresh mount elsewhere) and, if left
+			// running, could resolve *after* the setData below and silently
+			// overwrite this confirmed result with a stale pre-mutation
+			// read — react-query's own out-of-order protection only covers
+			// its own fetches racing each other, not a fetch racing a
+			// direct cache write like setData.
+			await utils.githubStar.checkStarred.cancel();
+			// Written into the shared query cache (not per-hook-instance
+			// state) so every mounted surface reflects the confirmed result
+			// immediately; StarNagObserver reacts to the change and marks
+			// completed.
+			utils.githubStar.checkStarred.setData(
+				undefined,
+				starred ? "starred" : "unknown",
+			);
+			if (!starred) markStaleWithoutRefetch(utils);
+		},
+		onError: async () => {
+			await utils.githubStar.checkStarred.cancel();
+			utils.githubStar.checkStarred.setData(undefined, "unknown");
+			markStaleWithoutRefetch(utils);
+		},
+	});
 
 	const state: GithubStarActionState = isSuccess ? checkResult : "loading";
 
@@ -276,37 +312,7 @@ export function useGithubStarAction(options?: UseGithubStarActionOptions) {
 		// on "unknown", which shouldUnmuteOnUnstarredRead never acts on.
 		// `isBusy` already gives immediate feedback ("Starring…"), so waiting
 		// for a real result costs nothing but correctness.
-		starMutation.mutate(undefined, {
-			onSuccess: async (starred) => {
-				// Stamped before the awaited cancel() below so the "starred" cache
-				// write can never outrun it — the transition watchers attribute the
-				// flip to this click only while the stamp is fresh.
-				if (starred) lastStarConfirmedAt = Date.now();
-				// Cancel any in-flight checkStarred fetch first: it may have
-				// started before this mutation resolved (e.g. Settings'
-				// alwaysFreshOnMount, or a fresh mount elsewhere) and, if left
-				// running, could resolve *after* the setData below and silently
-				// overwrite this confirmed result with a stale pre-mutation
-				// read — react-query's own out-of-order protection only covers
-				// its own fetches racing each other, not a fetch racing a
-				// direct cache write like setData.
-				await utils.githubStar.checkStarred.cancel();
-				// Written into the shared query cache (not per-hook-instance
-				// state) so every mounted surface reflects the confirmed result
-				// immediately; StarNagObserver reacts to the change and marks
-				// completed.
-				utils.githubStar.checkStarred.setData(
-					undefined,
-					starred ? "starred" : "unknown",
-				);
-				if (!starred) markStaleWithoutRefetch(utils);
-			},
-			onError: async () => {
-				await utils.githubStar.checkStarred.cancel();
-				utils.githubStar.checkStarred.setData(undefined, "unknown");
-				markStaleWithoutRefetch(utils);
-			},
-		});
+		starMutation.mutate();
 	};
 
 	return {

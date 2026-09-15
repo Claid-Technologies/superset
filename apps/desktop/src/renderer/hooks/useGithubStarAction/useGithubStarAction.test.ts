@@ -65,6 +65,17 @@ describe("shouldCelebrateStarTransition", () => {
 		).toBe(false);
 	});
 
+	test("rejects a confirmation stamped in the future (clock moved backwards)", () => {
+		expect(
+			shouldCelebrateStarTransition({
+				prevState: "unknown",
+				state: "starred",
+				starConfirmedAt: now + 1,
+				now,
+			}),
+		).toBe(false);
+	});
+
 	test("only the not_starred/unknown -> starred shape counts, even with a fresh confirmation", () => {
 		// A cold mount resolving straight from "loading" was already starred
 		// before this session; a starred -> starred re-read is no transition.
