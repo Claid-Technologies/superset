@@ -1,5 +1,6 @@
 import { useLingui } from "@lingui/react/macro";
 import { Composer, type ComposerHandle } from "@superset/composer";
+import { errorMessage } from "@superset/i18n/errors";
 import { isCloudAgentId } from "@superset/shared/cloud-agent-launch";
 import { getPresetById } from "@superset/shared/host-agent-presets";
 import { useQuery } from "@tanstack/react-query";
@@ -8,18 +9,20 @@ import { useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { Alert } from "react-native";
 import type { PromptInputMessage } from "@/components/ai-elements/prompt-input";
-import { useCloudEnvironments } from "@/hooks/useCloudEnvironments";
 import type { HostWorkspaceItem } from "@/hooks/useHostWorkspaces";
+import { awaitAttachmentUploads } from "@/lib/attachments/upload";
 import { useSession } from "@/lib/auth/client";
 import { getHostServiceClientByUrl } from "@/lib/host-service/client";
 import { posthog } from "@/lib/posthog";
 import { apiClient } from "@/lib/trpc/client";
+import { useCloudCreateSelection } from "@/screens/(authenticated)/(home)/hooks/useCloudCreateSelection";
 import { useWorkspaceScope } from "@/screens/(authenticated)/(home)/hooks/useWorkspaceScope";
 import {
 	agentLaunchPresetId,
 	useAgentLaunchPreferences,
 } from "@/screens/(authenticated)/hooks/useAgentLaunchPreferences";
 import { useAttachmentsSheet } from "@/screens/(authenticated)/hooks/useAttachmentsSheet";
+import { useAttachmentUploads } from "@/screens/(authenticated)/hooks/useAttachmentUploads";
 import { useComposerDraft } from "@/screens/(authenticated)/hooks/useComposerDraft";
 import { useCreateTerminalWorkspace } from "@/screens/(authenticated)/hooks/useCreateTerminalWorkspace";
 import { useHostAgentConfigs } from "@/screens/(authenticated)/hooks/useHostAgentConfigs";
@@ -61,6 +64,7 @@ export function NewChatWidget({
 	const draft = useComposerDraft(HOME_DRAFT_KEY);
 	const openAttachmentsSheet = useAttachmentsSheet(HOME_DRAFT_KEY);
 	const addPasted = usePasteAttachments(HOME_DRAFT_KEY);
+	const uploads = useAttachmentUploads(HOME_DRAFT_KEY);
 
 	// What was typed here last time, pinned at mount: a starting value handed to
 	// the composer as it is set up, never a binding.
@@ -78,13 +82,11 @@ export function NewChatWidget({
 		targets.find((target) => target.key === targetKey) ?? defaultTarget;
 	const isCloudTarget = selectedTarget?.kind === "cloud";
 	const cloudScope = useWorkspaceScope() === "cloud";
-	const environmentId = useNewSessionPreferencesStore(
-		(state) => state.environmentId,
-	);
-	const environmentsQuery = useCloudEnvironments();
-	const environments = environmentsQuery.data ?? [];
-	const selectedEnvironment =
-		environments.find((row) => row.id === environmentId) ?? environments[0];
+	const {
+		environment: selectedEnvironment,
+		picksRepository,
+		repository: cloudRepository,
+	} = useCloudCreateSelection();
 
 	const { data: session } = useSession();
 	const organizationId = session?.session?.activeOrganizationId ?? null;
@@ -94,6 +96,7 @@ export function NewChatWidget({
 			"branches",
 			selectedTarget?.hostUrl ?? null,
 			selectedTarget?.projectId ?? null,
+			cloudRepository?.id ?? null,
 			"",
 		],
 		enabled: selectedTarget !== null && (!isCloudTarget || !!organizationId),
@@ -101,9 +104,10 @@ export function NewChatWidget({
 		queryFn: async () => {
 			if (!selectedTarget) return null;
 			if (selectedTarget.kind === "cloud") {
-				if (!organizationId) return null;
+				if (!organizationId || !cloudRepository) return null;
 				return apiClient.cloudWorkspace.listBranches.query({
 					organizationId,
+					repositoryId: cloudRepository.id,
 				});
 			}
 			return getHostServiceClientByUrl(
@@ -172,8 +176,16 @@ export function NewChatWidget({
 		composerRef.current?.focus();
 	}, [focusNonce]);
 
+	// A send now begins with an await — the attachment uploads — so the
+	// mutation's own `isPending` no longer covers the whole of it. Without a
+	// lock taken before that await, a second tap slips through the gap and
+	// creates a second workspace with its own id.
+	const sending = useRef(false);
+	const [isHoldingSend, setIsHoldingSend] = useState(false);
 	const isSending =
-		createTerminalWorkspace.isPending || createCloudWorkspace.isPending;
+		isHoldingSend ||
+		createTerminalWorkspace.isPending ||
+		createCloudWorkspace.isPending;
 
 	// The draft and the tray are cleared together, on success only. The native
 	// composer's `clear()` reaches its own text and nothing else — the tray is
@@ -184,7 +196,19 @@ export function NewChatWidget({
 		draft.clear();
 	};
 
-	const submit = (message: PromptInputMessage) => {
+	const submit = async (message: PromptInputMessage) => {
+		if (sending.current) return;
+		sending.current = true;
+		setIsHoldingSend(true);
+		try {
+			await send(message);
+		} finally {
+			sending.current = false;
+			setIsHoldingSend(false);
+		}
+	};
+
+	const send = async (message: PromptInputMessage) => {
 		posthog.capture("chat_message_sent", {
 			has_attachments: message.attachments.length > 0,
 			attachment_count: message.attachments.length,
@@ -204,10 +228,15 @@ export function NewChatWidget({
 			return;
 		}
 		if (selectedTarget.kind === "cloud") {
-			createCloudWorkspace
+			if (picksRepository && !cloudRepository) {
+				router.push("/(authenticated)/(home)/new-session/repository");
+				return;
+			}
+			await createCloudWorkspace
 				.mutateAsync({
 					branch: baseBranch ?? branchData?.defaultBranch ?? null,
 					environmentId: selectedEnvironment?.id ?? null,
+					repositoryId: picksRepository ? (cloudRepository?.id ?? null) : null,
 					agent: effectiveAgentId,
 					model,
 					effort,
@@ -220,7 +249,25 @@ export function NewChatWidget({
 				.catch(() => {});
 			return;
 		}
-		createTerminalWorkspace
+		// Before the create is recorded, so the failed screen's retry replays
+		// ids rather than URIs the cleared draft no longer has. Usually
+		// instant: the upload started when the file was attached, and the ring
+		// on the thumbnail is what shows the rare case where it has not
+		// finished.
+		let attachmentFileIds: string[];
+		try {
+			attachmentFileIds = await awaitAttachmentUploads(
+				HOME_DRAFT_KEY,
+				message.attachments,
+			);
+		} catch (error) {
+			Alert.alert(
+				t({ message: "Could not attach files" }),
+				errorMessage(error),
+			);
+			return;
+		}
+		await createTerminalWorkspace
 			.mutateAsync({
 				target: selectedTarget,
 				baseBranch,
@@ -230,6 +277,7 @@ export function NewChatWidget({
 				model,
 				effort,
 				message,
+				attachmentFileIds,
 			})
 			.then(() => {
 				setBaseBranch(null);
@@ -239,8 +287,9 @@ export function NewChatWidget({
 	};
 
 	// Under Cloud there is no project to show: a sandbox has no real project
-	// structure yet, so the chip is the place itself and the repo it clones is
-	// resolved without asking.
+	// structure yet, so the chip is the place itself. The repo it clones comes
+	// from the environment, or from the repository chip when the environment
+	// has none.
 	const headerChips = [
 		cloudScope
 			? {
@@ -265,6 +314,15 @@ export function NewChatWidget({
 					},
 				]
 			: []),
+		...(cloudScope && picksRepository
+			? [
+					{
+						id: "repository",
+						label:
+							cloudRepository?.fullName ?? t({ message: "Select repository" }),
+					},
+				]
+			: []),
 		...(branchLabel ? [{ id: "branch", label: branchLabel, muted: true }] : []),
 	];
 
@@ -280,7 +338,7 @@ export function NewChatWidget({
 		<Composer
 			ref={composerRef}
 			placeholder={t({
-				message: "Plan, ask, build...",
+				message: "What do you want to do?",
 			})}
 			initialDraft={initialDraft}
 			isSending={isSending}
@@ -290,6 +348,12 @@ export function NewChatWidget({
 				uri: item.uri ?? "",
 				kind: item.type === "image" ? ("image" as const) : ("file" as const),
 				name: item.name,
+				// Dropped the moment the id lands, so a settled tray draws no
+				// rings — only what is still in flight is marked.
+				progress: uploads[item.id]?.fileId
+					? undefined
+					: uploads[item.id]?.progress,
+				failed: uploads[item.id]?.error !== undefined,
 			}))}
 			headerChips={headerChips}
 			selectedModel={selectedModel}
@@ -305,7 +369,7 @@ export function NewChatWidget({
 					},
 				});
 			}}
-			onSubmit={(text) => submit({ text, attachments: draft.attachments })}
+			onSubmit={(text) => void submit({ text, attachments: draft.attachments })}
 			onDraftChange={draft.setText}
 			onRemoveAttachment={(id) => draft.remove(id)}
 			onExpandedChange={(expanded) => {
@@ -339,6 +403,8 @@ export function NewChatWidget({
 				void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 				if (id === "environment") {
 					router.push("/(authenticated)/(home)/new-session/environment");
+				} else if (id === "repository") {
+					router.push("/(authenticated)/(home)/new-session/repository");
 				} else if (id === "project") {
 					if (targets.length > 0) {
 						router.push({

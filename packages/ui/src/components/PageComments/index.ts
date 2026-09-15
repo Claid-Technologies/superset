@@ -1,3 +1,11 @@
+export {
+	AGENT_DISPLAY_NAME,
+	type CommentAuthor,
+	commentAuthor,
+	isOptimisticId,
+	OPTIMISTIC_ID_PREFIX,
+	optimisticId,
+} from "@superset/shared/page-comments";
 export type {
 	CommentAnchor,
 	FrameRect,
@@ -23,6 +31,7 @@ export {
 export { useFramePointerDown } from "./hooks/useFramePointerDown";
 export {
 	type CommentDraft,
+	type CommentIntent,
 	CommentProvider,
 	type CommentStore,
 	type CommentThread,
@@ -30,13 +39,3 @@ export {
 	type PageCommentUser,
 	useComments,
 } from "./providers/CommentProvider";
-export {
-	AGENT_DISPLAY_NAME,
-	type CommentAuthor,
-	commentAuthor,
-} from "./utils/commentAuthor";
-export {
-	isOptimisticId,
-	OPTIMISTIC_ID_PREFIX,
-	optimisticId,
-} from "./utils/optimisticId";

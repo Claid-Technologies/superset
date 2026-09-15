@@ -1,11 +1,11 @@
 "use client";
 
 import { Plural } from "@lingui/react/macro";
+import { isOptimisticId } from "@superset/shared/page-comments";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "../../../../../../lib/utils";
 import { Button } from "../../../../../ui/button";
 import type { CommentThread } from "../../../../providers/CommentProvider";
-import { isOptimisticId } from "../../../../utils/optimisticId";
 import { CommentComposer } from "../../../CommentComposer";
 import { CommentList } from "../../../CommentList";
 
@@ -64,7 +64,7 @@ export function PanelThread({
 			{folded ? (
 				<Button
 					variant="ghost"
-					className="h-auto w-full justify-start rounded-none px-3.5 py-1 font-normal text-muted-foreground text-sm hover:bg-transparent hover:text-foreground"
+					className="h-auto w-full justify-start rounded-none px-3 py-1 font-normal text-muted-foreground text-xs hover:bg-transparent hover:text-foreground"
 					onClick={() => setExpanded(true)}
 				>
 					<Plural value={hidden} one="Show # reply" other="Show # replies" />
@@ -76,7 +76,7 @@ export function PanelThread({
 			) : null}
 
 			{servedVersion !== null && thread.version !== servedVersion ? (
-				<p className="px-3.5 pb-2 text-[11px] text-muted-foreground">
+				<p className="px-3 pb-1.5 text-[11px] text-muted-foreground">
 					v{thread.version}
 				</p>
 			) : null}

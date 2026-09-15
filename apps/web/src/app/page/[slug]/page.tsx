@@ -1,4 +1,5 @@
 import { msg } from "@lingui/core/macro";
+import { pageCommentUser } from "@superset/shared/page-comments";
 import {
 	AllCommentsButton,
 	CommentsPanel,
@@ -8,7 +9,7 @@ import { TRPCClientError } from "@trpc/client";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { cache } from "react";
-import { i18n } from "@/lib/i18n-server";
+import { initServerI18n } from "@/lib/i18n-server";
 import { api } from "../../../trpc/server";
 import { PageCommentsShell } from "./components/PageCommentsShell";
 import { PageHeaderBar } from "./components/PageHeaderBar";
@@ -52,6 +53,8 @@ export async function generateMetadata({
 }
 
 export default async function PublishedPage({ params }: PageProps) {
+	const i18n = await initServerI18n();
+
 	const { slug } = await params;
 
 	const { hasPagesAccess, session } = await getPagesAccess();
@@ -78,11 +81,7 @@ export default async function PublishedPage({ params }: PageProps) {
 			pageId={page.id}
 			version={page.version}
 			pageOwnerId={page.createdByUserId}
-			user={{
-				id: session?.user.id ?? "",
-				name: session?.user.name ?? i18n._(msg({ message: "You" })),
-				image: session?.user.image ?? null,
-			}}
+			user={pageCommentUser(session, i18n._(msg({ message: "You" })))}
 		>
 			<div className="flex h-dvh flex-col bg-background">
 				<PageHeaderBar

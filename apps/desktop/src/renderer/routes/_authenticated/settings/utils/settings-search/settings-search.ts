@@ -39,6 +39,7 @@ export const SETTING_ITEM_ID = {
 	BEHAVIOR_FILE_OPEN_MODE: "behavior-file-open-mode",
 	BEHAVIOR_CHANGES_OPEN_TARGET: "behavior-changes-open-target",
 	BEHAVIOR_RESOURCE_MONITOR: "behavior-resource-monitor",
+	USAGE_IN_SIDEBAR: "usage-in-sidebar",
 	BEHAVIOR_OPEN_LINKS_IN_APP: "behavior-open-links-in-app",
 	BEHAVIOR_STAR_GITHUB: "behavior-star-github",
 
@@ -65,6 +66,7 @@ export const SETTING_ITEM_ID = {
 	LINKS_URL: "links-url",
 	LINKS_SIDEBAR_FILE: "links-sidebar-file",
 	LINKS_PORT: "links-port",
+	LINKS_PAGE: "links-page",
 
 	EXPERIMENTAL_SUPERSET_V2: "experimental-superset-v2",
 	EXPERIMENTAL_V1_MIGRATION: "experimental-v1-migration",
@@ -99,6 +101,8 @@ export const SETTING_ITEM_ID = {
 
 	HOST_MEMBERS: "host-members",
 	ENVIRONMENTS_LIST: "environments-list",
+	AGENT_ACCOUNTS: "agent-accounts",
+	CONNECTIONS: "connections",
 	ENVIRONMENTS_SECRETS: "environments-secrets",
 	HOST_INVITE_MEMBER: "host-invite-member",
 	HOST_MEMBER_ROLE: "host-member-role",
@@ -184,6 +188,8 @@ export const SETTING_ITEM_VARIANT: Record<SettingItemId, SettingVariant> = {
 	// The top-bar Changes control is a v2-only surface.
 	[SETTING_ITEM_ID.BEHAVIOR_CHANGES_OPEN_TARGET]: "v2",
 	[SETTING_ITEM_ID.BEHAVIOR_RESOURCE_MONITOR]: "shared",
+	// The home sidebar (DashboardSidebar) only renders for v2 users.
+	[SETTING_ITEM_ID.USAGE_IN_SIDEBAR]: "v2",
 	[SETTING_ITEM_ID.BEHAVIOR_OPEN_LINKS_IN_APP]: "v1",
 	[SETTING_ITEM_ID.BEHAVIOR_STAR_GITHUB]: "shared",
 
@@ -212,6 +218,7 @@ export const SETTING_ITEM_VARIANT: Record<SettingItemId, SettingVariant> = {
 	[SETTING_ITEM_ID.LINKS_URL]: "v2",
 	[SETTING_ITEM_ID.LINKS_SIDEBAR_FILE]: "v2",
 	[SETTING_ITEM_ID.LINKS_PORT]: "v2",
+	[SETTING_ITEM_ID.LINKS_PAGE]: "v2",
 
 	[SETTING_ITEM_ID.EXPERIMENTAL_SUPERSET_V2]: "shared",
 	[SETTING_ITEM_ID.EXPERIMENTAL_V1_MIGRATION]: "v2",
@@ -245,6 +252,8 @@ export const SETTING_ITEM_VARIANT: Record<SettingItemId, SettingVariant> = {
 
 	[SETTING_ITEM_ID.HOST_MEMBERS]: "shared",
 	[SETTING_ITEM_ID.ENVIRONMENTS_LIST]: "v2",
+	[SETTING_ITEM_ID.AGENT_ACCOUNTS]: "v2",
+	[SETTING_ITEM_ID.CONNECTIONS]: "v2",
 	[SETTING_ITEM_ID.ENVIRONMENTS_SECRETS]: "v2",
 	[SETTING_ITEM_ID.HOST_INVITE_MEMBER]: "shared",
 	[SETTING_ITEM_ID.HOST_MEMBER_ROLE]: "shared",
@@ -847,6 +856,23 @@ export const SETTINGS_ITEMS: SettingsItem[] = [
 		],
 	},
 	{
+		id: SETTING_ITEM_ID.USAGE_IN_SIDEBAR,
+		section: "usage",
+		title: "Show usage tab on sidebar",
+		description: "Show a Usage button in the home sidebar, under Pull requests",
+		keywords: [
+			"sidebar",
+			"rail",
+			"button",
+			"shortcut",
+			"nav",
+			"home",
+			"gauge",
+			"pull requests",
+			"usage",
+		],
+	},
+	{
 		id: SETTING_ITEM_ID.GIT_WORKTREE_LOCATION,
 		section: "git",
 		title: "Worktree location",
@@ -973,6 +999,10 @@ export const SETTINGS_ITEMS: SettingsItem[] = [
 			"xai",
 			"hermes",
 			"nous",
+			"muse",
+			"meta",
+			"devin",
+			"cognition",
 			"fx",
 			"vercel",
 			"antigravity",
@@ -1045,6 +1075,10 @@ export const SETTINGS_ITEMS: SettingsItem[] = [
 			"xai",
 			"hermes",
 			"nous",
+			"muse",
+			"meta",
+			"devin",
+			"cognition",
 			"fx",
 			"vercel",
 			"antigravity",
@@ -1250,6 +1284,25 @@ export const SETTINGS_ITEMS: SettingsItem[] = [
 			"ctrl",
 			"shift",
 			"meta",
+			"browser",
+			"in-app",
+			"system",
+			"external",
+			"open",
+			"behavior",
+		],
+	},
+	{
+		id: SETTING_ITEM_ID.LINKS_PAGE,
+		section: "links",
+		title: "Pages",
+		description:
+			"Whether Page links (in terminals, chat, and task markdown) open inside Superset or the system browser",
+		keywords: [
+			"links",
+			"page",
+			"pages",
+			"click",
 			"browser",
 			"in-app",
 			"system",
@@ -1674,6 +1727,38 @@ export const SETTINGS_ITEMS: SettingsItem[] = [
 		],
 	},
 	{
+		id: SETTING_ITEM_ID.AGENT_ACCOUNTS,
+		section: "agentAccounts",
+		title: "Agents",
+		description: "Sign-ins cloud agents run with",
+		keywords: [
+			"claude",
+			"codex",
+			"subscription",
+			"api key",
+			"oauth",
+			"sign in",
+			"token",
+			"account",
+		],
+	},
+	{
+		id: SETTING_ITEM_ID.CONNECTIONS,
+		section: "connections",
+		title: "Connections",
+		description: "Your own GitHub account for cloud workspaces",
+		keywords: [
+			"github",
+			"connect",
+			"account",
+			"commit",
+			"author",
+			"push",
+			"pull request",
+			"personal",
+		],
+	},
+	{
 		id: SETTING_ITEM_ID.ENVIRONMENTS_LIST,
 		section: "environments",
 		title: "Environments",
@@ -1881,12 +1966,31 @@ export function getVisibleItemsForSection(params: {
  * active v1/v2 variant. Used by the sidebar so search counts and section
  * visibility agree.
  */
+/** Sections offered only with the cloud workspaces flag. */
+const CLOUD_WORKSPACE_SECTIONS: ReadonlySet<SettingsSection> = new Set([
+	"environments",
+	"agentAccounts",
+	"connections",
+]);
+
+function isItemOffered(
+	item: { id: SettingItemId; section: SettingsSection },
+	isV2: boolean,
+	cloudWorkspaces: boolean,
+): boolean {
+	return (
+		isItemAllowedForVariant(item.id, isV2) &&
+		(cloudWorkspaces || !CLOUD_WORKSPACE_SECTIONS.has(item.section))
+	);
+}
+
 export function getVisibleMatchCountBySection(
 	query: string,
 	isV2: boolean,
+	cloudWorkspaces: boolean,
 ): Partial<Record<SettingsSection, number>> {
 	const matches = searchSettings(query).filter((item) =>
-		isItemAllowedForVariant(item.id, isV2),
+		isItemOffered(item, isV2, cloudWorkspaces),
 	);
 	const counts: Partial<Record<SettingsSection, number>> = {};
 	for (const item of matches) {
@@ -1902,10 +2006,11 @@ export function getVisibleMatchCountBySection(
  */
 export function getAllowedSectionsForVariant(
 	isV2: boolean,
+	cloudWorkspaces: boolean,
 ): Set<SettingsSection> {
 	const sections = new Set<SettingsSection>();
 	for (const item of SETTINGS_ITEMS) {
-		if (isItemAllowedForVariant(item.id, isV2)) sections.add(item.section);
+		if (isItemOffered(item, isV2, cloudWorkspaces)) sections.add(item.section);
 	}
 	return sections;
 }

@@ -1,9 +1,15 @@
 "use client";
 
-import type {
-	CommentAnchor,
-	FrameRect,
-} from "@superset/shared/page-comments-runtime";
+import {
+	type CommentDraft,
+	type CommentIntent,
+	type CommentStore,
+	type CommentThread,
+	isOptimisticId,
+	type PageComment,
+	type PageCommentUser,
+} from "@superset/shared/page-comments";
+import type { FrameRect } from "@superset/shared/page-comments-runtime";
 import {
 	createContext,
 	type ReactNode,
@@ -13,56 +19,15 @@ import {
 	useRef,
 	useState,
 } from "react";
-import { isOptimisticId } from "../../utils/optimisticId";
 
-export interface PageCommentUser {
-	id: string;
-	name: string;
-	image: string | null;
-}
-
-export interface PageComment {
-	id: string;
-	authorName: string;
-	authorImage: string | null;
-	authorKind: "human" | "agent";
-	authorUserId: string | null;
-	body: string;
-	createdAt: number;
-}
-
-export interface CommentThread {
-	id: string;
-	anchor: CommentAnchor;
-	comments: PageComment[];
-	resolved: boolean;
-	version: number;
-	createdByUserId: string | null;
-}
-
-export interface CommentDraft {
-	anchor: CommentAnchor;
-	rect: FrameRect;
-	body?: string;
-}
-
-export interface CommentStore {
-	threads: CommentThread[];
-	isLoading: boolean;
-	createThread: (input: {
-		anchor: CommentAnchor;
-		anchorText: string;
-		body: string;
-	}) => Promise<void>;
-	addReply: (threadId: string, body: string) => Promise<void>;
-	editComment: (
-		threadId: string,
-		commentId: string,
-		body: string,
-	) => Promise<void>;
-	setResolved: (threadId: string, resolved: boolean) => Promise<void>;
-	deleteThread: (threadId: string) => Promise<void>;
-}
+export type {
+	CommentDraft,
+	CommentIntent,
+	CommentStore,
+	CommentThread,
+	PageComment,
+	PageCommentUser,
+};
 
 interface CommentContextValue extends CommentStore {
 	user: PageCommentUser;
