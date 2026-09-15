@@ -2,6 +2,10 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { defineTool } from "../../define-tool";
 import { hostServiceCall } from "../../host-service-client";
+import {
+	workspaceLocationInput,
+	workspaceServiceTarget,
+} from "../../workspace-service-target";
 
 export function register(server: McpServer): void {
 	defineTool(server, {
@@ -10,10 +14,7 @@ export function register(server: McpServer): void {
 		description:
 			"Read a terminal's current screen back as plain text — for a claude/codex agent this is the agent's rendered output, so use it to see the reply after terminals_send. Returns what is on screen now (plus recent scrollback), not a full transcript.",
 		inputSchema: {
-			hostId: z
-				.string()
-				.min(1)
-				.describe("Host machineId the workspace lives on."),
+			...workspaceLocationInput,
 			workspaceId: z
 				.string()
 				.uuid()
@@ -39,12 +40,7 @@ export function register(server: McpServer): void {
 				rows: number;
 				text: string;
 			}>(
-				{
-					relayUrl: ctx.relayUrl,
-					organizationId: ctx.organizationId,
-					hostId: input.hostId,
-					jwt: ctx.bearerToken,
-				},
+				await workspaceServiceTarget(input, ctx),
 				"terminal.snapshot",
 				"query",
 				{

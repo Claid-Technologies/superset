@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, mock, test } from "bun:test";
 
-// Control what `findWorkspaceOnHost` resolves per test. The command imports
+// Control what `resolveWorkspaceTarget` resolves per test. The command imports
 // it from the lib barrel, so mock that module before importing the SUT.
 type FindResult = {
 	hostId: string;
@@ -8,7 +8,12 @@ type FindResult = {
 };
 let findResult: FindResult = { hostId: "host-1", workspace: undefined };
 mock.module("../../../lib/host-workspaces", () => ({
-	findWorkspaceOnHost: async () => findResult,
+	resolveWorkspaceTarget: async () => {
+		if (!findResult.workspace) {
+			throw new Error(`Workspace not found on host ${findResult.hostId}`);
+		}
+		return { ...findResult, target: {} };
+	},
 }));
 
 const { default: getCommand } = await import("./command");

@@ -803,6 +803,7 @@ superset workspaces delete ws_a ws_b ws_c
 	]}
 	options={[
 		{ flag: "--host <id>", description: "Host the workspace lives on (default: this machine)." },
+		{ flag: "--cloud", description: "The workspace is a cloud workspace (see `workspaces list --cloud`). Exclusive with --host." },
 		{ flag: "--field <name>", description: "Print a single field's raw value (e.g. name, branch, worktreePath). Alias: -f." },
 	]}
 	output={`{
@@ -863,6 +864,7 @@ superset workspaces update ws_… --clear-task
 	]}
 	options={[
 		{ flag: "--host <id>", description: "Host the workspace lives on (default: this machine)." },
+		{ flag: "--cloud", description: "The workspace is a cloud workspace (see `workspaces list --cloud`). Exclusive with --host." },
 		{ flag: "--print", description: "Print the deep link instead of opening the desktop app." },
 	]}
 	output={`{
@@ -957,6 +959,7 @@ superset agents list --host host_…
 	options={[
 		{ flag: "--workspace <id>", required: true, description: "Workspace UUID to create the agent session in." },
 		{ flag: "--host <id>", description: "Host the workspace lives on (default: this machine)." },
+		{ flag: "--cloud", description: "The workspace is a cloud workspace (see `workspaces list --cloud`). Exclusive with --host." },
 		{ flag: "--agent <preset|uuid|superset>", required: true, description: "Agent preset id (e.g. `claude`, `codex`), HostAgentConfig instance UUID, or `superset`." },
 		{ flag: "--prompt <text>", description: "Prompt sent to the agent. Required unless `--resume-session` is set." },
 		{ flag: "--resume-session <id>", description: "Agent session id of a previous run to restore instead of starting fresh (e.g. `claude --resume <id>`). Fails for agents without an id-based resume." },
@@ -1023,6 +1026,7 @@ a one-off command in a worktree or to open an interactive shell.
 	options={[
 		{ flag: "--workspace <id>", required: true, description: "Workspace UUID to create the terminal in." },
 		{ flag: "--host <id>", description: "Host the workspace lives on (default: this machine)." },
+		{ flag: "--cloud", description: "The workspace is a cloud workspace (see `workspaces list --cloud`). Exclusive with --host." },
 		{ flag: "--command <cmd>", description: "Shell command to run in the terminal. Omit to open an interactive shell." },
 		{ flag: "--cwd <path>", description: "Working directory for the terminal. Defaults to the worktree." },
 	]}
@@ -1045,6 +1049,7 @@ superset terminals create --workspace ws_…
 	options={[
 		{ flag: "--workspace <id>", required: true, description: "Workspace UUID." },
 		{ flag: "--host <id>", description: "Host the workspace lives on (default: this machine)." },
+		{ flag: "--cloud", description: "The workspace is a cloud workspace (see `workspaces list --cloud`). Exclusive with --host." },
 	]}
 	output={`{
   sessions: Array<TerminalSession>;
@@ -1060,6 +1065,7 @@ PTY exists, not that an agent inside it is working or idle.
 		{ flag: "--workspace <id>", required: true, description: "Workspace UUID." },
 		{ flag: "--terminal <id>", required: true, description: "Terminal session ID." },
 		{ flag: "--host <id>", description: "Host the workspace lives on (default: this machine)." },
+		{ flag: "--cloud", description: "The workspace is a cloud workspace (see `workspaces list --cloud`). Exclusive with --host." },
 		{ flag: "--max-lines <n>", description: "Limit how many trailing lines to return." },
 	]}
 	output={`{
@@ -1084,6 +1090,7 @@ superset terminals read --workspace ws_… --terminal term_… --max-lines 240
 		{ flag: "--text <string>", required: true, description: "Text to deliver to the terminal." },
 		{ flag: "--no-submit", description: "Stage the text without pressing Enter." },
 		{ flag: "--host <id>", description: "Host the workspace lives on (default: this machine)." },
+		{ flag: "--cloud", description: "The workspace is a cloud workspace (see `workspaces list --cloud`). Exclusive with --host." },
 	]}
 >
 Send a follow-up message to a terminal already running in a workspace, e.g. to
@@ -1096,6 +1103,7 @@ give an agent new instructions mid-session.
 		{ flag: "--workspace <id>", required: true, description: "Workspace UUID." },
 		{ flag: "--terminal <id>", required: true, description: "Terminal session ID." },
 		{ flag: "--host <id>", description: "Host the workspace lives on (default: this machine)." },
+		{ flag: "--cloud", description: "The workspace is a cloud workspace (see `workspaces list --cloud`). Exclusive with --host." },
 	]}
 >
 Close (dispose) a terminal running in a workspace. This ends the session.

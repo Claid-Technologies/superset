@@ -1,6 +1,6 @@
-import { CLIError, positional, string } from "@superset/cli-framework";
+import { boolean, CLIError, positional, string } from "@superset/cli-framework";
 import { command } from "../../../lib/command";
-import { findWorkspaceOnHost } from "../../../lib/host-workspaces";
+import { resolveWorkspaceTarget } from "../../../lib/host-workspaces";
 
 export default command({
 	description: "Show details for a single workspace by id",
@@ -9,6 +9,7 @@ export default command({
 	],
 	options: {
 		host: string().desc("Host the workspace lives on (default: this machine)"),
+		cloud: boolean().desc("The workspace is a cloud workspace"),
 		field: string()
 			.alias("f")
 			.desc(
@@ -32,13 +33,14 @@ export default command({
 
 		// The row carries its host-served project name; the host id is
 		// enriched with its cloud name for display only.
-		const [{ hostId, workspace }, hosts] = await Promise.all([
-			findWorkspaceOnHost(
+		const [{ workspace }, hosts] = await Promise.all([
+			resolveWorkspaceTarget(
 				{
 					organizationId,
 					userJwt: ctx.bearer,
 					api: ctx.api,
 					hostId: options.host ?? undefined,
+					cloud: options.cloud ?? false,
 				},
 				id,
 			),
@@ -46,12 +48,6 @@ export default command({
 				.query({ organizationId })
 				.catch(() => [] as Array<{ id: string; name: string }>),
 		]);
-		if (!workspace) {
-			throw new CLIError(
-				`Workspace not found on host ${hostId}: ${id}`,
-				"Pass --host <id> if it lives on another machine. List with: superset workspaces list",
-			);
-		}
 
 		const projectName = workspace.projectName ?? workspace.projectId;
 		const hostName =

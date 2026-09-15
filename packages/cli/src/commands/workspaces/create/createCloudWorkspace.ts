@@ -57,7 +57,7 @@ export async function createCloudWorkspace(args: {
 		if (value !== undefined) {
 			throw new CLIError(
 				`${flag} does not apply to --cloud`,
-				"A cloud sandbox clones the repository itself — it has no project, worktree or host to target",
+				"A cloud workspace clones its environment's repositories itself — it has no project, worktree or host to target",
 			);
 		}
 	}

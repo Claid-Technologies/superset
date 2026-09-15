@@ -30,7 +30,6 @@ import {
 	loadRepositories,
 	mintSandboxGateAccess,
 	primaryRepository,
-	RepositoryError,
 	recordWorkspaceRepositories,
 	SandboxNotReadyError,
 	SandboxUnavailableError,
@@ -169,8 +168,6 @@ export const cloudWorkspaceRouter = {
 				/** Omitted = the repo's default branch, resolved here — a client
 				 * whose branch query hadn't answered must not guess "main". */
 				branch: z.string().min(1).max(300).optional(),
-				/** Only for an environment without repositories of its own. */
-				repositoryIds: z.array(z.string().uuid()).min(1).max(20).optional(),
 				environmentId: z.string().uuid(),
 				/**
 				 * A built-in agent to launch on first boot with `prompt`. Absent
@@ -216,30 +213,16 @@ export const cloudWorkspaceRouter = {
 				});
 			}
 
-			// An environment with repositories fixes them; the shared image
-			// environment takes the caller's. Either way one installation.
-			let repositories = await environmentRepositoryRows(environment.id);
+			// A workspace is started from an environment, and the environment's
+			// repositories are its checkouts.
+			const repositories = await environmentRepositoryRows(environment.id);
 			if (repositories.length === 0) {
-				if (!input.repositoryIds?.length) {
-					throw userError({
-						code: "BAD_REQUEST",
-						message: "Pick at least one repository for this workspace",
-						i18nKey: "serverError.cloudWorkspace.repositoryRequired",
-					});
-				}
-				try {
-					repositories = await loadRepositories({
-						organizationId: input.organizationId,
-						repositoryIds: input.repositoryIds,
-					});
-				} catch (error) {
-					if (!(error instanceof RepositoryError)) throw error;
-					throw userError({
-						code: "BAD_REQUEST",
-						message: error.message,
-						i18nKey: "serverError.cloudWorkspace.repositoryNotConnected",
-					});
-				}
+				throw userError({
+					code: "BAD_REQUEST",
+					message:
+						"This environment has no repositories. Create an environment with repositories in Settings, then start the workspace from it",
+					i18nKey: "serverError.cloudWorkspace.environmentHasNoRepositories",
+				});
 			}
 			const primary = primaryRepository(
 				repositories,
