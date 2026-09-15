@@ -320,10 +320,21 @@
     border: 1px solid var(--line);
     border-radius: 18px;
     padding: 24px;
-    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px;
-    max-width: 760px;
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px;
   }
+  @media (max-width: 900px) { .bpane { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (max-width: 590px) { .bpane { grid-template-columns: minmax(0, 1fr); padding: 16px; gap: 22px; } }
+
+  .demo-stage { position: relative; }
+  .bcard.hovering { border-color: #4a4d55; }
+  .democursor {
+    position: absolute; z-index: 4; width: 20px; height: 20px;
+    right: 16px; bottom: -12px;
+    transition: transform 600ms cubic-bezier(0.3, 0.7, 0.3, 1);
+    pointer-events: none;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.55));
+  }
+  .democursor.in { transform: translate(-110px, -140px); }
   .bp-label { margin-bottom: 12px; color: #9b9da5; font-size: 12px; font-weight: 500; line-height: 1.5; }
   .bcard {
     position: relative; min-width: 0;
@@ -740,6 +751,42 @@
         </div>
       </article>
     </div>
+    <div id="hoverdemo">
+      <p class="bp-label">Behavior — enters, waits 180ms, opens in 150ms</p>
+      <div class="demo-stage">
+        <article class="bcard">
+          <div class="bmedia">
+            <div class="bdoc">
+              <div class="bdoc-chrome"><span></span><span></span><span></span></div>
+              <div class="bdoc-body">
+                <div class="bdoc-eyebrow">Support</div>
+                <div class="bdoc-title">Reply queue</div>
+                <div class="bdoc-toolbar"><span>All conversations</span><span>Assigned to me</span></div>
+                <div class="bdoc-row"><span class="bdoc-dot"></span>Workspace invitation<span class="bdoc-time">12m</span></div>
+                <div class="bdoc-row"><span class="bdoc-dot"></span>SEMA delivery issue<span class="bdoc-time">24m</span></div>
+                <div class="bdoc-row"><span class="bdoc-dot"></span>Login link expired<span class="bdoc-time">38m</span></div>
+              </div>
+            </div>
+            <div class="bubble">
+              <div class="bhead"><span class="bav">S</span><span class="bwho">Satya</span><span class="bwhen">2h ago</span></div>
+              <div class="bcopy">Can we split the SEMA soft bounce cases into their own queue?</div>
+            </div>
+          </div>
+          <div class="bfoot">
+            <div class="btrow">
+              <span class="btitle">Support reply queue</span>
+              <span class="bcount">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>5
+              </span>
+            </div>
+            <div class="bmeta">Kiet<span aria-hidden="true">&middot;</span>Edited 18s ago</div>
+          </div>
+        </article>
+        <svg class="democursor" viewBox="0 0 20 20" aria-hidden="true">
+          <path d="M4.5 2.2 L4.5 16.6 L8.2 13.1 L10.6 18.3 L13 17.2 L10.7 12.1 L15.7 12.1 Z" fill="#fff" stroke="#111" stroke-width="1.1" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </div>
   </div>
 
   <div class="rows">
@@ -827,6 +874,50 @@
       windowEl.dataset.hover = b.dataset.hs;
     });
   });
+
+  (function () {
+    var demo = document.getElementById("hoverdemo");
+    if (!demo) return;
+    var card = demo.querySelector(".bcard");
+    var peek = demo.querySelector(".bubble");
+    var count = demo.querySelector(".bcount");
+    var cursor = demo.querySelector(".democursor");
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      peek.classList.add("shown");
+      count.classList.add("open");
+      cursor.remove();
+      return;
+    }
+    var timers = [];
+    var running = false;
+    function later(fn, ms) { timers.push(setTimeout(fn, ms)); }
+    function reset() {
+      timers.forEach(clearTimeout);
+      timers = [];
+      cursor.classList.remove("in");
+      card.classList.remove("hovering");
+      peek.classList.remove("shown");
+      count.classList.remove("open");
+    }
+    function cycle() {
+      if (!running) return;
+      cursor.classList.add("in");
+      later(function () { card.classList.add("hovering"); }, 600);
+      later(function () { peek.classList.add("shown"); count.classList.add("open"); }, 780);
+      later(function () { cursor.classList.remove("in"); }, 2700);
+      later(function () {
+        card.classList.remove("hovering");
+        peek.classList.remove("shown");
+        count.classList.remove("open");
+      }, 3250);
+      later(cycle, 4400);
+    }
+    new IntersectionObserver(function (entries) {
+      var visible = entries.some(function (entry) { return entry.isIntersecting; });
+      if (visible && !running) { running = true; cycle(); }
+      else if (!visible && running) { running = false; reset(); }
+    }, { threshold: 0.4 }).observe(demo);
+  })();
 </script>
 </body>
 </html>
