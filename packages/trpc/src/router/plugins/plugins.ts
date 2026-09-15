@@ -1,7 +1,6 @@
 import { db } from "@superset/db/client";
 import {
 	connections,
-	members,
 	pluginInstalls,
 	pluginMarketplaces,
 } from "@superset/db/schema";
@@ -10,52 +9,24 @@ import {
 	firstPartyManifest,
 } from "@superset/shared/plugins";
 import type { TRPCError, TRPCRouterRecord } from "@trpc/server";
-import { and, asc, desc, eq, isNull } from "drizzle-orm";
+import { and, asc, eq, isNull } from "drizzle-orm";
 import { z } from "zod";
 import { userError } from "../../i18n-error";
-import {
-	activeConnection,
-	connectionSecrets,
-	ensureFreshConnection,
-} from "../../lib/connectors";
 import { createTRPCRouter, protectedProcedure } from "../../trpc";
 import {
 	AmbiguousPluginError,
-	bundledSource,
 	installedPlugin,
 	installRecord,
 } from "./connections";
-import { callTool, listTools, PluginDispatchError } from "./dispatch";
 import {
 	type PluginManifest,
 	pluginConnector,
 	pluginNeedsConnection,
 	supersetExtension,
 } from "./manifest";
+import { forgetUpstreamTools } from "./proxy";
 
 const FIRST_PARTY = "superset";
-
-function dispatchError(error: unknown): never {
-	if (error instanceof PluginDispatchError) {
-		const code =
-			error.status === 401
-				? "UNAUTHORIZED"
-				: error.status === 404
-					? "NOT_FOUND"
-					: error.status === 501
-						? "NOT_IMPLEMENTED"
-						: error.status === 400
-							? "BAD_REQUEST"
-							: "BAD_GATEWAY";
-		throw userError({
-			code,
-			message: error.message,
-			i18nKey: "serverError.plugins.dispatchFailed",
-			params: { reason: error.message },
-		});
-	}
-	throw error;
-}
 
 function ambiguous(error: unknown): never {
 	if (error instanceof AmbiguousPluginError) {
@@ -76,68 +47,6 @@ function notInstalled(name: string): TRPCError {
 		i18nKey: "serverError.plugins.notInstalled",
 		params: { plugin: name },
 	});
-}
-
-async function dispatchOrganizationId(
-	userId: string,
-	activeOrganizationId: string | null,
-): Promise<string | null> {
-	if (activeOrganizationId) return activeOrganizationId;
-	const membership = await db.query.members.findFirst({
-		where: eq(members.userId, userId),
-		orderBy: desc(members.createdAt),
-		columns: { organizationId: true },
-	});
-	return membership?.organizationId ?? null;
-}
-
-async function connectionContext(
-	userId: string,
-	pluginName: string,
-	activeOrganizationId: string | null,
-) {
-	const install = await installedPlugin(userId, pluginName).catch(ambiguous);
-	if (!install) throw notInstalled(pluginName);
-
-	const slug = pluginConnector(install.manifest);
-	const source = await bundledSource(userId, install.marketplace);
-	if (!slug) return { install, source, scope: {}, authMethod: null };
-
-	const organizationId = await dispatchOrganizationId(
-		userId,
-		activeOrganizationId,
-	);
-	const row = await activeConnection(userId, slug, organizationId);
-	if (!row) {
-		throw userError({
-			code: "UNAUTHORIZED",
-			message: `Connect ${slug} before using "${pluginName}"`,
-			i18nKey: "serverError.plugins.dispatchFailed",
-			params: { reason: `${slug} is not connected` },
-		});
-	}
-
-	try {
-		const fresh = await ensureFreshConnection(row);
-		const secrets = await connectionSecrets(fresh);
-		return {
-			install,
-			source,
-			authMethod: fresh.authMethod,
-			scope: {
-				config: { access_token: secrets.accessToken, ...secrets.config },
-			},
-		};
-	} catch (error) {
-		throw userError({
-			code: "UNAUTHORIZED",
-			message: error instanceof Error ? error.message : String(error),
-			i18nKey: "serverError.plugins.dispatchFailed",
-			params: {
-				reason: error instanceof Error ? error.message : String(error),
-			},
-		});
-	}
 }
 
 function describe(
@@ -309,15 +218,12 @@ const connectionsRouter = {
 	list: protectedProcedure
 		.input(z.object({ plugin: z.string().min(1).optional() }).optional())
 		.query(async ({ ctx, input }) => {
-			const wanted = input?.plugin
-				? pluginConnector(
-						(
-							await installedPlugin(ctx.session.user.id, input.plugin).catch(
-								() => null,
-							)
-						)?.manifest as PluginManifest,
+			const install = input?.plugin
+				? await installedPlugin(ctx.session.user.id, input.plugin).catch(
+						() => null,
 					)
-				: undefined;
+				: null;
+			const wanted = install ? pluginConnector(install.manifest) : undefined;
 
 			const rows = await db
 				.select({
@@ -370,59 +276,8 @@ const connectionsRouter = {
 					i18nKey: "serverError.plugins.connectionNotFound",
 				});
 			}
+			forgetUpstreamTools(row.id);
 			return { disconnected: input.connectionId };
-		}),
-} satisfies TRPCRouterRecord;
-
-const toolsRouter = {
-	list: protectedProcedure
-		.input(z.object({ plugin: z.string().min(1) }))
-		.query(async ({ ctx, input }) => {
-			const { install, source, scope, authMethod } = await connectionContext(
-				ctx.session.user.id,
-				input.plugin,
-				ctx.activeOrganizationId,
-			);
-			try {
-				const tools = await listTools(
-					install.manifest,
-					scope,
-					authMethod,
-					source,
-				);
-				return { plugin: input.plugin, tools };
-			} catch (error) {
-				dispatchError(error);
-			}
-		}),
-
-	call: protectedProcedure
-		.input(
-			z.object({
-				plugin: z.string().min(1),
-				tool: z.string().min(1),
-				arguments: z.record(z.string(), z.unknown()).default({}),
-			}),
-		)
-		.mutation(async ({ ctx, input }) => {
-			const { install, source, scope, authMethod } = await connectionContext(
-				ctx.session.user.id,
-				input.plugin,
-				ctx.activeOrganizationId,
-			);
-			try {
-				const result = await callTool(
-					install.manifest,
-					scope,
-					input.tool,
-					input.arguments,
-					authMethod,
-					source,
-				);
-				return { result };
-			} catch (error) {
-				dispatchError(error);
-			}
 		}),
 } satisfies TRPCRouterRecord;
 
@@ -684,6 +539,8 @@ export const pluginsRouter = createTRPCRouter({
 							.returning({ id: connections.id })
 					: [];
 
+			for (const row of disconnected) forgetUpstreamTools(row.id);
+
 			return {
 				uninstalled: input.name,
 				marketplace,
@@ -693,5 +550,4 @@ export const pluginsRouter = createTRPCRouter({
 
 	marketplaces: marketplacesRouter,
 	connections: connectionsRouter,
-	tools: toolsRouter,
 });

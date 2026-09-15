@@ -14,43 +14,23 @@ export interface PluginBind {
 	env?: Record<string, string>;
 }
 
-export interface PluginServer {
-	path?: string;
-	integrity?: string;
-	ref?: string;
-}
-
 export interface PluginConnectorRef {
 	readonly slug: string;
-	readonly required?: boolean;
 }
 
 export interface SupersetExtension {
 	interface?: { displayName: string; category?: string; icon?: string };
-	connectors?: readonly PluginConnectorRef[];
+	connector?: PluginConnectorRef;
 	bind?: PluginBind;
 	mcp?: PluginMcp;
-	server?: PluginServer;
 }
 
-export function pluginConnectors(
-	manifest: PluginManifest,
-): readonly PluginConnectorRef[] {
-	return supersetExtension(manifest)?.connectors ?? [];
-}
-
-/**
- * The one connection a dispatch runs under. Plugins declaring several
- * connectors still resolve to a single credential today, so the required one
- * wins and declaration order breaks the tie.
- */
 export function pluginConnector(manifest: PluginManifest): string | undefined {
-	const refs = pluginConnectors(manifest);
-	return (refs.find((ref) => ref.required) ?? refs[0])?.slug;
+	return supersetExtension(manifest)?.connector?.slug;
 }
 
 export function pluginNeedsConnection(manifest: PluginManifest): boolean {
-	return pluginConnectors(manifest).length > 0;
+	return pluginConnector(manifest) !== undefined;
 }
 
 export interface PluginManifest {
@@ -182,10 +162,11 @@ export async function credentialFetch(
 		);
 	}
 
+	const deadline = AbortSignal.timeout(timeoutMs);
 	const response = await fetch(url, {
 		...init,
 		redirect: "manual",
-		signal: init.signal ?? AbortSignal.timeout(timeoutMs),
+		signal: init.signal ? AbortSignal.any([init.signal, deadline]) : deadline,
 	});
 	if (response.status >= 300 && response.status < 400) {
 		throw new Error(

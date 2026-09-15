@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { stringList } from "./api";
 
 export interface Attachment {
@@ -64,7 +65,7 @@ function wrap(value: string): string {
 }
 
 function boundary(): string {
-	return `=_superset_${globalThis.crypto.randomUUID().replace(/-/g, "")}`;
+	return `=_superset_${randomUUID().replace(/-/g, "")}`;
 }
 
 function part(contentType: string, content: string, extra: string[] = []) {

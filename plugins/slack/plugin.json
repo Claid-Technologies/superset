@@ -18,12 +18,9 @@
 				"category": "Communication",
 				"icon": "slack"
 			},
-			"connectors": [
-				{
-					"slug": "slack",
-					"required": true
-				}
-			]
+			"connector": {
+				"slug": "slack"
+			}
 		}
 	}
 }

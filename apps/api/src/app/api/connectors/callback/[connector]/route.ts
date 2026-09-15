@@ -53,6 +53,15 @@ export async function GET(
 	});
 	if (callback instanceof Response) return callback;
 
+	// The signed state proves who asked, not who is answering. Without this the
+	// authorization code a victim approves can be paired with a state minted by
+	// an attacker, binding the victim's account to the attacker's connection.
+	if (method.type !== "app_install") {
+		const query = new URL(request.url).searchParams.get("state");
+		if (!query || query !== stateCookie(request))
+			return web("?error=invalid_state");
+	}
+
 	try {
 		const rawState =
 			method.type === "app_install"

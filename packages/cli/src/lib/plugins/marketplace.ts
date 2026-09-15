@@ -51,12 +51,11 @@ export interface PluginBind {
 
 export interface PluginConnectorRef {
 	slug: string;
-	required?: boolean;
 }
 
 export interface SupersetExtension {
 	interface?: { displayName: string; category?: string; icon?: string };
-	connectors?: PluginConnectorRef[];
+	connector?: PluginConnectorRef;
 	bind?: PluginBind;
 	mcp?: PluginMcp;
 }
@@ -74,17 +73,14 @@ export function supersetExtension(
 	return manifest.extensions?.[SUPERSET_EXTENSION];
 }
 
-/** Mirrors `pluginConnector` in packages/trpc: required first, else declared order. */
 export function pluginConnector(manifest: PluginManifest): string | undefined {
-	const refs = supersetExtension(manifest)?.connectors ?? [];
-	return (refs.find((ref) => ref.required) ?? refs[0])?.slug;
+	return supersetExtension(manifest)?.connector?.slug;
 }
 
 export interface ResolvedPlugin {
 	entry: MarketplaceEntry;
 	dir: string;
 	manifest: PluginManifest;
-	hasServerSource: boolean;
 	hasSkills: boolean;
 	hasRemoteServer: boolean;
 }
@@ -170,7 +166,6 @@ export function resolvePlugin(
 		entry,
 		dir,
 		manifest,
-		hasServerSource: fs.existsSync(path.join(dir, "src", "index.ts")),
 		hasSkills: fs.existsSync(path.join(dir, "skills")),
 		hasRemoteServer: Boolean(supersetExtension(manifest)?.mcp),
 	};

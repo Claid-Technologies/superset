@@ -1,5 +1,5 @@
 {
-  "id": "65ec6c81-e9cf-4d86-89df-ef2760086253",
+  "id": "f071f611-410a-4feb-9ebf-4d89abe7bef0",
   "prevId": "76f117a5-f0c0-408f-a65d-475d36bc87f8",
   "version": "7",
   "dialect": "postgresql",
@@ -6399,6 +6399,28 @@
             }
           ],
           "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "connections_user_connector_idx": {
+          "name": "connections_user_connector_idx",
+          "columns": [
+            {
+              "expression": "connected_by_user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "connector",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "where": "\"connections\".\"disconnected_at\" IS NULL",
           "concurrently": false,
           "method": "btree",
           "with": {}

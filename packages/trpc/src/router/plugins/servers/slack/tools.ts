@@ -124,7 +124,7 @@ const USER = { type: "string", description: "User ID, e.g. U0123ABC." };
 function tool(
 	name: string,
 	description: string,
-	properties: Record<string, unknown>,
+	properties: Record<string, object>,
 	required: string[],
 	readOnly: boolean,
 	destructive = false,

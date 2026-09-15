@@ -4,7 +4,7 @@ import type { ToolDefinition } from "./types";
 function tool(
 	name: string,
 	description: string,
-	properties: Record<string, unknown>,
+	properties: Record<string, object>,
 	required: string[],
 	readOnly: boolean,
 	destructive = false,

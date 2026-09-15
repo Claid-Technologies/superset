@@ -48,13 +48,14 @@ export async function GET(
 		);
 
 	let target: string;
+	let state: string;
 	try {
 		const redirect = redirectUriFor(slug);
 		const wantsPkce =
 			method.type === "oauth2" &&
 			(await resolveEndpoints(slug, method, redirect)).pkce;
 		const codeVerifier = wantsPkce ? createCodeVerifier() : null;
-		const state = codeVerifier
+		state = codeVerifier
 			? createSignedState({
 					organizationId: member.organizationId,
 					userId: member.userId,
@@ -77,14 +78,12 @@ export async function GET(
 		throw error;
 	}
 
-	if (method.type !== "app_install") return Response.redirect(target);
-
 	const secure = env.NEXT_PUBLIC_API_URL.startsWith("https") ? " Secure;" : "";
 	return new Response(null, {
 		status: 302,
 		headers: {
 			Location: target,
-			"Set-Cookie": `${STATE_COOKIE}=${member.state}; HttpOnly;${secure} SameSite=Lax; Path=/api/connectors; Max-Age=600`,
+			"Set-Cookie": `${STATE_COOKIE}=${state}; HttpOnly;${secure} SameSite=Lax; Path=/api/connectors; Max-Age=600`,
 		},
 	});
 }

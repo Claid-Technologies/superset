@@ -345,6 +345,13 @@ export const connections = pgTable(
 			)
 			.where(sql`${table.ownerKind} = 'user'`),
 		index("connections_org_idx").on(table.organizationId),
+		// Every plugin surface asks "what has this person connected" — the
+		// plugins list, the connections list, and the uninstall sweep — and the
+		// two unique indexes above lead with organization_id, so none of them
+		// can serve it. The table this replaced had plugin_connections_user_plugin_idx.
+		index("connections_user_connector_idx")
+			.on(table.connectedByUserId, table.connector)
+			.where(sql`${table.disconnectedAt} IS NULL`),
 		index("connections_external_account_idx").on(
 			table.connector,
 			table.externalAccountId,

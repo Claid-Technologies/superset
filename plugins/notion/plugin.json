@@ -18,12 +18,9 @@
 				"category": "Productivity",
 				"icon": "notion"
 			},
-			"connectors": [
-				{
-					"slug": "notion",
-					"required": true
-				}
-			],
+			"connector": {
+				"slug": "notion"
+			},
 			"mcp": {
 				"type": "streamable-http",
 				"url": "https://mcp.notion.com/mcp"

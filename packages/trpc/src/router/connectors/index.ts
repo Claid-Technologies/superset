@@ -17,6 +17,7 @@ import {
 } from "../../lib/connectors";
 import { protectedProcedure } from "../../trpc";
 import { verifyOrgAdmin, verifyOrgMembership } from "../integration/utils";
+import { forgetUpstreamTools } from "../plugins/proxy";
 
 function methodSummary(method: ConnectorMethod) {
 	return {
@@ -194,6 +195,7 @@ export const connectorsRouter = {
 
 			if (!row)
 				throw new TRPCError({ code: "NOT_FOUND", message: "No connection" });
+			forgetUpstreamTools(row.id);
 			return { disconnected: row.id };
 		}),
 } satisfies TRPCRouterRecord;

@@ -49,4 +49,5 @@ CREATE UNIQUE INDEX "plugin_oauth_clients_issuer_redirect_unique" ON "plugin_oau
 CREATE UNIQUE INDEX "connections_org_connector_unique" ON "connections" USING btree ("organization_id","connector") WHERE "connections"."owner_kind" = 'org';--> statement-breakpoint
 CREATE UNIQUE INDEX "connections_user_connector_unique" ON "connections" USING btree ("organization_id","connector","connected_by_user_id","external_account_id") WHERE "connections"."owner_kind" = 'user';--> statement-breakpoint
 CREATE INDEX "connections_org_idx" ON "connections" USING btree ("organization_id");--> statement-breakpoint
+CREATE INDEX "connections_user_connector_idx" ON "connections" USING btree ("connected_by_user_id","connector") WHERE "connections"."disconnected_at" IS NULL;--> statement-breakpoint
 CREATE INDEX "connections_external_account_idx" ON "connections" USING btree ("connector","external_account_id");

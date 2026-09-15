@@ -13,9 +13,9 @@ export default command({
 	options: {
 		kind: string()
 			.required()
-			.enum("url", "server", "none")
+			.enum("url", "none")
 			.desc(
-				"Where tools come from: url (remote MCP server), server (custom MCP you write), none (skills only)",
+				"Where tools come from: url (remote MCP server), none (skills only)",
 			),
 		url: string().desc("MCP server URL, required when --kind url"),
 		skills: boolean().desc("Scaffold a skills/ folder with a starter skill"),
@@ -51,14 +51,9 @@ export default command({
 			connector: options.connector as string | undefined,
 		});
 
-		const next =
-			options.kind === "server"
-				? `Edit ${result.dir}/src/tools.ts, then run: superset plugins publish ${name}`
-				: `Edit ${result.dir}/plugin.json, then run: superset plugins publish ${name}`;
-
 		return {
 			data: result.files.map((file) => ({ file: `${result.dir}/${file}` })),
-			message: `Created ${name} (${result.files.length} files) and added it to ${ctx.marketplace.name}. ${next}`,
+			message: `Created ${name} (${result.files.length} files) and added it to ${ctx.marketplace.name}. Edit ${result.dir}/plugin.json, then run: superset plugins publish ${name}`,
 		};
 	},
 });

@@ -1,6 +1,7 @@
 import { string, table } from "@superset/cli-framework";
 import { command } from "../../../lib/command";
 import { resolvePluginName } from "../../../lib/plugins/connection-ref";
+import { connectPluginMcp } from "../../../lib/plugins/mcp-client";
 
 export default command({
 	description: "List the tools a connected plugin exposes",
@@ -24,17 +25,19 @@ export default command({
 			pluginId: options.pluginId as string | undefined,
 		});
 
-		const { plugin, tools } = await ctx.api.plugins.tools.list.query({
-			plugin: pluginName,
-		});
-
-		return {
-			data: tools.map((tool) => ({
-				plugin,
-				tool: tool.name,
-				description: tool.description ?? "",
-			})),
-			message: `${tools.length} tool${tools.length === 1 ? "" : "s"} on ${plugin}.`,
-		};
+		const { client, ref } = await connectPluginMcp(pluginName, ctx.bearer);
+		try {
+			const { tools } = await client.listTools();
+			return {
+				data: tools.map((tool) => ({
+					plugin: ref.plugin,
+					tool: tool.name,
+					description: tool.description ?? "",
+				})),
+				message: `${tools.length} tool${tools.length === 1 ? "" : "s"} on ${ref.plugin}.`,
+			};
+		} finally {
+			await client.close();
+		}
 	},
 });

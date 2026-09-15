@@ -6,16 +6,19 @@ and are listed in `.agent-marketplace.json` at the repo root.
 
 ## What is source and what is generated
 
-Only three things in a plugin directory are hand-written:
+Only two things in a plugin directory are hand-written:
 
 | Path | Owner |
 | --- | --- |
 | `plugins/<name>/plugin.json` | you |
 | `plugins/<name>/skills/*/SKILL.md` | you |
-| `plugins/<name>/src/index.ts` | you (optional MCP server) |
-| `plugins/<name>/server/` | `superset plugins build` (committed: it is what a release ships) |
 | `.agent-marketplace.json` | `superset plugins create` / `publish` |
 | `packages/shared/src/plugins/manifests.generated.ts` | `superset plugins publish` |
+
+A plugin ships no code. Tools come either from the vendor's own MCP server, which Superset proxies
+to, or from a server Superset hosts itself for the handful of plugins whose vendor publishes none
+(`SUPERSET_HOSTED_PLUGINS` in `packages/shared/src/plugins/index.ts`, implemented under
+`packages/trpc/src/router/plugins/servers/`). Hosted tools ship on an API deploy, not a plugin tag.
 
 `manifests.generated.ts` is generated; editing it by hand is the one way to get a marketplace that
 disagrees with itself. It exists because the API must resolve `token_url` and the proxy target
@@ -23,9 +26,8 @@ disagrees with itself. It exists because the API must resolve `token_url` and th
 exfiltration path.
 
 **A release is a git tag, not a folder.** `<name>@<version>` on the marketplace repo is the version:
-`plugins install` fetches that tag and takes the plugin's tree at it, and the generated manifest
-pins a bundled server by `path` + `ref` + `integrity`, so the bytes a host downloads belong to the
-version rather than to whatever the branch holds now. A `path:` marketplace has no releases in it
+`plugins install` fetches that tag and takes the plugin's skills at it, so what a host installs
+belongs to the version rather than to whatever the branch holds now. A `path:` marketplace has no releases in it
 and installs the working tree, which is what makes local authoring work.
 
 ## Changing a plugin
@@ -61,8 +63,8 @@ that must not change under them.
 - `bind` — how the connection's credential is attached to outbound calls.
   `${config.access_token}` and `${inputs.<name>}` placeholders are resolved server-side by
   `packages/trpc/src/router/plugins/manifest.ts`.
-- `mcp` — a single remote server (`type: "streamable-http"`, `url`, optional `headers`), not a map:
-  a plugin serves tools from exactly one place. Omit it when the plugin ships a bundled server.
+- `mcp` — the vendor's own MCP server (`type: "streamable-http"`, `url`, optional `headers`), not a
+  map: a plugin serves tools from exactly one place. Omit it for a Superset-hosted plugin.
 
 The published JSON Schema at `https://superset.sh/schemas/plugin/1.0.0.json` is generated from
 `pluginManifestSchema` in `packages/shared/src/plugins/manifest-schema.ts`, and
@@ -86,12 +88,12 @@ authorization server's metadata, and then gets a client identity one of two ways
 
 Either way the flow is PKCE with a `resource` indicator, the authorization response's `iss` is
 checked against the discovered issuer before the code is redeemed (RFC 9207), and refresh happens
-before dispatch. This is what lets a hosted MCP server be installable without anyone registering an
+before a tool call. This is what lets a hosted MCP server be installable without anyone registering an
 OAuth app first.
 
 Credentials never reach the manifest, the renderer, or the agent's machine. They are sealed at rest
 by `packages/trpc/src/lib/secret-box.ts` under `SECRETS_ENCRYPTION_KEY` and attached by the proxy in
-`packages/trpc/src/router/plugins/dispatch.ts`, so a tool call goes out from the API, not from the
+`packages/trpc/src/router/plugins/proxy/`, so a tool call goes out from the API, not from the
 agent.
 
 ## Install state on a machine

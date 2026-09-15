@@ -1,5 +1,5 @@
+import { db } from "@superset/db/client";
 import { connections, type SelectConnection } from "@superset/db/schema";
-import { withConnectionLock } from "@superset/db/utils";
 import { and, eq, isNull } from "drizzle-orm";
 import {
 	decryptOptional,
@@ -27,6 +27,17 @@ function expiringSoon(expiresAt: Date | null, bufferSeconds: number): boolean {
 	return expiresAt.getTime() - Date.now() <= bufferSeconds * 1000;
 }
 
+function live(id: string) {
+	return and(eq(connections.id, id), isNull(connections.disconnectedAt));
+}
+
+async function readConnection(id: string): Promise<SelectConnection | null> {
+	const [row] = await db.select().from(connections).where(live(id)).limit(1);
+	return row ?? null;
+}
+
+const inFlight = new Map<string, Promise<SelectConnection>>();
+
 export async function ensureFreshConnection(
 	row: SelectConnection,
 ): Promise<SelectConnection> {
@@ -41,78 +52,109 @@ export async function ensureFreshConnection(
 		method.token_expiration_buffer ?? DEFAULT_EXPIRY_BUFFER_SECONDS;
 	if (!expiringSoon(row.tokenExpiresAt, buffer)) return row;
 
-	return withConnectionLock(row.id, async (tx) => {
-		const [current] = await tx
-			.select()
-			.from(connections)
-			.where(
-				and(eq(connections.id, row.id), isNull(connections.disconnectedAt)),
-			)
-			.limit(1);
-		if (!current) return row;
-		if (!expiringSoon(current.tokenExpiresAt, buffer)) return current;
+	// Concurrent requests for one connection nearly always land in the same
+	// process, so collapsing them here is what keeps the token endpoint from
+	// being asked the same question N times.
+	const pending = inFlight.get(row.id);
+	if (pending) return await pending;
 
-		const refreshToken = await decryptOptional(current.refreshToken);
-		if (!refreshToken)
-			throw new UnrefreshableConnectionError(current.connector);
-
-		const endpoints = await resolveEndpoints(
-			current.connector,
-			method,
-			redirectUriFor(current.connector),
-		);
-		const { clientId, clientSecret } = endpoints;
-
-		const body = new URLSearchParams({
-			grant_type: "refresh_token",
-			refresh_token: refreshToken,
-		});
-		const headers: Record<string, string> = {
-			"Content-Type": "application/x-www-form-urlencoded",
-			Accept: "application/json",
-		};
-		if (endpoints.authentication === "basic")
-			headers.Authorization = `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString("base64")}`;
-		else {
-			body.set("client_id", clientId);
-			if (clientSecret) body.set("client_secret", clientSecret);
-		}
-
-		const response = await credentialFetch(
-			endpoints.tokenEndpoint,
-			{ method: "POST", headers, body },
-			`Connector "${current.connector}" refresh`,
-		);
-		const payload = (await response.json()) as Record<string, unknown>;
-		if (!response.ok || typeof payload.access_token !== "string") {
-			if (endpoints.issuer && payload.error === "invalid_client")
-				await forgetClient(
-					endpoints.issuer,
-					redirectUriFor(current.connector),
-					clientId,
-				);
-			throw new UnrefreshableConnectionError(current.connector);
-		}
-
-		const expiresIn = payload.expires_in;
-		const [updated] = await tx
-			.update(connections)
-			.set({
-				accessToken: await encryptSecret(payload.access_token),
-				refreshToken:
-					typeof payload.refresh_token === "string"
-						? await encryptSecret(payload.refresh_token)
-						: await encryptOptional(refreshToken),
-				tokenExpiresAt:
-					typeof expiresIn === "number"
-						? new Date(Date.now() + expiresIn * 1000)
-						: null,
-			})
-			.where(eq(connections.id, current.id))
-			.returning();
-
-		return updated ?? current;
+	const load = refresh(row, buffer).finally(() => {
+		inFlight.delete(row.id);
 	});
+	inFlight.set(row.id, load);
+	return await load;
+}
+
+/**
+ * Deliberately not wrapped in a transaction. The token endpoint is a third
+ * party on the other side of the internet, and holding a pooled connection
+ * across that call means one slow identity provider drains the pool for every
+ * unrelated query in the process. Mutual exclusion comes from the in-flight map
+ * above within a process, and from the compare-and-swap below across them: a
+ * refresh that loses the race writes nothing and adopts the winner's row.
+ */
+async function refresh(
+	row: SelectConnection,
+	buffer: number,
+): Promise<SelectConnection> {
+	const current = await readConnection(row.id);
+	if (!current) return row;
+	if (!expiringSoon(current.tokenExpiresAt, buffer)) return current;
+
+	const refreshToken = await decryptOptional(current.refreshToken);
+	if (!refreshToken) throw new UnrefreshableConnectionError(current.connector);
+
+	const connector = requireConnector(current.connector);
+	const method = connectorMethod(
+		connector,
+		current.authMethod as never as undefined,
+	);
+	const endpoints = await resolveEndpoints(
+		current.connector,
+		method,
+		redirectUriFor(current.connector),
+	);
+	const { clientId, clientSecret } = endpoints;
+
+	const body = new URLSearchParams({
+		grant_type: "refresh_token",
+		refresh_token: refreshToken,
+	});
+	const headers: Record<string, string> = {
+		"Content-Type": "application/x-www-form-urlencoded",
+		Accept: "application/json",
+	};
+	if (endpoints.authentication === "basic")
+		headers.Authorization = `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString("base64")}`;
+	else {
+		body.set("client_id", clientId);
+		if (clientSecret) body.set("client_secret", clientSecret);
+	}
+
+	const response = await credentialFetch(
+		endpoints.tokenEndpoint,
+		{ method: "POST", headers, body },
+		`Connector "${current.connector}" refresh`,
+	);
+	const payload = (await response.json()) as Record<string, unknown>;
+	if (!response.ok || typeof payload.access_token !== "string") {
+		if (endpoints.issuer && payload.error === "invalid_client")
+			await forgetClient(
+				endpoints.issuer,
+				redirectUriFor(current.connector),
+				clientId,
+			);
+		throw new UnrefreshableConnectionError(current.connector);
+	}
+
+	const expiresIn = payload.expires_in;
+	const [updated] = await db
+		.update(connections)
+		.set({
+			accessToken: await encryptSecret(payload.access_token),
+			refreshToken:
+				typeof payload.refresh_token === "string"
+					? await encryptSecret(payload.refresh_token)
+					: await encryptOptional(refreshToken),
+			tokenExpiresAt:
+				typeof expiresIn === "number"
+					? new Date(Date.now() + expiresIn * 1000)
+					: null,
+		})
+		.where(
+			and(
+				live(current.id),
+				current.tokenExpiresAt
+					? eq(connections.tokenExpiresAt, current.tokenExpiresAt)
+					: isNull(connections.tokenExpiresAt),
+			),
+		)
+		.returning();
+	if (updated) return updated;
+
+	// Zero rows means another process refreshed between our read and our write.
+	// Its tokens are the live ones; ours are already superseded.
+	return (await readConnection(current.id)) ?? current;
 }
 
 export async function connectionAccessToken(

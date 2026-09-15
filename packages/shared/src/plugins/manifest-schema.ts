@@ -11,12 +11,6 @@ export const pluginConnectorRefSchema = z
 			.describe(
 				"A connector in the Superset registry. The connections system owns how the connection is obtained; a manifest only names which one it needs.",
 			),
-		required: z
-			.boolean()
-			.optional()
-			.describe(
-				"Whether the plugin is unusable without this connection. The first required connector is the one a dispatch runs under.",
-			),
 	})
 	.meta({ id: "PluginConnectorRef" });
 
@@ -36,17 +30,7 @@ const pluginMcpSchema = z
 		headers: z.record(z.string(), z.string()).optional(),
 	})
 	.describe(
-		"A single remote server, not a map: a plugin serves tools from exactly one place. Omit it when the plugin ships a bundled server instead. Streamable HTTP only — the legacy HTTP+SSE transport is not supported.",
-	);
-
-const pluginServerSchema = z
-	.object({
-		path: z.string().optional(),
-		integrity: z.string().optional(),
-		ref: z.string().optional(),
-	})
-	.describe(
-		"Where a host downloads a bundled server from, and what it must hash to. Written by `superset plugins publish`.",
+		"The vendor's own MCP server, which Superset dials with the connection's credential attached. Omit it when Superset hosts the plugin's tools itself — absence is the declaration, not a gap. Agents never receive this URL; they are pointed at the Superset endpoint that fronts it. Streamable HTTP only — the legacy HTTP+SSE transport is not supported.",
 	);
 
 export const supersetExtensionSchema = z
@@ -58,15 +42,13 @@ export const supersetExtensionSchema = z
 				icon: z.string().optional(),
 			})
 			.optional(),
-		connectors: z
-			.array(pluginConnectorRefSchema)
+		connector: pluginConnectorRefSchema
 			.optional()
 			.describe(
-				"Connections this plugin needs, by connector slug. A manifest carries no OAuth configuration of its own — no scopes, no client mode, no requires_env.",
+				"The one connection this plugin needs, by connector slug. Its credential is what a tool call runs under. A manifest carries no OAuth configuration of its own — no scopes, no client mode, no requires_env.",
 			),
 		bind: pluginBindSchema.optional(),
 		mcp: pluginMcpSchema.optional(),
-		server: pluginServerSchema.optional(),
 	})
 	.meta({ id: "SupersetExtension" });
 

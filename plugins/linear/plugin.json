@@ -18,12 +18,9 @@
 				"category": "Productivity",
 				"icon": "linear"
 			},
-			"connectors": [
-				{
-					"slug": "linear",
-					"required": true
-				}
-			],
+			"connector": {
+				"slug": "linear"
+			},
 			"mcp": {
 				"type": "streamable-http",
 				"url": "https://mcp.linear.app/mcp"

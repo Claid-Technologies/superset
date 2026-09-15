@@ -18,12 +18,9 @@
 				"category": "Communication",
 				"icon": "gmail"
 			},
-			"connectors": [
-				{
-					"slug": "google",
-					"required": true
-				}
-			]
+			"connector": {
+				"slug": "google"
+			}
 		}
 	}
 }

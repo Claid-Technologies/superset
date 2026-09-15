@@ -32,12 +32,9 @@ export const FIRST_PARTY_MANIFESTS = {
 					"category": "Developer tools",
 					"icon": "github"
 				},
-				"connectors": [
-					{
-						"slug": "github",
-						"required": true
-					}
-				],
+				"connector": {
+					"slug": "github"
+				},
 				"mcp": {
 					"type": "streamable-http",
 					"url": "https://api.githubcopilot.com/mcp/"
@@ -80,12 +77,9 @@ export const FIRST_PARTY_MANIFESTS = {
 					"category": "Productivity",
 					"icon": "linear"
 				},
-				"connectors": [
-					{
-						"slug": "linear",
-						"required": true
-					}
-				],
+				"connector": {
+					"slug": "linear"
+				},
 				"mcp": {
 					"type": "streamable-http",
 					"url": "https://mcp.linear.app/mcp"
@@ -133,12 +127,9 @@ export const FIRST_PARTY_MANIFESTS = {
 					"category": "Productivity",
 					"icon": "notion"
 				},
-				"connectors": [
-					{
-						"slug": "notion",
-						"required": true
-					}
-				],
+				"connector": {
+					"slug": "notion"
+				},
 				"mcp": {
 					"type": "streamable-http",
 					"url": "https://mcp.notion.com/mcp"
@@ -182,16 +173,8 @@ export const FIRST_PARTY_MANIFESTS = {
 					"category": "Communication",
 					"icon": "slack"
 				},
-				"connectors": [
-					{
-						"slug": "slack",
-						"required": true
-					}
-				],
-				"server": {
-					"path": "plugins/slack/server/index.mjs",
-					"integrity": "sha256-v6jbpX7Wl57RBS2IU1mk2s4qrnnYIf68AUF3GtV3gxw=",
-					"ref": "slack@1.2.3"
+				"connector": {
+					"slug": "slack"
 				}
 			}
 		},
@@ -223,16 +206,8 @@ export const FIRST_PARTY_MANIFESTS = {
 					"category": "Communication",
 					"icon": "gmail"
 				},
-				"connectors": [
-					{
-						"slug": "google",
-						"required": true
-					}
-				],
-				"server": {
-					"path": "plugins/gmail/server/index.mjs",
-					"integrity": "sha256-j3X7Hn0q6evz96JrEycg5e1BkbUVxZGJ2/IjwyDlkxc=",
-					"ref": "gmail@1.1.5"
+				"connector": {
+					"slug": "google"
 				}
 			}
 		},

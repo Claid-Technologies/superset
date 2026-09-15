@@ -16,6 +16,7 @@
 	},
 	"dependencies": {
 		"@clack/prompts": "0.10.1",
+		"@modelcontextprotocol/sdk": "1.30.0",
 		"@superset/agent-setup": "workspace:*",
 		"@superset/cli-framework": "workspace:*",
 		"@superset/host-service": "workspace:*",

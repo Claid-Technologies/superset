@@ -2,6 +2,7 @@ import { CLIError, positional, string } from "@superset/cli-framework";
 import { command } from "../../../lib/command";
 import { resolvePluginName } from "../../../lib/plugins/connection-ref";
 import { readStdin } from "../../../lib/plugins/inputs";
+import { connectPluginMcp } from "../../../lib/plugins/mcp-client";
 
 export default command({
 	description: "Call a tool on a connected plugin",
@@ -35,15 +36,18 @@ export default command({
 			);
 		}
 
-		const { result } = await ctx.api.plugins.tools.call.mutate({
-			plugin: pluginName,
-			tool,
-			arguments: parsed,
-		});
-
-		return {
-			data: result,
-			message: JSON.stringify(result, null, 2),
-		};
+		const { client } = await connectPluginMcp(pluginName, ctx.bearer);
+		try {
+			const result = await client.callTool({
+				name: tool,
+				arguments: parsed,
+			});
+			return {
+				data: result,
+				message: JSON.stringify(result, null, 2),
+			};
+		} finally {
+			await client.close();
+		}
 	},
 });

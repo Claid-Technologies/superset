@@ -87,6 +87,10 @@
 		"./business-metrics": {
 			"types": "./src/router/analytics/business.ts",
 			"default": "./src/router/analytics/business.ts"
+		},
+		"./plugins-proxy": {
+			"types": "./src/router/plugins/proxy/index.ts",
+			"default": "./src/router/plugins/proxy/index.ts"
 		}
 	},
 	"scripts": {

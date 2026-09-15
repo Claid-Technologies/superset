@@ -18,12 +18,9 @@
 				"category": "Developer tools",
 				"icon": "github"
 			},
-			"connectors": [
-				{
-					"slug": "github",
-					"required": true
-				}
-			],
+			"connector": {
+				"slug": "github"
+			},
 			"mcp": {
 				"type": "streamable-http",
 				"url": "https://api.githubcopilot.com/mcp/"

@@ -1,10 +1,5 @@
 import { db } from "@superset/db/client";
-import { pluginInstalls, pluginMarketplaces } from "@superset/db/schema";
-import {
-	DEFAULT_MARKETPLACE,
-	DEFAULT_MARKETPLACE_REF,
-	DEFAULT_MARKETPLACE_REPO,
-} from "@superset/shared/plugins";
+import { pluginInstalls } from "@superset/db/schema";
 import { and, asc, countDistinct, eq } from "drizzle-orm";
 import type { PluginManifest } from "./manifest";
 
@@ -143,33 +138,4 @@ export async function installedManifest(
 	return (
 		(await installedPlugin(userId, pluginName, marketplace))?.manifest ?? null
 	);
-}
-
-export interface BundledSource {
-	repo: string;
-	ref: string;
-}
-
-export async function bundledSource(
-	userId: string,
-	marketplace: string,
-): Promise<BundledSource | null> {
-	const [row] = await db
-		.select()
-		.from(pluginMarketplaces)
-		.where(
-			and(
-				eq(pluginMarketplaces.userId, userId),
-				eq(pluginMarketplaces.name, marketplace),
-			),
-		)
-		.limit(1);
-
-	if (!row) {
-		return marketplace === DEFAULT_MARKETPLACE
-			? { repo: DEFAULT_MARKETPLACE_REPO, ref: DEFAULT_MARKETPLACE_REF }
-			: null;
-	}
-	if (row.sourceKind !== "github" || !row.repo) return null;
-	return { repo: row.repo, ref: row.ref ?? "HEAD" };
 }
