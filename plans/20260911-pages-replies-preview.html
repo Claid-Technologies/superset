@@ -326,7 +326,11 @@
   @media (max-width: 590px) { .bpane { grid-template-columns: minmax(0, 1fr); padding: 16px; gap: 22px; } }
 
   .demo-stage { position: relative; }
-  .bcard.hovering { border-color: #4a4d55; }
+  .bcard.hovering, .bcard:hover { border-color: #4a4d55; }
+  /* the component's contract on the real cards: hover waits 180ms, focus is instant */
+  .bcard:hover .bubble { opacity: 1; transform: none; transition-delay: 180ms; }
+  .bcard:focus-visible .bubble { opacity: 1; transform: none; transition-delay: 0ms; }
+  .bcard:hover .bcount, .bcard:focus-visible .bcount { background: #292b30; color: #eeeef0; }
   .democursor {
     position: absolute; z-index: 4; width: 20px; height: 20px;
     right: 16px; bottom: -12px;
@@ -412,7 +416,7 @@
 <section aria-label="Gallery preview" style="margin-top: 0;">
   <div class="stage">
     <div class="stage-glow" role="presentation"></div>
-    <figure class="window" id="window" data-mode="replies" data-hover="strip" aria-label="The Pages view with replies">
+    <figure class="window" id="window" data-mode="replies" data-hover="bubble" aria-label="The Pages view with replies">
       <div class="titlebar">
         <span class="lights" role="presentation"><i></i><i></i><i></i></span>
         <span class="crumb">Pages</span>
@@ -629,73 +633,18 @@
   </div>
   <div class="swatches" role="group" aria-label="Hover style">
     <span class="swatch-label">Hover style</span>
-    <button type="button" class="swatch hs" data-hs="strip" aria-pressed="true">Strip</button>
-    <button type="button" class="swatch hs" data-hs="bubble" aria-pressed="false">Bubble</button>
+    <button type="button" class="swatch hs" data-hs="bubble" aria-pressed="true">Bubble</button>
+    <button type="button" class="swatch hs" data-hs="strip" aria-pressed="false">Strip</button>
   </div>
 </section>
 
 <section>
   <h2>Two hover treatments</h2>
-  <p class="variant-label">A — Edge strip <span>(the window above defaults to this)</span></p>
-  <div class="states">
-    <div class="state">
-      <article class="card">
-        <div class="thumb-wrap">
-          <div class="thumb paper">
-            <span class="sk title" style="left:8%; top:9%; width:52%"></span>
-            <span class="sk line" style="left:8%; top:22%; width:78%"></span>
-            <span class="sk line" style="left:8%; top:29%; width:70%"></span>
-            <span class="sk block" style="left:8%; top:42%; width:84%; height:44%; opacity:.32"></span>
-          </div>
-        </div>
-        <div class="card-body">
-          <div class="card-title">Support reply queue</div>
-          <div class="meta">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
-            <span class="sep">&middot;</span><span class="t">Edited 18 seconds ago</span><span class="sep">&middot;</span><span class="t">Kiet Ho</span>
-            <span class="replies open">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>5
-            </span>
-          </div>
-        </div>
-      </article>
-      <p class="state-label">Rest — the count is the whole footprint.</p>
-    </div>
-    <div class="state">
-      <article class="card">
-        <div class="thumb-wrap">
-          <div class="thumb paper">
-            <span class="sk title" style="left:8%; top:9%; width:52%"></span>
-            <span class="sk line" style="left:8%; top:22%; width:78%"></span>
-            <span class="sk line" style="left:8%; top:29%; width:70%"></span>
-            <span class="sk block" style="left:8%; top:42%; width:84%; height:44%; opacity:.32"></span>
-          </div>
-          <div class="strip shown">
-            <span class="avatar sp">SP</span>
-            <span class="line"><span class="who">Satya Patel</span> <span class="snippet">Can we split the SEMA soft bounces into their own bucket?</span></span>
-            <span class="when">2h</span>
-          </div>
-        </div>
-        <div class="card-body">
-          <div class="card-title">Support reply queue</div>
-          <div class="meta">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
-            <span class="sep">&middot;</span><span class="t">Edited 18 seconds ago</span><span class="sep">&middot;</span><span class="t">Kiet Ho</span>
-            <span class="replies open">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>5
-            </span>
-          </div>
-        </div>
-      </article>
-      <p class="state-label">Hover — the newest reply overlays the thumbnail, then leaves.</p>
-    </div>
-  </div>
-
-  <p class="variant-label">B — Floating bubble <span>(per CommentPreviewCard.tsx; flip the Hover style switch to try it in the window)</span></p>
+  <p class="variant-label">B — Floating bubble <span>(per CommentPreviewCard.tsx; the window above defaults to this — hover the Rest card)</span></p>
   <div class="bpane">
     <div>
-      <p class="bp-label">Rest</p>
-      <article class="bcard">
+      <p class="bp-label">Rest — hover or focus me</p>
+      <article class="bcard" tabindex="0">
         <div class="bmedia">
           <div class="bdoc">
             <div class="bdoc-chrome"><span></span><span></span><span></span></div>
@@ -707,6 +656,10 @@
               <div class="bdoc-row"><span class="bdoc-dot"></span>SEMA delivery issue<span class="bdoc-time">24m</span></div>
               <div class="bdoc-row"><span class="bdoc-dot"></span>Login link expired<span class="bdoc-time">38m</span></div>
             </div>
+          </div>
+          <div class="bubble">
+            <div class="bhead"><span class="bav">S</span><span class="bwho">Satya</span><span class="bwhen">2h ago</span></div>
+            <div class="bcopy">Can we split the SEMA soft bounce cases into their own queue?</div>
           </div>
         </div>
         <div class="bfoot">
@@ -786,6 +739,66 @@
           <path d="M4.5 2.2 L4.5 16.6 L8.2 13.1 L10.6 18.3 L13 17.2 L10.7 12.1 L15.7 12.1 Z" fill="#fff" stroke="#111" stroke-width="1.1" stroke-linejoin="round"/>
         </svg>
       </div>
+    </div>
+  </div>
+
+  <p class="variant-label">A — Edge strip <span>(flip the Hover style switch to try it in the window)</span></p>
+  <div class="states">
+    <div class="state">
+      <article class="card">
+        <div class="thumb-wrap">
+          <div class="thumb paper">
+            <span class="sk title" style="left:8%; top:9%; width:52%"></span>
+            <span class="sk line" style="left:8%; top:22%; width:78%"></span>
+            <span class="sk line" style="left:8%; top:29%; width:70%"></span>
+            <span class="sk block" style="left:8%; top:42%; width:84%; height:44%; opacity:.32"></span>
+          </div>
+          <div class="strip">
+            <span class="avatar sp">SP</span>
+            <span class="line"><span class="who">Satya Patel</span> <span class="snippet">Can we split the SEMA soft bounces into their own bucket?</span></span>
+            <span class="when">2h</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Support reply queue</div>
+          <div class="meta">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+            <span class="sep">&middot;</span><span class="t">Edited 18 seconds ago</span><span class="sep">&middot;</span><span class="t">Kiet Ho</span>
+            <span class="replies open">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>5
+            </span>
+          </div>
+        </div>
+      </article>
+      <p class="state-label">Rest — the count is the whole footprint (hover reveals the strip).</p>
+    </div>
+    <div class="state">
+      <article class="card">
+        <div class="thumb-wrap">
+          <div class="thumb paper">
+            <span class="sk title" style="left:8%; top:9%; width:52%"></span>
+            <span class="sk line" style="left:8%; top:22%; width:78%"></span>
+            <span class="sk line" style="left:8%; top:29%; width:70%"></span>
+            <span class="sk block" style="left:8%; top:42%; width:84%; height:44%; opacity:.32"></span>
+          </div>
+          <div class="strip shown">
+            <span class="avatar sp">SP</span>
+            <span class="line"><span class="who">Satya Patel</span> <span class="snippet">Can we split the SEMA soft bounces into their own bucket?</span></span>
+            <span class="when">2h</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Support reply queue</div>
+          <div class="meta">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+            <span class="sep">&middot;</span><span class="t">Edited 18 seconds ago</span><span class="sep">&middot;</span><span class="t">Kiet Ho</span>
+            <span class="replies open">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>5
+            </span>
+          </div>
+        </div>
+      </article>
+      <p class="state-label">Hover — the newest reply overlays the thumbnail, then leaves.</p>
     </div>
   </div>
 
