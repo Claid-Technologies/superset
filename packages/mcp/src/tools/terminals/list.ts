@@ -1,10 +1,9 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { defineTool } from "../../define-tool";
-import { hostServiceCall } from "../../host-service-client";
 import {
 	workspaceLocationInput,
-	workspaceServiceTarget,
+	workspaceServiceCall,
 } from "../../workspace-service-target";
 
 interface TerminalSummary {
@@ -31,8 +30,9 @@ export function register(server: McpServer): void {
 				.describe("Workspace UUID whose terminals to list."),
 		},
 		handler: async (input, ctx) => {
-			return hostServiceCall<{ sessions: TerminalSummary[] }>(
-				await workspaceServiceTarget(input, ctx),
+			return workspaceServiceCall<{ sessions: TerminalSummary[] }>(
+				input,
+				ctx,
 				"terminal.list",
 				"query",
 				{ workspaceId: input.workspaceId },

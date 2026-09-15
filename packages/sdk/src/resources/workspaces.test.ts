@@ -49,15 +49,14 @@ test("workspace calls reach a running sandbox without waking it, with one cached
 	const requests: Array<{ url: URL; headers: Headers }> = [];
 	const client = clientWith((url, init) => {
 		requests.push({ url, headers: new Headers(init?.headers) });
-		if (url.pathname === "/api/trpc/cloudWorkspace.access") {
+		if (url.pathname === "/api/trpc/cloudWorkspace.hostTicket") {
 			expect(JSON.parse(String(init?.body))).toEqual({
-				json: { id: "ws", wake: false },
+				json: { id: "ws" },
 			});
 			return envelope({
 				url: "https://gate.invalid",
 				token: "ticket",
 				expiresAt: new Date(Date.now() + 3_600_000).toISOString(),
-				running: true,
 			});
 		}
 		return envelope({ terminalId: "t1", status: "ok" });
@@ -67,7 +66,7 @@ test("workspace calls reach a running sandbox without waking it, with one cached
 	await client.terminals.close({ workspaceId: "ws", terminalId: "t1" });
 
 	expect(requests.map(({ url }) => `${url.origin}${url.pathname}`)).toEqual([
-		"https://api.invalid/api/trpc/cloudWorkspace.access",
+		"https://api.invalid/api/trpc/cloudWorkspace.hostTicket",
 		"https://gate.invalid/trpc/terminal.createSession",
 		"https://gate.invalid/trpc/terminal.killSession",
 	]);

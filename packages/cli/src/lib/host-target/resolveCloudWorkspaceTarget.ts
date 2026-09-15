@@ -31,8 +31,8 @@ const REACH_TIMEOUT_MS = 8_000;
  * host-service inside a cloud workspace's sandbox, reached through the gate
  * with a ticket. The box answers in tens of milliseconds; asking the API to
  * wake it costs seconds, so the ticket from the last call is tried first,
- * then a ticket minted without a wake, and only then a wake — for a stopped
- * sandbox, or one whose address moved since the ticket was minted.
+ * then a ticket for the sandbox's last known address (no provider call), and
+ * only then a wake — for a stopped sandbox, or one whose address moved.
  */
 export async function resolveCloudWorkspaceTarget(options: {
 	api: ApiClient;
@@ -47,16 +47,21 @@ export async function resolveCloudWorkspaceTarget(options: {
 		if (reached) return reached;
 	}
 
-	const described = await mint(options, false);
-	if (described.running) {
-		const reached = await reach(options.workspaceId, described);
-		if (reached) {
-			saveTicket(key, described);
-			return reached;
-		}
+	const ticket = await askApi(options, () =>
+		options.api.cloudWorkspace.hostTicket.mutate({ id: options.workspaceId }),
+	);
+	const reached = await reach(options.workspaceId, ticket);
+	if (reached) {
+		saveTicket(key, ticket);
+		return reached;
 	}
 
-	const woken = await mint(options, true);
+	const woken = await askApi(options, () =>
+		options.api.cloudWorkspace.access.mutate({
+			id: options.workspaceId,
+			wake: true,
+		}),
+	);
 	const target = targetFor(options.workspaceId, woken);
 	const workspaces = await target.client.workspace.list.query();
 	saveTicket(key, woken);
@@ -90,20 +95,16 @@ async function reach(
 	}
 }
 
-async function mint(
-	options: { api: ApiClient; workspaceId: string },
-	wake: boolean,
-): Promise<Ticket & { running: boolean }> {
+async function askApi(
+	options: { workspaceId: string },
+	request: () => Promise<{ url: string; token: string; expiresAt: Date }>,
+): Promise<Ticket> {
 	try {
-		const access = await options.api.cloudWorkspace.access.mutate({
-			id: options.workspaceId,
-			wake,
-		});
+		const access = await request();
 		return {
 			url: access.url,
 			token: access.token,
 			expiresAt: new Date(access.expiresAt).getTime(),
-			running: access.running,
 		};
 	} catch (error) {
 		if (!(error instanceof TRPCClientError)) throw error;

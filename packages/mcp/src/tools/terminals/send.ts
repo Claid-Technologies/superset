@@ -1,10 +1,9 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { defineTool } from "../../define-tool";
-import { hostServiceCall } from "../../host-service-client";
 import {
 	workspaceLocationInput,
-	workspaceServiceTarget,
+	workspaceServiceCall,
 } from "../../workspace-service-target";
 
 export function register(server: McpServer): void {
@@ -31,8 +30,9 @@ export function register(server: McpServer): void {
 				.describe("Press Enter after the text. Default true."),
 		},
 		handler: async (input, ctx) => {
-			return hostServiceCall<{ terminalId: string; submitted: boolean }>(
-				await workspaceServiceTarget(input, ctx),
+			return workspaceServiceCall<{ terminalId: string; submitted: boolean }>(
+				input,
+				ctx,
 				"terminal.send",
 				"mutation",
 				{

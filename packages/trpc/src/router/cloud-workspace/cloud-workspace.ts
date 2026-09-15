@@ -56,6 +56,33 @@ const isLocalApi = /^https?:\/\/(localhost|127\.0\.0\.1)/.test(
 	env.NEXT_PUBLIC_API_URL,
 );
 
+/** The caller's cloud workspace, refused unless it exists, they may use it, and it is ready. */
+async function loadReadyWorkspace(
+	ctx: Parameters<typeof assertCloudAccess>[0] & { organizationIds: string[] },
+	id: string,
+) {
+	const row = await db.query.cloudWorkspaces.findFirst({
+		where: eq(cloudWorkspaces.id, id),
+	});
+	if (!row) {
+		throw userError({
+			code: "NOT_FOUND",
+			message: "Not found",
+			i18nKey: "serverError.cloudWorkspace.notFound",
+		});
+	}
+	await assertCloudAccess(ctx);
+	assertMember(ctx.organizationIds, row.organizationId);
+	if (row.status !== "ready") {
+		throw new TRPCError({
+			code: "PRECONDITION_FAILED",
+			message: `Cloud workspace is ${row.status}`,
+			cause: { kind: "CLOUD_WORKSPACE_NOT_READY", status: row.status },
+		});
+	}
+	return row;
+}
+
 export const cloudWorkspaceRouter = {
 	list: jwtProcedure
 		.input(z.object({ organizationId: z.string().uuid() }))
@@ -390,25 +417,7 @@ export const cloudWorkspaceRouter = {
 			z.object({ id: z.string().uuid(), wake: z.boolean().default(false) }),
 		)
 		.mutation(async ({ ctx, input }) => {
-			const row = await db.query.cloudWorkspaces.findFirst({
-				where: eq(cloudWorkspaces.id, input.id),
-			});
-			if (!row) {
-				throw userError({
-					code: "NOT_FOUND",
-					message: "Not found",
-					i18nKey: "serverError.cloudWorkspace.notFound",
-				});
-			}
-			await assertCloudAccess(ctx);
-			assertMember(ctx.organizationIds, row.organizationId);
-			if (row.status !== "ready") {
-				throw new TRPCError({
-					code: "PRECONDITION_FAILED",
-					message: `Cloud workspace is ${row.status}`,
-					cause: { kind: "CLOUD_WORKSPACE_NOT_READY", status: row.status },
-				});
-			}
+			const row = await loadReadyWorkspace(ctx, input.id);
 			let address: {
 				hostTarget: string;
 				desktopTarget: string;
@@ -421,6 +430,12 @@ export const cloudWorkspaceRouter = {
 						providerSandboxId: row.providerSandboxId,
 						claim,
 					});
+					if (woken.hostTarget !== row.sandboxUrl) {
+						await db
+							.update(cloudWorkspaces)
+							.set({ sandboxUrl: woken.hostTarget })
+							.where(eq(cloudWorkspaces.id, row.id));
+					}
 					address = { ...woken, running: true };
 				} else {
 					address = await describeSandbox(row.providerSandboxId);
@@ -472,6 +487,29 @@ export const cloudWorkspaceRouter = {
 				running: address.running,
 				desktop: { url: desktop.url, token: desktop.token },
 			};
+		}),
+
+	/**
+	 * A ticket for host-service in this workspace's sandbox at its last known
+	 * address, without asking the provider. For callers that reach the box
+	 * right away (CLI, MCP, SDK): a stopped sandbox, or one whose address moved
+	 * on resume, does not answer it, and they then ask `access` with `wake`,
+	 * which also records the current address.
+	 */
+	hostTicket: jwtProcedure
+		.input(z.object({ id: z.string().uuid() }))
+		.mutation(async ({ ctx, input }) => {
+			const row = await loadReadyWorkspace(ctx, input.id);
+			const target =
+				row.sandboxUrl ??
+				(await describeSandbox(row.providerSandboxId)).hostTarget;
+			const host = await mintSandboxGateAccess({
+				workspaceId: row.id,
+				userId: ctx.userId,
+				port: HOST_SERVICE_PORT,
+				target,
+			});
+			return { url: host.url, token: host.token, expiresAt: host.expiresAt };
 		}),
 
 	delete: jwtProcedure

@@ -1,6 +1,13 @@
 import { buildHostRoutingKey } from "@superset/shared/host-routing";
 import SuperJSON from "superjson";
 
+/**
+ * Nothing that speaks host-service answered: the network failed, or the
+ * address no longer leads to it (a stopped or moved sandbox). A host-service
+ * error response is not this — it means the call reached the host.
+ */
+export class HostServiceUnreachableError extends Error {}
+
 export type HostServiceCallOptions =
 	| {
 			relayUrl: string;
@@ -43,16 +50,24 @@ export async function hostServiceCall<TOutput>(
 		body = JSON.stringify(SuperJSON.serialize(input));
 	}
 
-	const response = await fetch(url, {
-		method: method === "query" ? "GET" : "POST",
-		headers,
-		body,
-	});
+	let response: Response;
+	try {
+		response = await fetch(url, {
+			method: method === "query" ? "GET" : "POST",
+			headers,
+			body,
+		});
+	} catch (error) {
+		throw new HostServiceUnreachableError(
+			`${label} could not be reached for ${procedure}: ${String(error)}`,
+		);
+	}
 	const rawBody = await response.text();
 	if (!response.ok) {
-		throw new Error(
-			`${label} returned ${response.status} for ${procedure}: ${rawBody.slice(0, 200)}`,
-		);
+		const message = `${label} returned ${response.status} for ${procedure}: ${rawBody.slice(0, 200)}`;
+		throw isTrpcErrorBody(rawBody)
+			? new Error(message)
+			: new HostServiceUnreachableError(message);
 	}
 
 	type TrpcEnvelope = { result?: { data?: unknown } };
@@ -72,4 +87,13 @@ export async function hostServiceCall<TOutput>(
 	return SuperJSON.deserialize(
 		data as Parameters<typeof SuperJSON.deserialize>[0],
 	) as TOutput;
+}
+
+function isTrpcErrorBody(body: string): boolean {
+	try {
+		const parsed: unknown = JSON.parse(body);
+		return typeof parsed === "object" && parsed !== null && "error" in parsed;
+	} catch {
+		return false;
+	}
 }

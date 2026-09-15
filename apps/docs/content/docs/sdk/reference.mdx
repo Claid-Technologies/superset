@@ -25,7 +25,7 @@ const client = new Superset({
 
 ### How calls reach a workspace
 
-`workspaces.*`, `tasks.*`, and `organization.*` call the Superset API. `terminals.*` and `agents.create` run inside a cloud workspace's sandbox: before the first such call for a workspace, the SDK asks the API for a ticket for it, waking the sandbox only if it has stopped. It caches the ticket, asks again every few minutes or after a failed call so a script follows a sandbox that stopped or moved, and sends the call through Superset's gate with it. Your API key is only ever sent to the API.
+`workspaces.*`, `tasks.*`, and `organization.*` call the Superset API. `terminals.*` and `agents.create` run inside a cloud workspace's sandbox: before the first such call for a workspace, the SDK asks the API for a ticket for the sandbox's last known address. It caches the ticket and sends calls through Superset's gate with it; after a call fails it asks the API to wake the sandbox, which also refreshes the address, so a script follows a sandbox that stopped or moved. Your API key is only ever sent to the API.
 
 The workspace must be `ready`. Asking for a ticket to a `provisioning` or `failed` workspace fails with a `412`. Right after a workspace turns `ready` its checkout may still be arriving, so a terminal or agent call can fail briefly; retry it.
 

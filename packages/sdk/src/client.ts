@@ -236,6 +236,7 @@ export class Superset {
 	protected idempotencyHeader?: string;
 	private _options: ClientOptions;
 	private _workspaceAccess = new Map<string, WorkspaceAccess>();
+	private _wakeNext = new Set<string>();
 	private _workspaceAccessInflight = new Map<
 		string,
 		Promise<WorkspaceAccess>
@@ -565,13 +566,14 @@ export class Superset {
 		);
 	}
 
-	/** A failed gate call may mean a stopped or moved sandbox: the next call asks again. */
+	/** A failed gate call may mean a stopped or moved sandbox: the next call wakes it. */
 	private _forgetAccessOnFailure<Rsp>(
 		workspaceId: string,
 		promise: APIPromise<Rsp>,
 	): APIPromise<Rsp> {
 		promise.then(undefined, () => {
 			this._workspaceAccess.delete(workspaceId);
+			this._wakeNext.add(workspaceId);
 		});
 		return promise;
 	}
@@ -676,25 +678,23 @@ export class Superset {
 		workspaceId: string,
 	): Promise<WorkspaceAccess> {
 		const mintedAt = Date.now();
-		// Waking re-runs the whole open sequence and costs seconds; a running
-		// sandbox only needs its address and a ticket.
-		const ask = async (wake: boolean) =>
-			(
-				await this.post<
-					TRPCEnvelope<{
-						url: string;
-						token: string;
-						expiresAt: string;
-						running: boolean;
-					}>
-				>("/api/trpc/cloudWorkspace.access", {
-					body: { json: { id: workspaceId, wake } },
-				})
-			).result.data.json;
-		const described = await ask(false);
-		const { url, token, expiresAt } = described.running
-			? described
-			: await ask(true);
+		// A ticket for the sandbox's last known address asks the provider
+		// nothing; the full wake runs only after a call through that ticket
+		// failed, since the sandbox may have stopped or moved.
+		const wake = this._wakeNext.delete(workspaceId);
+		const envelope = await this.post<
+			TRPCEnvelope<{ url: string; token: string; expiresAt: string }>
+		>(
+			wake
+				? "/api/trpc/cloudWorkspace.access"
+				: "/api/trpc/cloudWorkspace.hostTicket",
+			{
+				body: {
+					json: wake ? { id: workspaceId, wake: true } : { id: workspaceId },
+				},
+			},
+		);
+		const { url, token, expiresAt } = envelope.result.data.json;
 		const access: WorkspaceAccess = {
 			url,
 			token,

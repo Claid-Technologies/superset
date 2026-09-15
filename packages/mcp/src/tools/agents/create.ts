@@ -1,10 +1,9 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { defineTool } from "../../define-tool";
-import { hostServiceCall } from "../../host-service-client";
 import {
 	workspaceLocationInput,
-	workspaceServiceTarget,
+	workspaceServiceCall,
 } from "../../workspace-service-target";
 
 export function register(server: McpServer): void {
@@ -60,11 +59,11 @@ export function register(server: McpServer): void {
 				),
 		},
 		handler: async (input, ctx) => {
-			return hostServiceCall<{
+			return workspaceServiceCall<{
 				kind: "terminal";
 				sessionId: string;
 				label: string;
-			}>(await workspaceServiceTarget(input, ctx), "agents.run", "mutation", {
+			}>(input, ctx, "agents.run", "mutation", {
 				workspaceId: input.workspaceId,
 				agent: input.agent,
 				prompt: input.prompt,
