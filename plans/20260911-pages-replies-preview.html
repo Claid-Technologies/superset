@@ -245,26 +245,35 @@
   .strip .snippet { color: var(--muted); }
   .strip .when { flex: none; color: var(--faint); font-size: 10.5px; font-variant-numeric: tabular-nums; }
 
-  /* variant B: the newest reply floats as a comment bubble */
+  /* variant B: the newest reply floats as a comment peek (CommentPreviewCard.tsx).
+     Metrics from the component: 12px inset, 10px radius, 150ms motion with a
+     180ms hover-intent delay, muted 11px header over 13px high-contrast copy. */
   .bubble {
-    position: absolute; left: 10px; right: 10px; bottom: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    background: rgba(30, 32, 38, 0.96);
-    box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.6), 0 2px 6px rgba(0, 0, 0, 0.4);
-    padding: 9px 11px;
-    font-size: 11.5px;
-    opacity: 0; transform: translateY(4px);
-    transition: opacity 0.18s ease, transform 0.18s ease;
+    position: absolute; z-index: 3; left: 12px; right: 12px; bottom: 12px;
+    padding: 11px 12px 12px;
+    border: 1px solid #33353b;
+    border-radius: 10px;
+    background: #1c1d21;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.44);
+    opacity: 0; transform: translateY(5px);
+    transition: opacity 150ms ease, transform 150ms ease;
     pointer-events: none;
   }
-  .card:hover .bubble { opacity: 1; transform: none; }
-  .bhead { display: flex; align-items: center; gap: 7px; }
-  .bhead .who { font-weight: 550; }
-  .bhead .when { margin-left: auto; color: var(--faint); font-size: 10.5px; font-variant-numeric: tabular-nums; }
-  .btext {
-    margin-top: 4px; color: #c6c9d1; line-height: 1.45;
-    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  .card:hover .bubble, .bubble.shown { opacity: 1; transform: none; transition-delay: 180ms; }
+  .bubble.shown { transition-delay: 0ms; }
+  .bhead { display: flex; align-items: center; gap: 7px; color: #9b9da5; font-size: 11px; line-height: 1.4; }
+  .bav {
+    display: flex; align-items: center; justify-content: center;
+    width: 20px; height: 20px; flex: none; border-radius: 50%;
+    background: #35383e; color: #eeeef0; font-size: 11px; font-weight: 500;
+  }
+  .bav svg { width: 11px; height: 11px; }
+  .bwho { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .bwhen { margin-left: auto; flex: none; }
+  .bcopy {
+    margin-top: 6px; color: #eeeef0; font-size: 13px; line-height: 1.45;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    overflow: hidden; overflow-wrap: anywhere;
   }
   .window[data-hover="strip"] .bubble { display: none; }
   .window[data-hover="bubble"] .strip { display: none; }
@@ -305,69 +314,50 @@
   .variant-label { margin: 26px 0 0; font-size: 13px; font-weight: 550; color: var(--muted); }
   .variant-label span { color: var(--faint); font-weight: 400; }
 
-  .lightpane {
+  /* CommentPreviewCard.tsx demo, reproduced with the component's own values */
+  .bpane {
     margin-top: 14px;
-    background: #edeae3;
-    border: 1px solid #e0dcd3;
-    border-radius: 16px;
-    padding: 24px 26px 28px;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 24px;
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px;
+    max-width: 760px;
   }
-  .lightpane .pair { display: flex; gap: 28px; flex-wrap: wrap; }
-  .lp-state { flex: 1 1 300px; min-width: 0; max-width: 520px; }
-  .lp-label { font-size: 13px; color: #8a857c; margin-bottom: 12px; }
-  .lcard {
-    position: relative;
-    background: #fff;
-    border: 1px solid #e7e3da;
-    border-radius: 14px;
-    box-shadow: 0 1px 2px rgba(30, 25, 15, 0.05), 0 12px 32px -20px rgba(30, 25, 15, 0.2);
-    overflow: hidden;
+  @media (max-width: 590px) { .bpane { grid-template-columns: minmax(0, 1fr); padding: 16px; gap: 22px; } }
+  .bp-label { margin-bottom: 12px; color: #9b9da5; font-size: 12px; font-weight: 500; line-height: 1.5; }
+  .bcard {
+    position: relative; min-width: 0;
+    color: #eeeef0; background: #1c1d21;
+    border: 1px solid #33353b; border-radius: 14px; overflow: hidden;
   }
-  .lframe {
-    margin: 14px 14px 0;
-    border: 1px solid #eae6dd; border-bottom: 0;
-    border-radius: 10px 10px 0 0;
-    background: #fbfaf7;
-    height: 150px; overflow: hidden;
+  .bmedia { position: relative; aspect-ratio: 1.5; overflow: hidden; background: #edebe4; }
+  .bdoc {
+    position: absolute; inset: 20px 22px -26px;
+    background: #faf9f5; border: 1px solid #d9d7d0;
+    border-radius: 8px 8px 0 0; color: #55564f;
+    box-shadow: 0 6px 16px rgba(48, 48, 37, 0.04);
   }
-  .fdots { display: flex; gap: 4px; padding: 11px 13px; border-bottom: 1px solid #efeae1; }
-  .fdots i { width: 6px; height: 6px; border-radius: 50%; background: #d6d1c7; }
-  .fbody { padding: 13px 15px; }
-  .fbody .fk { font-size: 10.5px; color: #a49e93; }
-  .fbody .fh { font-size: 15px; font-weight: 550; letter-spacing: -0.015em; color: #26221b; margin-top: 2px; }
-  .fbody .ftabs { display: flex; gap: 12px; font-size: 11px; margin-top: 9px; padding-bottom: 8px; border-bottom: 1px solid #efeae1; }
-  .fbody .ftabs b { color: #26221b; font-weight: 550; }
-  .fbody .ftabs span { color: #a49e93; }
-  .fbody .fitem { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #4d483f; padding: 8px 0; border-bottom: 1px solid #f2eee6; }
-  .fbody .fitem i { width: 4px; height: 4px; border-radius: 50%; background: #b9b2a6; flex: none; }
-  .fbody .fitem .fw { margin-left: auto; color: #a49e93; font-size: 10px; }
-  .lbody { padding: 12px 16px 14px; }
-  .lrow { display: flex; align-items: center; gap: 10px; }
-  .ltitle { font-size: 16.5px; font-weight: 600; letter-spacing: -0.02em; color: #17150f; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .lcount { margin-left: auto; flex: none; display: inline-flex; align-items: center; gap: 5px; color: #6f6a61; font-size: 13px; font-variant-numeric: tabular-nums; }
-  .lcount svg { width: 14px; height: 14px; }
-  .lcount.pill { background: #f1efe8; border-radius: 8px; padding: 5px 10px; }
-  .lmeta { margin-top: 3px; font-size: 12.5px; color: #8a857c; }
-  .lbubble {
-    position: absolute; left: 16px; right: 16px; top: 72px;
-    background: #fff;
-    border-radius: 14px;
-    box-shadow: 0 18px 44px -14px rgba(30, 25, 15, 0.3), 0 2px 8px rgba(30, 25, 15, 0.08);
-    padding: 13px 15px;
+  .bdoc-chrome { height: 27px; border-bottom: 1px solid #e5e3dc; display: flex; align-items: center; gap: 4px; padding: 0 11px; }
+  .bdoc-chrome span { width: 4px; height: 4px; border-radius: 50%; background: #cbc9c1; }
+  .bdoc-body { padding: 19px 16px; }
+  .bdoc-eyebrow { color: #98988d; font-size: 11px; margin-bottom: 4px; }
+  .bdoc-title { font-size: 16px; font-weight: 500; letter-spacing: -0.25px; }
+  .bdoc-toolbar { display: flex; gap: 8px; margin: 16px 0 9px; font-size: 11px; color: #92948b; white-space: nowrap; }
+  .bdoc-toolbar span:first-child { color: #45473f; }
+  .bdoc-row { display: flex; align-items: center; gap: 7px; height: 32px; border-top: 1px solid #e7e6df; font-size: 11px; white-space: nowrap; }
+  .bdoc-dot { width: 5px; height: 5px; border-radius: 50%; flex: none; background: #a6ad9b; }
+  .bdoc-time { margin-left: auto; color: #a0a195; }
+  .bfoot { padding: 15px 16px 17px; border-top: 1px solid #33353b; }
+  .btrow { display: flex; align-items: center; gap: 8px; justify-content: space-between; }
+  .btitle { min-width: 0; font-size: 16px; line-height: 1.4; font-weight: 500; letter-spacing: -0.2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .bcount {
+    display: flex; align-items: center; justify-content: center; flex: none;
+    gap: 6px; min-width: 39px; min-height: 30px; padding: 3px 6px;
+    border-radius: 6px; color: #9b9da5; font-size: 12px;
   }
-  .lbubble .bhead { gap: 9px; }
-  .lbubble .lav {
-    width: 22px; height: 22px; border-radius: 50%; flex: none;
-    background: #ece9e1; color: #6f6a61;
-    display: inline-flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 550;
-  }
-  .lbubble .who { color: #6f6a61; font-weight: 500; font-size: 12.5px; }
-  .lbubble .when { color: #a49e93; font-size: 11.5px; }
-  .lbubble .btext {
-    -webkit-line-clamp: 3; margin-top: 8px;
-    color: #23201a; font-size: 13px; line-height: 1.5;
-  }
+  .bcount svg { width: 14px; height: 14px; flex: none; }
+  .bcount.open { background: #292b30; color: #eeeef0; }
+  .bmeta { display: flex; align-items: center; gap: 6px; margin-top: 4px; color: #9b9da5; font-size: 12px; line-height: 1.5; }
 
   /* ------------------------------------------------ states */
   .states { display: flex; gap: 24px; flex-wrap: wrap; margin-top: 24px; }
@@ -458,7 +448,7 @@
               <span class="line"><span class="who">Satya Patel</span> <span class="snippet">Can we split the SEMA soft bounces into their own bucket before Monday?</span></span>
               <span class="when">2h</span>
             </div>
-            <div class="bubble"><div class="bhead"><span class="avatar sp">SP</span><span class="who">Satya Patel</span><span class="when">2h</span></div><div class="btext">Can we split the SEMA soft bounces into their own bucket before Monday?</div></div>
+            <div class="bubble"><div class="bhead"><span class="bav">S</span><span class="bwho">Satya</span><span class="bwhen">2h ago</span></div><div class="bcopy">Can we split the SEMA soft bounces into their own bucket before Monday?</div></div>
           </div>
           <div class="card-body">
             <div class="card-title">Support reply queue</div>
@@ -488,7 +478,7 @@
               <span class="line"><span class="who">Agent</span> <span class="snippet">Republished with the runtime-version decision table — resolving.</span></span>
               <span class="when">1d</span>
             </div>
-            <div class="bubble"><div class="bhead"><span class="avatar agent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg></span><span class="who">Agent</span><span class="when">1d</span></div><div class="btext">Republished with the runtime-version decision table — resolving.</div></div>
+            <div class="bubble"><div class="bhead"><span class="bav"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg></span><span class="bwho">Agent</span><span class="bwhen">1d ago</span></div><div class="bcopy">Republished with the runtime-version decision table — resolving.</div></div>
           </div>
           <div class="card-body">
             <div class="card-title">Mobile OTA Updates</div>
@@ -518,7 +508,7 @@
               <span class="line"><span class="who">Avi Peltz</span> <span class="snippet">Is #7305 really no-action? The maintainer redirected him to v2.</span></span>
               <span class="when">4h</span>
             </div>
-            <div class="bubble"><div class="bhead"><span class="avatar ap">AP</span><span class="who">Avi Peltz</span><span class="when">4h</span></div><div class="btext">Is #7305 really no-action? The maintainer redirected him to v2.</div></div>
+            <div class="bubble"><div class="bhead"><span class="bav">A</span><span class="bwho">Avi</span><span class="bwhen">4h ago</span></div><div class="bcopy">Is #7305 really no-action? The maintainer redirected him to v2.</div></div>
           </div>
           <div class="card-body">
             <div class="card-title">PascalOrdano18 PR Review</div>
@@ -568,7 +558,7 @@
               <span class="line"><span class="who">Agent</span> <span class="snippet">Broke daily effective cost out by line item as asked.</span></span>
               <span class="when">3d</span>
             </div>
-            <div class="bubble"><div class="bhead"><span class="avatar agent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg></span><span class="who">Agent</span><span class="when">3d</span></div><div class="btext">Broke daily effective cost out by line item as asked.</div></div>
+            <div class="bubble"><div class="bhead"><span class="bav"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg></span><span class="bwho">Agent</span><span class="bwhen">3d ago</span></div><div class="bcopy">Broke daily effective cost out by line item as asked.</div></div>
           </div>
           <div class="card-body">
             <div class="card-title">Vercel spend, September 2026</div>
@@ -599,7 +589,7 @@
               <span class="line"><span class="who">Kiet Ho</span> <span class="snippet">Move Vedanta to Friday — founder-track bar conflict at 2:30.</span></span>
               <span class="when">3h</span>
             </div>
-            <div class="bubble"><div class="bhead"><span class="avatar kh">KH</span><span class="who">Kiet Ho</span><span class="when">3h</span></div><div class="btext">Move Vedanta to Friday — founder-track bar conflict at 2:30.</div></div>
+            <div class="bubble"><div class="bhead"><span class="bav">K</span><span class="bwho">Kiet</span><span class="bwhen">3h ago</span></div><div class="bcopy">Move Vedanta to Friday — founder-track bar conflict at 2:30.</div></div>
           </div>
           <div class="card-body">
             <div class="card-title">Hiring Follow-ups</div>
@@ -690,61 +680,65 @@
     </div>
   </div>
 
-  <p class="variant-label">B — Floating bubble <span>(flip the Hover style switch to try it in the window)</span></p>
-  <div class="lightpane">
-    <div class="pair">
-      <div class="lp-state">
-        <p class="lp-label">Rest</p>
-        <article class="lcard">
-          <div class="lframe">
-            <div class="fdots"><i></i><i></i><i></i></div>
-            <div class="fbody">
-              <div class="fk">Support</div>
-              <div class="fh">Reply queue</div>
-              <div class="ftabs"><b>All conversations</b><span>Assigned to me</span></div>
-              <div class="fitem"><i></i>Workspace invitation<span class="fw">12m</span></div>
-              <div class="fitem"><i></i>SEMA delivery report<span class="fw">2h</span></div>
+  <p class="variant-label">B — Floating bubble <span>(per CommentPreviewCard.tsx; flip the Hover style switch to try it in the window)</span></p>
+  <div class="bpane">
+    <div>
+      <p class="bp-label">Rest</p>
+      <article class="bcard">
+        <div class="bmedia">
+          <div class="bdoc">
+            <div class="bdoc-chrome"><span></span><span></span><span></span></div>
+            <div class="bdoc-body">
+              <div class="bdoc-eyebrow">Support</div>
+              <div class="bdoc-title">Reply queue</div>
+              <div class="bdoc-toolbar"><span>All conversations</span><span>Assigned to me</span></div>
+              <div class="bdoc-row"><span class="bdoc-dot"></span>Workspace invitation<span class="bdoc-time">12m</span></div>
+              <div class="bdoc-row"><span class="bdoc-dot"></span>SEMA delivery issue<span class="bdoc-time">24m</span></div>
+              <div class="bdoc-row"><span class="bdoc-dot"></span>Login link expired<span class="bdoc-time">38m</span></div>
             </div>
           </div>
-          <div class="lbody">
-            <div class="lrow">
-              <span class="ltitle">Support reply queue</span>
-              <span class="lcount">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>5
-              </span>
+        </div>
+        <div class="bfoot">
+          <div class="btrow">
+            <span class="btitle">Support reply queue</span>
+            <span class="bcount">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>5
+            </span>
+          </div>
+          <div class="bmeta">Kiet<span aria-hidden="true">&middot;</span>Edited 18s ago</div>
+        </div>
+      </article>
+    </div>
+    <div>
+      <p class="bp-label">Hover / focus</p>
+      <article class="bcard">
+        <div class="bmedia">
+          <div class="bdoc">
+            <div class="bdoc-chrome"><span></span><span></span><span></span></div>
+            <div class="bdoc-body">
+              <div class="bdoc-eyebrow">Support</div>
+              <div class="bdoc-title">Reply queue</div>
+              <div class="bdoc-toolbar"><span>All conversations</span><span>Assigned to me</span></div>
+              <div class="bdoc-row"><span class="bdoc-dot"></span>Workspace invitation<span class="bdoc-time">12m</span></div>
+              <div class="bdoc-row"><span class="bdoc-dot"></span>SEMA delivery issue<span class="bdoc-time">24m</span></div>
+              <div class="bdoc-row"><span class="bdoc-dot"></span>Login link expired<span class="bdoc-time">38m</span></div>
             </div>
-            <div class="lmeta">Kiet &middot; Edited 18s ago</div>
           </div>
-        </article>
-      </div>
-      <div class="lp-state">
-        <p class="lp-label">Hover / focus</p>
-        <article class="lcard">
-          <div class="lframe">
-            <div class="fdots"><i></i><i></i><i></i></div>
-            <div class="fbody">
-              <div class="fk">Support</div>
-              <div class="fh">Reply queue</div>
-              <div class="ftabs"><b>All conversations</b><span>Assigned to me</span></div>
-              <div class="fitem"><i></i>Workspace invitation<span class="fw">12m</span></div>
-              <div class="fitem"><i></i>SEMA delivery report<span class="fw">2h</span></div>
-            </div>
+          <div class="bubble shown">
+            <div class="bhead"><span class="bav">S</span><span class="bwho">Satya</span><span class="bwhen">2h ago</span></div>
+            <div class="bcopy">Can we split the SEMA soft bounce cases into their own queue?</div>
           </div>
-          <div class="lbubble">
-            <div class="bhead"><span class="lav">S</span><span class="who">Satya</span><span class="when">2h ago</span></div>
-            <div class="btext">Can we split the SEMA soft bounce cases into their own queue?</div>
+        </div>
+        <div class="bfoot">
+          <div class="btrow">
+            <span class="btitle">Support reply queue</span>
+            <span class="bcount open">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>5
+            </span>
           </div>
-          <div class="lbody">
-            <div class="lrow">
-              <span class="ltitle">Support reply queue</span>
-              <span class="lcount pill">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>5
-              </span>
-            </div>
-            <div class="lmeta">Kiet &middot; Edited 18s ago</div>
-          </div>
-        </article>
-      </div>
+          <div class="bmeta">Kiet<span aria-hidden="true">&middot;</span>Edited 18s ago</div>
+        </div>
+      </article>
     </div>
   </div>
 
@@ -755,7 +749,7 @@
     </div>
     <div class="row">
       <span class="lead">The peek</span>
-      <span class="body">Hover or keyboard focus reveals the newest reply — avatar, author, first 240 characters — as the edge strip (A) or the floating bubble (B); flip the Hover style switch under the window. Agent replies carry the bot mark and the <code>Agent</code> byline. Click through for the full threads.</span>
+      <span class="body">Hover or keyboard focus reveals the newest reply — avatar, author, first 240 characters — as the edge strip (A) or the floating bubble (B); flip the Hover style switch under the window. B follows <code>CommentPreviewCard.tsx</code>: hover waits 180ms, focus opens instantly, clicking the count pins the preview, Escape closes. Agent replies carry the bot mark and the <code>Agent</code> byline.</span>
     </div>
     <div class="row">
       <span class="lead">The default</span>
