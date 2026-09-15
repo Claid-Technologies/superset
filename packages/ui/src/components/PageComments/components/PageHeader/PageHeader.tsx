@@ -7,6 +7,7 @@ import { cn } from "../../../../lib/utils";
 import { Button } from "../../../ui/button";
 import { toast } from "../../../ui/sonner";
 import { DeletePageDialog } from "./components/DeletePageDialog";
+import { PagePublicBanner } from "./components/PagePublicBanner";
 import { PageSharePopover } from "./components/PageSharePopover";
 import { PageTitleMenu } from "./components/PageTitleMenu";
 import type {
@@ -59,66 +60,75 @@ export function PageHeader({
 	};
 
 	return (
-		<div
-			className={cn(
-				"flex h-11 shrink-0 items-center gap-2 border-b px-2",
-				className,
-			)}
-		>
-			{leading}
-			<div className="no-drag flex min-w-0 items-center">
-				<PageTitleMenu
-					page={page}
-					versions={versions}
-					editable={isOwner}
-					isOwner={isOwner}
-					open={menuOpen}
-					onOpenChange={setMenuOpen}
-					onShare={() => {
-						setMenuOpen(false);
-						setShareOpen(true);
-					}}
-					onDelete={() => {
-						setMenuOpen(false);
-						setDeleteOpen(true);
-					}}
-					onPickVersion={(version) => {
-						setMenuOpen(false);
-						void pickVersion(version);
-					}}
+		<>
+			<div
+				className={cn(
+					"flex h-11 shrink-0 items-center gap-2 border-b px-2",
+					className,
+				)}
+			>
+				{leading}
+				<div className="no-drag flex min-w-0 items-center">
+					<PageTitleMenu
+						page={page}
+						versions={versions}
+						editable={isOwner}
+						isOwner={isOwner}
+						open={menuOpen}
+						onOpenChange={setMenuOpen}
+						onShare={() => {
+							setMenuOpen(false);
+							setShareOpen(true);
+						}}
+						onDelete={() => {
+							setMenuOpen(false);
+							setDeleteOpen(true);
+						}}
+						onPickVersion={(version) => {
+							setMenuOpen(false);
+							void pickVersion(version);
+						}}
+					/>
+					{!isOwner && page.owner ? (
+						<span className="ml-2 min-w-0 truncate text-muted-foreground text-xs">
+							{page.owner.name}
+						</span>
+					) : null}
+				</div>
+
+				<div className="no-drag ml-auto flex shrink-0 items-center gap-1">
+					{trailing}
+					<PageSharePopover
+						page={page}
+						versions={versions}
+						editable={isOwner}
+						open={shareOpen}
+						onOpenChange={setShareOpen}
+						onSetVisibility={onSetVisibility}
+						onSetSharedVersion={onSetSharedVersion}
+					>
+						<Button size="xs" variant="ghost" className="gap-1.5">
+							<Share2 className="size-3.5" />
+							<Trans>Share</Trans>
+						</Button>
+					</PageSharePopover>
+				</div>
+
+				<DeletePageDialog
+					open={deleteOpen}
+					onOpenChange={setDeleteOpen}
+					title={page.title}
+					versionCount={versions.length}
+					onConfirm={onDelete}
 				/>
-				{!isOwner && page.owner ? (
-					<span className="ml-2 min-w-0 truncate text-muted-foreground text-xs">
-						{page.owner.name}
-					</span>
-				) : null}
 			</div>
 
-			<div className="no-drag ml-auto flex shrink-0 items-center gap-1">
-				{trailing}
-				<PageSharePopover
-					page={page}
-					versions={versions}
-					editable={isOwner}
-					open={shareOpen}
-					onOpenChange={setShareOpen}
-					onSetVisibility={onSetVisibility}
-					onSetSharedVersion={onSetSharedVersion}
-				>
-					<Button size="xs" variant="ghost" className="gap-1.5">
-						<Share2 className="size-3.5" />
-						<Trans>Share</Trans>
-					</Button>
-				</PageSharePopover>
-			</div>
-
-			<DeletePageDialog
-				open={deleteOpen}
-				onOpenChange={setDeleteOpen}
-				title={page.title}
-				versionCount={versions.length}
-				onConfirm={onDelete}
-			/>
-		</div>
+			{isOwner && page.visibility === "everyone" ? (
+				<PagePublicBanner
+					url={page.url}
+					onOpenShareSettings={() => setShareOpen(true)}
+				/>
+			) : null}
+		</>
 	);
 }

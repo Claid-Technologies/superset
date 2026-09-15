@@ -13249,6 +13249,9 @@ msgstr "Share designs and reports. Let your agent handle the feedback."
 msgid "Share page"
 msgstr "Share page"
 
+msgid "Share settings"
+msgstr "Share settings"
+
 msgid "Share this page"
 msgstr "Share this page"
 
@@ -15168,6 +15171,10 @@ msgstr "This page is being published from somewhere else — retry"
 
 msgid "This page is in another organization"
 msgstr "This page is in another organization"
+
+#. placeholder {0}: url.replace(/^https?:\/\//, "")
+msgid "This page is live at <0>{0}</0>"
+msgstr "This page is live at <0>{0}</0>"
 
 msgid "This page isn't here"
 msgstr "This page isn't here"

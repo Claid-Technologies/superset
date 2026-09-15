@@ -13249,6 +13249,9 @@ msgstr "デザインやレポートを共有しましょう。フィードバッ
 msgid "Share page"
 msgstr "ページを共有"
 
+msgid "Share settings"
+msgstr "共有設定"
+
 msgid "Share this page"
 msgstr "このページを共有"
 
@@ -15168,6 +15171,10 @@ msgstr "このページは別の場所から公開処理中です — 再試行�
 
 msgid "This page is in another organization"
 msgstr "このページは別の組織にあります"
+
+#. placeholder {0}: url.replace(/^https?:\/\//, "")
+msgid "This page is live at <0>{0}</0>"
+msgstr "このページは <0>{0}</0> で公開中です"
 
 msgid "This page isn't here"
 msgstr "このページはありません"
