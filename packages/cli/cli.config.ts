@@ -62,11 +62,11 @@ export default defineConfig({
 				desc: "Spin up an isolated workspace and put an agent to work",
 			},
 			{
-				cmd: "superset terminals read --workspace <id> --terminal <id>",
+				cmd: "superset terminals read --local --workspace <id> --terminal <id>",
 				desc: "Peek at what an agent is doing right now",
 			},
 			{
-				cmd: 'superset automations create --name nightly-audit --project <id> --rrule "FREQ=DAILY" --prompt "audit deps"',
+				cmd: 'superset automations create --name nightly-audit --local --project <id> --rrule "FREQ=DAILY" --prompt "audit deps"',
 				desc: "Schedule a recurring agent run",
 			},
 		],

@@ -6,11 +6,10 @@ import { listWorkspacesOnHost } from "../../../lib/host-workspaces";
 
 export default command({
 	description:
-		"List workspaces on a host (default: this machine), or cloud sandboxes with --cloud",
+		"List cloud workspaces, or workspaces on this machine with --local or on another host with --host",
 	options: {
-		host: string().desc("List workspaces on a specific host (machineId)"),
-		local: boolean().desc("List workspaces on this machine (the default)"),
-		cloud: boolean().desc("List cloud sandboxes instead of host workspaces"),
+		host: string().desc("List workspaces on this host (machineId)"),
+		local: boolean().desc("List workspaces on this machine"),
 		project: string().desc("Filter by project name (case-insensitive) or id"),
 		search: string()
 			.alias("s")
@@ -42,17 +41,19 @@ export default command({
 			throw new CLIError("No active organization", "Run: superset auth login");
 		}
 
-		if (options.cloud) {
+		const hostId = resolveHostFilter({
+			host: options.host ?? undefined,
+			local: options.local ?? undefined,
+		});
+		if (!hostId) {
 			for (const [flag, value] of [
-				["--host", options.host],
-				["--local", options.local || undefined],
 				["--project", options.project],
 				["--tag", options.tag],
 			] as const) {
 				if (value !== undefined) {
 					throw new CLIError(
-						`${flag} does not apply to --cloud`,
-						"Cloud sandboxes have no host, project or tags",
+						`${flag} does not apply to cloud workspaces`,
+						"Pass --local to list this machine's workspaces, or --host <id> for another host",
 					);
 				}
 			}
@@ -72,10 +73,7 @@ export default command({
 			organizationId,
 			userJwt: ctx.bearer,
 			api: ctx.api,
-			hostId: resolveHostFilter({
-				host: options.host ?? undefined,
-				local: options.local ?? undefined,
-			}),
+			hostId,
 		});
 
 		const projectInput = options.project?.toLowerCase();

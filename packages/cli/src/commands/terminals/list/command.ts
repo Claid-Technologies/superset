@@ -6,8 +6,8 @@ export default command({
 	description: "List the live terminal sessions in a workspace",
 	options: {
 		workspace: string().required().desc("Workspace ID"),
-		host: string().desc("Host the workspace lives on (default: this machine)"),
-		cloud: boolean().desc("The workspace is a cloud workspace"),
+		host: string().desc("Host the workspace lives on (default: the cloud)"),
+		local: boolean().desc("The workspace is on this machine"),
 	},
 	run: async ({ ctx, options }) => {
 		const organizationId = ctx.config.organizationId;
@@ -20,8 +20,8 @@ export default command({
 				organizationId,
 				userJwt: ctx.bearer,
 				api: ctx.api,
-				hostId: options.host ?? undefined,
-				cloud: options.cloud ?? false,
+				host: options.host ?? undefined,
+				local: options.local ?? undefined,
 			},
 			options.workspace,
 		);

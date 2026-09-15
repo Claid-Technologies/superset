@@ -27,7 +27,7 @@ export async function resolveCloudWorkspaceTarget(options: {
 				`Cloud workspace ${options.workspaceId}: ${error.message}`,
 				error.data?.code === "TIMEOUT"
 					? "The sandbox is still starting; try again in a few seconds"
-					: "Check it with: superset workspaces list --cloud",
+					: "Check it with: superset workspaces list",
 			);
 		}
 		throw error;

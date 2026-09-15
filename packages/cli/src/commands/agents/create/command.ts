@@ -9,8 +9,8 @@ export default command({
 	description: "Create an agent session in an existing workspace",
 	options: {
 		workspace: string().required().desc("Workspace ID"),
-		host: string().desc("Host the workspace lives on (default: this machine)"),
-		cloud: boolean().desc("The workspace is a cloud workspace"),
+		host: string().desc("Host the workspace lives on (default: the cloud)"),
+		local: boolean().desc("The workspace is on this machine"),
 		agent: string()
 			.required()
 			.desc(
@@ -92,8 +92,8 @@ export default command({
 				organizationId,
 				userJwt: ctx.bearer,
 				api: ctx.api,
-				hostId: options.host ?? undefined,
-				cloud: options.cloud ?? false,
+				host: options.host ?? undefined,
+				local: options.local ?? undefined,
 			},
 			options.workspace,
 		);

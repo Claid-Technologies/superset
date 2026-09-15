@@ -1,14 +1,16 @@
 #!/bin/bash
 # Read-only sweep of Superset state for the standup skill.
 # Emits one JSON object on stdout; progress and errors go to stderr.
-# Usage: sweep.sh [--host <id>] [--max-lines <n>]
+# Usage: sweep.sh [--host <id> | --cloud] [--max-lines <n>]
+# Sweeps this machine by default; --host sweeps another host, --cloud the cloud workspaces.
 set -u
 
-HOST_ARGS=()
+HOST_ARGS=(--local)
 MAX_LINES=60
 while [ $# -gt 0 ]; do
   case "$1" in
     --host) HOST_ARGS=(--host "$2"); shift 2 ;;
+    --cloud) HOST_ARGS=(); shift ;;
     --max-lines) MAX_LINES="$2"; shift 2 ;;
     *) echo "unknown argument: $1" >&2; exit 2 ;;
   esac
@@ -43,15 +45,15 @@ run_json() {
 }
 
 echo "sweeping workspaces and tasks..." >&2
-WORKSPACES=$(run_json workspaces list "${HOST_ARGS[@]}")
+WORKSPACES=$(run_json workspaces list ${HOST_ARGS[@]+"${HOST_ARGS[@]}"})
 TASKS=$(run_json tasks list)
 
 TERMINALS='[]'
 for ws in $(printf '%s' "$WORKSPACES" | jq -r '.[]?.id // empty'); do
   echo "reading terminals in $ws..." >&2
-  LIST=$(run_json terminals list --workspace "$ws" "${HOST_ARGS[@]}")
+  LIST=$(run_json terminals list --workspace "$ws" ${HOST_ARGS[@]+"${HOST_ARGS[@]}"})
   for term in $(printf '%s' "$LIST" | jq -r '.sessions[]?.terminalId // empty'); do
-    READ=$(run_json terminals read --workspace "$ws" --terminal "$term" --max-lines "$MAX_LINES" "${HOST_ARGS[@]}")
+    READ=$(run_json terminals read --workspace "$ws" --terminal "$term" --max-lines "$MAX_LINES" ${HOST_ARGS[@]+"${HOST_ARGS[@]}"})
     ENTRY=$(printf '%s' "$LIST" | jq -c --arg ws "$ws" --arg id "$term" --argjson read "$READ" \
       '.sessions[] | select(.terminalId == $id) | {workspaceId: $ws, terminalId: .terminalId, title: .title, attached: .attached, text: ($read.text // null)}')
     TERMINALS=$(printf '%s' "$TERMINALS" | jq -c --argjson e "$ENTRY" '. + [$e]')

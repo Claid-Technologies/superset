@@ -160,7 +160,7 @@ shape of the output for scripting:
 
 ```bash
 superset tasks list --status in_progress --json | jq '.[].title'
-superset workspaces list --quiet | xargs -L1 superset workspaces delete
+superset workspaces list --local --quiet | xargs -L1 superset workspaces delete --local
 ```
 
 When the CLI detects an agent or CI environment (`CLAUDE_CODE`,
@@ -170,14 +170,17 @@ output unless you pass `--quiet`.
 
 ## Local vs. remote hosts
 
-Commands that touch a host accept `--host <id>` to pick which host handles
-the request, or `--local` for this machine. Local-targeted calls go
+Workspace commands (`workspaces`, `terminals`, `agents create`) act on cloud
+workspaces unless you pass `--local` for this machine or `--host <id>` for
+another host. Commands that only make sense on a machine (`projects`, `agents
+list`, `automations`) take the same flags. Local-targeted calls go
 straight to the host server over loopback (offline-friendly); remote
 calls route through the cloud API and the relay.
 
 ```bash
 superset hosts list
-superset workspaces list              # this machine
+superset workspaces list              # cloud workspaces
+superset workspaces list --local      # this machine
 superset workspaces list --host h_…  # another host
 ```
 

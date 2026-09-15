@@ -1,6 +1,9 @@
 import { boolean, CLIError, positional, string } from "@superset/cli-framework";
 import { command } from "../../../lib/command";
-import { resolveAutomationTarget } from "../resolveAutomationTarget";
+import {
+	requireAutomationHost,
+	resolveAutomationTarget,
+} from "../resolveAutomationTarget";
 
 export default command({
 	description: "Update an automation's metadata (name, schedule, agent, host)",
@@ -14,6 +17,7 @@ export default command({
 			"New host agent instance id or presetId (e.g. claude, codex, superset).",
 		),
 		host: string().desc("New target host id"),
+		local: boolean().desc("Retarget the automation to this machine"),
 		project: string().desc("New v2 project id"),
 		workspace: string().desc("New v2 workspace id"),
 		continueSession: boolean().desc(
@@ -80,7 +84,7 @@ export default command({
 				organizationId,
 				userJwt: ctx.bearer,
 				api: ctx.api,
-				hostId: options.host ?? undefined,
+				hostId: requireAutomationHost(options),
 				workspaceId: options.workspace ?? undefined,
 				projectId: options.project ?? undefined,
 			});
@@ -93,7 +97,9 @@ export default command({
 			timezone: options.timezone,
 			dtstart: options.dtstart ? new Date(options.dtstart) : undefined,
 			agent: options.agent,
-			...(options.host !== undefined ? { targetHostId: options.host } : {}),
+			...(options.host !== undefined || options.local
+				? { targetHostId: requireAutomationHost(options) }
+				: {}),
 			...(options.project !== undefined
 				? { v2ProjectId: options.project }
 				: {}),

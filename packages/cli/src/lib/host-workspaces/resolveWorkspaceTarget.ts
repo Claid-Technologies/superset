@@ -1,8 +1,8 @@
 import { CLIError } from "@superset/cli-framework";
-import { getHostId } from "@superset/shared/host-info";
 import {
 	type ResolvedHostTarget,
 	resolveCloudWorkspaceTarget,
+	resolveHostFilter,
 	resolveHostTarget,
 } from "../host-target";
 import {
@@ -18,28 +18,27 @@ export interface ResolvedWorkspaceTarget {
 }
 
 /**
- * Where a workspace lives and a client for it: a cloud workspace with
- * `cloud`, the `hostId` host when given, else this machine. Never guessed: a
- * cloud lookup wakes a sandbox, so it happens only when asked for.
+ * Where a workspace lives and a client for it: a cloud workspace unless
+ * `--local` or `--host` names a host. Never guessed from the id.
  */
 export async function resolveWorkspaceTarget(
-	options: HostWorkspacesOptions & { cloud?: boolean },
+	options: Omit<HostWorkspacesOptions, "hostId"> & {
+		host?: string;
+		local?: boolean;
+	},
 	workspaceId: string,
 ): Promise<ResolvedWorkspaceTarget> {
-	if (options.cloud) {
-		if (options.hostId) {
-			throw new CLIError(
-				"--cloud and --host are exclusive",
-				"A cloud workspace runs in its own sandbox, not on a host",
-			);
-		}
-		return inCloud(options, workspaceId);
-	}
-	return onHost(options, options.hostId ?? getHostId(), workspaceId);
+	const hostId = resolveHostFilter({
+		host: options.host,
+		local: options.local,
+	});
+	return hostId
+		? onHost(options, hostId, workspaceId)
+		: inCloud(options, workspaceId);
 }
 
 async function onHost(
-	options: HostWorkspacesOptions,
+	options: Omit<HostWorkspacesOptions, "hostId">,
 	hostId: string,
 	workspaceId: string,
 ): Promise<ResolvedWorkspaceTarget> {
@@ -48,7 +47,7 @@ async function onHost(
 	if (!workspace) {
 		throw new CLIError(
 			`Workspace not found on host ${hostId}: ${workspaceId}`,
-			"Pass --host <id> if it lives on another machine, or --cloud for a cloud workspace",
+			"Pass --host <id> if it lives on another machine, or drop --local/--host for a cloud workspace",
 		);
 	}
 	const target = await resolveHostTarget({
@@ -61,7 +60,7 @@ async function onHost(
 }
 
 async function inCloud(
-	options: HostWorkspacesOptions,
+	options: Omit<HostWorkspacesOptions, "hostId">,
 	workspaceId: string,
 ): Promise<ResolvedWorkspaceTarget> {
 	const rows = await options.api.cloudWorkspace.list.query({
@@ -71,7 +70,7 @@ async function inCloud(
 	if (!row) {
 		throw new CLIError(
 			`No cloud workspace ${workspaceId} in this organization`,
-			"List them with: superset workspaces list --cloud",
+			"Pass --local for a workspace on this machine, or --host <id> for another host",
 		);
 	}
 	if (row.status !== "ready") {
@@ -79,7 +78,7 @@ async function inCloud(
 			`Cloud workspace ${workspaceId} is ${row.status}`,
 			row.status === "provisioning"
 				? "Its sandbox is still being created; try again shortly"
-				: "Check it with: superset workspaces list --cloud",
+				: "Check it with: superset workspaces list",
 		);
 	}
 	const target = await resolveCloudWorkspaceTarget({

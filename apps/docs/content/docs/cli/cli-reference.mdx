@@ -690,11 +690,11 @@ than silently falling through to the cloud.
 <Command
 	name="superset workspaces list"
 	options={[
-		{ flag: "--host <id>", description: "List workspaces on a specific host machineId." },
-		{ flag: "--local", description: "List workspaces on this machine (the default)." },
-		{ flag: "--project <nameOrId>", description: "Filter by project name (case-insensitive) or id." },
+		{ flag: "--host <id>", description: "List workspaces on this host (machineId) instead of the cloud." },
+		{ flag: "--local", description: "List workspaces on this machine instead of the cloud." },
+		{ flag: "--project <nameOrId>", description: "Filter by project name (case-insensitive) or id. Host workspaces only." },
 		{ flag: "--search <text>", description: "Substring match against workspace name or branch. Alias: -s." },
-		{ flag: "--tag <tag>", description: "Filter to workspaces carrying this tag (case-insensitive)." },
+		{ flag: "--tag <tag>", description: "Filter to workspaces carrying this tag (case-insensitive). Host workspaces only." },
 	]}
 	output={`Array<{
   id: string;
@@ -708,10 +708,12 @@ than silently falling through to the cloud.
 	humanColumns={["NAME", "BRANCH", "PROJECT", "TAGS", "ID"]}
 	quiet="workspace IDs"
 >
-List workspaces on a host. Defaults to this machine; pass `--host <id>` for
-another host. Workspaces are host-owned; there is no org-wide listing (the
-desktop app is the cross-host view). `projectName` falls back to the raw
-project id when the host doesn't know the project's name.
+List the organization's cloud workspaces, with their `status` (`provisioning`,
+`ready`, `failed`). Pass `--local` for this machine's workspaces or `--host <id>`
+for another host's; host listings have the columns shown above, and there is no
+org-wide listing across hosts (the desktop app is the cross-host view).
+`projectName` falls back to the raw project id when the host doesn't know the
+project's name.
 </Command>
 
 <Command
@@ -792,15 +794,18 @@ superset workspaces create --project prj_… --name "perf-spike" --branch perf/s
 		{ name: "id", required: true, variadic: true, description: "Workspace IDs to delete." },
 	]}
 	options={[
-		{ flag: "--host <id>", description: "Host the workspaces live on." },
-		{ flag: "--local", description: "Target this machine (the default)." },
+		{ flag: "--host <id>", description: "Host the workspaces live on (default: the cloud)." },
+		{ flag: "--local", description: "The workspaces are on this machine." },
 	]}
 	output={`{ deleted: string[]; warnings: string[] }`}
 >
-Delete one or more workspaces on the target host (default: this machine).
+Delete one or more cloud workspaces, tearing down their sandboxes (which is what
+stops them billing), or workspaces on this machine with `--local` or another
+host with `--host <id>`.
 
 ```bash
 superset workspaces delete ws_a ws_b ws_c
+superset workspaces delete ws_d --local
 ```
 </Command>
 
@@ -810,8 +815,8 @@ superset workspaces delete ws_a ws_b ws_c
 		{ name: "id", description: "Workspace ID. Defaults to `$SUPERSET_WORKSPACE_ID` when run inside a workspace." },
 	]}
 	options={[
-		{ flag: "--host <id>", description: "Host the workspace lives on (default: this machine)." },
-		{ flag: "--cloud", description: "The workspace is a cloud workspace (see `workspaces list --cloud`). Exclusive with --host." },
+		{ flag: "--host <id>", description: "Host the workspace lives on (default: the cloud)." },
+		{ flag: "--local", description: "The workspace is on this machine. Mutually exclusive with `--host`." },
 		{ flag: "--field <name>", description: "Print a single field's raw value (e.g. name, branch, worktreePath). Alias: -f." },
 	]}
 	output={`{
@@ -829,12 +834,13 @@ superset workspaces delete ws_a ws_b ws_c
   createdAt: Date;
 }`}
 >
-Show details for a single workspace on its host. `--field` is handy in
+Show details for a single workspace: a cloud workspace by default, or one on
+this machine (`--local`) or another host (`--host <id>`). `--field` is handy in
 scripts: `superset workspaces get --field worktreePath`.
 
 ```bash
 superset workspaces get ws_…
-superset workspaces get --field branch   # inside a workspace
+superset workspaces get --local --field branch   # inside a local workspace
 ```
 </Command>
 
@@ -844,7 +850,8 @@ superset workspaces get --field branch   # inside a workspace
 		{ name: "id", required: true, description: "Workspace UUID." },
 	]}
 	options={[
-		{ flag: "--host <id>", description: "Host the workspace lives on (default: this machine)." },
+		{ flag: "--host <id>", description: "Host the workspace lives on (default: the cloud)." },
+		{ flag: "--local", description: "The workspace is on this machine. Mutually exclusive with `--host`." },
 		{ flag: "--name <name>", description: "New workspace name." },
 		{ flag: "--task-id <id>", description: "Link the workspace to a task by id." },
 		{ flag: "--clear-task", description: "Unlink the workspace from its current task. Mutually exclusive with --task-id." },
@@ -853,15 +860,16 @@ superset workspaces get --field branch   # inside a workspace
 	]}
 	output="Workspace"
 >
-Update a workspace on its host (default: this machine). `--tag` replaces the
-whole tag set — tagging is how workspaces group into sidebar folders, so
+Rename a cloud workspace, or update a workspace on this machine (`--local`) or
+another host (`--host <id>`). Tasks and tags exist only on host workspaces.
+`--tag` replaces the whole tag set — tagging is how workspaces group into sidebar folders, so
 retagging moves the workspace between folders.
 
 ```bash
 superset workspaces update ws_… --name "better-name"
-superset workspaces update ws_… --task-id tsk_…
-superset workspaces update ws_… --tag perf --tag infra
-superset workspaces update ws_… --clear-task
+superset workspaces update ws_… --local --task-id tsk_…
+superset workspaces update ws_… --local --tag perf --tag infra
+superset workspaces update ws_… --local --clear-task
 ```
 </Command>
 
@@ -871,8 +879,8 @@ superset workspaces update ws_… --clear-task
 		{ name: "id", required: true, description: "Workspace ID." },
 	]}
 	options={[
-		{ flag: "--host <id>", description: "Host the workspace lives on (default: this machine)." },
-		{ flag: "--cloud", description: "The workspace is a cloud workspace (see `workspaces list --cloud`). Exclusive with --host." },
+		{ flag: "--host <id>", description: "Host the workspace lives on (default: the cloud)." },
+		{ flag: "--local", description: "The workspace is on this machine. Mutually exclusive with `--host`." },
 		{ flag: "--print", description: "Print the deep link instead of opening the desktop app." },
 	]}
 	output={`{
@@ -966,8 +974,8 @@ superset agents list --host host_…
 	name="superset agents create"
 	options={[
 		{ flag: "--workspace <id>", required: true, description: "Workspace UUID to create the agent session in." },
-		{ flag: "--host <id>", description: "Host the workspace lives on (default: this machine)." },
-		{ flag: "--cloud", description: "The workspace is a cloud workspace (see `workspaces list --cloud`). Exclusive with --host." },
+		{ flag: "--host <id>", description: "Host the workspace lives on (default: the cloud)." },
+		{ flag: "--local", description: "The workspace is on this machine. Mutually exclusive with `--host`." },
 		{ flag: "--agent <preset|uuid|superset>", required: true, description: "Agent preset id (e.g. `claude`, `codex`), HostAgentConfig instance UUID, or `superset`." },
 		{ flag: "--prompt <text>", description: "Prompt sent to the agent. Required unless `--resume-session` is set." },
 		{ flag: "--resume-session <id>", description: "Agent session id of a previous run to restore instead of starting fresh (e.g. `claude --resume <id>`). Fails for agents without an id-based resume." },
@@ -1033,8 +1041,8 @@ a one-off command in a worktree or to open an interactive shell.
 	name="superset terminals create"
 	options={[
 		{ flag: "--workspace <id>", required: true, description: "Workspace UUID to create the terminal in." },
-		{ flag: "--host <id>", description: "Host the workspace lives on (default: this machine)." },
-		{ flag: "--cloud", description: "The workspace is a cloud workspace (see `workspaces list --cloud`). Exclusive with --host." },
+		{ flag: "--host <id>", description: "Host the workspace lives on (default: the cloud)." },
+		{ flag: "--local", description: "The workspace is on this machine. Mutually exclusive with `--host`." },
 		{ flag: "--command <cmd>", description: "Shell command to run in the terminal. Omit to open an interactive shell." },
 		{ flag: "--cwd <path>", description: "Working directory for the terminal. Defaults to the worktree." },
 	]}
@@ -1056,8 +1064,8 @@ superset terminals create --workspace ws_…
 	name="superset terminals list"
 	options={[
 		{ flag: "--workspace <id>", required: true, description: "Workspace UUID." },
-		{ flag: "--host <id>", description: "Host the workspace lives on (default: this machine)." },
-		{ flag: "--cloud", description: "The workspace is a cloud workspace (see `workspaces list --cloud`). Exclusive with --host." },
+		{ flag: "--host <id>", description: "Host the workspace lives on (default: the cloud)." },
+		{ flag: "--local", description: "The workspace is on this machine. Mutually exclusive with `--host`." },
 	]}
 	output={`{
   sessions: Array<TerminalSession>;
@@ -1072,8 +1080,8 @@ PTY exists, not that an agent inside it is working or idle.
 	options={[
 		{ flag: "--workspace <id>", required: true, description: "Workspace UUID." },
 		{ flag: "--terminal <id>", required: true, description: "Terminal session ID." },
-		{ flag: "--host <id>", description: "Host the workspace lives on (default: this machine)." },
-		{ flag: "--cloud", description: "The workspace is a cloud workspace (see `workspaces list --cloud`). Exclusive with --host." },
+		{ flag: "--host <id>", description: "Host the workspace lives on (default: the cloud)." },
+		{ flag: "--local", description: "The workspace is on this machine. Mutually exclusive with `--host`." },
 		{ flag: "--max-lines <n>", description: "Limit how many trailing lines to return." },
 	]}
 	output={`{
@@ -1097,8 +1105,8 @@ superset terminals read --workspace ws_… --terminal term_… --max-lines 240
 		{ flag: "--terminal <id>", required: true, description: "Terminal session ID." },
 		{ flag: "--text <string>", required: true, description: "Text to deliver to the terminal." },
 		{ flag: "--no-submit", description: "Stage the text without pressing Enter." },
-		{ flag: "--host <id>", description: "Host the workspace lives on (default: this machine)." },
-		{ flag: "--cloud", description: "The workspace is a cloud workspace (see `workspaces list --cloud`). Exclusive with --host." },
+		{ flag: "--host <id>", description: "Host the workspace lives on (default: the cloud)." },
+		{ flag: "--local", description: "The workspace is on this machine. Mutually exclusive with `--host`." },
 	]}
 >
 Send a follow-up message to a terminal already running in a workspace, e.g. to
@@ -1110,8 +1118,8 @@ give an agent new instructions mid-session.
 	options={[
 		{ flag: "--workspace <id>", required: true, description: "Workspace UUID." },
 		{ flag: "--terminal <id>", required: true, description: "Terminal session ID." },
-		{ flag: "--host <id>", description: "Host the workspace lives on (default: this machine)." },
-		{ flag: "--cloud", description: "The workspace is a cloud workspace (see `workspaces list --cloud`). Exclusive with --host." },
+		{ flag: "--host <id>", description: "Host the workspace lives on (default: the cloud)." },
+		{ flag: "--local", description: "The workspace is on this machine. Mutually exclusive with `--host`." },
 	]}
 >
 Close (dispose) a terminal running in a workspace. This ends the session.
@@ -1134,7 +1142,7 @@ agent-facing protocol.
 	name="superset browser list"
 	options={[
 		{ flag: "--workspace <id>", required: true, description: "Workspace UUID." },
-		{ flag: "--host <id>", description: "Host the workspace lives on (default: this machine)." },
+		{ flag: "--host <id>", description: "Host the workspace lives on (default: the cloud)." },
 	]}
 	output={`{
   panes: Array<{ paneId; workspaceId; url; title; isLoading }>;
@@ -1149,7 +1157,7 @@ List the browser panes open in a workspace.
 		{ flag: "--workspace <id>", required: true, description: "Workspace UUID." },
 		{ flag: "--url <url>", required: true, description: "URL to open (http/https)." },
 		{ flag: "--target <t>", description: "`current-tab` (default) or `new-tab`." },
-		{ flag: "--host <id>", description: "Host the workspace lives on (default: this machine)." },
+		{ flag: "--host <id>", description: "Host the workspace lives on (default: the cloud)." },
 	]}
 	output={`{
   paneId: string;
@@ -1171,7 +1179,7 @@ superset browser open --workspace ws_… --url http://localhost:3000 --target ne
 		{ flag: "--workspace <id>", required: true, description: "Workspace UUID." },
 		{ flag: "--pane <id>", required: true, description: "Pane ID (from `browser list`)." },
 		{ flag: "--url <url>", required: true, description: "URL to navigate to (http/https)." },
-		{ flag: "--host <id>", description: "Host the workspace lives on (default: this machine)." },
+		{ flag: "--host <id>", description: "Host the workspace lives on (default: the cloud)." },
 	]}
 >
 Point an existing pane at a new URL. `file://`, `chrome://`, and custom schemes
@@ -1184,7 +1192,7 @@ are refused.
 		{ flag: "--workspace <id>", required: true, description: "Workspace UUID." },
 		{ flag: "--pane <id>", required: true, description: "Pane ID." },
 		{ flag: "--out <path>", description: "Write a PNG file instead of printing base64." },
-		{ flag: "--host <id>", description: "Host the workspace lives on (default: this machine)." },
+		{ flag: "--host <id>", description: "Host the workspace lives on (default: the cloud)." },
 	]}
 	output={`{ base64: string }  // or { path } with --out`}
 >
@@ -1197,7 +1205,7 @@ Capture a PNG screenshot of the pane's page.
 		{ flag: "--workspace <id>", required: true, description: "Workspace UUID." },
 		{ flag: "--pane <id>", required: true, description: "Pane ID." },
 		{ flag: "--code <js>", required: true, description: "JavaScript expression to evaluate in the page." },
-		{ flag: "--host <id>", description: "Host the workspace lives on (default: this machine)." },
+		{ flag: "--host <id>", description: "Host the workspace lives on (default: the cloud)." },
 	]}
 	output={`{ result: unknown }`}
 >
@@ -1216,7 +1224,7 @@ superset browser eval --workspace ws_… --pane pane_… \
 		{ flag: "--workspace <id>", required: true, description: "Workspace UUID." },
 		{ flag: "--pane <id>", required: true, description: "Pane ID." },
 		{ flag: "--max-lines <n>", description: "Cap returned entries from the bottom." },
-		{ flag: "--host <id>", description: "Host the workspace lives on (default: this machine)." },
+		{ flag: "--host <id>", description: "Host the workspace lives on (default: the cloud)." },
 	]}
 	output={`{ entries: Array<{ level; message; timestamp }> }`}
 >
@@ -1228,7 +1236,7 @@ Read the pane's captured console output.
 	options={[
 		{ flag: "--workspace <id>", required: true, description: "Workspace UUID." },
 		{ flag: "--pane <id>", required: true, description: "Pane ID." },
-		{ flag: "--host <id>", description: "Host the workspace lives on (default: this machine)." },
+		{ flag: "--host <id>", description: "Host the workspace lives on (default: the cloud)." },
 	]}
 	output={`{ url: string }  // a CDP WebSocket URL`}
 >
@@ -1411,7 +1419,8 @@ Use [`automations logs`](#superset-automations-logs-id) for run history.
 		{ flag: "--dtstart <iso8601>", description: "Default: now." },
 		{ flag: "--workspace <workspaceId>", description: "Reuse an existing workspace (session workspaces are accepted)." },
 		{ flag: "--project <projectId>", description: "Project ID for new-workspace-per-run mode. Omit (with no --workspace) for session mode." },
-		{ flag: "--host <hostId>", description: "Host the automation dispatches to (default: this machine)." },
+		{ flag: "--host <hostId>", description: "Host the automation runs on. Automations run on a host: pass this or `--local`." },
+		{ flag: "--local", description: "Run the automation on this machine." },
 		{ flag: "--agent <agent>", description: "Host agent presetId, instance UUID, or 'superset' for built-in chat. Default: claude." },
 		{ flag: "--tag <tag>", description: "Workspace tag applied to each run's created workspace. Repeatable. Default: automation." },
 	]}
@@ -1433,6 +1442,7 @@ pass `--tag` to file runs elsewhere.
 ```bash
 superset automations create \
   --name "Weekday triage" \
+  --local \
   --project prj_… \
   --workspace ws_… \
   --rrule "FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR;BYHOUR=9;BYMINUTE=0" \
@@ -1451,6 +1461,7 @@ superset automations create \
 		{ flag: "--timezone <iana>", description: "New timezone." },
 		{ flag: "--dtstart <iso8601>", description: "New start time." },
 		{ flag: "--host <hostId>", description: "New target host." },
+		{ flag: "--local", description: "Retarget to this machine." },
 		{ flag: "--project <projectId>", description: "New v2 project ID." },
 		{ flag: "--workspace <workspaceId>", description: "New v2 workspace ID." },
 		{ flag: "--session", description: "Switch to session mode: clears the project and any workspace pin; each run creates a project-less session workspace. Mutually exclusive with --project/--workspace." },

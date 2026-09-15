@@ -25,8 +25,8 @@ export default command({
 	description: "Open a workspace in the Superset desktop app",
 	args: [positional("id").required().desc("Workspace ID")],
 	options: {
-		host: string().desc("Host the workspace lives on (default: this machine)"),
-		cloud: boolean().desc("The workspace is a cloud workspace"),
+		host: string().desc("Host the workspace lives on (default: the cloud)"),
+		local: boolean().desc("The workspace is on this machine"),
 		print: boolean().desc(
 			"Print the deep link URL instead of opening the desktop app",
 		),
@@ -43,8 +43,8 @@ export default command({
 				organizationId,
 				userJwt: ctx.bearer,
 				api: ctx.api,
-				hostId: options.host ?? undefined,
-				cloud: options.cloud ?? false,
+				host: options.host ?? undefined,
+				local: options.local ?? undefined,
 			},
 			id,
 		);

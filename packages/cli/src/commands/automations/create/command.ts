@@ -2,7 +2,10 @@ import { readFileSync } from "node:fs";
 import { boolean, CLIError, string } from "@superset/cli-framework";
 import { command } from "../../../lib/command";
 import { formatAutomationDate } from "../format";
-import { resolveAutomationTarget } from "../resolveAutomationTarget";
+import {
+	requireAutomationHost,
+	resolveAutomationTarget,
+} from "../resolveAutomationTarget";
 
 const DEFAULT_TIMEZONE =
 	Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
@@ -28,8 +31,9 @@ export default command({
 			"Deliver each run's prompt into the agent session the previous run left, instead of starting another. Requires --workspace",
 		),
 		host: string().desc(
-			"Host the target project/workspace lives on (default: this machine)",
+			"Host the automation runs on (machineId). Automations run on a host: pass this or --local",
 		),
+		local: boolean().desc("Run the automation on this machine"),
 		agent: string()
 			.default("claude")
 			.desc("Host agent instance id or presetId (claude, codex, ...)."),
@@ -57,7 +61,7 @@ export default command({
 			organizationId,
 			userJwt: ctx.bearer,
 			api: ctx.api,
-			hostId: options.host ?? undefined,
+			hostId: requireAutomationHost(options),
 			workspaceId: options.workspace ?? undefined,
 			projectId: options.project ?? undefined,
 		});

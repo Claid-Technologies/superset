@@ -12,7 +12,7 @@ export function register(server: McpServer): void {
 		name: "agents_create",
 		annotations: { destructiveHint: false },
 		description:
-			"Create (launch) an agent session inside an existing workspace on its host: runs the named agent preset (or HostAgentConfig instance) with the given prompt in a fresh terminal session. Use hosts_list / workspaces_list to find the hostId, or pass cloud: true for a cloud workspace. Use this to start a second agent in a workspace that already exists; for create-and-spawn in a single call, pass `agents` to workspaces_create instead.",
+			"Create (launch) an agent session inside an existing workspace on its host: runs the named agent preset (or HostAgentConfig instance) with the given prompt in a fresh terminal session. Omit hostId for a cloud workspace; for a host workspace, use hosts_list / workspaces_list to find the hostId. Use this to start a second agent in a workspace that already exists; for create-and-spawn in a single call, pass `agents` to workspaces_create instead.",
 		inputSchema: {
 			...workspaceLocationInput,
 			workspaceId: z

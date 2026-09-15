@@ -25,7 +25,7 @@ A page is identified by its workspace plus its path, so **which target you picke
 ## 2. Pick the target
 
 - `superset projects list`: a project target creates a fresh workspace per run (most tasks)
-- `superset workspaces list`: a workspace target reuses the same workspace every run (stateful tasks)
+- `superset workspaces list --local`: a workspace target reuses the same workspace every run (stateful tasks)
 
 ## 3. Confirm before creating
 
@@ -38,11 +38,12 @@ superset automations create \
   --name "Daily issue triage" \
   --rrule "FREQ=DAILY;BYHOUR=9;BYMINUTE=0" \
   --timezone America/Los_Angeles \
+  --local \
   --project <id> \
   --agent claude \
   --prompt-file /tmp/automation-prompt.md
 ```
 
-(`--workspace <id>` instead of `--project` for reuse mode; `--host <id>` if it should run on another machine; prefer `--prompt-file` for multiline prompts.)
+(`--workspace <id>` instead of `--project` for reuse mode; `--host <id>` instead of `--local` if it should run on another machine; prefer `--prompt-file` for multiline prompts.)
 
 Then trigger a first run now with `superset automations run <id>`, review `superset automations logs <id>` with the user, and refine the prompt via `superset automations prompt set <id>` until the run output is right. An automation isn't done until one real run looked good. If the prompt publishes a page, open the published page as part of that review, not just the run log.
