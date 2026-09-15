@@ -9568,12 +9568,6 @@ msgstr "Nog geen publieke agentconfiguraties. Deze route is klaar voor toekomsti
 msgid "No pull requests found."
 msgstr "Geen pull requests gevonden."
 
-msgid "No repositories connected."
-msgstr "Geen repositories gekoppeld."
-
-msgid "No repositories found"
-msgstr "Geen repositories gevonden"
-
 msgid "No repositories found. Make sure your GitHub App has access to repositories."
 msgstr "Geen repository's gevonden. Controleer of je GitHub App toegang heeft tot repository's."
 

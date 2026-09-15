@@ -9568,12 +9568,6 @@ msgstr "Публичных конфигураций агентов пока не
 msgid "No pull requests found."
 msgstr "Пул-реквесты не найдены."
 
-msgid "No repositories connected."
-msgstr "Нет подключённых репозиториев."
-
-msgid "No repositories found"
-msgstr "Репозитории не найдены"
-
 msgid "No repositories found. Make sure your GitHub App has access to repositories."
 msgstr "Репозитории не найдены. Убедитесь, что у вашего GitHub App есть доступ к репозиториям."
 

@@ -9568,12 +9568,6 @@ msgstr "暫無公開的代理程式配置。此頁面已為將來的代理程式
 msgid "No pull requests found."
 msgstr "未找到拉取請求。"
 
-msgid "No repositories connected."
-msgstr "尚未連結任何儲存庫。"
-
-msgid "No repositories found"
-msgstr "未找到儲存庫"
-
 msgid "No repositories found. Make sure your GitHub App has access to repositories."
 msgstr "未找到儲存庫。請確認你的GitHub App有權存取儲存庫。"
 

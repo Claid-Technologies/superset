@@ -9568,12 +9568,6 @@ msgstr "公開されているエージェント設定はまだありません。
 msgid "No pull requests found."
 msgstr "プルリクエストが見つかりません。"
 
-msgid "No repositories connected."
-msgstr "接続されているリポジトリがありません。"
-
-msgid "No repositories found"
-msgstr "リポジトリが見つかりません"
-
 msgid "No repositories found. Make sure your GitHub App has access to repositories."
 msgstr "リポジトリが見つかりません。GitHub Appにリポジトリへのアクセス権があるか確認してください。"
 

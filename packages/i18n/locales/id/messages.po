@@ -9568,12 +9568,6 @@ msgstr "Belum ada konfigurasi agen publik. Rute ini siap untuk daftar konfiguras
 msgid "No pull requests found."
 msgstr "Tidak ada pull request ditemukan."
 
-msgid "No repositories connected."
-msgstr "Tidak ada repositori yang terhubung."
-
-msgid "No repositories found"
-msgstr "Tidak ada repositori yang ditemukan"
-
 msgid "No repositories found. Make sure your GitHub App has access to repositories."
 msgstr "Tidak ada repositori ditemukan. Pastikan GitHub App Anda punya akses ke repositori."
 

@@ -9568,12 +9568,6 @@ msgstr "No public agent configs yet. This route is ready for future agent config
 msgid "No pull requests found."
 msgstr "No pull requests found."
 
-msgid "No repositories connected."
-msgstr "No repositories connected."
-
-msgid "No repositories found"
-msgstr "No repositories found"
-
 msgid "No repositories found. Make sure your GitHub App has access to repositories."
 msgstr "No repositories found. Make sure your GitHub App has access to repositories."
 

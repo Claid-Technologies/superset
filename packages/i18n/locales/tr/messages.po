@@ -9568,12 +9568,6 @@ msgstr "Henüz herkese açık ajan yapılandırması yok. Bu bölüm gelecekteki
 msgid "No pull requests found."
 msgstr "Pull request bulunamadı."
 
-msgid "No repositories connected."
-msgstr "Bağlı depo yok."
-
-msgid "No repositories found"
-msgstr "Depo bulunamadı"
-
 msgid "No repositories found. Make sure your GitHub App has access to repositories."
 msgstr "Depo bulunamadı. GitHub App'inizin depolara erişimi olduğundan emin olun."
 

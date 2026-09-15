@@ -9568,12 +9568,6 @@ msgstr "아직 공개된 에이전트 설정이 없습니다. 이 경로는 앞�
 msgid "No pull requests found."
 msgstr "풀 리퀘스트를 찾을 수 없습니다."
 
-msgid "No repositories connected."
-msgstr "연결된 리포지토리가 없습니다."
-
-msgid "No repositories found"
-msgstr "리포지토리를 찾을 수 없습니다"
-
 msgid "No repositories found. Make sure your GitHub App has access to repositories."
 msgstr "리포지토리를 찾을 수 없습니다. GitHub App이 리포지토리에 접근할 수 있는지 확인하세요."
 

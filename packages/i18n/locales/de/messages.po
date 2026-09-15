@@ -9568,12 +9568,6 @@ msgstr "Noch keine öffentlichen Agenten-Konfigurationen. Diese Seite ist für k
 msgid "No pull requests found."
 msgstr "Keine Pull Requests gefunden."
 
-msgid "No repositories connected."
-msgstr "Keine Repositories verbunden."
-
-msgid "No repositories found"
-msgstr "Keine Repositories gefunden"
-
 msgid "No repositories found. Make sure your GitHub App has access to repositories."
 msgstr "Keine Repositories gefunden. Stelle sicher, dass deine GitHub-App Zugriff auf Repositories hat."
 

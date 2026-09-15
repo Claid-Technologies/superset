@@ -9568,12 +9568,6 @@ msgstr "Nenhuma configuração de agente pública ainda. Esta rota já está pro
 msgid "No pull requests found."
 msgstr "Nenhum pull request encontrado."
 
-msgid "No repositories connected."
-msgstr "Nenhum repositório conectado."
-
-msgid "No repositories found"
-msgstr "Nenhum repositório encontrado"
-
 msgid "No repositories found. Make sure your GitHub App has access to repositories."
 msgstr "Nenhum repositório encontrado. Confirme se o seu GitHub App tem acesso aos repositórios."
 

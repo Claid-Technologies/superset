@@ -9568,12 +9568,6 @@ msgstr "Aucune configuration d'agent publique pour l'instant. Cette page est pr�
 msgid "No pull requests found."
 msgstr "Aucune pull request trouvée."
 
-msgid "No repositories connected."
-msgstr "Aucun dépôt connecté."
-
-msgid "No repositories found"
-msgstr "Aucun dépôt trouvé"
-
 msgid "No repositories found. Make sure your GitHub App has access to repositories."
 msgstr "Aucun dépôt trouvé. Vérifiez que votre GitHub App a accès à des dépôts."
 

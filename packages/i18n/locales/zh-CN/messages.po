@@ -9568,12 +9568,6 @@ msgstr "暂无公开的智能体配置。此页面已为将来的智能体配置
 msgid "No pull requests found."
 msgstr "未找到拉取请求。"
 
-msgid "No repositories connected."
-msgstr "未连接任何仓库。"
-
-msgid "No repositories found"
-msgstr "未找到仓库"
-
 msgid "No repositories found. Make sure your GitHub App has access to repositories."
 msgstr "未找到仓库。请确认你的GitHub App有权访问仓库。"
 

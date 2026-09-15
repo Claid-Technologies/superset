@@ -9568,12 +9568,6 @@ msgstr "Chưa có cấu hình agent công khai nào. Đường dẫn này đã s
 msgid "No pull requests found."
 msgstr "Không tìm thấy pull request nào."
 
-msgid "No repositories connected."
-msgstr "Chưa có repository nào được kết nối."
-
-msgid "No repositories found"
-msgstr "Không tìm thấy repository nào"
-
 msgid "No repositories found. Make sure your GitHub App has access to repositories."
 msgstr "Không tìm thấy repository nào. Hãy đảm bảo GitHub App của bạn có quyền truy cập repository."
 

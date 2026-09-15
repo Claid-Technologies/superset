@@ -9568,12 +9568,6 @@ msgstr "Zatím žádné veřejné konfigurace agentů. Tato adresa je připraven
 msgid "No pull requests found."
 msgstr "Nenalezeny žádné pull requesty."
 
-msgid "No repositories connected."
-msgstr "Žádné připojené repozitáře."
-
-msgid "No repositories found"
-msgstr "Nenalezeny žádné repozitáře"
-
 msgid "No repositories found. Make sure your GitHub App has access to repositories."
 msgstr "Nenalezeny žádné repozitáře. Ověřte, že vaše GitHub App má k repozitářům přístup."
 
