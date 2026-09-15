@@ -3,7 +3,7 @@ import { createHash } from "node:crypto";
 import { existsSync, openSync, readFileSync, writeFileSync } from "node:fs";
 import { rm } from "node:fs/promises";
 import { homedir } from "node:os";
-import { dirname, join } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import {
 	type CloudAgentLaunch,
 	readCloudAgentLaunch,
@@ -62,7 +62,13 @@ export interface SandboxIdentity {
 
 function readSandboxRepositories(raw: string | undefined): SandboxRepository[] {
 	if (!raw) return [];
-	const parsed = sandboxRepositoriesSchema.safeParse(JSON.parse(raw));
+	let json: unknown;
+	try {
+		json = JSON.parse(raw);
+	} catch {
+		json = null;
+	}
+	const parsed = sandboxRepositoriesSchema.safeParse(json);
 	if (!parsed.success) {
 		console.warn(
 			"[sandbox] SUPERSET_SANDBOX_REPOSITORIES is not a repository list",
@@ -134,9 +140,12 @@ export function runSandboxStartHook(
 			: [`bash ${shellSingleQuote(resolved.scriptPath)}`];
 	if (!commands?.length) return { started: false, reason: "no-hook" };
 	const command = commands.join(" && ");
+	const configured = resolved?.cwd
+		? resolve(identity.hooksPath, resolved.cwd)
+		: identity.hooksPath;
 	const log = openSync(START_HOOK_LOG, "a");
 	const child = spawn("bash", ["-lc", command], {
-		cwd: identity.hooksPath,
+		cwd: existsSync(configured) ? configured : identity.hooksPath,
 		env: { ...process.env, ...getManagedEnv(), IS_SANDBOX: "1" },
 		stdio: ["ignore", log, log],
 		detached: true,

@@ -411,10 +411,25 @@ await deleteSandbox(probe);
 log(`probe: ${probe} deleted`);
 
 // 5. rows
-const { db } = await import("@superset/db/client");
-const { environments } = await import("@superset/db/schema");
-const { eq } = await import("drizzle-orm");
+const { db, dbWs } = await import("@superset/db/client");
+const { environments, environmentRepositories, githubRepositories } =
+	await import("@superset/db/schema");
+const { and, eq } = await import("drizzle-orm");
 const { seedSharedEnvironments } = await import("./seed");
+
+// The golden baked the monorepo at its path; a fork asks for the same, and
+// the box acts on the monorepo's own .superset/config.json.
+const monorepo = await db.query.githubRepositories.findFirst({
+	where: and(
+		eq(githubRepositories.organizationId, ORGANIZATION_ID as string),
+		eq(githubRepositories.fullName, REPO_FULL_NAME),
+	),
+});
+if (!monorepo)
+	fail(
+		`rows: ${REPO_FULL_NAME} is not connected to organization ${ORGANIZATION_ID}; install the GitHub App there first; ${golden} left for inspection`,
+	);
+
 await seedSharedEnvironments(SANDBOX_IMAGE_NAME);
 await db
 	.update(environments)
@@ -425,67 +440,45 @@ log(
 );
 
 const previous = await db.query.environments.findFirst({
-	where: (row, { and, eq: equals }) =>
-		and(
-			equals(row.organizationId, ORGANIZATION_ID as string),
-			equals(row.name, INTERNAL_NAME),
-		),
-});
-await db
-	.insert(environments)
-	.values({
-		organizationId: ORGANIZATION_ID as string,
-		name: INTERNAL_NAME,
-		provider: "vercel",
-		sourceKind: "fork",
-		sourceRef: golden,
-		bundleSha: bundle.sha256,
-	})
-	.onConflictDoUpdate({
-		target: [environments.organizationId, environments.name],
-		set: {
-			provider: "vercel",
-			sourceKind: "fork",
-			sourceRef: golden,
-			bundleSha: bundle.sha256,
-			archivedAt: null,
-		},
-	});
-// The golden baked the monorepo at its path; a fork asks for the same, and
-// the box acts on the monorepo's own .superset/config.json.
-const { environmentRepositories, githubRepositories } = await import(
-	"@superset/db/schema"
-);
-const { and: andWhere } = await import("drizzle-orm");
-const internal = await db.query.environments.findFirst({
 	where: (row, { and: both, eq: equals }) =>
 		both(
 			equals(row.organizationId, ORGANIZATION_ID as string),
 			equals(row.name, INTERNAL_NAME),
 		),
 });
-const monorepo = await db.query.githubRepositories.findFirst({
-	where: andWhere(
-		eq(githubRepositories.organizationId, ORGANIZATION_ID as string),
-		eq(githubRepositories.fullName, REPO_FULL_NAME),
-	),
+await dbWs.transaction(async (tx) => {
+	const [internal] = await tx
+		.insert(environments)
+		.values({
+			organizationId: ORGANIZATION_ID as string,
+			name: INTERNAL_NAME,
+			provider: "vercel",
+			sourceKind: "fork",
+			sourceRef: golden,
+			bundleSha: bundle.sha256,
+			hooksRepositoryId: monorepo.id,
+		})
+		.onConflictDoUpdate({
+			target: [environments.organizationId, environments.name],
+			set: {
+				provider: "vercel",
+				sourceKind: "fork",
+				sourceRef: golden,
+				bundleSha: bundle.sha256,
+				hooksRepositoryId: monorepo.id,
+				archivedAt: null,
+			},
+		})
+		.returning({ id: environments.id });
+	if (!internal) throw new Error(`${INTERNAL_NAME} row missing after upsert`);
+	await tx
+		.delete(environmentRepositories)
+		.where(eq(environmentRepositories.environmentId, internal.id));
+	await tx.insert(environmentRepositories).values({
+		environmentId: internal.id,
+		repositoryId: monorepo.id,
+	});
 });
-if (!internal) fail(`rows: ${INTERNAL_NAME} row missing after upsert`);
-if (!monorepo)
-	fail(
-		`rows: ${REPO_FULL_NAME} is not connected to organization ${ORGANIZATION_ID}; install the GitHub App there first`,
-	);
-await db
-	.delete(environmentRepositories)
-	.where(eq(environmentRepositories.environmentId, internal.id));
-await db.insert(environmentRepositories).values({
-	environmentId: internal.id,
-	repositoryId: monorepo.id,
-});
-await db
-	.update(environments)
-	.set({ hooksRepositoryId: monorepo.id })
-	.where(eq(environments.id, internal.id));
 log(
 	`rows: ${INTERNAL_NAME} -> fork of ${golden}, bundle ${bundle.sha256.slice(0, 12)}`,
 );

@@ -204,7 +204,11 @@ export const cloudWorkspaceRouter = {
 					isNull(environments.archivedAt),
 				),
 			});
-			if (!environment) {
+			if (
+				!environment ||
+				(environment.scope === "personal" &&
+					environment.createdByUserId !== ctx.userId)
+			) {
 				throw userError({
 					code: "NOT_FOUND",
 					message: "Environment not found in this organization",

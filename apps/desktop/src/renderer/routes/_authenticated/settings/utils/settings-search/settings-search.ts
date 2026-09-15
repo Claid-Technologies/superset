@@ -1966,12 +1966,31 @@ export function getVisibleItemsForSection(params: {
  * active v1/v2 variant. Used by the sidebar so search counts and section
  * visibility agree.
  */
+/** Sections offered only with the cloud workspaces flag. */
+const CLOUD_WORKSPACE_SECTIONS: ReadonlySet<SettingsSection> = new Set([
+	"environments",
+	"agentAccounts",
+	"connections",
+]);
+
+function isItemOffered(
+	item: { id: SettingItemId; section: SettingsSection },
+	isV2: boolean,
+	cloudWorkspaces: boolean,
+): boolean {
+	return (
+		isItemAllowedForVariant(item.id, isV2) &&
+		(cloudWorkspaces || !CLOUD_WORKSPACE_SECTIONS.has(item.section))
+	);
+}
+
 export function getVisibleMatchCountBySection(
 	query: string,
 	isV2: boolean,
+	cloudWorkspaces: boolean,
 ): Partial<Record<SettingsSection, number>> {
 	const matches = searchSettings(query).filter((item) =>
-		isItemAllowedForVariant(item.id, isV2),
+		isItemOffered(item, isV2, cloudWorkspaces),
 	);
 	const counts: Partial<Record<SettingsSection, number>> = {};
 	for (const item of matches) {
@@ -1987,10 +2006,11 @@ export function getVisibleMatchCountBySection(
  */
 export function getAllowedSectionsForVariant(
 	isV2: boolean,
+	cloudWorkspaces: boolean,
 ): Set<SettingsSection> {
 	const sections = new Set<SettingsSection>();
 	for (const item of SETTINGS_ITEMS) {
-		if (isItemAllowedForVariant(item.id, isV2)) sections.add(item.section);
+		if (isItemOffered(item, isV2, cloudWorkspaces)) sections.add(item.section);
 	}
 	return sections;
 }

@@ -7,8 +7,9 @@ and an agent that onboards the checkout. Each call below was mine; overturn any 
 
 ## The model
 
-- **An environment lists its repositories, in order.** `environment_repositories` rows, the
-  first is the primary: the checkout a workspace opens on. The shared `Default` environment
+- **An environment lists its repositories, unordered.** `environment_repositories` rows. The
+  primary, the checkout a workspace opens on, is the config repository (`hooks_repository_id`),
+  else the first by full name. The shared `Default` environment
   lists none and takes its repositories at workspace create, so anyone can start from the
   base image with any connected repository.
 - **A workspace fixes its checkouts at create.** `cloud_workspace_repositories`: repository and

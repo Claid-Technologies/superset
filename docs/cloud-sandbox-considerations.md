@@ -59,6 +59,16 @@ clone URL carries nothing, and the box holds only a `GH_TOKEN` placeholder so
 `gh` is willing to call. The rule is re-minted on every wake and every
 `access` keepalive, so a rule's token is never older than one keepalive.
 
+**A visitor acts on GitHub as the workspace's creator. Accepted (multiplayer).**
+Any member of the organization can open any cloud workspace; that is the
+default on purpose. The GitHub rule carries the creator's own connection
+(Settings › Connections) when they have one, so a member who opens someone
+else's workspace commits, pushes and opens pull requests as that person, and
+reaches every repository the creator can reach through the App, including ones
+the visitor cannot. Before cloud workspaces leave the team this needs an
+answer: per-member identity inside a shared box, or a workspace falling back
+to the installation token while someone other than its creator holds a ticket.
+
 **A sandbox has exactly one gate, and it is ours.** A sandbox's own port is
 a public URL that clients never see; they reach a workspace through the
 sandbox gate (`apps/gate`), which verifies a ticket the API signed
