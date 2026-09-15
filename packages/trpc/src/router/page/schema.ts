@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const OFFERED_VISIBILITIES = ["just_me", "org"] as const;
+export const OFFERED_VISIBILITIES = ["just_me", "org", "everyone"] as const;
 
 /**
  * Field-level schemas shared by this router's inputs and by the MCP tool
@@ -152,3 +152,5 @@ export const setPageWatchSchema = z.object({
 });
 
 export const clearPageWatchSchema = z.object({ id: pageFields.id });
+
+export const publicPageSchema = z.object({ slug: pageFields.slug });

@@ -1,4 +1,4 @@
-export type PageVisibility = "just_me" | "org";
+export type PageVisibility = "just_me" | "org" | "everyone";
 
 export interface PageHeaderOwner {
 	id: string;

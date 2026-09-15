@@ -3,6 +3,7 @@ import type {
 	CommentThread,
 	PageHeaderPage,
 	PageHeaderVersion,
+	PageVisibility,
 } from "@superset/ui/page-comments";
 import { useCallback } from "react";
 import { authClient } from "renderer/lib/auth-client";
@@ -19,7 +20,7 @@ interface PageHeaderData {
 	versions: PageHeaderVersion[];
 	threads: CommentThread[];
 	currentUserId: string | undefined;
-	onSetVisibility: (visibility: "just_me" | "org") => Promise<void>;
+	onSetVisibility: (visibility: PageVisibility) => Promise<void>;
 	onSetSharedVersion: (version: number | null) => Promise<void>;
 	onDelete: () => Promise<void>;
 }
@@ -57,7 +58,7 @@ export function usePageHeaderData(data: PageHeaderTarget): PageHeaderData {
 					id: pageId,
 					title: data.title ?? resolved.title ?? data.slug,
 					url: resolved.url,
-					visibility: resolved.visibility === "just_me" ? "just_me" : "org",
+					visibility: resolved.visibility,
 					createdByUserId: resolved.createdByUserId,
 					owner: access.data?.owner ?? null,
 					updatedAt: resolved.updatedAt,

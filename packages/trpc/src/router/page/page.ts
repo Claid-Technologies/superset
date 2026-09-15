@@ -22,8 +22,8 @@ import { TRPCError, type TRPCRouterRecord } from "@trpc/server";
 import { and, desc, eq, inArray, or, type SQL, sql } from "drizzle-orm";
 import { z } from "zod";
 import { env } from "../../env";
-import { deleteObjects, presignedGetUrl } from "../../lib/r2";
-import { protectedProcedure, userError } from "../../trpc";
+import { deleteObjects, objectExists, presignedGetUrl } from "../../lib/r2";
+import { protectedProcedure, publicProcedure, userError } from "../../trpc";
 import { requireActiveOrgMembership } from "../utils/active-org";
 import { assertPageReadable, assertPageWritable } from "./access";
 import { pageAssetRouter } from "./assets";
@@ -37,6 +37,7 @@ import {
 	listPagesSchema,
 	pageFields,
 	pageRefSchema,
+	publicPageSchema,
 	publishPageSchema,
 	pullPageSchema,
 	setPageVisibilitySchema,
@@ -56,6 +57,7 @@ import { assertWorkspaceAccess } from "./workspace-access";
 function visibilityFilter(userId: string) {
 	return or(
 		eq(pages.visibility, "org"),
+		eq(pages.visibility, "everyone"),
 		and(eq(pages.visibility, "just_me"), eq(pages.createdByUserId, userId)),
 	);
 }
@@ -730,6 +732,39 @@ export const pageRouter = {
 				storageKey: row.storageKey,
 				downloadUrl,
 				viewUrl,
+			};
+		}),
+
+	publicView: publicProcedure
+		.input(publicPageSchema)
+		.query(async ({ input }) => {
+			const [page] = await db
+				.select()
+				.from(pages)
+				.where(eq(pages.slug, input.slug))
+				.limit(1);
+			if (!page || page.visibility !== "everyone") return null;
+
+			const version = servedVersion(
+				page.sharedVersion,
+				await latestVersionNumber(page.id),
+			);
+			if (version === null) return null;
+
+			const baseUrl = env.USERCONTENT_URL;
+			const captured = await objectExists(pageThumbnailKey(page.id, version));
+			return {
+				id: page.id,
+				slug: page.slug,
+				title: page.title,
+				description: page.description,
+				url: pageUrl(page.slug),
+				updatedAt: page.updatedAt,
+				version,
+				viewUrl: pageViewUrl({ baseUrl, pageId: page.id, version }),
+				thumbnailUrl: captured
+					? pageThumbnailUrl({ baseUrl, pageId: page.id, version })
+					: null,
 			};
 		}),
 } satisfies TRPCRouterRecord;

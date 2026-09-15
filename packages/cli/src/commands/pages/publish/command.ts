@@ -1,6 +1,7 @@
 import { readFileSync, statSync } from "node:fs";
 import { basename, extname, resolve } from "node:path";
 import { boolean, CLIError, positional, string } from "@superset/cli-framework";
+import { OFFERED_VISIBILITIES } from "@superset/trpc/page-schema";
 import { command } from "../../../lib/command";
 import { resolveWorkspaceId } from "../workspaceRef";
 import {
@@ -17,7 +18,7 @@ import {
 import { resolvePageId } from "./utils/resolvePageId";
 import { uploadAssets, uploadDocument } from "./utils/upload";
 
-const VISIBILITIES = ["just_me", "org"] as const;
+const VISIBILITIES = OFFERED_VISIBILITIES;
 
 export default command({
 	description: "Publish an HTML file, or a directory of files, as a page",
