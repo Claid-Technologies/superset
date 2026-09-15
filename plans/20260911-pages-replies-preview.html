@@ -245,9 +245,34 @@
   .strip .snippet { color: var(--muted); }
   .strip .when { flex: none; color: var(--faint); font-size: 10.5px; font-variant-numeric: tabular-nums; }
 
+  /* variant B: the newest reply floats as a comment bubble */
+  .bubble {
+    position: absolute; left: 10px; right: 10px; bottom: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    background: rgba(30, 32, 38, 0.96);
+    box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.6), 0 2px 6px rgba(0, 0, 0, 0.4);
+    padding: 9px 11px;
+    font-size: 11.5px;
+    opacity: 0; transform: translateY(4px);
+    transition: opacity 0.18s ease, transform 0.18s ease;
+    pointer-events: none;
+  }
+  .card:hover .bubble { opacity: 1; transform: none; }
+  .bhead { display: flex; align-items: center; gap: 7px; }
+  .bhead .who { font-weight: 550; }
+  .bhead .when { margin-left: auto; color: var(--faint); font-size: 10.5px; font-variant-numeric: tabular-nums; }
+  .btext {
+    margin-top: 4px; color: #c6c9d1; line-height: 1.45;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .window[data-hover="strip"] .bubble { display: none; }
+  .window[data-hover="bubble"] .strip { display: none; }
+
   /* today-mode: the one visible change disappears; hover peeks disarm */
   .window[data-mode="today"] .replies { opacity: 0; visibility: hidden; }
   .window[data-mode="today"] .strip { display: none; }
+  .window[data-mode="today"] .bubble { display: none; }
 
   .caption { margin-top: 16px; font-size: 13px; color: var(--faint); }
   .caption b { color: var(--muted); font-weight: 500; }
@@ -273,6 +298,75 @@
     color: var(--text);
     border-color: rgba(255, 255, 255, 0.22);
     background: rgba(255, 255, 255, 0.06);
+  }
+  .swatch.hs { padding: 4px 12px; }
+
+  /* ------------------------------------------------ variant labels + light pane */
+  .variant-label { margin: 26px 0 0; font-size: 13px; font-weight: 550; color: var(--muted); }
+  .variant-label span { color: var(--faint); font-weight: 400; }
+
+  .lightpane {
+    margin-top: 14px;
+    background: #edeae3;
+    border: 1px solid #e0dcd3;
+    border-radius: 16px;
+    padding: 24px 26px 28px;
+  }
+  .lightpane .pair { display: flex; gap: 28px; flex-wrap: wrap; }
+  .lp-state { flex: 1 1 300px; min-width: 0; max-width: 520px; }
+  .lp-label { font-size: 13px; color: #8a857c; margin-bottom: 12px; }
+  .lcard {
+    position: relative;
+    background: #fff;
+    border: 1px solid #e7e3da;
+    border-radius: 14px;
+    box-shadow: 0 1px 2px rgba(30, 25, 15, 0.05), 0 12px 32px -20px rgba(30, 25, 15, 0.2);
+    overflow: hidden;
+  }
+  .lframe {
+    margin: 14px 14px 0;
+    border: 1px solid #eae6dd; border-bottom: 0;
+    border-radius: 10px 10px 0 0;
+    background: #fbfaf7;
+    height: 150px; overflow: hidden;
+  }
+  .fdots { display: flex; gap: 4px; padding: 11px 13px; border-bottom: 1px solid #efeae1; }
+  .fdots i { width: 6px; height: 6px; border-radius: 50%; background: #d6d1c7; }
+  .fbody { padding: 13px 15px; }
+  .fbody .fk { font-size: 10.5px; color: #a49e93; }
+  .fbody .fh { font-size: 15px; font-weight: 550; letter-spacing: -0.015em; color: #26221b; margin-top: 2px; }
+  .fbody .ftabs { display: flex; gap: 12px; font-size: 11px; margin-top: 9px; padding-bottom: 8px; border-bottom: 1px solid #efeae1; }
+  .fbody .ftabs b { color: #26221b; font-weight: 550; }
+  .fbody .ftabs span { color: #a49e93; }
+  .fbody .fitem { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #4d483f; padding: 8px 0; border-bottom: 1px solid #f2eee6; }
+  .fbody .fitem i { width: 4px; height: 4px; border-radius: 50%; background: #b9b2a6; flex: none; }
+  .fbody .fitem .fw { margin-left: auto; color: #a49e93; font-size: 10px; }
+  .lbody { padding: 12px 16px 14px; }
+  .lrow { display: flex; align-items: center; gap: 10px; }
+  .ltitle { font-size: 16.5px; font-weight: 600; letter-spacing: -0.02em; color: #17150f; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .lcount { margin-left: auto; flex: none; display: inline-flex; align-items: center; gap: 5px; color: #6f6a61; font-size: 13px; font-variant-numeric: tabular-nums; }
+  .lcount svg { width: 14px; height: 14px; }
+  .lcount.pill { background: #f1efe8; border-radius: 8px; padding: 5px 10px; }
+  .lmeta { margin-top: 3px; font-size: 12.5px; color: #8a857c; }
+  .lbubble {
+    position: absolute; left: 16px; right: 16px; top: 72px;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 18px 44px -14px rgba(30, 25, 15, 0.3), 0 2px 8px rgba(30, 25, 15, 0.08);
+    padding: 13px 15px;
+  }
+  .lbubble .bhead { gap: 9px; }
+  .lbubble .lav {
+    width: 22px; height: 22px; border-radius: 50%; flex: none;
+    background: #ece9e1; color: #6f6a61;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 550;
+  }
+  .lbubble .who { color: #6f6a61; font-weight: 500; font-size: 12.5px; }
+  .lbubble .when { color: #a49e93; font-size: 11.5px; }
+  .lbubble .btext {
+    -webkit-line-clamp: 3; margin-top: 8px;
+    color: #23201a; font-size: 13px; line-height: 1.5;
   }
 
   /* ------------------------------------------------ states */
@@ -317,7 +411,7 @@
 <section aria-label="Gallery preview" style="margin-top: 0;">
   <div class="stage">
     <div class="stage-glow" role="presentation"></div>
-    <figure class="window" id="window" data-mode="replies" aria-label="The Pages view with replies">
+    <figure class="window" id="window" data-mode="replies" data-hover="strip" aria-label="The Pages view with replies">
       <div class="titlebar">
         <span class="lights" role="presentation"><i></i><i></i><i></i></span>
         <span class="crumb">Pages</span>
@@ -364,6 +458,7 @@
               <span class="line"><span class="who">Satya Patel</span> <span class="snippet">Can we split the SEMA soft bounces into their own bucket before Monday?</span></span>
               <span class="when">2h</span>
             </div>
+            <div class="bubble"><div class="bhead"><span class="avatar sp">SP</span><span class="who">Satya Patel</span><span class="when">2h</span></div><div class="btext">Can we split the SEMA soft bounces into their own bucket before Monday?</div></div>
           </div>
           <div class="card-body">
             <div class="card-title">Support reply queue</div>
@@ -393,6 +488,7 @@
               <span class="line"><span class="who">Agent</span> <span class="snippet">Republished with the runtime-version decision table — resolving.</span></span>
               <span class="when">1d</span>
             </div>
+            <div class="bubble"><div class="bhead"><span class="avatar agent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg></span><span class="who">Agent</span><span class="when">1d</span></div><div class="btext">Republished with the runtime-version decision table — resolving.</div></div>
           </div>
           <div class="card-body">
             <div class="card-title">Mobile OTA Updates</div>
@@ -422,6 +518,7 @@
               <span class="line"><span class="who">Avi Peltz</span> <span class="snippet">Is #7305 really no-action? The maintainer redirected him to v2.</span></span>
               <span class="when">4h</span>
             </div>
+            <div class="bubble"><div class="bhead"><span class="avatar ap">AP</span><span class="who">Avi Peltz</span><span class="when">4h</span></div><div class="btext">Is #7305 really no-action? The maintainer redirected him to v2.</div></div>
           </div>
           <div class="card-body">
             <div class="card-title">PascalOrdano18 PR Review</div>
@@ -471,6 +568,7 @@
               <span class="line"><span class="who">Agent</span> <span class="snippet">Broke daily effective cost out by line item as asked.</span></span>
               <span class="when">3d</span>
             </div>
+            <div class="bubble"><div class="bhead"><span class="avatar agent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg></span><span class="who">Agent</span><span class="when">3d</span></div><div class="btext">Broke daily effective cost out by line item as asked.</div></div>
           </div>
           <div class="card-body">
             <div class="card-title">Vercel spend, September 2026</div>
@@ -501,6 +599,7 @@
               <span class="line"><span class="who">Kiet Ho</span> <span class="snippet">Move Vedanta to Friday — founder-track bar conflict at 2:30.</span></span>
               <span class="when">3h</span>
             </div>
+            <div class="bubble"><div class="bhead"><span class="avatar kh">KH</span><span class="who">Kiet Ho</span><span class="when">3h</span></div><div class="btext">Move Vedanta to Friday — founder-track bar conflict at 2:30.</div></div>
           </div>
           <div class="card-body">
             <div class="card-title">Hiring Follow-ups</div>
@@ -527,10 +626,16 @@
     <button type="button" class="swatch" data-color="#f07b55" aria-pressed="false"><i style="background:#f07b55"></i>Coral</button>
     <button type="button" class="swatch" data-color="#edeef1" aria-pressed="false"><i style="background:#edeef1"></i>White</button>
   </div>
+  <div class="swatches" role="group" aria-label="Hover style">
+    <span class="swatch-label">Hover style</span>
+    <button type="button" class="swatch hs" data-hs="strip" aria-pressed="true">Strip</button>
+    <button type="button" class="swatch hs" data-hs="bubble" aria-pressed="false">Bubble</button>
+  </div>
 </section>
 
 <section>
-  <h2>Rest and hover</h2>
+  <h2>Two hover treatments</h2>
+  <p class="variant-label">A — Edge strip <span>(the window above defaults to this)</span></p>
   <div class="states">
     <div class="state">
       <article class="card">
@@ -585,6 +690,64 @@
     </div>
   </div>
 
+  <p class="variant-label">B — Floating bubble <span>(flip the Hover style switch to try it in the window)</span></p>
+  <div class="lightpane">
+    <div class="pair">
+      <div class="lp-state">
+        <p class="lp-label">Rest</p>
+        <article class="lcard">
+          <div class="lframe">
+            <div class="fdots"><i></i><i></i><i></i></div>
+            <div class="fbody">
+              <div class="fk">Support</div>
+              <div class="fh">Reply queue</div>
+              <div class="ftabs"><b>All conversations</b><span>Assigned to me</span></div>
+              <div class="fitem"><i></i>Workspace invitation<span class="fw">12m</span></div>
+              <div class="fitem"><i></i>SEMA delivery report<span class="fw">2h</span></div>
+            </div>
+          </div>
+          <div class="lbody">
+            <div class="lrow">
+              <span class="ltitle">Support reply queue</span>
+              <span class="lcount">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>5
+              </span>
+            </div>
+            <div class="lmeta">Kiet &middot; Edited 18s ago</div>
+          </div>
+        </article>
+      </div>
+      <div class="lp-state">
+        <p class="lp-label">Hover / focus</p>
+        <article class="lcard">
+          <div class="lframe">
+            <div class="fdots"><i></i><i></i><i></i></div>
+            <div class="fbody">
+              <div class="fk">Support</div>
+              <div class="fh">Reply queue</div>
+              <div class="ftabs"><b>All conversations</b><span>Assigned to me</span></div>
+              <div class="fitem"><i></i>Workspace invitation<span class="fw">12m</span></div>
+              <div class="fitem"><i></i>SEMA delivery report<span class="fw">2h</span></div>
+            </div>
+          </div>
+          <div class="lbubble">
+            <div class="bhead"><span class="lav">S</span><span class="who">Satya</span><span class="when">2h ago</span></div>
+            <div class="btext">Can we split the SEMA soft bounce cases into their own queue?</div>
+          </div>
+          <div class="lbody">
+            <div class="lrow">
+              <span class="ltitle">Support reply queue</span>
+              <span class="lcount pill">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>5
+              </span>
+            </div>
+            <div class="lmeta">Kiet &middot; Edited 18s ago</div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+
   <div class="rows">
     <div class="row">
       <span class="lead">The count</span>
@@ -592,7 +755,7 @@
     </div>
     <div class="row">
       <span class="lead">The peek</span>
-      <span class="body">Hover or keyboard focus overlays the newest reply — avatar, author, first 240 characters. Agent replies carry the bot mark and the <code>Agent</code> byline. Click through for the full threads.</span>
+      <span class="body">Hover or keyboard focus reveals the newest reply — avatar, author, first 240 characters — as the edge strip (A) or the floating bubble (B); flip the Hover style switch under the window. Agent replies carry the bot mark and the <code>Agent</code> byline. Click through for the full threads.</span>
     </div>
     <div class="row">
       <span class="lead">The default</span>
@@ -623,8 +786,8 @@
   <h2>Calls to make</h2>
   <div class="rows">
     <div class="row">
-      <span class="lead">Louder alternative</span>
-      <span class="body">Version 2 in this page&rsquo;s history keeps the newest reply pinned under every card — reads like an inbox, at the cost of taller, busier cards. Hover-only is the current pick.</span>
+      <span class="lead">Strip or bubble</span>
+      <span class="body">Two hover treatments are on the table: the edge strip hugging the card&rsquo;s bottom, or the floating bubble that reads as a comment. The always-visible strip from version 2 stays in this page&rsquo;s history as the loudest option.</span>
     </div>
     <div class="row">
       <span class="lead">Active semantics</span>
@@ -655,11 +818,19 @@
     });
   });
 
-  var swatches = document.querySelectorAll(".swatch");
+  var swatches = document.querySelectorAll(".swatch[data-color]");
   swatches.forEach(function (sw) {
     sw.addEventListener("click", function () {
       swatches.forEach(function (s) { s.setAttribute("aria-pressed", String(s === sw)); });
       document.documentElement.style.setProperty("--active", sw.dataset.color);
+    });
+  });
+
+  var hsButtons = document.querySelectorAll(".swatch.hs");
+  hsButtons.forEach(function (b) {
+    b.addEventListener("click", function () {
+      hsButtons.forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
+      windowEl.dataset.hover = b.dataset.hs;
     });
   });
 </script>
