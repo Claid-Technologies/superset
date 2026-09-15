@@ -3,7 +3,9 @@ import { createContext, runInContext } from "node:vm";
 import { PAGE_COMMENTS_RUNTIME_SOURCE } from "./page-comments-runtime";
 
 interface Posted {
+	channel?: string;
 	type: string;
+	id?: string;
 }
 
 function setup() {
@@ -28,6 +30,51 @@ function setup() {
 		className: "",
 	};
 
+	interface FakeNode {
+		style: Record<string, string>;
+		children: FakeNode[];
+		handlers: Record<string, (event: unknown) => void>;
+		isConnected: boolean;
+		textContent: string;
+		type: string;
+		setAttribute: () => void;
+		addEventListener: (type: string, fn: (event: unknown) => void) => void;
+		appendChild: (child: FakeNode) => FakeNode;
+		replaceChildren: (...nodes: FakeNode[]) => void;
+		contains: (target: unknown) => boolean;
+	}
+
+	const makeNode = (): FakeNode => {
+		const self: FakeNode = {
+			style: {},
+			children: [],
+			handlers: {},
+			isConnected: false,
+			textContent: "",
+			type: "",
+			setAttribute: () => {},
+			addEventListener: (type, fn) => {
+				self.handlers[type] = fn;
+			},
+			appendChild: (child) => {
+				self.children.push(child);
+				child.isConnected = true;
+				return child;
+			},
+			replaceChildren: (...nodes) => {
+				self.children.length = 0;
+				for (const node of nodes) self.children.push(...node.children);
+			},
+			contains: (target) =>
+				target === self || self.children.includes(target as FakeNode),
+		};
+		return self;
+	};
+
+	const body = Object.assign(makeNode(), element, {
+		querySelector: () => element,
+	});
+
 	const context = createContext({
 		scrollY: 0,
 		scrollX: 0,
@@ -35,7 +82,9 @@ function setup() {
 		innerHeight: 800,
 		document: {
 			documentElement: { style: {}, ...element },
-			body: { ...element },
+			body,
+			createElement: () => makeNode(),
+			createDocumentFragment: () => makeNode(),
 			addEventListener: (type: string, fn: (event: unknown) => void) =>
 				listeners.set(`document:${type}`, fn),
 			querySelectorAll: () => [element],
@@ -99,6 +148,25 @@ function setup() {
 			});
 			pump();
 		},
+		renderPins: (count: number) => {
+			listeners.get("message")?.({
+				data: {
+					channel: "superset-comments/host",
+					type: "render-pins",
+					pins: Array.from({ length: count }, (_, index) => ({
+						id: `thread-${index}`,
+						anchor: { path: "p:nth-of-type(1)", offsetX: 0.5, offsetY: 0.5 },
+						label: "AM",
+						resolved: false,
+					})),
+				},
+			});
+			pump();
+		},
+		pinNodes: () => body.children.flatMap((layer) => layer.children),
+		setScroll: (y: number) => {
+			context.scrollY = y;
+		},
 		/** One frame of a finger drag: the page moves, then the frame runs. */
 		scrollFrame: (by = 8, ms = 16) => {
 			context.scrollY += by;
@@ -158,5 +226,46 @@ describe("page comments runtime, scroll cost", () => {
 
 		const rects = page.posted.filter((message) => message.type === "rects");
 		expect(rects.length).toBe(FRAMES);
+	});
+});
+
+describe("page comments runtime, in-document pins", () => {
+	test("positions a pin in document space, not viewport space", () => {
+		const page = setup();
+		page.setScroll(500);
+		page.renderPins(1);
+
+		expect(page.pinNodes()[0]?.style.top).toBe("506px");
+	});
+
+	test("a drag neither remeasures nor moves the pins", () => {
+		const page = setup();
+		page.renderPins(3);
+		const before = page.pinNodes().map((pin) => pin.style.top);
+		page.clear();
+
+		for (let i = 0; i < FRAMES; i += 1) page.scrollFrame();
+
+		expect(page.posted.some((message) => message.type === "rects")).toBe(false);
+		expect(page.pinNodes().map((pin) => pin.style.top)).toEqual(before);
+	});
+
+	test("tapping a pin names the thread it belongs to", () => {
+		const page = setup();
+		page.renderPins(2);
+		page.clear();
+
+		page.pinNodes()[1]?.handlers.click?.({
+			preventDefault: () => {},
+			stopPropagation: () => {},
+		});
+
+		expect(page.posted).toEqual([
+			{
+				channel: "superset-comments/frame",
+				type: "pin-press",
+				id: "thread-1",
+			},
+		]);
 	});
 });
