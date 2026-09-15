@@ -24,12 +24,10 @@ import { Text } from "@/components/ui/text";
 import { errorCopy } from "@/lib/errors";
 import { PressableScale } from "@/screens/(authenticated)/components/PressableScale";
 import { usePageQuery } from "../hooks/usePages";
-import { CommentPin } from "./components/CommentPin";
 import { CommentPopover } from "./components/CommentPopover";
 import { PageFrame, type PageFrameHandle } from "./components/PageFrame";
 import { usePageCommentUser } from "./hooks/usePageCommentUser";
 import { usePageCommentStore } from "./stores/pageCommentStore";
-import { pinPointOf, stackPins } from "./utils/pinLayout";
 
 interface Selection {
 	anchor: CommentAnchor;
@@ -77,9 +75,12 @@ export function PageDetailScreen({
 	const [frameEpoch, setFrameEpoch] = useState(0);
 	const [commentMode, setCommentMode] = useState(false);
 	const [selection, setSelection] = useState<Selection | null>(null);
-	const openComposeRef = useRef<(anchor: CommentAnchor) => void>(() => {});
+	const rememberPickRef = useRef<(anchor: CommentAnchor) => void>(() => {});
+	const openThreadRef = useRef<(threadId: string) => void>(() => {});
+	const dismissSelectionRef = useRef<() => void>(() => {});
 	const selectionRef = useRef(selection);
 	selectionRef.current = selection;
+	const submittingRef = useRef(false);
 	const [rects, setRects] = useState<Record<string, FrameRect>>({});
 
 	const page = usePageQuery(slug);
@@ -109,6 +110,7 @@ export function PageDetailScreen({
 		width: number;
 		height: number;
 	} | null>(null);
+	submittingRef.current = store.submitting;
 
 	const unresolvedThreads = useMemo(
 		() => threads.filter((thread) => !thread.resolved),
@@ -134,16 +136,30 @@ export function PageDetailScreen({
 	useEffect(() => {
 		send({
 			type: "track",
-			anchors: [
-				...unresolvedThreads.flatMap((thread) =>
-					thread.anchor ? [{ id: thread.id, anchor: thread.anchor }] : [],
-				),
-				...(selection
-					? [{ id: PENDING_ANCHOR_ID, anchor: selection.anchor }]
-					: []),
-			],
+			anchors: selection
+				? [{ id: PENDING_ANCHOR_ID, anchor: selection.anchor }]
+				: [],
 		});
-	}, [unresolvedThreads, selection, frameEpoch, send]);
+	}, [selection, frameEpoch, send]);
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: frameEpoch redraws pins into a runtime that just restarted
+	useEffect(() => {
+		send({
+			type: "render-pins",
+			pins: unresolvedThreads.flatMap((thread) =>
+				thread.anchor
+					? [
+							{
+								id: thread.id,
+								anchor: thread.anchor,
+								label: getInitials(thread.comments[0]?.authorName) || "?",
+								resolved: thread.resolved,
+							},
+						]
+					: [],
+			),
+		});
+	}, [unresolvedThreads, frameEpoch, send]);
 
 	const selectionRect = selection
 		? (rects[PENDING_ANCHOR_ID] ?? selection.rect)
@@ -175,66 +191,72 @@ export function PageDetailScreen({
 			}
 			setRects((previous) => (sameRects(previous, next) ? previous : next));
 		}
-		if (message.type === "pointer-down") setSelection(null);
+		if (message.type === "pointer-down" && !submittingRef.current) {
+			dismissSelectionRef.current();
+		}
+		if (message.type === "pin-press") openThreadRef.current(message.id);
 		if (message.type === "pick") {
 			if (!selectionRef.current) {
 				const next = { anchor: message.anchor, rect: message.rect };
 				selectionRef.current = next;
 				void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 				setSelection(next);
-				openComposeRef.current(message.anchor);
+				rememberPickRef.current(message.anchor);
 			}
 		}
 	}, []);
 
-	const pins = useMemo(() => {
-		const out: Array<{ id: string; point: { x: number; y: number } }> = [];
-		for (const thread of unresolvedThreads) {
-			const rect = rects[thread.id];
-			if (rect && thread.anchor)
-				out.push({ id: thread.id, point: pinPointOf(rect, thread.anchor) });
-		}
-		return out;
-	}, [rects, unresolvedThreads]);
-
-	const stackIndex = useMemo(() => stackPins(pins), [pins]);
-	const pinPoints = useMemo(
-		() => new Map(pins.map((pin) => [pin.id, pin.point])),
-		[pins],
-	);
-
-	const openCompose = useCallback(
+	rememberPickRef.current = useCallback(
 		(anchor: CommentAnchor) => {
 			if (!pageId || !version) return;
 			setPick({ pageId, version, anchor });
 		},
 		[pageId, setPick, version],
 	);
-	openComposeRef.current = openCompose;
+
+	openThreadRef.current = useCallback(
+		(threadId: string) => {
+			void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+			setFocusThreadId(threadId);
+			router.push({
+				pathname: "/(authenticated)/pages/[slug]/comments",
+				params: { slug },
+			});
+		},
+		[router, setFocusThreadId, slug],
+	);
 
 	const dismissSelection = useCallback(() => {
 		setSelection(null);
 		clearPick();
 	}, [clearPick]);
+	dismissSelectionRef.current = dismissSelection;
+
+	const createAnchored = useCallback(
+		async (body: string, intent?: CommentIntent) => {
+			const anchor = selectionRef.current?.anchor;
+			if (!anchor) return;
+			await store.createThread({
+				anchor,
+				anchorText: anchor.text,
+				body,
+				...(intent ? { intent } : {}),
+			});
+			dismissSelection();
+		},
+		[dismissSelection, store],
+	);
 
 	const postQuick = useCallback(
 		async (body: MessageDescriptor, intent: CommentIntent) => {
-			const anchor = selectionRef.current?.anchor;
-			if (!anchor || store.submitting) return;
+			if (store.submitting) return;
 			try {
-				await store.createThread({
-					anchor,
-					anchorText: anchor.text,
-					body: i18n._(body),
-					intent,
-				});
+				await createAnchored(i18n._(body), intent);
 			} catch (error) {
 				Alert.alert(t({ message: "Comment not posted" }), errorCopy(error));
-				return;
 			}
-			dismissSelection();
 		},
-		[dismissSelection, store, t],
+		[createAnchored, store.submitting, t],
 	);
 
 	const retryFrame = useCallback(async () => {
@@ -355,28 +377,6 @@ export function PageDetailScreen({
 							);
 						}}
 					>
-						{unresolvedThreads.map((thread) => {
-							const point = pinPoints.get(thread.id);
-							if (!point) return null;
-							return (
-								<CommentPin
-									key={thread.id}
-									point={point}
-									stackIndex={stackIndex[thread.id] ?? 0}
-									initials={getInitials(thread.comments[0]?.authorName) || "?"}
-									resolved={thread.resolved}
-									active={false}
-									onPress={() => {
-										setFocusThreadId(thread.id);
-										router.push({
-											pathname: "/(authenticated)/pages/[slug]/comments",
-											params: { slug },
-										});
-									}}
-								/>
-							);
-						})}
-
 						{selectionRect ? (
 							<View
 								pointerEvents="none"
@@ -403,14 +403,7 @@ export function PageDetailScreen({
 									})
 								}
 								onQuick={(body, intent) => void postQuick(body, intent)}
-								onSubmit={async (body) => {
-									await store.createThread({
-										anchor: selection.anchor,
-										anchorText: selection.anchor.text,
-										body,
-									});
-									dismissSelection();
-								}}
+								onSubmit={(body) => createAnchored(body)}
 							/>
 						) : null}
 					</View>

@@ -3585,14 +3585,14 @@ msgstr "Yorum gönderilmedi"
 msgid "Comment on this page"
 msgstr "Bu sayfaya yorum yap"
 
-msgid "Comment options"
-msgstr "Yorum seçenekleri"
-
 msgid "Commented"
 msgstr "Yorum yapıldı"
 
 msgid "Comments"
 msgstr "Yorumlar"
+
+msgid "Comments could not be loaded"
+msgstr "Yorumlar yüklenemedi"
 
 msgid "Comments go to this agent"
 msgstr "Yorumlar bu ajana gider"

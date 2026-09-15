@@ -3585,14 +3585,14 @@ msgstr "Комментарий не отправлен"
 msgid "Comment on this page"
 msgstr "Комментировать эту страницу"
 
-msgid "Comment options"
-msgstr "Действия с комментарием"
-
 msgid "Commented"
 msgstr "Прокомментировано"
 
 msgid "Comments"
 msgstr "Комментарии"
+
+msgid "Comments could not be loaded"
+msgstr "Не удалось загрузить комментарии"
 
 msgid "Comments go to this agent"
 msgstr "Комментарии отправляются этому агенту"

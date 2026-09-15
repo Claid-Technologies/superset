@@ -40,8 +40,6 @@ export function CommentPopover({
 	const keyboard = useAnimatedKeyboard();
 	const [height, setHeight] = useState(ESTIMATED_HEIGHT);
 
-	// Anchors to the block's box, not pinPointOf: that point is *inside* the
-	// element, so a tall heading would get the card dropped on top of its text.
 	const { left, top, width } = popoverPlacement({
 		point: { x: rect.left, y: rect.top + rect.height },
 		container,

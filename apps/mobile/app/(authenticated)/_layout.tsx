@@ -96,10 +96,9 @@ export default function AuthenticatedLayout() {
 				name="pages/[slug]/comments"
 				options={{
 					presentation: "formSheet",
-					title: t({ message: "All comments" }),
+					headerShown: false,
 					sheetAllowedDetents: [1.0],
 					sheetGrabberVisible: true,
-					...glassHeaderOptions,
 				}}
 			/>
 			<Stack.Screen

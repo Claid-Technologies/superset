@@ -3585,14 +3585,14 @@ msgstr "コメントを投稿できませんでした"
 msgid "Comment on this page"
 msgstr "このページにコメント"
 
-msgid "Comment options"
-msgstr "コメントの操作"
-
 msgid "Commented"
 msgstr "コメント"
 
 msgid "Comments"
 msgstr "コメント"
+
+msgid "Comments could not be loaded"
+msgstr "コメントを読み込めませんでした"
 
 msgid "Comments go to this agent"
 msgstr "コメントはこのエージェントに送られます"

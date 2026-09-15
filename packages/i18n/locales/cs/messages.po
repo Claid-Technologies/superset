@@ -3585,14 +3585,14 @@ msgstr "Komentář se nepodařilo odeslat"
 msgid "Comment on this page"
 msgstr "Okomentovat tuto stránku"
 
-msgid "Comment options"
-msgstr "Možnosti komentáře"
-
 msgid "Commented"
 msgstr "Okomentováno"
 
 msgid "Comments"
 msgstr "Komentáře"
+
+msgid "Comments could not be loaded"
+msgstr "Komentáře se nepodařilo načíst"
 
 msgid "Comments go to this agent"
 msgstr "Komentáře jdou tomuto agentovi"

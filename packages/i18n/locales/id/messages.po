@@ -3585,14 +3585,14 @@ msgstr "Komentar tidak terkirim"
 msgid "Comment on this page"
 msgstr "Komentari halaman ini"
 
-msgid "Comment options"
-msgstr "Opsi komentar"
-
 msgid "Commented"
 msgstr "Dikomentari"
 
 msgid "Comments"
 msgstr "Komentar"
+
+msgid "Comments could not be loaded"
+msgstr "Komentar tidak bisa dimuat"
 
 msgid "Comments go to this agent"
 msgstr "Komentar masuk ke agen ini"

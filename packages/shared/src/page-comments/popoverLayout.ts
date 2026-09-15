@@ -8,8 +8,6 @@ const EDGE = 12;
  */
 const MIN_WIDTH = 240;
 
-const DEFAULT_PIN_SIZE = 24;
-
 export interface PopoverPoint {
 	x: number;
 	y: number;
@@ -25,15 +23,13 @@ export function popoverPlacement({
 	point,
 	container,
 	height,
-	pinSize = DEFAULT_PIN_SIZE,
+	pinSize,
 	maxWidth = WIDTH,
 }: {
 	point: PopoverPoint;
 	container: { width: number; height: number };
 	height: number;
-	pinSize?: number;
-	/** Narrow containers pass their own width: capping a phone at 350 leaves
-	 * uneven margins once `left` is clamped against the right edge. */
+	pinSize: number;
 	maxWidth?: number;
 }): PopoverPlacement {
 	const width = Math.max(

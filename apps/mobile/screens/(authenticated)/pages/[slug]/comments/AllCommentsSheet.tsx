@@ -6,13 +6,8 @@ import {
 } from "@superset/cloud-client";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import {
-	ActionSheetIOS,
-	Alert,
-	Pressable,
-	ScrollView,
-	View,
-} from "react-native";
+import { Alert, Pressable, ScrollView, View } from "react-native";
+import { Spinner } from "@/components/ui/spinner";
 import { Text } from "@/components/ui/text";
 import { errorCopy } from "@/lib/errors";
 import { cn } from "@/lib/utils";
@@ -30,14 +25,19 @@ interface ReplyTarget {
 	name: string;
 }
 
+type PendingScroll = "end" | { threadId: string; atBottom: boolean };
+
 export function AllCommentsSheet() {
 	const { t } = useLingui();
 	const router = useRouter();
 	const { slug } = useLocalSearchParams<{ slug: string }>();
 	const scrollRef = useRef<ScrollView>(null);
 	const composerRef = useRef<CommentComposerHandle>(null);
-	const threadY = useRef<Record<string, number>>({});
-	const pendingScroll = useRef<string | "end" | null>(null);
+	const threadLayout = useRef<Record<string, { y: number; height: number }>>(
+		{},
+	);
+	const viewportHeight = useRef(0);
+	const pendingScroll = useRef<PendingScroll | null>(null);
 	const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 	const [showResolved, setShowResolved] = useState(false);
 	const [replyingTo, setReplyingTo] = useState<ReplyTarget | null>(null);
@@ -51,7 +51,13 @@ export function AllCommentsSheet() {
 	const pageId = page.data?.id ?? "";
 	const version = page.data?.version ?? 0;
 	const store = usePageComments({ pageId, version, user });
-	const { rows: threads } = usePageCommentThreads({ pageId, version });
+	const {
+		rows: threads,
+		error: threadsError,
+		refetch: refetchThreads,
+	} = usePageCommentThreads({ pageId, version });
+	const loadError = page.error ?? threadsError;
+	const loading = !loadError && (!pageId || version === 0);
 
 	const open = useMemo(() => threads.filter((row) => !row.resolved), [threads]);
 	const resolved = useMemo(
@@ -60,10 +66,13 @@ export function AllCommentsSheet() {
 	);
 	const visible = showResolved ? [...open, ...resolved] : open;
 
-	const scrollToThread = useCallback((threadId: string) => {
-		const y = threadY.current[threadId];
-		if (y === undefined) return;
-		scrollRef.current?.scrollTo({ y: Math.max(y - 8, 0), animated: true });
+	const scrollToThread = useCallback((threadId: string, atBottom = false) => {
+		const layout = threadLayout.current[threadId];
+		if (!layout) return;
+		const y = atBottom
+			? layout.y + layout.height + 8 - viewportHeight.current
+			: layout.y - 8;
+		scrollRef.current?.scrollTo({ y: Math.max(y, 0), animated: true });
 	}, []);
 
 	useEffect(() => {
@@ -76,7 +85,7 @@ export function AllCommentsSheet() {
 			threadId: thread.id,
 			name: thread.comments[0]?.authorName ?? "",
 		});
-		pendingScroll.current = thread.id;
+		pendingScroll.current = { threadId: thread.id, atBottom: false };
 		setFocusThreadId(null);
 	}, [focusThreadId, threads, setFocusThreadId]);
 
@@ -90,46 +99,43 @@ export function AllCommentsSheet() {
 		composerRef.current?.focus();
 	};
 
-	const askResolve = (thread: ServerThread) => {
-		ActionSheetIOS.showActionSheetWithOptions(
-			{
-				options: [
-					thread.resolved
-						? t({ message: "Reopen" })
-						: t({ message: "Resolve" }),
-					t({ message: "Cancel" }),
-				],
-				cancelButtonIndex: 1,
-			},
-			async (index) => {
-				if (index !== 0) return;
-				try {
-					await store.setResolved(thread.id, !thread.resolved);
-				} catch (error) {
-					Alert.alert(
-						thread.resolved
-							? t({ message: "Could not reopen this comment" })
-							: t({ message: "Could not resolve this comment" }),
-						errorCopy(error),
-					);
-				}
-			},
-		);
+	const toggleResolved = async (thread: ServerThread) => {
+		try {
+			await store.setResolved(thread.id, !thread.resolved);
+		} catch (error) {
+			Alert.alert(
+				thread.resolved
+					? t({ message: "Could not reopen this comment" })
+					: t({ message: "Could not resolve this comment" }),
+				errorCopy(error),
+			);
+		}
 	};
 
 	const submit = async (body: string) => {
 		if (replyingTo) {
-			await store.addReply(replyingTo.threadId, body);
-			setExpanded((previous) => ({ ...previous, [replyingTo.threadId]: true }));
-			pendingScroll.current = replyingTo.threadId;
+			const { threadId } = replyingTo;
+			setExpanded((previous) => ({ ...previous, [threadId]: true }));
 			setReplyingTo(null);
+			pendingScroll.current = { threadId, atBottom: true };
+			try {
+				await store.addReply(threadId, body);
+			} catch (error) {
+				pendingScroll.current = null;
+				throw error;
+			}
 			return;
 		}
 		if (!pageId || version === 0) {
 			throw new Error("This page is no longer open for comments");
 		}
-		await store.createThread({ body });
 		pendingScroll.current = "end";
+		try {
+			await store.createThread({ body });
+		} catch (error) {
+			pendingScroll.current = null;
+			throw error;
+		}
 	};
 
 	return (
@@ -149,6 +155,9 @@ export function AllCommentsSheet() {
 					contentContainerClassName="px-4 pb-4 pt-1"
 					contentInsetAdjustmentBehavior="automatic"
 					keyboardShouldPersistTaps="handled"
+					onLayout={(event) => {
+						viewportHeight.current = event.nativeEvent.layout.height;
+					}}
 					onContentSizeChange={() => {
 						const target = pendingScroll.current;
 						if (!target) return;
@@ -157,10 +166,37 @@ export function AllCommentsSheet() {
 							scrollRef.current?.scrollToEnd({ animated: true });
 							return;
 						}
-						scrollToThread(target);
+						scrollToThread(target.threadId, target.atBottom);
 					}}
 				>
-					{visible.length === 0 ? (
+					{loadError ? (
+						<View className="items-center justify-center px-8 py-24">
+							<Text className="text-center font-medium">
+								{t({ message: "Comments could not be loaded" })}
+							</Text>
+							<Text className="text-muted-foreground mt-1 text-center text-sm">
+								{errorCopy(loadError)}
+							</Text>
+							<Pressable
+								accessibilityRole="button"
+								onPress={() => refetchThreads()}
+								hitSlop={8}
+								className="mt-3 active:opacity-60"
+							>
+								<Text className="text-[13px] font-medium">
+									{t({ message: "Try again" })}
+								</Text>
+							</Pressable>
+						</View>
+					) : null}
+
+					{loading ? (
+						<View className="items-center justify-center py-24">
+							<Spinner className="size-5" />
+						</View>
+					) : null}
+
+					{!loadError && !loading && visible.length === 0 ? (
 						<View className="items-center justify-center px-8 py-24">
 							<Text className="text-muted-foreground text-center">
 								{t({ message: "No comments on this page yet" })}
@@ -181,13 +217,11 @@ export function AllCommentsSheet() {
 						const hidden = replies.length - shown.length;
 
 						return (
-							<Pressable
+							<View
 								key={thread.id}
-								accessibilityRole="button"
-								accessibilityLabel={t({ message: "Comment options" })}
-								onLongPress={() => askResolve(thread)}
 								onLayout={(event) => {
-									threadY.current[thread.id] = event.nativeEvent.layout.y;
+									const { y, height } = event.nativeEvent.layout;
+									threadLayout.current[thread.id] = { y, height };
 								}}
 								className={cn(
 									thread.resolved && "opacity-50",
@@ -195,7 +229,12 @@ export function AllCommentsSheet() {
 										"bg-muted/40 rounded-lg",
 								)}
 							>
-								<CommentRow comment={root} onReply={() => startReply(thread)} />
+								<CommentRow
+									comment={root}
+									resolved={thread.resolved}
+									onReply={() => startReply(thread)}
+									onToggleResolved={() => void toggleResolved(thread)}
+								/>
 
 								{shown.map((reply) => (
 									<CommentRow key={reply.id} comment={reply} indented />
@@ -222,7 +261,7 @@ export function AllCommentsSheet() {
 										</Text>
 									</Pressable>
 								) : null}
-							</Pressable>
+							</View>
 						);
 					})}
 

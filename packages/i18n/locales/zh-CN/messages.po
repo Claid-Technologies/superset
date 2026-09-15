@@ -3585,14 +3585,14 @@ msgstr "评论未发布"
 msgid "Comment on this page"
 msgstr "评论这个页面"
 
-msgid "Comment options"
-msgstr "评论选项"
-
 msgid "Commented"
 msgstr "已评论"
 
 msgid "Comments"
 msgstr "评论"
+
+msgid "Comments could not be loaded"
+msgstr "无法加载评论"
 
 msgid "Comments go to this agent"
 msgstr "评论将发送给此智能体"

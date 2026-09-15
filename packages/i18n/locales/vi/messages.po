@@ -3585,14 +3585,14 @@ msgstr "Chưa đăng được bình luận"
 msgid "Comment on this page"
 msgstr "Bình luận về trang này"
 
-msgid "Comment options"
-msgstr "Tùy chọn bình luận"
-
 msgid "Commented"
 msgstr "Đã bình luận"
 
 msgid "Comments"
 msgstr "Bình luận"
+
+msgid "Comments could not be loaded"
+msgstr "Không thể tải bình luận"
 
 msgid "Comments go to this agent"
 msgstr "Bình luận sẽ được gửi tới agent này"

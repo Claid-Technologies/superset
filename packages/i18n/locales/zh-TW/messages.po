@@ -3585,14 +3585,14 @@ msgstr "評論未發布"
 msgid "Comment on this page"
 msgstr "評論這個頁面"
 
-msgid "Comment options"
-msgstr "留言選項"
-
 msgid "Commented"
 msgstr "已評論"
 
 msgid "Comments"
 msgstr "評論"
+
+msgid "Comments could not be loaded"
+msgstr "無法載入留言"
 
 msgid "Comments go to this agent"
 msgstr "評論將傳送給此代理程式"

@@ -3585,14 +3585,14 @@ msgstr "코멘트를 게시하지 못했습니다"
 msgid "Comment on this page"
 msgstr "이 페이지에 댓글 달기"
 
-msgid "Comment options"
-msgstr "댓글 옵션"
-
 msgid "Commented"
 msgstr "댓글 남김"
 
 msgid "Comments"
 msgstr "댓글"
+
+msgid "Comments could not be loaded"
+msgstr "댓글을 불러올 수 없습니다"
 
 msgid "Comments go to this agent"
 msgstr "댓글은 이 에이전트에게 전달됩니다"

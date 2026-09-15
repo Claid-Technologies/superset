@@ -3585,14 +3585,14 @@ msgstr "Opmerking niet geplaatst"
 msgid "Comment on this page"
 msgstr "Reageren op deze pagina"
 
-msgid "Comment options"
-msgstr "Reactieopties"
-
 msgid "Commented"
 msgstr "Opmerking geplaatst"
 
 msgid "Comments"
 msgstr "Reacties"
+
+msgid "Comments could not be loaded"
+msgstr "Reacties konden niet worden geladen"
 
 msgid "Comments go to this agent"
 msgstr "Reacties gaan naar deze agent"

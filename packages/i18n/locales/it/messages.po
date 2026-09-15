@@ -3585,14 +3585,14 @@ msgstr "Commento non pubblicato"
 msgid "Comment on this page"
 msgstr "Commenta questa pagina"
 
-msgid "Comment options"
-msgstr "Opzioni commento"
-
 msgid "Commented"
 msgstr "Commentata"
 
 msgid "Comments"
 msgstr "Commenti"
+
+msgid "Comments could not be loaded"
+msgstr "Impossibile caricare i commenti"
 
 msgid "Comments go to this agent"
 msgstr "I commenti vanno a questo agente"
