@@ -58,6 +58,11 @@ export default command({
 			);
 		}
 
+		const targetHostId = resolveHostFilter({
+			host: options.host ?? undefined,
+			local: options.local ?? undefined,
+		});
+
 		if (options.enabled !== undefined) {
 			await ctx.api.automation.setEnabled.mutate({
 				id,
@@ -82,10 +87,7 @@ export default command({
 				organizationId,
 				userJwt: ctx.bearer,
 				api: ctx.api,
-				hostId: resolveHostFilter({
-					host: options.host ?? undefined,
-					local: options.local ?? undefined,
-				}),
+				hostId: targetHostId,
 				workspaceId: options.workspace ?? undefined,
 				projectId: options.project ?? undefined,
 			});
@@ -98,14 +100,7 @@ export default command({
 			timezone: options.timezone,
 			dtstart: options.dtstart ? new Date(options.dtstart) : undefined,
 			agent: options.agent,
-			...(options.host !== undefined || options.local
-				? {
-						targetHostId: resolveHostFilter({
-							host: options.host ?? undefined,
-							local: options.local ?? undefined,
-						}),
-					}
-				: {}),
+			...(targetHostId !== undefined ? { targetHostId } : {}),
 			...(options.project !== undefined
 				? { v2ProjectId: options.project }
 				: {}),
