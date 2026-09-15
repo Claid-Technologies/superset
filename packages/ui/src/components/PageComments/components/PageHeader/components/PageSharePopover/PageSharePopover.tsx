@@ -1,6 +1,7 @@
 "use client";
 
 import { Trans, useLingui } from "@lingui/react/macro";
+import { errorMessage } from "@superset/i18n/errors";
 import { getInitials } from "@superset/shared/names";
 import { Building2, Check, Globe, Link2, Lock } from "lucide-react";
 import { type ReactNode, useCallback, useEffect, useState } from "react";
@@ -95,11 +96,10 @@ export function PageSharePopover({
 		} catch (error) {
 			setPending(null);
 			toast.error(
-				error instanceof Error
-					? error.message
-					: t({
-							message: "Could not change who can see this page",
-						}),
+				errorMessage(
+					error,
+					t({ message: "Could not change who can see this page" }),
+				),
 			);
 		} finally {
 			setBusy(false);
@@ -111,7 +111,7 @@ export function PageSharePopover({
 		try {
 			await action();
 		} catch (error) {
-			toast.error(error instanceof Error ? error.message : failure);
+			toast.error(errorMessage(error, failure));
 		} finally {
 			setBusy(false);
 		}

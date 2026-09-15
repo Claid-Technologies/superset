@@ -484,7 +484,15 @@ export const pageRouter = {
 					i18nKey: "serverError.page.pageNotFound",
 				});
 			}
-			await writePageManifest(page.id);
+			try {
+				await writePageManifest(page.id);
+			} catch (error) {
+				await db
+					.update(pages)
+					.set({ visibility: page.visibility })
+					.where(eq(pages.id, page.id));
+				throw error;
+			}
 			return { id: updated.id, visibility: updated.visibility };
 		}),
 
@@ -686,7 +694,9 @@ export const pageRouter = {
 				.where(eq(pageVersions.pageId, page.id))
 				.orderBy(desc(pageVersions.version));
 
-			const captured = await listObjectKeys(`pages/${page.id}/versions/`);
+			const captured = await listObjectKeys(`pages/${page.id}/versions/`).catch(
+				() => new Set<string>(),
+			);
 			const baseUrl = env.USERCONTENT_URL;
 			return await Promise.all(
 				rows.map(async (row) => ({
@@ -808,7 +818,9 @@ export const pageRouter = {
 			if (version === null) return null;
 
 			const baseUrl = env.USERCONTENT_URL;
-			const captured = await objectExists(pageThumbnailKey(page.id, version));
+			const captured = await objectExists(
+				pageThumbnailKey(page.id, version),
+			).catch(() => false);
 			return {
 				id: page.id,
 				slug: page.slug,
