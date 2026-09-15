@@ -14,7 +14,7 @@ Checked 2026-09-13 on this machine; values never printed, names only.
 | Docker daemon (image builds, boot-twice test) | Docker Desktop installed; started it | none |
 | Vercel CLI login | logged in as saddlepaddle | none |
 | Dev sandbox token → project `sandboxes` | `VERCEL_SANDBOX_TOKEN/TEAM_ID/PROJECT_ID` in `.env`; projects API answers 200 | none |
-| Vercel container registry push | `vercel vcr login docker --project <id> --scope <team>` (12 h) | run at first image build |
+| Vercel container registry push | `bun run image` mints a registry credential from `VERCEL_SANDBOX_TOKEN` and logs Docker in itself (verified 2026-09-14) | none |
 | GitHub CLI | logged in, scopes repo/workflow | none |
 | GitHub App (installation tokens) | `GH_APP_ID/PRIVATE_KEY/SLUG` in `.env` and CI | none |
 | CI secrets for the release job (Decision 22) | `DATABASE_URL`, `DATABASE_URL_UNPOOLED`, `VERCEL_SANDBOX_*`, `CDN_R2_*` exist | none |

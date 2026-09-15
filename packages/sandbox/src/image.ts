@@ -14,8 +14,8 @@
  * here downloads without a checksum: apt verifies its packages, the bundle
  * verifies its assets, and the vendor repositories are keyed.
  *
- * Needs Docker and, for a push, `vercel vcr login docker --project
- * <VERCEL_SANDBOX_PROJECT_ID> --scope <team>` (valid 12 hours).
+ * Needs Docker with Buildx and, for a push, VERCEL_SANDBOX_TOKEN,
+ * VERCEL_SANDBOX_TEAM_ID and VERCEL_SANDBOX_PROJECT_ID: the push logs itself in.
  */
 import {
 	cpSync,
@@ -33,6 +33,7 @@ import {
 	SANDBOX_USER,
 } from "@superset/shared/sandbox-contract";
 import { type BuiltBundle, buildBundle, PACKAGE_ROOT } from "./build";
+import { loginToRegistry } from "./registry";
 
 const REPO_ROOT = join(PACKAGE_ROOT, "..", "..");
 const IMAGE_TAG = process.env.SANDBOX_IMAGE_TAG ?? "latest";
@@ -126,10 +127,10 @@ function assembleContext(bundle: BuiltBundle): string {
 export const IMAGE_REF = `${SANDBOX_IMAGE_NAME}:${IMAGE_TAG}`;
 
 /** Builds the image from a built bundle; pushes unless `local`. Returns the image reference. */
-export function buildImage(
+export async function buildImage(
 	bundle: BuiltBundle,
 	options: { local: boolean },
-): string {
+): Promise<string> {
 	const local = options.local;
 	const context = assembleContext(bundle);
 	try {
@@ -145,30 +146,18 @@ export function buildImage(
 					LOCAL_IMAGE,
 					context,
 				]
-			: (() => {
-					const project = process.env.VERCEL_SANDBOX_PROJECT_ID;
-					const team = process.env.VERCEL_SANDBOX_TEAM_ID;
-					if (!project || !team) {
-						throw new Error(
-							"VERCEL_SANDBOX_PROJECT_ID and VERCEL_SANDBOX_TEAM_ID are required",
-						);
-					}
-					return [
-						"vercel",
-						"vcr",
-						"build",
-						"docker",
-						context,
-						`${SANDBOX_IMAGE_NAME}:${IMAGE_TAG}`,
-						"--push",
-						"--project",
-						project,
-						"--scope",
-						team,
-					];
-				})();
+			: [
+					"docker",
+					"buildx",
+					"build",
+					"--platform",
+					"linux/amd64",
+					"--output",
+					`type=image,name=${await loginToRegistry()}/${IMAGE_REF},push=true,oci-mediatypes=true,compression=zstd,compression-level=3,force-compression=true`,
+					context,
+				];
 		console.log(
-			`building bundle ${bundle.sha256.slice(0, 12)} into ${local ? LOCAL_IMAGE : `${SANDBOX_IMAGE_NAME}:${IMAGE_TAG}`}`,
+			`building bundle ${bundle.sha256.slice(0, 12)} into ${local ? LOCAL_IMAGE : IMAGE_REF}`,
 		);
 		const build = Bun.spawnSync(command, {
 			stdout: "inherit",
@@ -176,9 +165,7 @@ export function buildImage(
 		});
 		if (build.exitCode !== 0)
 			throw new Error(`image build exited ${build.exitCode}`);
-		console.log(
-			`built: ${local ? LOCAL_IMAGE : `${SANDBOX_IMAGE_NAME}:${IMAGE_TAG}`}`,
-		);
+		console.log(`built: ${local ? LOCAL_IMAGE : IMAGE_REF}`);
 		return local ? LOCAL_IMAGE : IMAGE_REF;
 	} finally {
 		rmSync(context, { recursive: true, force: true });
@@ -191,5 +178,5 @@ if (import.meta.main) {
 		console.log(dockerfile(bundle));
 		process.exit(0);
 	}
-	buildImage(bundle, { local: process.argv.includes("--local") });
+	await buildImage(bundle, { local: process.argv.includes("--local") });
 }

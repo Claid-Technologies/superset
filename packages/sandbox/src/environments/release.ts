@@ -19,7 +19,7 @@
  *   SUPERSET_INTERNAL_ORGANIZATION_ID=… bun run release [--production] [--skip-image] [--keep-old]
  *
  * Needs VERCEL_SANDBOX_*, SANDBOX_GATE_SECRET, CDN_R2_* and, for the image,
- * Docker and `vercel vcr login docker`. Rows go to DATABASE_URL, or with
+ * Docker with Buildx. Rows go to DATABASE_URL, or with
  * --production to the Neon project's default branch (NEON_API_KEY,
  * NEON_PROJECT_ID). SUPERSET_INTERNAL_ENV_FILE feeds the probe's managed
  * environment so the dev-stack checks can run; the golden never carries it.
@@ -128,7 +128,7 @@ if (SKIP_IMAGE) {
 } else {
 	const { buildImage } = await import("../image");
 	log(`image: building and pushing ${SANDBOX_IMAGE_NAME}`);
-	buildImage(bundle, { local: false });
+	await buildImage(bundle, { local: false });
 }
 
 // 3. golden
