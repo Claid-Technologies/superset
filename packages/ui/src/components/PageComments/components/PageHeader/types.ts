@@ -11,6 +11,7 @@ export interface PageHeaderVersion {
 	version: number;
 	label: string | null;
 	createdAt: Date | string;
+	thumbnailUrl?: string | null;
 }
 
 export interface PageHeaderPage {
@@ -30,4 +31,8 @@ export interface PageHeaderActions {
 	onSetVisibility: (visibility: PageVisibility) => Promise<void>;
 	onSetSharedVersion: (version: number | null) => Promise<void>;
 	onDelete: () => Promise<void>;
+	onRename: (title: string) => Promise<void>;
+	onRefresh: () => void;
+	onPreviewVersion: (version: number | null) => void;
+	previewVersion?: number | null;
 }

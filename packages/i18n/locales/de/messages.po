@@ -2413,6 +2413,9 @@ msgstr "Zurück zum Changelog"
 msgid "Back to checklist"
 msgstr "Zurück zur Checkliste"
 
+msgid "Back to current"
+msgstr "Zurück zur aktuellen Version"
+
 msgid "Back to GitHub issues"
 msgstr "Zurück zu GitHub-Issues"
 
@@ -4259,6 +4262,9 @@ msgstr "Umgebung konnte nicht gespeichert werden"
 
 msgid "Could not rename the session"
 msgstr "Sitzung konnte nicht umbenannt werden"
+
+msgid "Could not rename this page"
+msgstr "Diese Seite konnte nicht umbenannt werden"
 
 msgid "Could not reopen"
 msgstr "Konnte nicht wieder geöffnet werden"
@@ -10691,6 +10697,9 @@ msgstr "Seite nicht gefunden"
 msgid "Page Not Found"
 msgstr "Seite nicht gefunden"
 
+msgid "Page title"
+msgstr "Seitentitel"
+
 msgid "Page views"
 msgstr "Seitenaufrufe"
 
@@ -11912,6 +11921,9 @@ msgstr "Gruppe umbenennen"
 
 msgid "Rename host"
 msgstr "Host umbenennen"
+
+msgid "Rename page"
+msgstr "Seite umbenennen"
 
 msgid "Rename session"
 msgstr "Sitzung umbenennen"
@@ -14973,6 +14985,9 @@ msgstr "der Ziel-Host"
 msgid "The team invitation has either expired or doesn't exist. Request a new link from the team owner or check the URL to make sure it is entered correctly."
 msgstr "Die Team-Einladung ist abgelaufen oder existiert nicht. Bitte den Team-Eigentümer um einen neuen Link oder prüfe, ob die URL korrekt eingegeben ist."
 
+msgid "The title shows everywhere this page is listed and in its link preview."
+msgstr "Der Titel erscheint überall dort, wo diese Seite aufgeführt ist, und in ihrer Linkvorschau."
+
 msgid "The web agents UI is a read-only preview for now."
 msgstr "Die Web-Oberfläche für Agenten ist vorerst eine schreibgeschützte Vorschau."
 
@@ -16778,6 +16793,9 @@ msgstr "Du bist die einzige Inhaberin einer Organisation, die weitere Mitglieder
 #. placeholder {0}: String(MIN_ACTIVE_DAYS)
 msgid "You are unranked until {0} days carry usage. Scoring starts once the board can see a full picture."
 msgstr "Du bist ohne Rang, bis {0} Tage Nutzung aufweisen. Die Bewertung beginnt, sobald das Gesamtbild sichtbar ist."
+
+msgid "You are viewing version {version}, read-only"
+msgstr "Du siehst Version {version}, schreibgeschützt"
 
 msgid "You can attach up to {MAX_ATTACHMENTS} files"
 msgstr "Du kannst bis zu {MAX_ATTACHMENTS} Dateien anhängen"

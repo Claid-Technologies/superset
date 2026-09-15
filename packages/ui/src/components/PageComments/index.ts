@@ -28,6 +28,7 @@ export {
 	PageSharePopover,
 	PageTitleMenu,
 	type PageVisibility,
+	RenamePageDialog,
 } from "./components/PageHeader";
 export { useFramePointerDown } from "./hooks/useFramePointerDown";
 export {

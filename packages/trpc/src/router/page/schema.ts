@@ -154,3 +154,14 @@ export const setPageWatchSchema = z.object({
 export const clearPageWatchSchema = z.object({ id: pageFields.id });
 
 export const publicPageSchema = z.object({ slug: pageFields.slug });
+
+export const updatePageSchema = z
+	.object({
+		id: pageFields.id,
+		title: pageFields.title.optional(),
+		description: pageFields.description.nullable().optional(),
+	})
+	.refine(
+		(value) => value.title !== undefined || value.description !== undefined,
+		{ message: "Provide a title or a description to change" },
+	);

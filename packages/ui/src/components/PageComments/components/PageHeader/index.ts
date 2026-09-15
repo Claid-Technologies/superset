@@ -1,6 +1,7 @@
 export { DeletePageDialog } from "./components/DeletePageDialog";
 export { PageSharePopover } from "./components/PageSharePopover";
 export { PageTitleMenu } from "./components/PageTitleMenu";
+export { RenamePageDialog } from "./components/RenamePageDialog";
 export { PageHeader } from "./PageHeader";
 export type {
 	PageHeaderActions,

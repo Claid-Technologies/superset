@@ -1,15 +1,16 @@
 "use client";
 
-import { Trans, useLingui } from "@lingui/react/macro";
+import { Trans } from "@lingui/react/macro";
 import { Share2 } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import { cn } from "../../../../lib/utils";
 import { Button } from "../../../ui/button";
-import { toast } from "../../../ui/sonner";
 import { DeletePageDialog } from "./components/DeletePageDialog";
 import { PagePublicBanner } from "./components/PagePublicBanner";
 import { PageSharePopover } from "./components/PageSharePopover";
 import { PageTitleMenu } from "./components/PageTitleMenu";
+import { PageVersionBanner } from "./components/PageVersionBanner";
+import { RenamePageDialog } from "./components/RenamePageDialog";
 import type {
 	PageHeaderActions,
 	PageHeaderPage,
@@ -35,29 +36,18 @@ export function PageHeader({
 	onSetVisibility,
 	onSetSharedVersion,
 	onDelete,
+	onRename,
+	onRefresh,
+	onPreviewVersion,
+	previewVersion = null,
 }: PageHeaderProps) {
-	const { t } = useLingui();
 	const [menuOpen, setMenuOpen] = useState(false);
 	const [shareOpen, setShareOpen] = useState(false);
 	const [deleteOpen, setDeleteOpen] = useState(false);
+	const [renameOpen, setRenameOpen] = useState(false);
 
 	const isOwner =
 		currentUserId !== undefined && currentUserId === page.createdByUserId;
-
-	const pickVersion = async (version: number) => {
-		if (page.sharedVersion !== null && version === page.sharedVersion) return;
-		try {
-			await onSetSharedVersion(version);
-		} catch (error) {
-			toast.error(
-				error instanceof Error
-					? error.message
-					: t({
-							message: "Could not change the shared version",
-						}),
-			);
-		}
-	};
 
 	return (
 		<>
@@ -84,10 +74,9 @@ export function PageHeader({
 							setMenuOpen(false);
 							setDeleteOpen(true);
 						}}
-						onPickVersion={(version) => {
-							setMenuOpen(false);
-							void pickVersion(version);
-						}}
+						onRename={() => setRenameOpen(true)}
+						onRefresh={onRefresh}
+						onPreviewVersion={onPreviewVersion}
 					/>
 					{!isOwner && page.owner ? (
 						<span className="ml-2 min-w-0 truncate text-muted-foreground text-xs">
@@ -121,9 +110,21 @@ export function PageHeader({
 					versionCount={versions.length}
 					onConfirm={onDelete}
 				/>
+
+				<RenamePageDialog
+					open={renameOpen}
+					onOpenChange={setRenameOpen}
+					title={page.title}
+					onRename={onRename}
+				/>
 			</div>
 
-			{isOwner && page.visibility === "everyone" ? (
+			{previewVersion !== null ? (
+				<PageVersionBanner
+					version={previewVersion}
+					onExit={() => onPreviewVersion(null)}
+				/>
+			) : isOwner && page.visibility === "everyone" ? (
 				<PagePublicBanner
 					url={page.url}
 					onOpenShareSettings={() => setShareOpen(true)}

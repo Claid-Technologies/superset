@@ -22,7 +22,12 @@ import { TRPCError, type TRPCRouterRecord } from "@trpc/server";
 import { and, desc, eq, inArray, or, type SQL, sql } from "drizzle-orm";
 import { z } from "zod";
 import { env } from "../../env";
-import { deleteObjects, objectExists, presignedGetUrl } from "../../lib/r2";
+import {
+	deleteObjects,
+	listObjectKeys,
+	objectExists,
+	presignedGetUrl,
+} from "../../lib/r2";
 import { protectedProcedure, publicProcedure, userError } from "../../trpc";
 import { requireActiveOrgMembership } from "../utils/active-org";
 import { assertPageReadable, assertPageWritable } from "./access";
@@ -43,6 +48,7 @@ import {
 	setPageVisibilitySchema,
 	setPageWatchSchema,
 	setSharedVersionSchema,
+	updatePageSchema,
 } from "./schema";
 import { resolveSharedVersion, servedVersion } from "./shared-version";
 import {
@@ -423,6 +429,40 @@ export const pageRouter = {
 			};
 		}),
 
+	update: protectedProcedure
+		.input(updatePageSchema)
+		.mutation(async ({ ctx, input }) => {
+			const organizationId = await requireActiveOrgMembership(ctx);
+			const userId = ctx.session.user.id;
+			const page = await loadPage({ id: input.id, organizationId, userId });
+			assertPageWritable(page, userId);
+
+			const [updated] = await db
+				.update(pages)
+				.set({
+					...(input.title !== undefined ? { title: input.title } : {}),
+					...(input.description !== undefined
+						? { description: input.description }
+						: {}),
+				})
+				.where(eq(pages.id, page.id))
+				.returning();
+
+			if (!updated) {
+				throw userError({
+					code: "NOT_FOUND",
+					message: "Page not found",
+					i18nKey: "serverError.page.pageNotFound",
+				});
+			}
+
+			return {
+				id: updated.id,
+				title: updated.title,
+				description: updated.description,
+			};
+		}),
+
 	setVisibility: protectedProcedure
 		.input(setPageVisibilitySchema)
 		.mutation(async ({ ctx, input }) => {
@@ -632,7 +672,7 @@ export const pageRouter = {
 				userId: ctx.session.user.id,
 			});
 
-			return await db
+			const rows = await db
 				.select({
 					version: pageVersions.version,
 					label: pageVersions.label,
@@ -645,6 +685,22 @@ export const pageRouter = {
 				.from(pageVersions)
 				.where(eq(pageVersions.pageId, page.id))
 				.orderBy(desc(pageVersions.version));
+
+			const captured = await listObjectKeys(`pages/${page.id}/versions/`);
+			const baseUrl = env.USERCONTENT_URL;
+			return await Promise.all(
+				rows.map(async (row) => ({
+					...row,
+					thumbnailUrl: captured.has(pageThumbnailKey(page.id, row.version))
+						? pageThumbnailUrl({
+								baseUrl,
+								pageId: page.id,
+								version: row.version,
+								ticket: await mintPageTicket(page, { version: row.version }),
+							})
+						: null,
+				})),
+			);
 		}),
 
 	pull: protectedProcedure

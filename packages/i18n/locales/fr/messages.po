@@ -2413,6 +2413,9 @@ msgstr "Retour au changelog"
 msgid "Back to checklist"
 msgstr "Retour à la liste de contrôle"
 
+msgid "Back to current"
+msgstr "Revenir à la version actuelle"
+
 msgid "Back to GitHub issues"
 msgstr "Retour aux issues GitHub"
 
@@ -4259,6 +4262,9 @@ msgstr "Impossible d'enregistrer l'environnement"
 
 msgid "Could not rename the session"
 msgstr "Impossible de renommer la session"
+
+msgid "Could not rename this page"
+msgstr "Impossible de renommer cette page"
 
 msgid "Could not reopen"
 msgstr "Impossible de rouvrir"
@@ -10691,6 +10697,9 @@ msgstr "Page introuvable"
 msgid "Page Not Found"
 msgstr "Page introuvable"
 
+msgid "Page title"
+msgstr "Titre de la page"
+
 msgid "Page views"
 msgstr "Pages vues"
 
@@ -11912,6 +11921,9 @@ msgstr "Renommer le groupe"
 
 msgid "Rename host"
 msgstr "Renommer l'hôte"
+
+msgid "Rename page"
+msgstr "Renommer la page"
 
 msgid "Rename session"
 msgstr "Renommer la session"
@@ -14973,6 +14985,9 @@ msgstr "l'hôte cible"
 msgid "The team invitation has either expired or doesn't exist. Request a new link from the team owner or check the URL to make sure it is entered correctly."
 msgstr "L'invitation à l'équipe a expiré ou n'existe pas. Demandez un nouveau lien au propriétaire de l'équipe ou vérifiez que l'URL est correctement saisie."
 
+msgid "The title shows everywhere this page is listed and in its link preview."
+msgstr "Le titre apparaît partout où cette page est listée ainsi que dans son aperçu de lien."
+
 msgid "The web agents UI is a read-only preview for now."
 msgstr "L'interface web des agents est pour l'instant un aperçu en lecture seule."
 
@@ -16778,6 +16793,9 @@ msgstr "Vous êtes le seul propriétaire d'une organisation qui compte d'autres 
 #. placeholder {0}: String(MIN_ACTIVE_DAYS)
 msgid "You are unranked until {0} days carry usage. Scoring starts once the board can see a full picture."
 msgstr "Vous n'êtes pas classé tant que {0} jours n'ont pas d'activité. Le score démarre une fois la vue d'ensemble disponible."
+
+msgid "You are viewing version {version}, read-only"
+msgstr "Vous consultez la version {version}, en lecture seule"
 
 msgid "You can attach up to {MAX_ATTACHMENTS} files"
 msgstr "Vous pouvez joindre jusqu'à {MAX_ATTACHMENTS} fichiers"

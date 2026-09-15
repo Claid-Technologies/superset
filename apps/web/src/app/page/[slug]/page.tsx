@@ -21,14 +21,20 @@ import { isForbidden, isNotFound } from "./utils/trpcErrors";
 
 interface PageProps {
 	params: Promise<{ slug: string }>;
+	searchParams: Promise<{ v?: string }>;
 }
 
 // `api()` caches the client, not the result — this cache is what keeps
 // generateMetadata and the component to a single pull.
-const pullPage = cache(async (slug: string) => {
+const pullPage = cache(async (slug: string, version?: number) => {
 	const trpc = await api();
-	return trpc.page.pull.query({ slug });
+	return trpc.page.pull.query({ slug, version });
 });
+
+function previewVersionOf(raw: string | undefined): number | undefined {
+	const parsed = Number(raw);
+	return Number.isInteger(parsed) && parsed > 0 ? parsed : undefined;
+}
 
 const pullVersions = cache(async (slug: string) => {
 	const trpc = await api();
@@ -95,10 +101,14 @@ export async function generateMetadata({
 	};
 }
 
-export default async function PublishedPage({ params }: PageProps) {
+export default async function PublishedPage({
+	params,
+	searchParams,
+}: PageProps) {
 	const i18n = await initServerI18n();
 
 	const { slug } = await params;
+	const requestedVersion = previewVersionOf((await searchParams).v);
 
 	const { hasPagesAccess, session } = await getPagesAccess();
 
@@ -122,7 +132,7 @@ export default async function PublishedPage({ params }: PageProps) {
 
 	let page: Awaited<ReturnType<typeof pullPage>>;
 	try {
-		page = await pullPage(slug);
+		page = await pullPage(slug, requestedVersion);
 	} catch (error) {
 		const view = await publicView();
 		if (view) return view;
@@ -164,6 +174,9 @@ export default async function PublishedPage({ params }: PageProps) {
 					slug={slug}
 					watching={page.watch.watching}
 					watchAgentId={page.watch.agentId}
+					previewVersion={
+						page.version === page.servedVersion ? null : page.version
+					}
 				/>
 
 				<div className="relative flex min-h-0 flex-1">

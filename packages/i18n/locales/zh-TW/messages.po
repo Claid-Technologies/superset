@@ -2413,6 +2413,9 @@ msgstr "返回更新日誌"
 msgid "Back to checklist"
 msgstr "返回清單"
 
+msgid "Back to current"
+msgstr "返回目前版本"
+
 msgid "Back to GitHub issues"
 msgstr "返回GitHub議題"
 
@@ -4259,6 +4262,9 @@ msgstr "無法儲存環境"
 
 msgid "Could not rename the session"
 msgstr "無法重新命名會話"
+
+msgid "Could not rename this page"
+msgstr "無法重新命名此頁面"
 
 msgid "Could not reopen"
 msgstr "無法重新開啟"
@@ -10691,6 +10697,9 @@ msgstr "未找到頁面"
 msgid "Page Not Found"
 msgstr "頁面未找到"
 
+msgid "Page title"
+msgstr "頁面標題"
+
 msgid "Page views"
 msgstr "頁面瀏覽"
 
@@ -11912,6 +11921,9 @@ msgstr "重新命名群組"
 
 msgid "Rename host"
 msgstr "重新命名主機"
+
+msgid "Rename page"
+msgstr "重新命名頁面"
 
 msgid "Rename session"
 msgstr "重新命名會話"
@@ -14973,6 +14985,9 @@ msgstr "目標主機"
 msgid "The team invitation has either expired or doesn't exist. Request a new link from the team owner or check the URL to make sure it is entered correctly."
 msgstr "該團隊邀請已過期或不存在。請向團隊擁有者索取新連結，或檢查URL是否輸入正確。"
 
+msgid "The title shows everywhere this page is listed and in its link preview."
+msgstr "標題會顯示在此頁面列出的所有位置以及連結預覽中。"
+
 msgid "The web agents UI is a read-only preview for now."
 msgstr "網頁版代理程式介面目前是隻讀預覽。"
 
@@ -16778,6 +16793,9 @@ msgstr "你是某個仍有其他成員的組織的唯一擁有者。請先轉移
 #. placeholder {0}: String(MIN_ACTIVE_DAYS)
 msgid "You are unranked until {0} days carry usage. Scoring starts once the board can see a full picture."
 msgstr "在累計 {0} 天使用紀錄之前你不參與排名。等看板掌握完整情況後才會開始計分。"
+
+msgid "You are viewing version {version}, read-only"
+msgstr "您正在檢視版本 {version}，唯讀"
 
 msgid "You can attach up to {MAX_ATTACHMENTS} files"
 msgstr "最多可附加{MAX_ATTACHMENTS}個檔案"

@@ -2413,6 +2413,9 @@ msgstr "К changelog"
 msgid "Back to checklist"
 msgstr "К списку задач"
 
+msgid "Back to current"
+msgstr "Вернуться к текущей"
+
 msgid "Back to GitHub issues"
 msgstr "К задачам GitHub"
 
@@ -4259,6 +4262,9 @@ msgstr "Не удалось сохранить окружение"
 
 msgid "Could not rename the session"
 msgstr "Не удалось переименовать сессию"
+
+msgid "Could not rename this page"
+msgstr "Не удалось переименовать эту страницу"
 
 msgid "Could not reopen"
 msgstr "Не удалось открыть заново"
@@ -10691,6 +10697,9 @@ msgstr "Страница не найдена"
 msgid "Page Not Found"
 msgstr "Страница не найдена"
 
+msgid "Page title"
+msgstr "Заголовок страницы"
+
 msgid "Page views"
 msgstr "Просмотры страниц"
 
@@ -11912,6 +11921,9 @@ msgstr "Переименовать группу"
 
 msgid "Rename host"
 msgstr "Переименовать хост"
+
+msgid "Rename page"
+msgstr "Переименовать страницу"
 
 msgid "Rename session"
 msgstr "Переименовать сессию"
@@ -14973,6 +14985,9 @@ msgstr "целевой хост"
 msgid "The team invitation has either expired or doesn't exist. Request a new link from the team owner or check the URL to make sure it is entered correctly."
 msgstr "Приглашение в команду истекло или не существует. Запросите новую ссылку у владельца команды или проверьте правильность URL."
 
+msgid "The title shows everywhere this page is listed and in its link preview."
+msgstr "Заголовок отображается везде, где указана эта страница, и в превью ссылки."
+
 msgid "The web agents UI is a read-only preview for now."
 msgstr "Веб-интерфейс агентов пока доступен только для просмотра."
 
@@ -16778,6 +16793,9 @@ msgstr "Вы единственный владелец организации, �
 #. placeholder {0}: String(MIN_ACTIVE_DAYS)
 msgid "You are unranked until {0} days carry usage. Scoring starts once the board can see a full picture."
 msgstr "Вы вне рейтинга, пока не наберётся дней с активностью: {0}. Подсчёт очков начнётся, когда картина станет полной."
+
+msgid "You are viewing version {version}, read-only"
+msgstr "Вы просматриваете версию {version}, только для чтения"
 
 msgid "You can attach up to {MAX_ATTACHMENTS} files"
 msgstr "Можно прикрепить не более {MAX_ATTACHMENTS} файлов"

@@ -32,6 +32,7 @@ interface PageViewerProps {
 	onCommentsEnabledChange: (enabled: boolean) => void;
 	onResolved?: (page: ResolvedPage) => void;
 	onFramePointerDown?: () => void;
+	version?: number | null;
 }
 
 export function PageViewer({
@@ -42,10 +43,14 @@ export function PageViewer({
 	onCommentsEnabledChange,
 	onResolved,
 	onFramePointerDown,
+	version,
 }: PageViewerProps) {
 	const { t } = useLingui();
 	const { data: session } = authClient.useSession();
-	const pull = cloudTrpc.page.pull.useQuery(pageId ? { id: pageId } : { slug });
+	const pull = cloudTrpc.page.pull.useQuery({
+		...(pageId ? { id: pageId } : { slug }),
+		...(version ? { version } : {}),
+	});
 	const resolvedPageId = pageId ?? pull.data?.id;
 	const resolvedTitle = title ?? pull.data?.title ?? slug;
 	const user = useMemo(

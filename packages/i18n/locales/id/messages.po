@@ -2413,6 +2413,9 @@ msgstr "Kembali ke Changelog"
 msgid "Back to checklist"
 msgstr "Kembali ke checklist"
 
+msgid "Back to current"
+msgstr "Kembali ke versi saat ini"
+
 msgid "Back to GitHub issues"
 msgstr "Kembali ke issue GitHub"
 
@@ -4259,6 +4262,9 @@ msgstr "Tidak dapat menyimpan environment"
 
 msgid "Could not rename the session"
 msgstr "Tidak dapat mengganti nama sesi"
+
+msgid "Could not rename this page"
+msgstr "Tidak dapat mengganti nama halaman ini"
 
 msgid "Could not reopen"
 msgstr "Tidak bisa membuka lagi"
@@ -10691,6 +10697,9 @@ msgstr "Halaman tidak ditemukan"
 msgid "Page Not Found"
 msgstr "Halaman Tidak Ditemukan"
 
+msgid "Page title"
+msgstr "Judul halaman"
+
 msgid "Page views"
 msgstr "Tampilan halaman"
 
@@ -11912,6 +11921,9 @@ msgstr "Ganti nama grup"
 
 msgid "Rename host"
 msgstr "Ganti nama host"
+
+msgid "Rename page"
+msgstr "Ganti nama halaman"
 
 msgid "Rename session"
 msgstr "Ganti nama sesi"
@@ -14973,6 +14985,9 @@ msgstr "host tujuan"
 msgid "The team invitation has either expired or doesn't exist. Request a new link from the team owner or check the URL to make sure it is entered correctly."
 msgstr "Undangan tim ini sudah kedaluwarsa atau tidak ada. Minta tautan baru dari pemilik tim atau periksa URL-nya sudah benar."
 
+msgid "The title shows everywhere this page is listed and in its link preview."
+msgstr "Judul muncul di semua tempat halaman ini terdaftar dan di pratinjau tautannya."
+
 msgid "The web agents UI is a read-only preview for now."
 msgstr "UI agen di web masih pratinjau baca-saja untuk saat ini."
 
@@ -16778,6 +16793,9 @@ msgstr "Anda satu-satunya pemilik organisasi yang punya anggota lain. Alihkan ke
 #. placeholder {0}: String(MIN_ACTIVE_DAYS)
 msgid "You are unranked until {0} days carry usage. Scoring starts once the board can see a full picture."
 msgstr "Anda tanpa peringkat sampai ada {0} hari dengan penggunaan. Penilaian dimulai setelah gambaran utuh terlihat."
+
+msgid "You are viewing version {version}, read-only"
+msgstr "Anda melihat versi {version}, hanya-baca"
 
 msgid "You can attach up to {MAX_ATTACHMENTS} files"
 msgstr "Anda dapat melampirkan hingga {MAX_ATTACHMENTS} file"

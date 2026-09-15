@@ -3,6 +3,7 @@ import {
 	DeleteObjectsCommand,
 	GetObjectCommand,
 	HeadObjectCommand,
+	ListObjectsV2Command,
 	PutObjectCommand,
 	S3Client,
 } from "@aws-sdk/client-s3";
@@ -157,6 +158,28 @@ export async function objectExists(
 	{ bucket = "private" }: { bucket?: Bucket } = {},
 ): Promise<boolean> {
 	return (await headObject(key, { bucket })) !== null;
+}
+
+export async function listObjectKeys(
+	prefix: string,
+	{ bucket = "private" }: { bucket?: Bucket } = {},
+): Promise<Set<string>> {
+	const keys = new Set<string>();
+	let token: string | undefined;
+	do {
+		const result = await s3().send(
+			new ListObjectsV2Command({
+				Bucket: bucketName(bucket),
+				Prefix: prefix,
+				ContinuationToken: token,
+			}),
+		);
+		for (const entry of result.Contents ?? []) {
+			if (entry.Key) keys.add(entry.Key);
+		}
+		token = result.IsTruncated ? result.NextContinuationToken : undefined;
+	} while (token);
+	return keys;
 }
 
 /** Deletes are idempotent and batched; a missing key is not an error. */

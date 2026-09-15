@@ -22,6 +22,8 @@ interface PageHeaderData {
 	currentUserId: string | undefined;
 	onSetVisibility: (visibility: PageVisibility) => Promise<void>;
 	onSetSharedVersion: (version: number | null) => Promise<void>;
+	onRename: (title: string) => Promise<void>;
+	onRefresh: () => void;
 	onDelete: () => Promise<void>;
 }
 
@@ -45,6 +47,7 @@ export function usePageHeaderData(data: PageHeaderTarget): PageHeaderData {
 	const utils = cloudTrpc.useUtils();
 	const setVisibility = cloudTrpc.page.setVisibility.useMutation();
 	const setSharedVersion = cloudTrpc.page.setSharedVersion.useMutation();
+	const updatePage = cloudTrpc.page.update.useMutation();
 	const deletePage = cloudTrpc.page.delete.useMutation();
 
 	const refresh = useCallback(async () => {
@@ -87,6 +90,16 @@ export function usePageHeaderData(data: PageHeaderTarget): PageHeaderData {
 			if (!pageId) return;
 			await setSharedVersion.mutateAsync({ id: pageId, version });
 			await refresh();
+		},
+		onRename: async (title) => {
+			if (!pageId) return;
+			const updated = await updatePage.mutateAsync({ id: pageId, title });
+			utils.page.pull.setData(ref, (prev) =>
+				prev ? { ...prev, title: updated.title } : prev,
+			);
+		},
+		onRefresh: () => {
+			void refresh();
 		},
 		onDelete: async () => {
 			if (!pageId) return;
