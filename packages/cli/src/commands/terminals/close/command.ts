@@ -6,7 +6,9 @@ export default command({
 	description: "Close (dispose) a terminal running in a workspace",
 	options: {
 		workspace: string().required().desc("Workspace ID"),
-		host: string().desc("Host the workspace lives on (default: the cloud)"),
+		host: string().desc(
+			"Host the workspace lives on (default: the cloud if your account has cloud workspaces, else this machine)",
+		),
 		local: boolean().desc("The workspace is on this machine"),
 		terminal: string().required().desc("Terminal ID to close"),
 	},

@@ -3,6 +3,7 @@ import { z } from "zod";
 import { createMcpCaller } from "../../caller";
 import { defineTool } from "../../define-tool";
 import { hostServiceCall } from "../../host-service-client";
+import { requireCloudUnlessHost } from "../../workspace-service-target";
 
 export function register(server: McpServer): void {
 	defineTool(server, {
@@ -16,11 +17,12 @@ export function register(server: McpServer): void {
 				.min(1)
 				.optional()
 				.describe(
-					"Host machineId to query (see `hosts_list`). Omit to list cloud workspaces.",
+					"Host machineId to query (see `hosts_list`). Omit to list cloud workspaces (accounts with cloud workspaces only).",
 				),
 		},
 		handler: async (input, ctx) => {
 			if (!input.hostId) {
+				await requireCloudUnlessHost(input, ctx);
 				return createMcpCaller(ctx).cloudWorkspace.list({
 					organizationId: ctx.organizationId,
 				});

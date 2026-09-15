@@ -1,13 +1,16 @@
 import { boolean, CLIError, positional, string } from "@superset/cli-framework";
+import { resolveWorkspaceHost } from "../../../lib/cloud-workspaces";
 import { command } from "../../../lib/command";
-import { resolveHostFilter, resolveHostTarget } from "../../../lib/host-target";
+import { resolveHostTarget } from "../../../lib/host-target";
 
 export default command({
 	description:
-		"Update a cloud workspace, or a workspace on this machine with --local or another host with --host",
+		"Update a workspace: a cloud workspace by default if your account has them, else one on this machine; --local or --host picks a host",
 	args: [positional("id").required().desc("Workspace UUID")],
 	options: {
-		host: string().desc("Host the workspace lives on (default: the cloud)"),
+		host: string().desc(
+			"Host the workspace lives on (default: the cloud if your account has cloud workspaces, else this machine)",
+		),
 		local: boolean().desc("The workspace is on this machine"),
 		name: string().desc("Workspace name"),
 		taskId: string().desc("Link the workspace to a task by id"),
@@ -63,10 +66,11 @@ export default command({
 			);
 		}
 
-		const hostId = resolveHostFilter({
-			host: options.host ?? undefined,
-			local: options.local ?? undefined,
-		});
+		const hostId = await resolveWorkspaceHost(
+			{ host: options.host, local: options.local },
+			ctx.api,
+			organizationId,
+		);
 		if (!hostId) {
 			// A cloud workspace's name lives in the API; tasks and tags are
 			// host-side rows it does not have.

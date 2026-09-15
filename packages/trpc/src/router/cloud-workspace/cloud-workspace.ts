@@ -84,6 +84,20 @@ async function loadReadyWorkspace(
 }
 
 export const cloudWorkspaceRouter = {
+	/**
+	 * Whether this account may use cloud workspaces. Clients decide their
+	 * default location from it: a workspace command defaults to the cloud only
+	 * for an account that can use it, so nobody else's commands change.
+	 */
+	available: jwtProcedure.query(async ({ ctx }) => {
+		try {
+			await assertCloudAccess(ctx);
+			return { available: true };
+		} catch {
+			return { available: false };
+		}
+	}),
+
 	list: jwtProcedure
 		.input(z.object({ organizationId: z.string().uuid() }))
 		.query(async ({ ctx, input }) => {

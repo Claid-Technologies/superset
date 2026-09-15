@@ -22,6 +22,7 @@ mock.module("../../define-tool", () => ({
 	},
 }));
 mock.module("../../host-service-client", () => ({
+	HostServiceUnreachableError: class extends Error {},
 	hostServiceCall: async (
 		_ctx: unknown,
 		procedure: string,

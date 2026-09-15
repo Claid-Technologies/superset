@@ -55,7 +55,7 @@ export async function createCloudWorkspace(args: {
 		if (value !== undefined) {
 			throw new CLIError(
 				`${flag} does not apply to a cloud workspace`,
-				"Workspaces are created in the cloud by default. Pass --local to create on this machine, or --host <id> for another host",
+				"Your account creates workspaces in the cloud by default. Pass --local to create on this machine, or --host <id> for another host",
 			);
 		}
 	}

@@ -1,8 +1,8 @@
 import { CLIError } from "@superset/cli-framework";
+import { resolveWorkspaceHost } from "../cloud-workspaces";
 import {
 	type ResolvedHostTarget,
 	resolveCloudWorkspaceTarget,
-	resolveHostFilter,
 	resolveHostTarget,
 } from "../host-target";
 import {
@@ -18,8 +18,9 @@ export interface ResolvedWorkspaceTarget {
 }
 
 /**
- * Where a workspace lives and a client for it: a cloud workspace unless
- * `--local` or `--host` names a host. Never guessed from the id.
+ * Where a workspace lives and a client for it: `--local` or `--host` names a
+ * host; otherwise the account's default location (see resolveWorkspaceHost).
+ * Never guessed from the id.
  */
 export async function resolveWorkspaceTarget(
 	options: Omit<HostWorkspacesOptions, "hostId"> & {
@@ -28,10 +29,11 @@ export async function resolveWorkspaceTarget(
 	},
 	workspaceId: string,
 ): Promise<ResolvedWorkspaceTarget> {
-	const hostId = resolveHostFilter({
-		host: options.host,
-		local: options.local,
-	});
+	const hostId = await resolveWorkspaceHost(
+		{ host: options.host, local: options.local },
+		options.api,
+		options.organizationId,
+	);
 	return hostId
 		? onHost(options, hostId, workspaceId)
 		: inCloud(options, workspaceId);
@@ -47,7 +49,7 @@ async function onHost(
 	if (!workspace) {
 		throw new CLIError(
 			`Workspace not found on host ${hostId}: ${workspaceId}`,
-			"Pass --host <id> if it lives on another machine, or drop --local/--host for a cloud workspace",
+			"Pass --host <id> if it lives on another machine",
 		);
 	}
 	const target = await resolveHostTarget({

@@ -1,10 +1,11 @@
 import { boolean, CLIError, positional, string } from "@superset/cli-framework";
+import { resolveWorkspaceHost } from "../../../lib/cloud-workspaces";
 import { command } from "../../../lib/command";
-import { resolveHostFilter, resolveHostTarget } from "../../../lib/host-target";
+import { resolveHostTarget } from "../../../lib/host-target";
 
 export default command({
 	description:
-		"Delete cloud workspaces by ID (tearing down the sandbox stops its billing), or workspaces on this machine with --local or another host with --host",
+		"Delete workspaces by ID: cloud workspaces by default if your account has them (tearing down the sandbox stops its billing), else on this machine; --local or --host picks a host",
 	args: [positional("ids").required().variadic().desc("Workspace IDs")],
 	options: {
 		host: string().desc("Host the workspaces live on"),
@@ -17,10 +18,11 @@ export default command({
 			throw new CLIError("No active organization", "Run: superset auth login");
 		}
 
-		const hostId = resolveHostFilter({
-			host: options.host ?? undefined,
-			local: options.local ?? undefined,
-		});
+		const hostId = await resolveWorkspaceHost(
+			{ host: options.host, local: options.local },
+			ctx.api,
+			organizationId,
+		);
 		if (!hostId) {
 			const deleted: string[] = [];
 			const missing: string[] = [];

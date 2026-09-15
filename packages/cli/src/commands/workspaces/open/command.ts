@@ -1,6 +1,7 @@
 import { spawn } from "node:child_process";
 import { boolean, CLIError, positional, string } from "@superset/cli-framework";
 import type { ApiClient } from "../../../lib/api-client";
+import { resolveWorkspaceHost } from "../../../lib/cloud-workspaces";
 import { command } from "../../../lib/command";
 import { resolveWorkspaceTarget } from "../../../lib/host-workspaces";
 
@@ -26,7 +27,9 @@ export default command({
 	description: "Open a workspace in the Superset desktop app",
 	args: [positional("id").required().desc("Workspace ID")],
 	options: {
-		host: string().desc("Host the workspace lives on (default: the cloud)"),
+		host: string().desc(
+			"Host the workspace lives on (default: the cloud if your account has cloud workspaces, else this machine)",
+		),
 		local: boolean().desc("The workspace is on this machine"),
 		print: boolean().desc(
 			"Print the deep link URL instead of opening the desktop app",
@@ -41,21 +44,24 @@ export default command({
 
 		// Opening only needs the id and name: a cloud workspace's come from the
 		// API, so the desktop, not this command, wakes its sandbox.
-		const workspace =
-			options.host || options.local
-				? (
-						await resolveWorkspaceTarget(
-							{
-								organizationId,
-								userJwt: ctx.bearer,
-								api: ctx.api,
-								host: options.host ?? undefined,
-								local: options.local ?? undefined,
-							},
-							id,
-						)
-					).workspace
-				: await cloudWorkspaceRow(ctx.api, organizationId, id);
+		const hostId = await resolveWorkspaceHost(
+			{ host: options.host, local: options.local },
+			ctx.api,
+			organizationId,
+		);
+		const workspace = hostId
+			? (
+					await resolveWorkspaceTarget(
+						{
+							organizationId,
+							userJwt: ctx.bearer,
+							api: ctx.api,
+							host: hostId,
+						},
+						id,
+					)
+				).workspace
+			: await cloudWorkspaceRow(ctx.api, organizationId, id);
 
 		const url = `superset://v2-workspace/${workspace.id}`;
 

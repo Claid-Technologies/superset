@@ -1,17 +1,16 @@
 import { boolean, CLIError, number, string } from "@superset/cli-framework";
+import { resolveWorkspaceHost } from "../../../lib/cloud-workspaces";
 import { command } from "../../../lib/command";
-import { requireHostTarget, resolveHostTarget } from "../../../lib/host-target";
+import { resolveHostTarget } from "../../../lib/host-target";
 import { uploadAttachments } from "../../../lib/upload-attachments";
 import { createCloudWorkspace } from "./createCloudWorkspace";
 
 export default command({
 	description:
-		"Create a cloud workspace, or a workspace on this machine with --local or on another host with --host",
+		"Create a workspace: in the cloud by default if your account has cloud workspaces, else on this machine; --local or --host picks a host",
 	options: {
-		host: string().desc(
-			"Create on this host (machineId) instead of in the cloud",
-		),
-		local: boolean().desc("Create on this machine instead of in the cloud"),
+		host: string().desc("Create on this host (machineId)"),
+		local: boolean().desc("Create on this machine"),
 		environment: string().desc(
 			"Environment a cloud workspace starts from (id or name; defaults to the first with repositories)",
 		),
@@ -70,7 +69,12 @@ export default command({
 			throw new CLIError("No active organization", "Run: superset auth login");
 		}
 
-		if (!options.local && !options.host) {
+		const defaultHostId = await resolveWorkspaceHost(
+			{ host: options.host, local: options.local },
+			ctx.api,
+			organizationId,
+		);
+		if (!defaultHostId) {
 			return await createCloudWorkspace({
 				api: ctx.api,
 				organizationId,
@@ -184,10 +188,7 @@ export default command({
 			);
 		}
 
-		const hostId = requireHostTarget({
-			host: options.host ?? undefined,
-			local: options.local ?? undefined,
-		});
+		const hostId = defaultHostId;
 
 		const target = await resolveHostTarget({
 			requestedHostId: hostId,

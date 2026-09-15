@@ -6,16 +6,34 @@ import {
 	hostServiceCall,
 } from "./host-service-client";
 
-/** Where a workspace-scoped tool reaches: a cloud workspace unless a host is named. */
+/** Where a workspace-scoped tool reaches: a host by id, or a cloud workspace. */
 export const workspaceLocationInput = {
 	hostId: z
 		.string()
 		.min(1)
 		.optional()
 		.describe(
-			"Host machineId the workspace lives on. Omit for a cloud workspace (the default).",
+			"Host machineId the workspace lives on. Omit for a cloud workspace (accounts with cloud workspaces only).",
 		),
 };
+
+/**
+ * Omitting hostId means a cloud workspace only for an account that can use
+ * them; for everyone else hostId stays required, as it was before cloud
+ * workspaces, so no existing client's calls change.
+ */
+export async function requireCloudUnlessHost(
+	input: { hostId?: string },
+	ctx: McpContext,
+): Promise<void> {
+	if (input.hostId) return;
+	const { available } = await createMcpCaller(ctx).cloudWorkspace.available();
+	if (!available) {
+		throw new Error(
+			"hostId is required. Find it with hosts_list, and the workspace with workspaces_list",
+		);
+	}
+}
 
 /**
  * Calls host-service for a workspace. A host workspace goes through the
@@ -45,6 +63,7 @@ export async function workspaceServiceCall<TOutput>(
 			payload,
 		);
 	}
+	await requireCloudUnlessHost(input, ctx);
 	const caller = createMcpCaller(ctx);
 	const gate = (access: { url: string; token: string }) => ({
 		gateUrl: access.url,

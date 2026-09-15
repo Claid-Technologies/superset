@@ -1,12 +1,12 @@
 import { boolean, CLIError, string, table } from "@superset/cli-framework";
 import { normalizeWorkspaceTag } from "@superset/shared/workspace-tags";
+import { resolveWorkspaceHost } from "../../../lib/cloud-workspaces";
 import { command } from "../../../lib/command";
-import { resolveHostFilter } from "../../../lib/host-target";
 import { listWorkspacesOnHost } from "../../../lib/host-workspaces";
 
 export default command({
 	description:
-		"List cloud workspaces, or workspaces on this machine with --local or on another host with --host",
+		"List workspaces: cloud workspaces by default if your account has them, else this machine's; --local or --host picks a host",
 	options: {
 		host: string().desc("List workspaces on this host (machineId)"),
 		local: boolean().desc("List workspaces on this machine"),
@@ -41,10 +41,11 @@ export default command({
 			throw new CLIError("No active organization", "Run: superset auth login");
 		}
 
-		const hostId = resolveHostFilter({
-			host: options.host ?? undefined,
-			local: options.local ?? undefined,
-		});
+		const hostId = await resolveWorkspaceHost(
+			{ host: options.host, local: options.local },
+			ctx.api,
+			organizationId,
+		);
 		if (!hostId) {
 			for (const [flag, value] of [
 				["--project", options.project],

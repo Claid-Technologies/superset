@@ -8,6 +8,7 @@ import type { McpContext } from "../../auth";
 import { createMcpCaller } from "../../caller";
 import { defineTool } from "../../define-tool";
 import { hostServiceCall } from "../../host-service-client";
+import { requireCloudUnlessHost } from "../../workspace-service-target";
 
 const agentLaunchSchema = z.object({
 	agent: z
@@ -99,7 +100,7 @@ export function register(server: McpServer): void {
 				.min(1)
 				.optional()
 				.describe(
-					"Host machineId to create the workspace on. Omit for a cloud workspace (the default).",
+					"Host machineId to create the workspace on. Omit for a cloud workspace (accounts with cloud workspaces only).",
 				),
 			taskId: z
 				.string()
@@ -119,7 +120,10 @@ export function register(server: McpServer): void {
 				.describe("Shell command to run in the new worktree after creation."),
 		},
 		handler: async (input, ctx) => {
-			if (!input.hostId) return createInCloud(input, ctx);
+			if (!input.hostId) {
+				await requireCloudUnlessHost(input, ctx);
+				return createInCloud(input, ctx);
+			}
 			const hostId = input.hostId;
 			if (input.environment !== undefined) {
 				throw new Error(

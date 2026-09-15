@@ -5,6 +5,18 @@ let createProcedure: string | undefined;
 let createInput: Record<string, unknown> | undefined;
 let sessionInput: Record<string, unknown> | undefined;
 
+let cloudAvailable = false;
+
+mock.module("../../../lib/cloud-workspaces", () => ({
+	resolveWorkspaceHost: async (flags: { host?: string; local?: boolean }) =>
+		flags.local
+			? "host-1"
+			: (flags.host ?? (cloudAvailable ? undefined : "host-1")),
+	resolveCloudEnvironment: () => {
+		throw new Error("Unexpected environment lookup");
+	},
+}));
+
 mock.module("../../../lib/host-target", () => ({
 	requireHostTarget: () => "host-1",
 	resolveHostTarget: () => ({
@@ -79,6 +91,7 @@ function invoke(
 }
 
 afterEach(() => {
+	cloudAvailable = false;
 	createInput = undefined;
 	createProcedure = undefined;
 	localCreateError = undefined;
@@ -104,7 +117,8 @@ describe("workspaces create", () => {
 		expect(sessionInput).toBeUndefined();
 	});
 
-	test("rejects --session without a host: workspaces default to the cloud", async () => {
+	test("rejects --session when the account's default location is the cloud", async () => {
+		cloudAvailable = true;
 		await expect(
 			invoke({ project: undefined, session: true, local: false }),
 		).rejects.toThrow(/--session does not apply to a cloud workspace/);

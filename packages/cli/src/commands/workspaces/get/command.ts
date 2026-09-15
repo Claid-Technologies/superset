@@ -1,4 +1,5 @@
 import { boolean, CLIError, positional, string } from "@superset/cli-framework";
+import { resolveWorkspaceHost } from "../../../lib/cloud-workspaces";
 import { command } from "../../../lib/command";
 import { resolveWorkspaceTarget } from "../../../lib/host-workspaces";
 
@@ -8,7 +9,9 @@ export default command({
 		positional("id").desc("Workspace ID (defaults to $SUPERSET_WORKSPACE_ID)"),
 	],
 	options: {
-		host: string().desc("Host the workspace lives on (default: the cloud)"),
+		host: string().desc(
+			"Host the workspace lives on (default: the cloud if your account has cloud workspaces, else this machine)",
+		),
 		local: boolean().desc("The workspace is on this machine"),
 		field: string()
 			.alias("f")
@@ -31,10 +34,14 @@ export default command({
 			throw new CLIError("No active organization", "Run: superset auth login");
 		}
 
-		const detail =
-			options.host || options.local
-				? await hostDetail(ctx, organizationId, id, options)
-				: await cloudDetail(ctx, organizationId, id);
+		const hostId = await resolveWorkspaceHost(
+			{ host: options.host, local: options.local },
+			ctx.api,
+			organizationId,
+		);
+		const detail = hostId
+			? await hostDetail(ctx, organizationId, id, hostId)
+			: await cloudDetail(ctx, organizationId, id);
 
 		if (options.field) {
 			if (!Object.hasOwn(detail, options.field)) {
@@ -90,7 +97,7 @@ async function hostDetail(
 	ctx: Ctx,
 	organizationId: string,
 	id: string,
-	options: { host?: string | null; local?: boolean | null },
+	hostId: string,
 ) {
 	const [{ workspace }, hosts] = await Promise.all([
 		resolveWorkspaceTarget(
@@ -98,8 +105,7 @@ async function hostDetail(
 				organizationId,
 				userJwt: ctx.bearer,
 				api: ctx.api,
-				host: options.host ?? undefined,
-				local: options.local ?? undefined,
+				host: hostId,
 			},
 			id,
 		),
