@@ -67,7 +67,7 @@ result="$(
 
 id="$(printf '%s' "$result" | jq -r '.workspace.id')"
 
-superset workspaces open "$id" --local
+superset workspaces open "$id"
 ```
 
 Make it executable:

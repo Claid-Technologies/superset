@@ -1,7 +1,7 @@
 import { CLIError } from "@superset/cli-framework";
 import { getHostId } from "@superset/shared/host-info";
 import type { ApiClient } from "../../lib/api-client";
-import { resolveHostFilter, resolveHostTarget } from "../../lib/host-target";
+import { resolveHostTarget } from "../../lib/host-target";
 import { findWorkspaceOnHost } from "../../lib/host-workspaces";
 
 /**
@@ -86,25 +86,4 @@ export async function resolveAutomationTarget(args: {
 		);
 	}
 	return { targetHostId, v2ProjectId: args.projectId };
-}
-
-/**
- * Workspace commands default to the cloud, but an automation runs on a host
- * until cloud automations exist, so the host is always named.
- */
-export function requireAutomationHost(options: {
-	host?: string | null;
-	local?: boolean | null;
-}): string {
-	const hostId = resolveHostFilter({
-		host: options.host ?? undefined,
-		local: options.local ?? undefined,
-	});
-	if (!hostId) {
-		throw new CLIError(
-			"Automations run on a host",
-			"Pass --local for this machine, or --host <id> for another host",
-		);
-	}
-	return hostId;
 }

@@ -7,15 +7,14 @@ description: Drive Superset programmatically from any TypeScript or JavaScript c
 The SDK is in early alpha. It is not meant for production use and may be removed in the future. Stay on the latest version (`@superset_sh/sdk@latest`) while we iterate.
 </Callout>
 
-The Superset TypeScript SDK lets you run cloud workspaces from code: sandboxes Superset hosts for your organization, each started from an environment whose repositories are its checkouts. Create one, launch agents and terminals inside it, read what they print, and tear it down. It also manages your organization's tasks.
+The Superset TypeScript SDK lets you create and manage your workspaces, tasks, projects, and automations from code. Anything you can do in the dashboard, your scripts and services can do too.
 
 A few things you might use it for:
 
-- **On-demand agents**: start a cloud workspace with an agent on it when an issue is opened, a PR is reviewed, or a webhook fires.
-- **Fan-out**: put an agent on every task in a queue, each in its own sandbox.
+- **Bulk task management**: script the creation, triage, or cleanup of tasks across one or many projects.
 - **Integrations**: sync tasks to/from your CRM, issue tracker, or internal tools.
-
-Cloud workspaces run in Superset's cloud, not on your machines, so nothing has to be online for these calls to work. They have to be enabled for your account; without that the workspace methods return `403`.
+- **Provisioning**: spin up workspaces on a developer's machine when an issue is opened, a PR is reviewed, or a customer ticket lands.
+- **On-demand agents**: kick off a recurring automation off-schedule when a webhook fires.
 
 Everything is fully typed and works in Node, Bun, and Deno. The bundle also runs in browsers, but **don't ship `sk_live_…` keys to a frontend**: they're long-lived and grant full org access. From the browser, talk to a thin server proxy that holds the key.
 
@@ -50,7 +49,6 @@ We're under active development. The SDK follows the API as it grows, so **stay o
 
 1. Open the [Superset desktop app](https://superset.sh/download) → **Settings → API Keys** → **Create**. The key starts with `sk_live_…`. Copy it now (you won't be able to see it again).
 2. Note your **organization ID**. Find it in the org switcher inside the desktop app.
-3. Make sure the organization has an **environment with repositories** (desktop app → **Settings → Environments**). Every cloud workspace starts from one.
 
 ```bash
 export SUPERSET_API_KEY=sk_live_…
@@ -69,39 +67,41 @@ const client = new Superset();
 That's all the setup. From here, every resource works the same way:
 
 ```ts
-// Start a cloud workspace with an agent on first boot
-const workspace = await client.workspaces.create({
-  environment: 'web',        // id or name; defaults to the first environment with repositories
-  agent: 'claude',
-  prompt: 'Fix the flaky login test and push a branch.',
+// Create a task
+const task = await client.tasks.create({
+  title: 'Wire up auth',
+  priority: 'high',
 });
 
-// Provisioning runs in the background; the row comes back in `provisioning`
-let current = workspace;
-while (current.status === 'provisioning') {
-  await new Promise((resolve) => setTimeout(resolve, 5_000));
-  const next = await client.workspaces.retrieve(workspace.id);
-  if (!next) throw new Error('Workspace was deleted');
-  current = next;
-}
-if (current.status !== 'ready') throw new Error(`Workspace is ${current.status}`);
+// Update it
+await client.tasks.update({ id: task.id, statusId: '<uuid>' });
 
-// Run a command in it and read the output
-const { terminalId } = await client.terminals.create({
-  workspaceId: workspace.id,
-  command: 'bun test',
+// Look one up by id or slug
+const got = await client.tasks.retrieve('SUPER-172'); // returns null if missing
+
+// Find tasks with rich filters
+const urgent = await client.tasks.list({
+  priority: 'urgent',
+  search: 'auth',
+  creatorMe: true,
 });
-const { text } = await client.terminals.read({ workspaceId: workspace.id, terminalId });
 
-// Find workspaces by name or branch
-const workspaces = await client.workspaces.list({ search: 'login' });
+// Inspect what else you have: projects and workspaces are host-owned
+const [host] = await client.hosts.list();
+if (!host) throw new Error('No hosts registered; run `superset start` on a machine');
+const projects = await client.projects.list({ hostId: host.id });
+const automations = await client.automations.list();
 
-// Tasks
-const task = await client.tasks.create({ title: 'Wire up auth', priority: 'high' });
-const urgent = await client.tasks.list({ priority: 'urgent', creatorMe: true });
+// Trigger an automation off-schedule
+await client.automations.run('<automation-id>');
 
-// Tear the sandbox down when you are done
-await client.workspaces.delete(workspace.id);
+// Create a workspace on a developer's machine
+await client.workspaces.create({
+  hostId: '<machine-id>',
+  projectId: '<project-id>',
+  name: 'fix-auth-bug',
+  branch: 'fix/auth',
+});
 ```
 
 See the [reference](/docs/sdk/reference) for every method, parameter, and return type.

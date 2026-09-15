@@ -2,11 +2,9 @@
 # Read-only sweep of Superset state for the standup skill.
 # Emits one JSON object on stdout; progress and errors go to stderr.
 # Usage: sweep.sh [--host <id>] [--max-lines <n>]
-# Sweeps this machine by default, or --host <id>. Never the cloud: reading every
-# cloud workspace's terminals would wake every sandbox in the organization.
 set -u
 
-HOST_ARGS=(--local)
+HOST_ARGS=()
 MAX_LINES=60
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -45,7 +43,7 @@ run_json() {
 }
 
 echo "sweeping workspaces and tasks..." >&2
-WORKSPACES=$(run_json workspaces list "${HOST_ARGS[@]}")
+WORKSPACES=$(run_json workspaces list "${HOST_ARGS[@]:---local}")
 TASKS=$(run_json tasks list)
 
 TERMINALS='[]'

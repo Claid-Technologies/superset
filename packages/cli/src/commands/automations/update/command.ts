@@ -1,9 +1,7 @@
 import { boolean, CLIError, positional, string } from "@superset/cli-framework";
 import { command } from "../../../lib/command";
-import {
-	requireAutomationHost,
-	resolveAutomationTarget,
-} from "../resolveAutomationTarget";
+import { resolveHostFilter } from "../../../lib/host-target";
+import { resolveAutomationTarget } from "../resolveAutomationTarget";
 
 export default command({
 	description: "Update an automation's metadata (name, schedule, agent, host)",
@@ -84,7 +82,10 @@ export default command({
 				organizationId,
 				userJwt: ctx.bearer,
 				api: ctx.api,
-				hostId: requireAutomationHost(options),
+				hostId: resolveHostFilter({
+					host: options.host ?? undefined,
+					local: options.local ?? undefined,
+				}),
 				workspaceId: options.workspace ?? undefined,
 				projectId: options.project ?? undefined,
 			});
@@ -98,7 +99,12 @@ export default command({
 			dtstart: options.dtstart ? new Date(options.dtstart) : undefined,
 			agent: options.agent,
 			...(options.host !== undefined || options.local
-				? { targetHostId: requireAutomationHost(options) }
+				? {
+						targetHostId: resolveHostFilter({
+							host: options.host ?? undefined,
+							local: options.local ?? undefined,
+						}),
+					}
 				: {}),
 			...(options.project !== undefined
 				? { v2ProjectId: options.project }

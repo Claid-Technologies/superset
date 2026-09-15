@@ -80,15 +80,13 @@ Launch a terminal agent once and retain its session ID:
 ```bash
 superset agents create \
   --workspace <workspace-id> \
-  --local \
+  --host <host-id> \
   --agent <preset-or-config-id> \
   --effort <supported-level> \
   --attachment <optional-path> \
   --prompt "<worker prompt>" \
   --json
 ```
-
-These examples target workspaces on this machine (`--local`). Use `--host <host-id>` instead for a workspace on another machine, and neither flag for a cloud workspace: workspace commands act on cloud workspaces by default.
 
 Omit `--effort` or `--attachment` when they are not needed. The result is `{ "kind", "sessionId", "label" }`. Require `kind` to be `terminal`; store `sessionId` as the terminal ID. Launch all ready, independent tasks before monitoring them.
 
@@ -101,7 +99,7 @@ Reacquire live terminal IDs after losing coordinator context or restarting the h
 ```bash
 superset terminals list \
   --workspace <workspace-id> \
-  --local \
+  --host <host-id> \
   --json
 ```
 
@@ -112,7 +110,7 @@ Read recent output without mutating the session:
 ```bash
 superset terminals read \
   --workspace <workspace-id> \
-  --local \
+  --host <host-id> \
   --terminal <terminal-id> \
   --max-lines 240 \
   --json
@@ -125,7 +123,7 @@ Send clarification, dependency results, review feedback, or a handoff into the e
 ```bash
 superset terminals send \
   --workspace <workspace-id> \
-  --local \
+  --host <host-id> \
   --terminal <terminal-id> \
   --text "<follow-up>" \
   --json
@@ -164,7 +162,7 @@ Keep completed terminals available when the user may want to inspect or continue
 ```bash
 superset terminals close \
   --workspace <workspace-id> \
-  --local \
+  --host <host-id> \
   --terminal <terminal-id> \
   --json
 ```
