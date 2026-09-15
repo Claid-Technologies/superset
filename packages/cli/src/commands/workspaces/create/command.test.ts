@@ -54,7 +54,6 @@ function invoke(
 		tag?: string[];
 		project?: string | undefined;
 		session?: boolean;
-		cloud?: boolean;
 		local?: boolean;
 		branch?: string | undefined;
 		model?: string;
@@ -105,10 +104,10 @@ describe("workspaces create", () => {
 		expect(sessionInput).toBeUndefined();
 	});
 
-	test("rejects --session with --cloud", async () => {
+	test("rejects --session without a host: workspaces default to the cloud", async () => {
 		await expect(
-			invoke({ project: undefined, session: true, cloud: true, local: false }),
-		).rejects.toThrow(/--session does not apply to --cloud/);
+			invoke({ project: undefined, session: true, local: false }),
+		).rejects.toThrow(/--session does not apply to a cloud workspace/);
 		expect(createInput).toBeUndefined();
 		expect(sessionInput).toBeUndefined();
 	});

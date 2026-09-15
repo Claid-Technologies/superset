@@ -536,8 +536,9 @@ another host.
 	name="superset projects create"
 	options={[
 		{ flag: "--name <name>", required: true, description: "Display name for the project." },
-		{ flag: "--host <id>", description: "Target host machineId. Mutually exclusive with `--local`; one is required." },
-		{ flag: "--local", description: "Target this machine. Mutually exclusive with `--host`; one is required." },
+		{ flag: "--environment <id|name>", description: "Environment a cloud workspace starts from; its repositories are the checkouts. Defaults to the first environment with repositories." },
+		{ flag: "--host <id>", description: "Create on this host (machineId) instead of in the cloud. Mutually exclusive with `--local`." },
+		{ flag: "--local", description: "Create on this machine instead of in the cloud. Mutually exclusive with `--host`." },
 		{ flag: "--clone <url>", description: "Clone from a Git URL. Mutually exclusive with `--import`." },
 		{ flag: "--parent-dir <path>", description: "Parent directory the cloned repo lands in. Required with `--clone`." },
 		{ flag: "--import <path>", description: "Existing repo path on the target host. Mutually exclusive with `--clone`." },
@@ -716,10 +717,10 @@ project id when the host doesn't know the project's name.
 <Command
 	name="superset workspaces create"
 	options={[
-		{ flag: "--project <projectId>", description: "Project ID. Required unless --session or --cloud is set." },
-		{ flag: "--session", description: "Create a project-less session (a managed scratch folder). Mutually exclusive with --project and --cloud." },
+		{ flag: "--project <projectId>", description: "Project ID, for a workspace on a host. Required with `--local` or `--host` unless `--session` is set." },
+		{ flag: "--session", description: "Create a project-less session (a managed scratch folder) on a host. Mutually exclusive with `--project`." },
 		{ flag: "--name <name>", description: "Workspace name. Required when `--project` is set; optional for sessions." },
-		{ flag: "--checkout <local|worktree>", description: "Use the shared project checkout or an isolated worktree (default). Requires --project; incompatible with --cloud." },
+		{ flag: "--checkout <local|worktree>", description: "Use the shared project checkout or an isolated worktree (default). Requires `--project`." },
 		{ flag: "--branch <branch>", description: "Workspace branch. Required unless `--pr`, `--task`, or `--checkout local` is set." },
 		{ flag: "--pr <number>", description: "Pull request number. Checks out the verified PR head." },
 		{ flag: "--task <id>", description: "Task ID to link. When `--branch` is omitted, the task's provider branch name (e.g. Linear's) is used verbatim." },
@@ -737,7 +738,11 @@ project id when the host doesn't know the project's name.
 	]}
 	output={`{ workspace: Workspace; alreadyExists: boolean }`}
 >
-Create a workspace on the target host. With `--project`, specify one of
+Create a workspace. Without `--local` or `--host` it is a **cloud workspace**, started
+from `--environment` (or the first environment with repositories); the host-only flags
+(`--project`, `--session`, `--checkout`, `--pr`, `--task`, `--base-branch`,
+`--skip-branch-prefix`, `--tag`, `--attachment`, `--command`) are rejected there with a
+hint to pass `--local` or `--host`. On a host, with `--project`, specify one of
 `--checkout local`, `--branch`, `--pr`, or `--task` (`--branch` and `--pr` are mutually
 exclusive). If you pass `--agent`, you must also pass `--prompt`. `--command`
 runs a one-off shell command in the workspace directory and is independent of
@@ -758,6 +763,9 @@ optional, and the output has no `alreadyExists` field. Host workspace creation
 requires either `--project <id>` or `--session`; omitting both is an error.
 
 ```bash
+# Cloud workspace from an environment, with an agent
+superset workspaces create --environment Superset --agent claude --prompt "…"
+
 superset workspaces create \
   --project prj_… \
   --name "fix-login-bug" \

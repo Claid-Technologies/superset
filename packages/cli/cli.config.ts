@@ -58,7 +58,7 @@ export default defineConfig({
 		],
 		examples: [
 			{
-				cmd: 'superset ws create --project <id> --name fix-tests --branch fix-tests --agent claude --prompt "fix the flaky tests"',
+				cmd: 'superset ws create --local --project <id> --name fix-tests --branch fix-tests --agent claude --prompt "fix the flaky tests"',
 				desc: "Spin up an isolated workspace and put an agent to work",
 			},
 			{
