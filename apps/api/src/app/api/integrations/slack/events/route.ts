@@ -118,10 +118,15 @@ export async function POST(request: Request) {
 						teamId: team_id,
 						eventId: event_id,
 					},
+					deduplicationId: event_id,
 					retries: 3,
 				});
 			} catch (error) {
 				console.error("[slack/events] Failed to queue mention job:", error);
+				return Response.json(
+					{ error: "Failed to queue event" },
+					{ status: 503 },
+				);
 			}
 		}
 
@@ -134,7 +139,7 @@ export async function POST(request: Request) {
 			// Skip bot messages to prevent infinite loops
 			if (
 				messageEvent.bot_id ||
-				messageEvent.subtype === "bot_message" ||
+				(messageEvent.subtype && messageEvent.subtype !== "file_share") ||
 				!messageEvent.user
 			) {
 				return new Response("ok", { status: 200 });
@@ -148,12 +153,17 @@ export async function POST(request: Request) {
 						teamId: team_id,
 						eventId: event_id,
 					},
+					deduplicationId: event_id,
 					retries: 3,
 				});
 			} catch (error) {
 				console.error(
 					"[slack/events] Failed to queue assistant message job:",
 					error,
+				);
+				return Response.json(
+					{ error: "Failed to queue event" },
+					{ status: 503 },
 				);
 			}
 		}
