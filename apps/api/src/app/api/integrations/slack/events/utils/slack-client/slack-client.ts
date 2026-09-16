@@ -1,4 +1,5 @@
 import { WebClient } from "@slack/web-api";
+import { slackRequestBounds } from "./request-bounds";
 
 /**
  * Slack platform errors meaning "this channel cannot receive our reply" —
@@ -20,12 +21,15 @@ export function isUnpostableChannelError(error: unknown): boolean {
 	return typeof code === "string" && UNPOSTABLE_CHANNEL_ERRORS.has(code);
 }
 
-const REQUEST_TIMEOUT_MS = 15_000;
-const RETRY_CONFIG = { retries: 2, minTimeout: 500, maxTimeout: 2_000 };
+const RETRY_BACKOFF = { minTimeout: 500, maxTimeout: 2_000 };
 
-export function createSlackClient(token: string): WebClient {
+export function createSlackClient(
+	token: string,
+	options: { deadline?: number } = {},
+): WebClient {
+	const { timeout, retries } = slackRequestBounds(options.deadline);
 	return new WebClient(token, {
-		timeout: REQUEST_TIMEOUT_MS,
-		retryConfig: RETRY_CONFIG,
+		timeout,
+		retryConfig: { retries, ...RETRY_BACKOFF },
 	});
 }

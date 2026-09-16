@@ -58,16 +58,18 @@ export async function fetchThreadContext({
 	channelId,
 	threadTs,
 	messageTs,
+	deadline,
 	limit = 20,
 }: {
 	token: string;
 	channelId: string;
 	threadTs: string;
 	messageTs: string;
+	deadline?: number;
 	limit?: number;
 }): Promise<string> {
 	try {
-		const slack = createSlackClient(token);
+		const slack = createSlackClient(token, { deadline });
 		// Slack returns oldest first. Walk every page while retaining only the
 		// latest context, bounded by the triggering message rather than "now".
 		let cursor: string | undefined;
@@ -332,13 +334,15 @@ const SLACK_GET_CHANNEL_HISTORY_TOOL: Anthropic.Tool = {
 async function handleGetChannelHistory({
 	token,
 	channelId,
+	deadline,
 	limit = 20,
 }: {
 	token: string;
 	channelId: string;
+	deadline?: number;
 	limit?: number;
 }): Promise<string> {
-	const slack = createSlackClient(token);
+	const slack = createSlackClient(token, { deadline });
 	const result = await slack.conversations.history({
 		channel: channelId,
 		limit: Math.min(limit, 100),
@@ -523,6 +527,7 @@ export async function runSlackAgent(
 				channelId: params.channelId,
 				threadTs: params.threadTs,
 				messageTs: params.messageTs,
+				deadline,
 			}),
 			createSupersetMcpClient({
 				organizationId: params.organizationId,
@@ -673,6 +678,7 @@ ${agentContext}`;
 						resultContent = await handleGetChannelHistory({
 							token: params.slackToken,
 							channelId: params.channelId,
+							deadline,
 							limit: input.limit,
 						});
 					} else {
