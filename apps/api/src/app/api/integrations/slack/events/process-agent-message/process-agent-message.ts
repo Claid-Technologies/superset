@@ -45,6 +45,11 @@ import { splitMarkdown } from "./utils/split-markdown";
 
 /** Everything after the claim — preflight, model calls, tools — shares this. */
 const RUN_BUDGET_MS = 240_000;
+/**
+ * The reply, or why there is none, is posted after the run budget is spent,
+ * in what remains of the job route's 300s maxDuration.
+ */
+const REPLY_BUDGET_MS = 45_000;
 
 const LOST_TRACK_TEXT =
 	"I lost track of this request partway through. Anything listed as changed in this thread did happen; ask again for the rest.";
@@ -248,6 +253,10 @@ export async function processAgentMessage({
 	// reply exists, so the thread ends with one notifying message.
 	const deadline = Date.now() + RUN_BUDGET_MS;
 	const run = createSlackClient(connection.accessToken, { deadline });
+	const replyDeadline = deadline + REPLY_BUDGET_MS;
+	const reply = createSlackClient(connection.accessToken, {
+		deadline: replyDeadline,
+	});
 	let placeholderTs: string | undefined;
 
 	const showProgress = async (status: string) => {
@@ -279,13 +288,13 @@ export async function processAgentMessage({
 	const clearProgress = async () => {
 		try {
 			if (isDm) {
-				await run.assistant.threads.setStatus({
+				await reply.assistant.threads.setStatus({
 					channel_id: event.channel,
 					thread_ts: threadTs,
 					status: "",
 				});
 			} else if (placeholderTs) {
-				await run.chat.delete({ channel: event.channel, ts: placeholderTs });
+				await reply.chat.delete({ channel: event.channel, ts: placeholderTs });
 				placeholderTs = undefined;
 			}
 		} catch {
@@ -295,7 +304,7 @@ export async function processAgentMessage({
 	const removeEyes = async () => {
 		for (const timestamp of [event.ts, ...(event.queued_ts ?? [])]) {
 			try {
-				await run.reactions.remove({
+				await reply.reactions.remove({
 					channel: event.channel,
 					timestamp,
 					name: "eyes",
@@ -314,7 +323,7 @@ export async function processAgentMessage({
 	});
 	if (claim.status === "duplicate") return;
 	if (claim.status === "stale") {
-		await run.chat.postMessage({
+		await reply.chat.postMessage({
 			channel: event.channel,
 			thread_ts: threadTs,
 			text: LOST_TRACK_TEXT,
@@ -328,7 +337,7 @@ export async function processAgentMessage({
 		let applied = false;
 		try {
 			await setThreadQuiet({ ...threadKey, quiet: command === "mute" });
-			await run.chat.postMessage({
+			await reply.chat.postMessage({
 				channel: event.channel,
 				thread_ts: threadTs,
 				text: command === "mute" ? QUIETED_TEXT : UNQUIETED_TEXT,
@@ -428,7 +437,7 @@ export async function processAgentMessage({
 		// silently would not. Model output goes in Slack's Markdown block.
 		for (const text of splitMarkdown(result.text)) {
 			const post = () =>
-				run.chat.postMessage({
+				reply.chat.postMessage({
 					channel: event.channel,
 					thread_ts: threadTs,
 					text,
@@ -438,7 +447,8 @@ export async function processAgentMessage({
 				await post();
 			} catch (error) {
 				const wait = slackRateLimitRetryAfterMs(error);
-				if (wait === undefined || Date.now() + wait >= deadline) throw error;
+				if (wait === undefined || Date.now() + wait >= replyDeadline)
+					throw error;
 				await new Promise((resolve) => setTimeout(resolve, wait));
 				await post();
 			}
@@ -459,7 +469,7 @@ export async function processAgentMessage({
 		// Post side effects as a separate message
 		if (result.actions.length > 0) {
 			try {
-				await run.chat.postMessage({
+				await reply.chat.postMessage({
 					channel: event.channel,
 					thread_ts: threadTs,
 					text: formatSideEffectsMessage(result.actions),
@@ -480,7 +490,7 @@ export async function processAgentMessage({
 				: err instanceof SlackAgentError
 					? err.message
 					: await formatErrorForSlack(err, deadline);
-		await run.chat.postMessage({
+		await reply.chat.postMessage({
 			channel: event.channel,
 			thread_ts: threadTs,
 			text: errorText,

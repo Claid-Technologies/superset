@@ -117,11 +117,25 @@ const { slackRateLimitRetryAfterMs } = await import(
 	"../utils/slack-client/request-bounds"
 );
 mock.module("../utils/slack-client", () => ({
-	createSlackClient: () => ({
-		chat: { postMessage, update: updateMessage, delete: deleteMessage },
-		assistant: { threads: { setStatus } },
-		reactions: { add: addReaction, remove: removeReaction },
-	}),
+	createSlackClient: (_token: string, options: { deadline?: number } = {}) => {
+		const bounded =
+			<A, R>(call: (args: A) => Promise<R>) =>
+			async (args: A) => {
+				if (options.deadline !== undefined && Date.now() >= options.deadline) {
+					throw new Error("Slack request started after the run deadline");
+				}
+				return call(args);
+			};
+		return {
+			chat: {
+				postMessage: bounded(postMessage),
+				update: bounded(updateMessage),
+				delete: bounded(deleteMessage),
+			},
+			assistant: { threads: { setStatus: bounded(setStatus) } },
+			reactions: { add: bounded(addReaction), remove: bounded(removeReaction) },
+		};
+	},
 	isUnpostableChannelError: () => false,
 	slackRateLimitRetryAfterMs,
 }));
@@ -525,6 +539,24 @@ test("a rate limit that outlives the budget is not waited on", async () => {
 	await processAgentMessage(params);
 	expect(finish).toHaveBeenCalledWith("delivery", false);
 	expect(postMessage.mock.calls.at(-1)?.[0].text).toBe("Unable to finish");
+});
+
+test("a run that spends its whole budget still posts its reply and clears its indicators", async () => {
+	const realNow = Date.now;
+	runAgent.mockImplementationOnce(async (args) => {
+		const pastDeadline = (args.deadline as number) + 1;
+		Date.now = () => pastDeadline;
+		return { text: "I ran out of time", actions: [] };
+	});
+	try {
+		await processAgentMessage(params);
+	} finally {
+		Date.now = realNow;
+	}
+	expect(postMessage.mock.calls.at(-1)?.[0].text).toBe("I ran out of time");
+	expect(deleteMessage).toHaveBeenCalledWith({ channel: "C1", ts: "msg-1" });
+	expect(removeReaction).toHaveBeenCalledTimes(1);
+	expect(finish).toHaveBeenCalledWith("delivery", true);
 });
 
 test("channel progress updates edit the placeholder instead of posting", async () => {
