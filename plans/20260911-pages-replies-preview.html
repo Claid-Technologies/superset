@@ -15,7 +15,6 @@
     --faint: #5c606a;
     --indigo: #6e79d6;
     --amber: #f5a623;
-    --active: #f5a623;
     --paper: #f3f1ec;
     --paper-ink: #c9c4ba;
     --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
@@ -209,13 +208,20 @@
 
   .replies {
     margin-left: auto; flex: none;
-    display: inline-flex; align-items: center; gap: 4px;
+    display: inline-flex; align-items: center; gap: 4.5px;
     font-size: 11px; font-weight: 500; font-variant-numeric: tabular-nums;
-    color: var(--muted);
-    transition: opacity 0.22s ease;
+    color: var(--text);
+    border-radius: 6px; padding: 1px 5px;
+    transition: opacity 0.22s ease, background-color 0.15s ease;
   }
   .replies svg { width: 11px; height: 11px; }
-  .replies.open { color: var(--active); }
+  .replies:hover { background: rgba(255, 255, 255, 0.07); }
+  .replies.open::before {
+    content: ""; width: 5px; height: 5px; border-radius: 50%;
+    background: #4cc38a; flex: none;
+  }
+  .trow { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .trow .card-title { min-width: 0; flex: 1; }
 
   .strip {
     position: absolute; inset: auto 0 0 0;
@@ -259,7 +265,7 @@
     transition: opacity 150ms ease, transform 150ms ease;
     pointer-events: none;
   }
-  .card:hover .bubble, .bubble.shown { opacity: 1; transform: none; transition-delay: 180ms; }
+  .card:has(.replies:hover) .bubble, .bubble.shown { opacity: 1; transform: none; transition-delay: 180ms; }
   .bubble.shown { transition-delay: 0ms; }
   .bhead { display: flex; align-items: center; gap: 7px; color: #9b9da5; font-size: 11px; line-height: 1.4; }
   .bav {
@@ -328,9 +334,9 @@
   .demo-stage { position: relative; }
   .bcard.hovering, .bcard:hover { border-color: #4a4d55; }
   /* the component's contract on the real cards: hover waits 180ms, focus is instant */
-  .bcard:hover .bubble { opacity: 1; transform: none; transition-delay: 180ms; }
+  .bcard:has(.bcount:hover) .bubble { opacity: 1; transform: none; transition-delay: 180ms; }
   .bcard:focus-visible .bubble { opacity: 1; transform: none; transition-delay: 0ms; }
-  .bcard:hover .bcount, .bcard:focus-visible .bcount { background: #292b30; color: #eeeef0; }
+  .bcount:hover, .bcard:focus-visible .bcount { background: #292b30; }
   .democursor {
     position: absolute; z-index: 4; width: 20px; height: 20px;
     right: 16px; bottom: -12px;
@@ -338,7 +344,7 @@
     pointer-events: none;
     filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.55));
   }
-  .democursor.in { transform: translate(-110px, -140px); }
+  .democursor.in { transform: translate(-30px, -46px); }
   .bp-label { margin-bottom: 12px; color: #9b9da5; font-size: 12px; font-weight: 500; line-height: 1.5; }
   .bcard {
     position: relative; min-width: 0;
@@ -368,10 +374,14 @@
   .bcount {
     display: flex; align-items: center; justify-content: center; flex: none;
     gap: 6px; min-width: 39px; min-height: 30px; padding: 3px 6px;
-    border-radius: 6px; color: #9b9da5; font-size: 12px;
+    border-radius: 6px; color: #eeeef0; font-size: 12px;
   }
   .bcount svg { width: 14px; height: 14px; flex: none; }
-  .bcount.open { background: #292b30; color: #eeeef0; }
+  .bcount.open { background: #292b30; }
+  .bcount.unresolved::before {
+    content: ""; width: 5px; height: 5px; border-radius: 50%;
+    background: #4cc38a; flex: none;
+  }
   .bmeta { display: flex; align-items: center; gap: 6px; margin-top: 4px; color: #9b9da5; font-size: 12px; line-height: 1.5; }
 
   /* ------------------------------------------------ states */
@@ -407,7 +417,7 @@
 <header>
   <p class="kicker">Design preview</p>
   <h1>One quiet signal per card</h1>
-  <p class="deck">A <b>reply count</b> in the meta row — gray when the conversation is settled, lit while threads are open. The <b>newest reply</b> appears only when you hover. Nothing else changes: no extra rows, no added height, and a page nobody has commented on is untouched.</p>
+  <p class="deck">A <b>reply count</b> beside the title — white, with a small green dot while threads are open. The <b>newest reply</b> peeks out when you hover the count; clicking the count opens the page on that comment, clicking anywhere else opens the page. A page nobody has commented on is untouched.</p>
   <p class="status">Implemented on <s>show-replies-view</s>. The desktop shows real data after the next API deploy; until then, this page is the accurate stand-in.</p>
 </header>
 
@@ -466,13 +476,12 @@
             <div class="bubble"><div class="bhead"><span class="bav">S</span><span class="bwho">Satya</span><span class="bwhen">2h ago</span></div><div class="bcopy">Can we split the SEMA soft bounces into their own bucket before Monday?</div></div>
           </div>
           <div class="card-body">
-            <div class="card-title">Support reply queue</div>
+            <div class="trow"><div class="card-title">Support reply queue</div><span class="replies open" title="5 replies, 2 open threads">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>5
+              </span></div>
             <div class="meta">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
               <span class="sep">&middot;</span><span class="t">Edited 18 seconds ago</span><span class="sep">&middot;</span><span class="t">Kiet Ho</span>
-              <span class="replies open" title="5 replies, 2 open threads">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>5
-              </span>
             </div>
           </div>
         </article>
@@ -496,13 +505,12 @@
             <div class="bubble"><div class="bhead"><span class="bav"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg></span><span class="bwho">Agent</span><span class="bwhen">1d ago</span></div><div class="bcopy">Republished with the runtime-version decision table — resolving.</div></div>
           </div>
           <div class="card-body">
-            <div class="card-title">Mobile OTA Updates</div>
+            <div class="trow"><div class="card-title">Mobile OTA Updates</div><span class="replies" title="3 replies">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>3
+              </span></div>
             <div class="meta">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
               <span class="sep">&middot;</span><span class="t">Edited 15 seconds ago</span><span class="sep">&middot;</span><span class="t">Satya Patel</span>
-              <span class="replies" title="3 replies">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>3
-              </span>
             </div>
           </div>
         </article>
@@ -526,13 +534,12 @@
             <div class="bubble"><div class="bhead"><span class="bav">A</span><span class="bwho">Avi</span><span class="bwhen">4h ago</span></div><div class="bcopy">Is #7305 really no-action? The maintainer redirected him to v2.</div></div>
           </div>
           <div class="card-body">
-            <div class="card-title">PascalOrdano18 PR Review</div>
+            <div class="trow"><div class="card-title">PascalOrdano18 PR Review</div><span class="replies open" title="2 replies, 1 open thread">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>2
+              </span></div>
             <div class="meta">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
               <span class="sep">&middot;</span><span class="t">Edited 38 seconds ago</span><span class="sep">&middot;</span><span class="t">Kiet Ho</span>
-              <span class="replies open" title="2 replies, 1 open thread">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>2
-              </span>
             </div>
           </div>
         </article>
@@ -576,13 +583,12 @@
             <div class="bubble"><div class="bhead"><span class="bav"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg></span><span class="bwho">Agent</span><span class="bwhen">3d ago</span></div><div class="bcopy">Broke daily effective cost out by line item as asked.</div></div>
           </div>
           <div class="card-body">
-            <div class="card-title">Vercel spend, September 2026</div>
+            <div class="trow"><div class="card-title">Vercel spend, September 2026</div><span class="replies" title="4 replies">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>4
+              </span></div>
             <div class="meta">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
               <span class="sep">&middot;</span><span class="t">Edited 54 minutes ago</span><span class="sep">&middot;</span><span class="t">Kiet Ho</span>
-              <span class="replies" title="4 replies">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>4
-              </span>
             </div>
           </div>
         </article>
@@ -607,13 +613,12 @@
             <div class="bubble"><div class="bhead"><span class="bav">K</span><span class="bwho">Kiet</span><span class="bwhen">3h ago</span></div><div class="bcopy">Move Vedanta to Friday — founder-track bar conflict at 2:30.</div></div>
           </div>
           <div class="card-body">
-            <div class="card-title">Hiring Follow-ups</div>
+            <div class="trow"><div class="card-title">Hiring Follow-ups</div><span class="replies open" title="1 reply, 1 open thread">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>1
+              </span></div>
             <div class="meta">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
               <span class="sep">&middot;</span><span class="t">Edited 3 hours ago</span><span class="sep">&middot;</span><span class="t">Kiet Ho</span>
-              <span class="replies open" title="1 reply, 1 open thread">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>1
-              </span>
             </div>
           </div>
         </article>
@@ -621,17 +626,8 @@
       </div>
     </figure>
   </div>
-  <p class="caption"><b>Hover any card</b> to peek at the newest reply. The titlebar switch flips back to today&rsquo;s gallery — the only visible difference is the count.</p>
-  <div class="swatches" role="group" aria-label="Color for counts with open threads">
-    <span class="swatch-label">Open-thread color</span>
-    <button type="button" class="swatch" data-color="#f5a623" aria-pressed="true"><i style="background:#f5a623"></i>Amber</button>
-    <button type="button" class="swatch" data-color="#8e99ec" aria-pressed="false"><i style="background:#8e99ec"></i>Indigo</button>
-    <button type="button" class="swatch" data-color="#5ca8ff" aria-pressed="false"><i style="background:#5ca8ff"></i>Blue</button>
-    <button type="button" class="swatch" data-color="#4cc38a" aria-pressed="false"><i style="background:#4cc38a"></i>Green</button>
-    <button type="button" class="swatch" data-color="#f07b55" aria-pressed="false"><i style="background:#f07b55"></i>Coral</button>
-    <button type="button" class="swatch" data-color="#edeef1" aria-pressed="false"><i style="background:#edeef1"></i>White</button>
-  </div>
-  <div class="swatches" role="group" aria-label="Hover style">
+  <p class="caption"><b>Hover the count on any card</b> to peek at the newest reply. The titlebar switch flips back to today&rsquo;s gallery — the only visible difference is the count.</p>
+    <div class="swatches" role="group" aria-label="Hover style">
     <span class="swatch-label">Hover style</span>
     <button type="button" class="swatch hs" data-hs="bubble" aria-pressed="true">Bubble</button>
     <button type="button" class="swatch hs" data-hs="strip" aria-pressed="false">Strip</button>
@@ -665,7 +661,7 @@
         <div class="bfoot">
           <div class="btrow">
             <span class="btitle">Support reply queue</span>
-            <span class="bcount">
+            <span class="bcount unresolved">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>5
             </span>
           </div>
@@ -696,7 +692,7 @@
         <div class="bfoot">
           <div class="btrow">
             <span class="btitle">Support reply queue</span>
-            <span class="bcount open">
+            <span class="bcount open unresolved">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>5
             </span>
           </div>
@@ -728,7 +724,7 @@
           <div class="bfoot">
             <div class="btrow">
               <span class="btitle">Support reply queue</span>
-              <span class="bcount">
+              <span class="bcount unresolved">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>5
               </span>
             </div>
@@ -760,13 +756,12 @@
           </div>
         </div>
         <div class="card-body">
-          <div class="card-title">Support reply queue</div>
+          <div class="trow"><div class="card-title">Support reply queue</div><span class="replies open">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>5
+            </span></div>
           <div class="meta">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
             <span class="sep">&middot;</span><span class="t">Edited 18 seconds ago</span><span class="sep">&middot;</span><span class="t">Kiet Ho</span>
-            <span class="replies open">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>5
-            </span>
           </div>
         </div>
       </article>
@@ -788,13 +783,12 @@
           </div>
         </div>
         <div class="card-body">
-          <div class="card-title">Support reply queue</div>
+          <div class="trow"><div class="card-title">Support reply queue</div><span class="replies open">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>5
+            </span></div>
           <div class="meta">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
             <span class="sep">&middot;</span><span class="t">Edited 18 seconds ago</span><span class="sep">&middot;</span><span class="t">Kiet Ho</span>
-            <span class="replies open">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>5
-            </span>
           </div>
         </div>
       </article>
@@ -805,11 +799,11 @@
   <div class="rows">
     <div class="row">
       <span class="lead">The count</span>
-      <span class="body">Every comment on the page, across threads and versions. Gray when settled; lit while unresolved threads remain — try the color candidates under the window. Screen readers get the whole phrase: &ldquo;5 replies, 2 open threads.&rdquo;</span>
+      <span class="body">Every comment on the page, across threads and versions, in plain white beside the title. A small green dot marks unresolved threads; it disappears once the conversation settles. Screen readers get the whole phrase: &ldquo;5 replies, 2 open threads.&rdquo;</span>
     </div>
     <div class="row">
       <span class="lead">The peek</span>
-      <span class="body">Hover or keyboard focus reveals the newest reply — avatar, author, first 240 characters — as the edge strip (A) or the floating bubble (B); flip the Hover style switch under the window. B follows <code>CommentPreviewCard.tsx</code>: hover waits 180ms, focus opens instantly, clicking the count pins the preview, Escape closes. Agent replies carry the bot mark and the <code>Agent</code> byline.</span>
+      <span class="body">Hovering or focusing the count — not the card — reveals the newest reply: avatar, author, first 240 characters. Per <code>CommentPreviewCard.tsx</code>, hover waits 180ms and keyboard focus opens instantly; Escape closes. Clicking the count opens the page with that comment&rsquo;s thread selected in the panel; clicking the rest of the card opens the page. Agent replies carry the bot mark and the <code>Agent</code> byline.</span>
     </div>
     <div class="row">
       <span class="lead">The default</span>
@@ -840,12 +834,8 @@
   <h2>Calls to make</h2>
   <div class="rows">
     <div class="row">
-      <span class="lead">Strip or bubble</span>
-      <span class="body">Two hover treatments are on the table: the edge strip hugging the card&rsquo;s bottom, or the floating bubble that reads as a comment. The always-visible strip from version 2 stays in this page&rsquo;s history as the loudest option.</span>
-    </div>
-    <div class="row">
-      <span class="lead">Active semantics</span>
-      <span class="body">The lit count currently means any unresolved thread. &ldquo;New since you last opened it&rdquo; is the sharper signal, but needs per-viewer read state we don&rsquo;t track yet.</span>
+      <span class="lead">Dot semantics</span>
+      <span class="body">The green dot currently means any unresolved thread. &ldquo;New since you last opened it&rdquo; is the sharper signal, but needs per-viewer read state we don&rsquo;t track yet.</span>
     </div>
     <div class="row">
       <span class="lead">A needs-reply filter</span>
@@ -872,13 +862,7 @@
     });
   });
 
-  var swatches = document.querySelectorAll(".swatch[data-color]");
-  swatches.forEach(function (sw) {
-    sw.addEventListener("click", function () {
-      swatches.forEach(function (s) { s.setAttribute("aria-pressed", String(s === sw)); });
-      document.documentElement.style.setProperty("--active", sw.dataset.color);
     });
-  });
 
   var hsButtons = document.querySelectorAll(".swatch.hs");
   hsButtons.forEach(function (b) {
