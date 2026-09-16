@@ -287,6 +287,7 @@ export const pageRouter = {
 					body: sql<string>`left(${pageComments.body}, 240)`.as(
 						"last_comment_body",
 					),
+					threadId: pageComments.threadId,
 					authorKind: pageComments.authorKind,
 					authorName: users.name,
 					authorImage: users.image,
@@ -327,6 +328,7 @@ export const pageRouter = {
 					commentCount: commentStats.commentCount,
 					openThreadCount: commentStats.openThreadCount,
 					lastCommentBody: lastComment.body,
+					lastCommentThreadId: lastComment.threadId,
 					lastCommentAuthorKind: lastComment.authorKind,
 					lastCommentAuthorName: lastComment.authorName,
 					lastCommentAuthorImage: lastComment.authorImage,
@@ -361,6 +363,7 @@ export const pageRouter = {
 				rows.map(async (row) => {
 					const {
 						lastCommentBody,
+						lastCommentThreadId,
 						lastCommentAuthorKind,
 						lastCommentAuthorName,
 						lastCommentAuthorImage,
@@ -381,11 +384,13 @@ export const pageRouter = {
 						openThreadCount: page.openThreadCount ?? 0,
 						lastComment:
 							lastCommentBody === null ||
+							lastCommentThreadId === null ||
 							lastCommentAuthorKind === null ||
 							lastCommentAt === null
 								? null
 								: {
 										body: lastCommentBody,
+										threadId: lastCommentThreadId,
 										authorKind: lastCommentAuthorKind,
 										authorName: lastCommentAuthorName ?? "Unknown",
 										authorImage: lastCommentAuthorImage,

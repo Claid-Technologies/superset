@@ -175,8 +175,11 @@ export function PagesView({
 						hasFilters={
 							!orgEmpty && (Boolean(search.trim()) || activeScope !== "all")
 						}
-						onOpen={(page, event) =>
-							openPage(page, { inPane: isPaneModifier(event) })
+						onOpen={(page, event, options) =>
+							openPage(page, {
+								inPane: isPaneModifier(event),
+								threadId: options?.threadId,
+							})
 						}
 						onTogglePin={toggleFavorite}
 						onDelete={async (pageId) => {

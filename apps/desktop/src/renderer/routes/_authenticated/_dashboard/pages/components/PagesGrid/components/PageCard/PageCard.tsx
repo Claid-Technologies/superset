@@ -23,11 +23,12 @@ import {
 	PinOff,
 	Trash2,
 } from "lucide-react";
-import { type MouseEvent, useState } from "react";
+import { type MouseEvent, useEffect, useRef, useState } from "react";
 import { PageThumbnail } from "./components/PageThumbnail";
 
 export interface PageCardLastComment {
 	body: string;
+	threadId: string;
 	authorKind: "human" | "agent";
 	authorName: string;
 	authorImage: string | null;
@@ -52,14 +53,24 @@ export interface PageCardItem {
 	lastComment: PageCardLastComment | null;
 }
 
+export interface OpenPageCardOptions {
+	threadId?: string;
+}
+
 interface PageCardProps {
 	page: PageCardItem;
 	isPinned: boolean;
 	currentUserId: string | undefined;
-	onOpen: (page: PageCardItem, event: MouseEvent) => void;
+	onOpen: (
+		page: PageCardItem,
+		event: MouseEvent,
+		options?: OpenPageCardOptions,
+	) => void;
 	onTogglePin: (pageId: string) => void;
 	onDelete: (pageId: string) => Promise<void>;
 }
+
+const PEEK_HOVER_DELAY_MS = 180;
 
 export function PageCard({
 	page,
@@ -73,6 +84,8 @@ export function PageCard({
 
 	const { t } = useLingui();
 	const [deleteOpen, setDeleteOpen] = useState(false);
+	const [peekOpen, setPeekOpen] = useState(false);
+	const hoverTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 	const isShared = page.visibility === "org";
 	const isOwner =
 		currentUserId !== undefined && currentUserId === page.createdByUserId;
@@ -83,6 +96,21 @@ export function PageCard({
 	const wasEdited = edited - created > 60_000;
 	const timestamp = formatRelativeTime(wasEdited ? edited : created);
 	const lastAuthor = page.lastComment ? commentAuthor(page.lastComment) : null;
+
+	const cancelHover = () => {
+		if (hoverTimer.current !== null) {
+			clearTimeout(hoverTimer.current);
+			hoverTimer.current = null;
+		}
+	};
+
+	// Unmount-only: refs are stable, so no dependency on cancelHover's identity.
+	useEffect(
+		() => () => {
+			if (hoverTimer.current !== null) clearTimeout(hoverTimer.current);
+		},
+		[],
+	);
 
 	const copyLink = async () => {
 		try {
@@ -103,93 +131,131 @@ export function PageCard({
 
 	return (
 		<div className="group relative flex flex-col overflow-hidden rounded-lg border border-border bg-card transition-colors hover:border-muted-foreground/30">
-			<button
-				type="button"
-				onClick={(event) => onOpen(page, event)}
-				className="flex flex-1 flex-col text-left"
-			>
-				<div className="relative">
-					<PageThumbnail src={page.thumbnailUrl} />
-					{page.lastComment && lastAuthor ? (
-						// The CommentPreviewCard peek: floats inside the thumbnail, waits
-						// 180ms for hover intent, opens instantly on keyboard focus.
-						<div className="pointer-events-none absolute inset-x-3 bottom-3 translate-y-[5px] rounded-[10px] border border-border bg-popover px-3 pt-2.5 pb-3 opacity-0 shadow-lg transition-[opacity,transform] duration-150 group-hover:translate-y-0 group-hover:opacity-100 group-hover:delay-[180ms] group-focus-within:translate-y-0 group-focus-within:opacity-100 group-focus-within:delay-0">
-							<div className="flex items-center gap-2 text-[11px] text-muted-foreground">
-								<Avatar className="size-5 shrink-0">
-									<AvatarImage src={lastAuthor.image ?? undefined} alt="" />
-									<AvatarFallback className="text-[9px]">
-										{lastAuthor.isAgent ? (
-											<Bot className="size-3" />
-										) : (
-											getInitials(lastAuthor.name) || "?"
-										)}
-									</AvatarFallback>
-								</Avatar>
-								<span className="min-w-0 truncate">{lastAuthor.name}</span>
-								<span className="ml-auto shrink-0">
-									{formatCompactRelativeTime(
-										new Date(page.lastComment.createdAt),
+			<div className="relative">
+				<PageThumbnail src={page.thumbnailUrl} />
+				{page.lastComment && lastAuthor ? (
+					// The CommentPreviewCard peek. Opens only from the comment count:
+					// hovering it waits 180ms for intent, keyboard focus is instant.
+					<div
+						className={cn(
+							"pointer-events-none absolute inset-x-3 bottom-3 translate-y-[5px] rounded-[10px] border border-border bg-popover px-3 pt-2.5 pb-3 opacity-0 shadow-lg transition-[opacity,transform] duration-150",
+							peekOpen && "translate-y-0 opacity-100",
+						)}
+					>
+						<div className="flex items-center gap-2 text-[11px] text-muted-foreground">
+							<Avatar className="size-5 shrink-0">
+								<AvatarImage src={lastAuthor.image ?? undefined} alt="" />
+								<AvatarFallback className="text-[9px]">
+									{lastAuthor.isAgent ? (
+										<Bot className="size-3" />
+									) : (
+										getInitials(lastAuthor.name) || "?"
 									)}
-								</span>
-							</div>
-							<p className="mt-1.5 line-clamp-2 text-[13px] text-foreground leading-snug">
-								{page.lastComment.body}
-							</p>
-						</div>
-					) : null}
-				</div>
-				<div className="flex flex-col gap-1 border-border/60 border-t px-3 py-2.5">
-					<span className="flex items-center gap-2">
-						<span className="min-w-0 flex-1 truncate font-medium text-sm">
-							{page.title}
-						</span>
-						{page.commentCount > 0 ? (
-							<span
-								className={cn(
-									"-my-0.5 flex shrink-0 items-center gap-1 rounded-md px-1.5 py-0.5 text-xs tabular-nums transition-colors group-hover:bg-accent",
-									page.openThreadCount > 0
-										? "text-amber-500"
-										: "text-muted-foreground",
+								</AvatarFallback>
+							</Avatar>
+							<span className="min-w-0 truncate">{lastAuthor.name}</span>
+							<span className="ml-auto shrink-0">
+								{formatCompactRelativeTime(
+									new Date(page.lastComment.createdAt),
 								)}
-							>
-								<MessageCircle className="size-3.5" aria-hidden="true" />
-								<span aria-hidden="true">{page.commentCount}</span>
-								<span className="sr-only">
-									<Plural
-										value={page.commentCount}
-										one="# reply"
-										other="# replies"
-									/>
-									{page.openThreadCount > 0 ? (
-										<>
-											{", "}
-											<Plural
-												value={page.openThreadCount}
-												one="# open thread"
-												other="# open threads"
-											/>
-										</>
-									) : null}
-								</span>
 							</span>
-						) : null}
+						</div>
+						<p className="mt-1.5 line-clamp-2 text-[13px] text-foreground leading-snug">
+							{page.lastComment.body}
+						</p>
+					</div>
+				) : null}
+			</div>
+
+			<div className="flex flex-col gap-1 border-border/60 border-t px-3 py-2.5">
+				<span className="flex items-center gap-2">
+					<button
+						type="button"
+						onClick={(event) => onOpen(page, event)}
+						className="min-w-0 flex-1 truncate text-left font-medium text-sm after:absolute after:inset-0 after:rounded-lg after:content-[''] focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-ring focus-visible:after:ring-inset"
+					>
+						{page.title}
+					</button>
+					{page.commentCount > 0 ? (
+						<button
+							type="button"
+							onClick={(event) => {
+								cancelHover();
+								setPeekOpen(false);
+								onOpen(page, event, {
+									threadId: page.lastComment?.threadId,
+								});
+							}}
+							onPointerEnter={(event) => {
+								if (event.pointerType === "touch" || !page.lastComment) return;
+								cancelHover();
+								hoverTimer.current = setTimeout(() => {
+									setPeekOpen(true);
+									hoverTimer.current = null;
+								}, PEEK_HOVER_DELAY_MS);
+							}}
+							onPointerLeave={() => {
+								cancelHover();
+								setPeekOpen(false);
+							}}
+							onFocus={(event) => {
+								if (event.target.matches(":focus-visible")) setPeekOpen(true);
+							}}
+							onBlur={() => setPeekOpen(false)}
+							onKeyDown={(event) => {
+								if (event.key === "Escape" && peekOpen) {
+									event.stopPropagation();
+									setPeekOpen(false);
+								}
+							}}
+							className={cn(
+								"-my-0.5 relative flex shrink-0 items-center gap-1.5 rounded-md px-1.5 py-0.5 text-foreground text-xs tabular-nums transition-colors hover:bg-accent",
+								peekOpen && "bg-accent",
+							)}
+						>
+							{page.openThreadCount > 0 ? (
+								<span
+									aria-hidden="true"
+									className="size-1.5 rounded-full bg-emerald-500"
+								/>
+							) : null}
+							<MessageCircle className="size-3.5" aria-hidden="true" />
+							<span aria-hidden="true">{page.commentCount}</span>
+							<span className="sr-only">
+								<Plural
+									value={page.commentCount}
+									one="# reply"
+									other="# replies"
+								/>
+								{page.openThreadCount > 0 ? (
+									<>
+										{", "}
+										<Plural
+											value={page.openThreadCount}
+											one="# open thread"
+											other="# open threads"
+										/>
+									</>
+								) : null}
+							</span>
+						</button>
+					) : null}
+				</span>
+				<span className="flex items-center gap-1.5 text-muted-foreground text-xs">
+					<VisibilityIcon className="size-3 shrink-0" />
+					<span aria-hidden="true">·</span>
+					<span className="truncate">
+						{wasEdited ? <Trans>Edited</Trans> : <Trans>Created</Trans>}{" "}
+						{timestamp}
 					</span>
-					<span className="flex items-center gap-1.5 text-muted-foreground text-xs">
-						<VisibilityIcon className="size-3 shrink-0" />
-						<span aria-hidden="true">·</span>
-						<span className="truncate">
-							{wasEdited ? <Trans>Edited</Trans> : <Trans>Created</Trans>}{" "}
-							{timestamp}
-						</span>
-						{ownerName ? (
-							<>
-								<span aria-hidden="true">·</span>
-								<span className="truncate">{ownerName}</span>
-							</>
-						) : null}
-					</span>
-				</div>
-			</button>
+					{ownerName ? (
+						<>
+							<span aria-hidden="true">·</span>
+							<span className="truncate">{ownerName}</span>
+						</>
+					) : null}
+				</span>
+			</div>
 
 			{isPinned && (
 				<Pin className="absolute top-2 left-2 size-3.5 fill-current text-muted-foreground" />

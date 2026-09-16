@@ -10,9 +10,10 @@ import { usePageHeaderData } from "renderer/routes/_authenticated/_dashboard/hoo
 
 interface PageDetailViewProps {
 	slug: string;
+	initialThreadId?: string;
 }
 
-export function PageDetailView({ slug }: PageDetailViewProps) {
+export function PageDetailView({ slug, initialThreadId }: PageDetailViewProps) {
 	const { t } = useLingui();
 	const navigate = useNavigate();
 	const [commentsEnabled, setCommentsEnabled] = useState(false);
@@ -78,6 +79,7 @@ export function PageDetailView({ slug }: PageDetailViewProps) {
 					slug={slug}
 					commentsEnabled={commentsEnabled}
 					onCommentsEnabledChange={setCommentsEnabled}
+					initialThreadId={initialThreadId}
 				/>
 			</div>
 		</div>
