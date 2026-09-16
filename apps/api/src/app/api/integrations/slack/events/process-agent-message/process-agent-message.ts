@@ -351,7 +351,7 @@ export async function processAgentMessage({
 		try {
 			let text: string;
 			if (command === "stop") {
-				text = (await requestThreadStop(threadKey))
+				text = (await requestThreadStop(threadKey, event.ts))
 					? STOPPING_TEXT
 					: NOTHING_RUNNING_TEXT;
 			} else {
@@ -444,7 +444,7 @@ export async function processAgentMessage({
 				? {
 						threadMemory: renderThreadMemory(threadSession.entityLog),
 						lastContextTs: threadSession.lastContextTs ?? undefined,
-						shouldStop: () => threadStopRequested(threadSession.id),
+						shouldStop: () => threadStopRequested(threadSession.id, event.ts),
 						...(isDm
 							? {}
 							: {

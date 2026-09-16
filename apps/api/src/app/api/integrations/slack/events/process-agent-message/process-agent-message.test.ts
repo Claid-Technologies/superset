@@ -94,8 +94,8 @@ const beginThread = mock(
 const finishThread = mock(async (_args: unknown) => {});
 const setQuiet = mock(async (_args: unknown) => {});
 const followUpsEnabled = mock(async (_teamId: string) => true);
-const requestStop = mock(async (_key: unknown) => true);
-const stopRequested = mock(async (_id: string) => false);
+const requestStop = mock(async (_key: unknown, _ts: string) => true);
+const stopRequested = mock(async (_id: string, _ts: string) => false);
 const takeQueued = mock(
 	async (
 		_id: string,
@@ -236,6 +236,7 @@ test("!stop asks the running turn to stop and confirms", async () => {
 	});
 	expect(requestStop).toHaveBeenCalledWith(
 		expect.objectContaining({ threadTs: "1.0" }),
+		"10.0",
 	);
 	expect(runAgent).not.toHaveBeenCalled();
 	expect(postMessage.mock.calls[0]?.[0].text).toBe("Stopping.");
@@ -281,7 +282,7 @@ test("the agent is given a way to check for a stop request", async () => {
 		shouldStop: () => Promise<boolean>;
 	};
 	expect(await args.shouldStop()).toBe(true);
-	expect(stopRequested).toHaveBeenCalledWith("thread-session");
+	expect(stopRequested).toHaveBeenCalledWith("thread-session", "10.0");
 });
 
 test("!unmute reopens the thread without running the agent", async () => {

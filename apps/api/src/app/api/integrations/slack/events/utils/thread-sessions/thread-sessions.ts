@@ -48,13 +48,17 @@ export function parseThreadCommand(text: string): ThreadCommand | null {
 }
 
 /**
- * Ask the running turn to stop at its next step. Recorded even when nothing
- * is running yet, and even before the thread has a session row: a delivery
- * claims its session only after preflight, and a stop sent in that gap
- * still applies once the claim sees it is newer than the message that
- * started the turn. Returns whether a turn was running.
+ * Ask the running turn to stop at its next step. Stamped with the stop
+ * message's own Slack time, so it can be ordered against the message that
+ * started a turn: a stop sent after that message applies to the turn, even
+ * one still in preflight without a session row; a stop sent before it was
+ * aimed at an earlier turn. Returns whether a turn was running.
  */
-export async function requestThreadStop(key: ThreadKey): Promise<boolean> {
+export async function requestThreadStop(
+	key: ThreadKey,
+	stopTs: string,
+): Promise<boolean> {
+	const stampedAt = sql`to_timestamp(${stopTs}::numeric)`;
 	const [row] = await db
 		.insert(slackThreadSessions)
 		.values({
@@ -62,22 +66,29 @@ export async function requestThreadStop(key: ThreadKey): Promise<boolean> {
 			teamId: key.teamId,
 			channelId: key.channelId,
 			threadTs: key.threadTs,
-			stopRequestedAt: new Date(),
+			stopRequestedAt: stampedAt,
 		})
 		.onConflictDoUpdate({
 			target: THREAD_CONFLICT_TARGET,
-			set: { stopRequestedAt: new Date() },
+			set: { stopRequestedAt: stampedAt },
 		})
 		.returning({ status: slackThreadSessions.status });
 	return row?.status === "running";
 }
 
-export async function threadStopRequested(id: string): Promise<boolean> {
+/** Whether a stop newer than the turn's own message has been requested. */
+export async function threadStopRequested(
+	id: string,
+	messageTs: string,
+): Promise<boolean> {
 	const row = await db.query.slackThreadSessions.findFirst({
 		where: eq(slackThreadSessions.id, id),
 		columns: { stopRequestedAt: true },
 	});
-	return row?.stopRequestedAt != null;
+	return (
+		row?.stopRequestedAt != null &&
+		row.stopRequestedAt.getTime() > Number(messageTs) * 1000
+	);
 }
 
 const flagCache = new Map<string, { enabled: boolean; expiresAt: number }>();
