@@ -7,7 +7,7 @@ interface GroupSourcePosition {
  * Replace an ungrouped row's slot, or take the one right after its existing
  * group. Every lane order is an integer — the schema rejects anything else —
  * so the new group shares a slot with whatever holds it until the next
- * reorder renumbers the lane; sections sort ahead of workspaces on a tie.
+ * reorder renumbers the lane.
  */
 export function getNewGroupTabOrder(
 	sources: GroupSourcePosition[],

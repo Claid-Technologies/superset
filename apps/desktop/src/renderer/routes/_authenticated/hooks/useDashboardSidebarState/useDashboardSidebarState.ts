@@ -626,9 +626,10 @@ export function useDashboardSidebarState() {
 						{ tabOrder: workspace.sidebarState.tabOrder, isGrouped: false },
 					];
 				}
-				// Stored rows only, for the same reason getProjectTopLevelItems
-				// reads them: a derived folder's order is the synthetic floor,
-				// which must never be the basis of an order we persist.
+				// Anchor only on a row this lane owns and renumbers. A folder
+				// without one carries an order from outside the lane — the
+				// derived floor, or a host tag setting — which must not become
+				// the basis of an order we persist.
 				const folder = collections.v2SidebarSections.get(sourceSectionId);
 				return folder ? [{ tabOrder: folder.tabOrder, isGrouped: true }] : [];
 			});
