@@ -59,9 +59,6 @@ export function usePageHeaderData(data: PageHeaderTarget): PageHeaderData {
 		resolved && pageId
 			? {
 					id: pageId,
-					// The pull wins over the caller's cached label: a pane carries
-					// the title it was opened with, and a rename has to show there
-					// without waiting for the pane to re-resolve.
 					title: resolved.title ?? data.title ?? data.slug,
 					url: resolved.url,
 					visibility: resolved.visibility,
@@ -100,8 +97,6 @@ export function usePageHeaderData(data: PageHeaderTarget): PageHeaderData {
 			utils.page.pull.setData(ref, (prev) =>
 				prev ? { ...prev, title: updated.title } : prev,
 			);
-			// The grid and any other pane reading this page hold their own
-			// entries, and neither is keyed by the ref patched above.
 			await Promise.all([
 				utils.page.pull.invalidate(),
 				utils.page.list.invalidate(),

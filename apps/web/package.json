@@ -24,6 +24,8 @@
 		"@superset/trpc": "workspace:*",
 		"@superset/ui": "workspace:*",
 		"@superset/workspace-client": "workspace:*",
+		"@upstash/ratelimit": "2.0.8",
+		"@upstash/redis": "1.37.0",
 		"@t3-oss/env-nextjs": "0.13.11",
 		"@tanstack/react-query": "5.101.4",
 		"@tanstack/react-query-devtools": "5.101.4",

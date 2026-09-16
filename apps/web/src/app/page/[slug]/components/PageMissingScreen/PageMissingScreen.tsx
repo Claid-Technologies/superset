@@ -8,11 +8,6 @@ interface PageMissingScreenProps {
 	action: ReactNode;
 }
 
-/**
- * Deliberately says the same thing whether the page is missing, deleted or
- * merely closed to the reader: the wording is what keeps a stranger from
- * learning which one it was.
- */
 export async function PageMissingScreen({ action }: PageMissingScreenProps) {
 	const i18n = await initServerI18n();
 

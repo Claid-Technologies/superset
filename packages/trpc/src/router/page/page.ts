@@ -30,7 +30,6 @@ import { pageAssetRouter } from "./assets";
 import { pageUrl } from "./page-url";
 import { publishPage } from "./publish";
 import { isEntryPathConflict } from "./publish-rules";
-import { enforcePublicPageRead } from "./rate-limit";
 import {
 	clearPageWatchSchema,
 	createPageSchema,
@@ -691,9 +690,6 @@ export const pageRouter = {
 				.orderBy(desc(pageVersions.version));
 
 			const baseUrl = env.USERCONTENT_URL;
-			// Emitted unchecked, like `list` does: this runs on every page render
-			// and every header, and an R2 listing per call buys nothing the
-			// client's own `onError` placeholder does not already handle.
 			return await Promise.all(
 				rows.map(async (row) => ({
 					...row,
@@ -797,9 +793,7 @@ export const pageRouter = {
 
 	publicView: publicProcedure
 		.input(publicPageSchema)
-		.query(async ({ ctx, input }) => {
-			await enforcePublicPageRead(ctx.headers);
-
+		.query(async ({ input }) => {
 			const [page] = await db
 				.select()
 				.from(pages)

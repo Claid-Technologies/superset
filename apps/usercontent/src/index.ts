@@ -30,12 +30,6 @@ type AppContext = { Bindings: UsercontentEnv };
 
 const app = new Hono<AppContext>();
 
-/**
- * A public version's bytes are immutable, but its *readability* is not: it
- * lasts only while the page still serves that version. Caching it immutably
- * would let a shared CDN keep answering for a version the owner has already
- * moved away from, so public responses get a short, bounded reuse instead.
- */
 const PUBLIC_REVOCABLE = "public, max-age=300";
 
 /**

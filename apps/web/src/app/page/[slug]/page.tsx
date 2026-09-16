@@ -17,6 +17,7 @@ import { PageUnavailable } from "./components/PageUnavailable";
 import { PublicPageView } from "./components/PublicPageView";
 import { WrongOrganization } from "./components/WrongOrganization";
 import { getPagesAccess } from "./utils/getPagesAccess";
+import { allowPublicRead } from "./utils/publicReadLimit";
 import { isForbidden, isNotFound } from "./utils/trpcErrors";
 
 interface PageProps {
@@ -25,10 +26,7 @@ interface PageProps {
 }
 
 // `api()` caches the client, not the result — this cache is what keeps
-// generateMetadata and the component to a single pull. React keys on the
-// argument count as well as the values, so `version` is required: passing it
-// from one caller and omitting it from the other made two entries, and every
-// render pulled twice.
+// generateMetadata and the component to a single pull.
 const pullPage = cache(async (slug: string, version: number | undefined) => {
 	const trpc = await api();
 	return trpc.page.pull.query({ slug, version });
@@ -39,9 +37,6 @@ function previewVersionOf(raw: string | undefined): number | undefined {
 	return Number.isInteger(parsed) && parsed > 0 ? parsed : undefined;
 }
 
-// "Anyone with the link" is not "index me": usercontent already answers
-// `X-Robots-Tag: noindex`, and this wrapper has to say the same. Unfurlers
-// ignore robots, so link previews still work.
 const ROBOTS = { index: false, follow: false } as const;
 
 const pullVersions = cache(async (slug: string) => {
@@ -54,9 +49,8 @@ const pullAccess = cache(async (slug: string) => {
 	return trpc.page.access.query({ slug });
 });
 
-// Answers null for anything that is not public. A throw here is a real
-// failure — a DB or R2 outage — and must not read as "not public".
 const pullPublicPage = cache(async (slug: string) => {
+	if (!(await allowPublicRead())) return null;
 	const trpc = await api();
 	return trpc.page.publicView.query({ slug });
 });
@@ -69,7 +63,6 @@ export async function generateMetadata({
 	const requestedVersion = previewVersionOf((await searchParams).v);
 	const i18n = await initServerI18n();
 
-	// Metadata is best-effort: a card still renders when the lookup fails.
 	const shared = await pullPublicPage(slug).catch(() => null);
 	if (shared) {
 		const description = shared.description ?? undefined;
@@ -150,10 +143,6 @@ export default async function PublishedPage({
 	try {
 		page = await pullPage(slug, requestedVersion);
 	} catch (error) {
-		// Only a missing or forbidden page might still be readable publicly.
-		// A presign failure is an error for a member of the organization, not a
-		// reason to show them anonymous chrome — and neither is a `?v` that does
-		// not resolve, which would silently drop them onto the served version.
 		if (!isNotFound(error) && !isForbidden(error)) throw error;
 		const view = requestedVersion === undefined ? await publicView() : null;
 		if (view) return view;

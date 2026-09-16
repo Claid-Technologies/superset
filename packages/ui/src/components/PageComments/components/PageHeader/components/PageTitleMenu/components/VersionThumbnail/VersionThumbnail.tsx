@@ -5,11 +5,6 @@ interface VersionThumbnailProps {
 	src: string | null | undefined;
 }
 
-/**
- * Version thumbnails are emitted without checking R2, so one that has not been
- * captured yet 404s and falls back here rather than costing every caller a
- * listing to find out.
- */
 export function VersionThumbnail({ src }: VersionThumbnailProps) {
 	const [failed, setFailed] = useState(false);
 

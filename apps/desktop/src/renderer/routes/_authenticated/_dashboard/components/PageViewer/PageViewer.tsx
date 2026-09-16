@@ -34,11 +34,6 @@ interface PageViewerProps {
 	onResolved?: (page: ResolvedPage) => void;
 	onFramePointerDown?: () => void;
 	version?: number | null;
-	/**
-	 * Leaves the historical version. Surfaces that already carry the banner
-	 * themselves — the detail view's `PageHeader` — leave this unset so the
-	 * viewer does not render a second one.
-	 */
 	onExitPreview?: () => void;
 }
 
@@ -120,9 +115,6 @@ export function PageViewer({
 		);
 	}
 
-	// A historical version is read-only, so comment mode stays off: a new
-	// thread here would be anchored to content the page no longer serves, and
-	// a watching agent would be asked to act on it.
 	const previewing =
 		pull.data.servedVersion !== null &&
 		pull.data.version !== pull.data.servedVersion;
