@@ -48,13 +48,19 @@ export function parseThreadCommand(text: string): ThreadCommand | null {
 }
 
 /** Ask the running turn to stop at its next step. False when nothing is running. */
+/**
+ * Ask the running turn to stop at its next step. Recorded even when nothing
+ * is running yet: a delivery claims its session only after preflight, and a
+ * stop sent in that gap still applies once the claim sees it is newer than
+ * the message that started the turn. Returns whether a turn was running.
+ */
 export async function requestThreadStop(key: ThreadKey): Promise<boolean> {
 	const [row] = await db
 		.update(slackThreadSessions)
 		.set({ stopRequestedAt: new Date() })
-		.where(and(whereThread(key), eq(slackThreadSessions.status, "running")))
-		.returning({ id: slackThreadSessions.id });
-	return row !== undefined;
+		.where(whereThread(key))
+		.returning({ status: slackThreadSessions.status });
+	return row?.status === "running";
 }
 
 export async function threadStopRequested(id: string): Promise<boolean> {
@@ -206,7 +212,12 @@ export async function beginThreadRun(
 		const now = new Date();
 		const [claimed] = await db
 			.update(slackThreadSessions)
-			.set({ status: "running", lastActivityAt: now, stopRequestedAt: null })
+			.set({
+				status: "running",
+				lastActivityAt: now,
+				// A stop sent after this turn's message was meant for it.
+				stopRequestedAt: sql`CASE WHEN ${slackThreadSessions.stopRequestedAt} > to_timestamp(${key.event.ts}::numeric) THEN ${slackThreadSessions.stopRequestedAt} ELSE NULL END`,
+			})
 			.where(
 				and(
 					whereThread(key),
