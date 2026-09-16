@@ -517,7 +517,7 @@ export async function processAgentMessage({
 			const names = toConnect.map((plugin) => plugin.displayName).join(" and ");
 			const text = `${names} ${toConnect.length === 1 ? "isn't" : "aren't"} connected to your Superset account yet.`;
 			try {
-				await run.chat.postMessage({
+				await reply.chat.postMessage({
 					channel: event.channel,
 					thread_ts: threadTs,
 					text,
