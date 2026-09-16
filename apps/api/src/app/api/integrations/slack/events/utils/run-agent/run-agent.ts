@@ -163,6 +163,8 @@ interface RunSlackAgentParams {
 	/** The newest thread message the agent had read before this turn. */
 	lastContextTs?: string;
 	onProgress?: (status: string) => void | Promise<void>;
+	/** Bound on listing a plugin's tools before the first model call. */
+	pluginDiscoveryTimeoutMs?: number;
 	/** Checked between steps; true ends the turn with the stopped copy. */
 	shouldStop?: () => Promise<boolean>;
 }
@@ -170,6 +172,7 @@ interface RunSlackAgentParams {
 /** Everything after the handler's claim shares one budget (job maxDuration is 300s). */
 const DEFAULT_RUN_BUDGET_MS = 240_000;
 const MODEL_CALL_TIMEOUT_MS = 120_000;
+const PLUGIN_DISCOVERY_TIMEOUT_MS = 15_000;
 
 /**
  * A failure with copy already written for Slack. Never routed through the
@@ -745,6 +748,15 @@ export async function runSlackAgent(
 	});
 	const pluginSignal = (): AbortSignal =>
 		AbortSignal.timeout(remainingBudget());
+	// Discovery runs before the first model call. A hung plugin endpoint must
+	// cost that plugin, not the whole turn.
+	const discoverySignal = (): AbortSignal =>
+		AbortSignal.timeout(
+			Math.min(
+				remainingBudget(),
+				params.pluginDiscoveryTimeoutMs ?? PLUGIN_DISCOVERY_TIMEOUT_MS,
+			),
+		);
 
 	let supersetMcp: Client | null = null;
 	let cleanupSuperset: (() => Promise<void>) | null = null;
@@ -778,7 +790,7 @@ export async function runSlackAgent(
 			loadPluginTools({
 				userId: params.userId,
 				pluginNames: Object.keys(PLUGIN_SLACK_TOOLS),
-				signal: pluginSignal(),
+				signal: discoverySignal(),
 			}),
 		]);
 		const pluginToolSets = pluginLoad.sets;

@@ -36,8 +36,9 @@ export function invalidatePluginToolCache(): void {
 	toolListCache.clear();
 }
 
+/** Per installation: the same plugin from two marketplaces can list different tools. */
 function cacheKey({ connection, install }: ConnectionContext): string {
-	return `${connection.pluginName}@${install.manifest.version}:${connection.authMethod}`;
+	return `${install.id}:${install.marketplace}/${connection.pluginName}@${install.manifest.version}:${connection.authMethod}`;
 }
 
 async function cachedListTools(

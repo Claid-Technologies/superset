@@ -797,6 +797,47 @@ describe("plugin tools", () => {
 		expect(result.unconnectedPlugins).toEqual([]);
 	});
 
+	test("a plugin whose listing hangs costs that plugin, not the turn", async () => {
+		toolConnections.mockImplementation(async () => [pluginContext("linear")]);
+		pluginListTools.mockImplementation(
+			(
+				_m: unknown,
+				_s: unknown,
+				_a: unknown,
+				_src: unknown,
+				opts?: { signal?: AbortSignal },
+			) =>
+				new Promise((_resolve, reject) => {
+					opts?.signal?.addEventListener("abort", () =>
+						reject(new Error("aborted")),
+					);
+				}),
+		);
+		const started = Date.now();
+		const result = await runSlackAgent({
+			...params,
+			pluginDiscoveryTimeoutMs: 50,
+		});
+		expect(Date.now() - started).toBeLessThan(5_000);
+		expect(result.text).toBe("Finished");
+		expect(requestToolNames()).toContain("superset_tasks_create");
+		expect(requestToolNames()).not.toContain("linear_list_issues");
+	});
+
+	test("the tool cache is per installation, not per plugin name", async () => {
+		const first = pluginContext("linear");
+		const other = {
+			...first,
+			install: { ...first.install, id: "install-2", marketplace: "acme" },
+		};
+		pluginListTools.mockImplementation(listingFor);
+		toolConnections.mockImplementation(async () => [first]);
+		await runSlackAgent(params);
+		toolConnections.mockImplementation(async () => [other]);
+		await runSlackAgent(params);
+		expect(pluginListTools).toHaveBeenCalledTimes(2);
+	});
+
 	test("caches a plugin's tool listing across runs for the same plugin version and auth method", async () => {
 		toolConnections.mockImplementation(async () => [pluginContext("linear")]);
 		pluginListTools.mockImplementation(listingFor);
