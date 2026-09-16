@@ -12638,9 +12638,6 @@ msgstr "Enregistrement…"
 msgid "Saw the paywall"
 msgstr "A vu le paywall"
 
-msgid "Say something, or tap a block to pin a note."
-msgstr "Écrivez quelque chose ou touchez un bloc pour y épingler une note."
-
 msgid "Scale from two agents to 100+"
 msgstr "Passez de deux agents à plus de 100"
 

@@ -12638,9 +12638,6 @@ msgstr "正在保存…"
 msgid "Saw the paywall"
 msgstr "看到付费墙"
 
-msgid "Say something, or tap a block to pin a note."
-msgstr "说点什么，或点按某个区块以固定备注。"
-
 msgid "Scale from two agents to 100+"
 msgstr "从两个智能体扩到100多个"
 

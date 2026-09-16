@@ -58,6 +58,7 @@ export const ReplyBar = forwardRef<CommentComposerHandle, ReplyBarProps>(
 
 				<CommentComposer
 					ref={ref}
+					autoFocus
 					placeholder={t({ message: "Add a comment…" })}
 					pending={pending}
 					onSubmit={onSubmit}

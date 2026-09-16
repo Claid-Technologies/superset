@@ -12638,9 +12638,6 @@ msgstr "保存中…"
 msgid "Saw the paywall"
 msgstr "ペイウォールを表示"
 
-msgid "Say something, or tap a block to pin a note."
-msgstr "何か書くか、ブロックをタップしてメモをピン留めしましょう。"
-
 msgid "Scale from two agents to 100+"
 msgstr "2体から100体以上へ広げる"
 

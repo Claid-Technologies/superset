@@ -12638,9 +12638,6 @@ msgstr "Đang lưu…"
 msgid "Saw the paywall"
 msgstr "Đã thấy paywall"
 
-msgid "Say something, or tap a block to pin a note."
-msgstr "Viết gì đó, hoặc chạm vào một khối để ghim ghi chú."
-
 msgid "Scale from two agents to 100+"
 msgstr "Mở rộng từ hai agent lên hơn 100"
 

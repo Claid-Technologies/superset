@@ -113,25 +113,13 @@ export function AllCommentsSheet() {
 	};
 
 	const submit = async (body: string) => {
-		if (replyingTo) {
-			const { threadId } = replyingTo;
-			setExpanded((previous) => ({ ...previous, [threadId]: true }));
-			setReplyingTo(null);
-			pendingScroll.current = { threadId, atBottom: true };
-			try {
-				await store.addReply(threadId, body);
-			} catch (error) {
-				pendingScroll.current = null;
-				throw error;
-			}
-			return;
-		}
-		if (!pageId || version === 0) {
-			throw new Error("This page is no longer open for comments");
-		}
-		pendingScroll.current = "end";
+		if (!replyingTo) return;
+		const { threadId } = replyingTo;
+		setExpanded((previous) => ({ ...previous, [threadId]: true }));
+		setReplyingTo(null);
+		pendingScroll.current = { threadId, atBottom: true };
 		try {
-			await store.createThread({ body });
+			await store.addReply(threadId, body);
 		} catch (error) {
 			pendingScroll.current = null;
 			throw error;
@@ -201,7 +189,7 @@ export function AllCommentsSheet() {
 							{t({ message: "No comments on this page yet" })}
 						</Text>
 						<Text className="text-muted-foreground/70 mt-1 text-center text-sm">
-							{t({ message: "Say something, or tap a block to pin a note." })}
+							{t({ message: "Tap anything on the page to comment on it" })}
 						</Text>
 					</View>
 				) : null}
@@ -222,10 +210,7 @@ export function AllCommentsSheet() {
 								const { y, height } = event.nativeEvent.layout;
 								threadLayout.current[thread.id] = { y, height };
 							}}
-							className={cn(
-								thread.resolved && "opacity-50",
-								replyingTo?.threadId === thread.id && "bg-muted/40 rounded-lg",
-							)}
+							className={cn(thread.resolved && "opacity-50")}
 						>
 							<CommentRow
 								comment={root}
@@ -285,13 +270,15 @@ export function AllCommentsSheet() {
 				) : null}
 			</ScrollView>
 
-			<ReplyBar
-				ref={composerRef}
-				replyingTo={replyingTo?.name ?? null}
-				pending={store.submitting}
-				onCancelReply={() => setReplyingTo(null)}
-				onSubmit={submit}
-			/>
+			{replyingTo ? (
+				<ReplyBar
+					ref={composerRef}
+					replyingTo={replyingTo.name}
+					pending={store.submitting}
+					onCancelReply={() => setReplyingTo(null)}
+					onSubmit={submit}
+				/>
+			) : null}
 		</>
 	);
 }

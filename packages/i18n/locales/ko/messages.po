@@ -12638,9 +12638,6 @@ msgstr "저장하는 중…"
 msgid "Saw the paywall"
 msgstr "페이월 조회"
 
-msgid "Say something, or tap a block to pin a note."
-msgstr "의견을 남기거나 블록을 탭해 메모를 고정하세요."
-
 msgid "Scale from two agents to 100+"
 msgstr "에이전트 2개에서 100개 이상까지"
 

@@ -12638,9 +12638,6 @@ msgstr "Сохранение…"
 msgid "Saw the paywall"
 msgstr "Показ пейволла"
 
-msgid "Say something, or tap a block to pin a note."
-msgstr "Напишите что-нибудь или коснитесь блока, чтобы закрепить заметку."
-
 msgid "Scale from two agents to 100+"
 msgstr "От двух агентов до 100+"
 

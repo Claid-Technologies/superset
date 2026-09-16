@@ -12638,9 +12638,6 @@ msgstr "Salvataggio…"
 msgid "Saw the paywall"
 msgstr "Ha visto il paywall"
 
-msgid "Say something, or tap a block to pin a note."
-msgstr "Scrivi qualcosa o tocca un blocco per fissare una nota."
-
 msgid "Scale from two agents to 100+"
 msgstr "Passa da due agenti a più di 100"
 

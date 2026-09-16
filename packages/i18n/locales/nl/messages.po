@@ -12638,9 +12638,6 @@ msgstr "Opslaan…"
 msgid "Saw the paywall"
 msgstr "Zag de paywall"
 
-msgid "Say something, or tap a block to pin a note."
-msgstr "Schrijf iets of tik op een blok om een notitie vast te pinnen."
-
 msgid "Scale from two agents to 100+"
 msgstr "Schaal van twee agents naar 100+"
 

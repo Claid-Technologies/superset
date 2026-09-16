@@ -12638,9 +12638,6 @@ msgstr "Kaydediliyor…"
 msgid "Saw the paywall"
 msgstr "Ödeme duvarını gördü"
 
-msgid "Say something, or tap a block to pin a note."
-msgstr "Bir şeyler yazın veya not sabitlemek için bir bloğa dokunun."
-
 msgid "Scale from two agents to 100+"
 msgstr "İki ajandan 100+ ajana ölçeklenin"
 

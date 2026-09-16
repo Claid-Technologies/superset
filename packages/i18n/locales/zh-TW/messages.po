@@ -12638,9 +12638,6 @@ msgstr "正在儲存…"
 msgid "Saw the paywall"
 msgstr "看到付費牆"
 
-msgid "Say something, or tap a block to pin a note."
-msgstr "說點什麼，或點按區塊以釘選備註。"
-
 msgid "Scale from two agents to 100+"
 msgstr "從兩個代理程式擴到100多個"
 

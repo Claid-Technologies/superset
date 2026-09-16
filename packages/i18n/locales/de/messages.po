@@ -12638,9 +12638,6 @@ msgstr "Wird gespeichert…"
 msgid "Saw the paywall"
 msgstr "Paywall gesehen"
 
-msgid "Say something, or tap a block to pin a note."
-msgstr "Schreib etwas oder tippe auf einen Block, um eine Notiz anzuheften."
-
 msgid "Scale from two agents to 100+"
 msgstr "Von zwei Agenten auf über 100 skalieren"
 

@@ -12638,9 +12638,6 @@ msgstr "Ukládám…"
 msgid "Saw the paywall"
 msgstr "Zobrazení paywallu"
 
-msgid "Say something, or tap a block to pin a note."
-msgstr "Napište něco nebo klepněte na blok a připněte poznámku."
-
 msgid "Scale from two agents to 100+"
 msgstr "Od dvou agentů ke stovkám"
 

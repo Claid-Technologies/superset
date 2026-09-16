@@ -12638,9 +12638,6 @@ msgstr "Menyimpan…"
 msgid "Saw the paywall"
 msgstr "Melihat paywall"
 
-msgid "Say something, or tap a block to pin a note."
-msgstr "Tulis sesuatu, atau ketuk blok untuk menyematkan catatan."
-
 msgid "Scale from two agents to 100+"
 msgstr "Naik dari dua agen ke 100+"
 
