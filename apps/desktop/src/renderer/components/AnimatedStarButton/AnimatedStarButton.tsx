@@ -81,13 +81,8 @@ export function AnimatedStarButton({
 	useEffect(() => {
 		const prevState = prevStateRef.current;
 		prevStateRef.current = state;
-		// Same gate as useJustStarredWindow: only a star confirmed by this
-		// session's own mutation celebrates. Neither a cold mount that resolves
-		// straight from "loading" to "starred" (already starred before this
-		// session) nor a background refetch recovering to "starred" after a
-		// flaky "unknown"/"not_starred" read is a fresh star, and bursting
-		// confetti for the latter is exactly the phantom star-button flash on
-		// freshly-opened workspaces.
+		// Same gate as useJustStarredWindow, so the confetti and the surface's
+		// visibility window can never disagree about what counts as a fresh star.
 		if (isCelebratableStarTransition(prevState, state)) {
 			setJustStarred(true);
 			if (!prefersReducedMotion) setParticles(createBurst());
