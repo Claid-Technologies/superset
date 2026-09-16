@@ -52,6 +52,10 @@ describe("classifyEnvironmentalGitError", () => {
 			"spawn git-lfs ENOENT",
 			// The phrase quoted inside a larger failure, not the spawn itself.
 			"fatal: could not read 'spawn git ENOENT' from config",
+			// git ran and relayed the words from something it invoked — a hook
+			// that could not spawn its own git. That hook is the failure, not
+			// this command's environment.
+			"fatal: pre-commit hook failed\nspawn git ENOENT\n",
 		]) {
 			expect(classifyEnvironmentalGitError(new Error(message))).toBeNull();
 		}

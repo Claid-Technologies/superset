@@ -35,9 +35,11 @@ const NOT_GIT_REPO_PATTERN = /not a git repository/i;
 // `code === "ENOENT"` because simple-git rebuilds the spawn failure as a
 // GitError carrying only the stringified original, so the code is gone by the
 // time we see it; that stringification is also why the line can arrive with an
-// `Error: ` prefix and a stack below it. Anchoring the whole line keeps this off
-// an ENOENT from a file a task read and off other binaries git spawns.
-const GIT_UNSPAWNABLE_PATTERN = /^(?:Error: )?spawn git ENOENT$/m;
+// `Error: ` prefix and a stack below it. Anchored to the start of the message
+// rather than to any line, so this stays off an ENOENT from a file a task read,
+// off other binaries git spawns, and off a command that ran and merely relayed
+// the words — only a git that never started opens with them.
+const GIT_UNSPAWNABLE_PATTERN = /^(?:Error: )?spawn git ENOENT(?:\r?\n|$)/;
 
 /**
  * Classifies a raw git failure (simple-git GitError, exec stderr) into the
