@@ -5,7 +5,7 @@ set -euo pipefail
 . /etc/superset/contract.sh
 
 binary=""
-for candidate in "${SUPERSET_MEDIA_DIR}"/superset-*.bin; do
+for candidate in "${SUPERSET_MEDIA_DIR}"/superset-*; do
 	[ -f "${candidate}.hash" ] || continue
 	if grep -qF "$(tr -d '\n\r' < "${candidate}.hash")" "${SUPERSET_BUNDLE_DIR}/assets.tsv"; then
 		binary="$candidate"

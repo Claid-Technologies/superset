@@ -170,7 +170,6 @@ export async function deriveSandboxCredentials(
 				inputs.workspaceId,
 			)}`,
 		});
-		managedEnv.SUPERSET_API_KEY = SANDBOX_CREDENTIAL_PLACEHOLDER;
 	}
 
 	// The catch-all keeps the rest of the internet reachable; without it a

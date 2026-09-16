@@ -324,12 +324,8 @@ export function createApp(options: CreateAppOptions): CreateAppResult {
 	// websockify listens on loopback with no credential of its own, so the
 	// check that admits a pane is this route's. Sandboxes only: on a laptop
 	// this would forward a caller's bytes to whatever holds port 6080.
-	// "/websockify" is where desktop builds shipped before the display moved
-	// behind this check look for it.
-	app.use("/websockify", wsAuth);
-	app.on(
-		["GET"],
-		["/desktop/websockify", "/websockify"],
+	app.get(
+		"/desktop/websockify",
 		async (c, next) => {
 			if (process.env.SUPERSET_HOST_RUN_MODE !== "sandbox") {
 				return c.json({ error: "Not found" }, 404);

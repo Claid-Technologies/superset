@@ -275,8 +275,8 @@ const checks: Array<[label: string, command: string, expect: RegExp]> = [
 		/gt is/,
 	],
 	[
-		"dev stack start hook",
-		"test -x /usr/local/bin/superset-dev-stack && test -x /workspace/.superset/setup.cloud.sh && echo ok",
+		"the repository's cloud setup and dev stack",
+		"test -x /workspace/.superset/setup.cloud.sh && test -x /workspace/.superset/dev-stack.cloud.sh && echo ok",
 		/ok/,
 	],
 	["neonctl", "neonctl --version", /^\d+\.\d+/m],

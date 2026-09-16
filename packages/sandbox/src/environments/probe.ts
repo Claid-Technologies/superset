@@ -141,16 +141,11 @@ export async function probeBox(args: ProbeArgs): Promise<number> {
 		/up/,
 		90,
 	);
-	// From inside: the desktop port is not published, and the pane reaches it
-	// through host-service, which only answers with a ticket the release has
-	// no reason to mint.
-	const rfb = await run(
-		`node -e 'const ws=new WebSocket("ws://127.0.0.1:${SANDBOX_PORTS.desktop}/websockify",["binary"]);ws.binaryType="arraybuffer";const t=setTimeout(()=>{console.log("timeout");process.exit(0)},30000);ws.onmessage=(e)=>{clearTimeout(t);console.log(new TextDecoder().decode(new Uint8Array(e.data).slice(0,12)));process.exit(0)};ws.onerror=(e)=>{clearTimeout(t);console.log("error "+(e.message??""));process.exit(0)}'`,
-	);
+	const rfb = await rfbHandshake(host, args.hostSecret);
 	check(
-		"desktop stream answers RFB over websockify",
-		rfb.includes("RFB "),
-		JSON.stringify(rfb.trim().split("\n").pop() ?? ""),
+		"desktop stream answers RFB through host-service",
+		rfb.startsWith("RFB "),
+		JSON.stringify(rfb),
 	);
 	if (args.expectAnthropicRule) {
 		const code = (
@@ -218,4 +213,37 @@ export async function checkWakeLog(args: {
 	check("wake: checkout kept", /checkout\.skipped/.test(last));
 	check("wake: host-service ready", /host\.ready/.test(last));
 	return failed;
+}
+
+/**
+ * The first bytes the VNC server sends, read the way a pane reads them: the
+ * display is not published, so it is host-service's route, with the secret the
+ * gate presents on a person's behalf.
+ */
+function rfbHandshake(hostOrigin: string, hostSecret: string): Promise<string> {
+	const url = new URL("/desktop/websockify", hostOrigin);
+	url.protocol = "wss:";
+	url.searchParams.set("token", hostSecret);
+	return new Promise<string>((resolve) => {
+		const ws = new WebSocket(url.toString());
+		ws.binaryType = "arraybuffer";
+		const timer = setTimeout(() => {
+			resolve("timeout");
+			ws.close();
+		}, 30_000);
+		ws.onmessage = (event) => {
+			clearTimeout(timer);
+			resolve(
+				new TextDecoder().decode(
+					new Uint8Array(event.data as ArrayBuffer).slice(0, 12),
+				),
+			);
+			ws.close();
+		};
+		ws.onerror = () => {
+			clearTimeout(timer);
+			resolve("error");
+			ws.close();
+		};
+	});
 }

@@ -3,7 +3,6 @@ import os from "node:os";
 import path from "node:path";
 import {
 	buildWrapperScript,
-	commandInstalled,
 	createWrapper,
 	getManagedNotifyHookCommand,
 	writeFileIfChanged,
@@ -167,8 +166,8 @@ export function getMuseSettingsJsonWithoutManagedHooks(
 }
 
 export function createMuseSettingsJson(): void {
-	if (!commandInstalled("muse")) return;
 	const settingsPath = getMuseSettingsJsonPath();
+	fs.mkdirSync(path.dirname(settingsPath), { recursive: true });
 	let raw: string | null = null;
 	try {
 		raw = fs.readFileSync(settingsPath, "utf-8");

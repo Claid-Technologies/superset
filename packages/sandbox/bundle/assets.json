@@ -8,9 +8,9 @@
 		"version": "153.0.8010.36"
 	},
 	"cli": {
-		"sha256": "9d6b3e3a6b832abb236d6392477f3b48e9c37db87cd6884d18d1fb37b76b651e",
-		"suffix": ".bin",
-		"dest": "/usr/local/share/superset/media/superset-1.29.0.bin",
+		"sha256": "66be5ff609582623dc943c2a6405553268c9b57d8ad215d2056cde9f746186ab",
+		"suffix": "",
+		"dest": "/usr/local/share/superset/media/superset-1.29.0",
 		"mode": "0755",
 		"version": "1.29.0"
 	},
