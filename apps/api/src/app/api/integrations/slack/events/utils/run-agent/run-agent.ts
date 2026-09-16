@@ -1,9 +1,10 @@
 import Anthropic from "@anthropic-ai/sdk";
 import type { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { WebClient } from "@slack/web-api";
+import type { WebClient } from "@slack/web-api";
 import { env } from "@/env";
 import { DEFAULT_SLACK_MODEL } from "../../../constants";
 import type { AgentAction } from "../slack-blocks";
+import { createSlackClient } from "../slack-client";
 import type { SlackImageAsset } from "../slack-image-assets";
 import {
 	createSupersetMcpClient,
@@ -66,7 +67,7 @@ export async function fetchThreadContext({
 	limit?: number;
 }): Promise<string> {
 	try {
-		const slack = new WebClient(token);
+		const slack = createSlackClient(token);
 		// Slack returns oldest first. Walk every page while retaining only the
 		// latest context, bounded by the triggering message rather than "now".
 		let cursor: string | undefined;
@@ -166,14 +167,28 @@ export interface SlackAgentResult {
 	actions: AgentAction[];
 }
 
-export async function formatErrorForSlack(error: unknown): Promise<string> {
+const ERROR_REWRITE_TIMEOUT_MS = 45_000;
+const ERROR_REWRITE_MIN_REMAINING_MS = 20_000;
+const GENERIC_ERROR_TEXT = "Sorry, something went wrong. Please try again.";
+
+export async function formatErrorForSlack(
+	error: unknown,
+	deadline?: number,
+): Promise<string> {
 	const message =
 		error instanceof Error ? error.message : "Unknown error occurred";
+	const remaining =
+		deadline === undefined ? ERROR_REWRITE_TIMEOUT_MS : deadline - Date.now();
+	if (remaining < ERROR_REWRITE_MIN_REMAINING_MS) {
+		return error instanceof Anthropic.APIError && error.status === 429
+			? "I'm a bit overloaded right now — please try again in a moment."
+			: GENERIC_ERROR_TEXT;
+	}
 	try {
 		const anthropic = new Anthropic({
 			apiKey: env.ANTHROPIC_API_KEY,
-			timeout: 45_000,
-			maxRetries: 1,
+			timeout: Math.min(ERROR_REWRITE_TIMEOUT_MS, remaining - 5_000),
+			maxRetries: 0,
 		});
 		const response = await anthropic.messages.create({
 			model: "claude-haiku-4-5",
@@ -188,13 +203,12 @@ export async function formatErrorForSlack(error: unknown): Promise<string> {
 		const text = response.content.find(
 			(b): b is Anthropic.TextBlock => b.type === "text",
 		);
-		return text?.text ?? "Sorry, something went wrong. Please try again.";
+		return text?.text ?? GENERIC_ERROR_TEXT;
 	} catch {
-		// Haiku itself failed (possibly also rate limited) — use static fallback
 		if (error instanceof Anthropic.APIError && error.status === 429) {
 			return "I'm a bit overloaded right now — please try again in a moment.";
 		}
-		return "Sorry, something went wrong. Please try again.";
+		return GENERIC_ERROR_TEXT;
 	}
 }
 
@@ -324,7 +338,7 @@ async function handleGetChannelHistory({
 	channelId: string;
 	limit?: number;
 }): Promise<string> {
-	const slack = new WebClient(token);
+	const slack = createSlackClient(token);
 	const result = await slack.conversations.history({
 		channel: channelId,
 		limit: Math.min(limit, 100),
@@ -377,17 +391,33 @@ Context gathering:
 - Use slack_get_channel_history to read recent channel messages for additional context
 - Don't ask the user for context you can find yourself - be proactive`;
 
+type McpRequestOptions = NonNullable<Parameters<Client["callTool"]>[2]>;
+
 async function fetchAgentContext({
 	mcpClient,
 	userId,
+	requestOptions,
 }: {
 	mcpClient: Client;
 	userId: string;
+	requestOptions: () => McpRequestOptions;
 }): Promise<string> {
 	const [membersResult, statusesResult, hostsResult] = await Promise.all([
-		mcpClient.callTool({ name: "organization_members_list", arguments: {} }),
-		mcpClient.callTool({ name: "tasks_statuses_list", arguments: {} }),
-		mcpClient.callTool({ name: "hosts_list", arguments: {} }),
+		mcpClient.callTool(
+			{ name: "organization_members_list", arguments: {} },
+			undefined,
+			requestOptions(),
+		),
+		mcpClient.callTool(
+			{ name: "tasks_statuses_list", arguments: {} },
+			undefined,
+			requestOptions(),
+		),
+		mcpClient.callTool(
+			{ name: "hosts_list", arguments: {} },
+			undefined,
+			requestOptions(),
+		),
 	]);
 
 	const sections: string[] = [];
@@ -479,6 +509,9 @@ export async function runSlackAgent(
 	});
 	const actions: AgentAction[] = [];
 	const deadline = params.deadline ?? Date.now() + DEFAULT_RUN_BUDGET_MS;
+	const mcpRequestOptions = (): McpRequestOptions => ({
+		timeout: Math.max(1_000, deadline - Date.now()),
+	});
 
 	let supersetMcp: Client | null = null;
 	let cleanupSuperset: (() => Promise<void>) | null = null;
@@ -501,10 +534,11 @@ export async function runSlackAgent(
 		cleanupSuperset = supersetMcpResult.cleanup;
 
 		const [supersetToolsResult, agentContext] = await Promise.all([
-			supersetMcp.listTools(),
+			supersetMcp.listTools(undefined, mcpRequestOptions()),
 			fetchAgentContext({
 				mcpClient: supersetMcp,
 				userId: params.userId,
+				requestOptions: mcpRequestOptions,
 			}),
 		]);
 
@@ -660,10 +694,14 @@ ${agentContext}`;
 							continue;
 						}
 
-						const result = await supersetMcp.callTool({
-							name: toolName,
-							arguments: toolUse.input as Record<string, unknown>,
-						});
+						const result = await supersetMcp.callTool(
+							{
+								name: toolName,
+								arguments: toolUse.input as Record<string, unknown>,
+							},
+							undefined,
+							mcpRequestOptions(),
+						);
 
 						resultContent = JSON.stringify(result.content);
 
@@ -737,7 +775,7 @@ ${agentContext}`;
 		const text =
 			error instanceof SlackAgentError
 				? error.message
-				: await formatErrorForSlack(error);
+				: await formatErrorForSlack(error, deadline);
 		return { text, actions };
 	} finally {
 		if (cleanupSuperset) {

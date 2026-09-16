@@ -33,11 +33,16 @@ mock.module("@anthropic-ai/sdk", () => ({
 		messages = { create };
 	},
 }));
-mock.module("@slack/web-api", () => ({
-	WebClient: class {
-		conversations = { replies };
-		users = { info: async () => ({}) };
-	},
+class FakeWebClient {
+	conversations = { replies };
+	users = { info: async () => ({}) };
+}
+mock.module("@slack/web-api", () => ({ WebClient: FakeWebClient }));
+// bun shares mock.module registrations across test files in one process, so
+// pin the factory here rather than inheriting whichever file mocked it last.
+mock.module("../slack-client", () => ({
+	createSlackClient: () => new FakeWebClient(),
+	isUnpostableChannelError: () => false,
 }));
 mock.module("./mcp-clients", () => ({
 	createSupersetMcpClient: async () => ({
@@ -53,7 +58,9 @@ mock.module("./mcp-clients", () => ({
 		toolName: name.slice(name.indexOf("_") + 1),
 	}),
 }));
-const { fetchThreadContext, runSlackAgent } = await import("./run-agent");
+const { fetchThreadContext, formatErrorForSlack, runSlackAgent } = await import(
+	"./run-agent"
+);
 const params = {
 	prompt: "Help",
 	channelId: "C1",
@@ -177,23 +184,50 @@ describe("agent loop", () => {
 		).toHaveLength(0);
 	});
 	test("an exhausted deadline fails with static copy and keeps completed actions", async () => {
+		const realNow = Date.now;
+		let now = realNow();
+		Date.now = () => now;
+		try {
+			create.mockImplementationOnce(async () => toolResponse());
+			// The tool call outlives the budget, so the next model call must not start.
+			callTool.mockImplementation(async ({ name }) => {
+				if (name !== "tasks_create") return {};
+				now += 200;
+				return {
+					structuredContent: {
+						task: { id: "task", title: "Task", slug: "SUP-1" },
+					},
+				};
+			});
+			const result = await runSlackAgent({ ...params, deadline: now + 100 });
+			expect(result.text).toContain("ran out of time");
+			expect(result.actions).toHaveLength(1);
+		} finally {
+			Date.now = realNow;
+		}
+	});
+	test("bounds every MCP request by the remaining budget", async () => {
 		create.mockImplementationOnce(async () => toolResponse());
-		// The tool call outlives the budget, so the next model call must not start.
-		callTool.mockImplementation(async ({ name }) => {
-			if (name !== "tasks_create") return {};
-			await new Promise((resolve) => setTimeout(resolve, 200));
-			return {
-				structuredContent: {
-					task: { id: "task", title: "Task", slug: "SUP-1" },
-				},
-			};
+		await runSlackAgent({ ...params, deadline: Date.now() + 30_000 });
+		const timeouts = callTool.mock.calls.map(
+			(call) => (call[2] as { timeout?: number } | undefined)?.timeout,
+		);
+		expect(timeouts.length).toBeGreaterThanOrEqual(4);
+		for (const timeout of timeouts) {
+			expect(timeout).toBeGreaterThan(0);
+			expect(timeout).toBeLessThanOrEqual(30_000);
+		}
+		expect(listTools.mock.calls[0]?.[1]).toMatchObject({
+			timeout: expect.any(Number),
 		});
-		const result = await runSlackAgent({
-			...params,
-			deadline: Date.now() + 100,
-		});
-		expect(result.text).toContain("ran out of time");
-		expect(result.actions).toHaveLength(1);
+	});
+	test("skips the error rewrite when the budget is nearly spent", async () => {
+		const text = await formatErrorForSlack(
+			new Error("boom"),
+			Date.now() + 5_000,
+		);
+		expect(text).toContain("something went wrong");
+		expect(create).not.toHaveBeenCalled();
 	});
 	test("enforces tool policy at execution, even for a hallucinated destructive tool", async () => {
 		create.mockImplementationOnce(async () =>

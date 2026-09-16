@@ -362,7 +362,7 @@ export async function processAgentMessage({
 				? formatSlackImageAssetError(err)
 				: err instanceof SlackAgentError
 					? err.message
-					: await formatErrorForSlack(err);
+					: await formatErrorForSlack(err, deadline);
 		await slack.chat.postMessage({
 			channel: event.channel,
 			thread_ts: threadTs,

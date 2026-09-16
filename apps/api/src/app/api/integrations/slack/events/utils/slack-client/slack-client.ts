@@ -20,6 +20,12 @@ export function isUnpostableChannelError(error: unknown): boolean {
 	return typeof code === "string" && UNPOSTABLE_CHANNEL_ERRORS.has(code);
 }
 
+const REQUEST_TIMEOUT_MS = 15_000;
+const RETRY_CONFIG = { retries: 2, minTimeout: 500, maxTimeout: 2_000 };
+
 export function createSlackClient(token: string): WebClient {
-	return new WebClient(token);
+	return new WebClient(token, {
+		timeout: REQUEST_TIMEOUT_MS,
+		retryConfig: RETRY_CONFIG,
+	});
 }
