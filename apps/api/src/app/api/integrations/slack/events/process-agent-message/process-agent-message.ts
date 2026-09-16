@@ -256,9 +256,10 @@ export async function processAgentMessage({
 	// closed since, and the unflagged path never runs the agent for one.
 	const isFollowUp = event.type === "message" && !isDm;
 	if (isFollowUp && !sessions) return;
-	// Every DM already reaches the agent, so quieting means nothing there.
-	const command =
-		sessions && !isDm ? parseThreadCommand(event.text ?? "") : null;
+	// Every DM already reaches the agent, so quieting means nothing there;
+	// stopping a turn does.
+	const parsed = sessions ? parseThreadCommand(event.text ?? "") : null;
+	const command = isDm && parsed !== "stop" ? null : parsed;
 	// assistant.threads.setStatus only works in assistant (DM) threads; Slack
 	// answers method_not_supported_for_channel_type anywhere else. Channels get
 	// a placeholder message that carries progress and is removed once the final

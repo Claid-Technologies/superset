@@ -756,10 +756,12 @@ ${agentContext}`;
 				(b): b is Anthropic.ToolUseBlock => b.type === "tool_use",
 			);
 
-			await stopIfRequested();
 			const toolResults: Anthropic.ToolResultBlockParam[] = [];
 
 			for (const toolUse of toolUseBlocks) {
+				// Per tool, not per batch: a stop that lands during one tool call
+				// must not let the next one create a task or launch an agent.
+				await stopIfRequested();
 				if (Date.now() >= deadline)
 					throw new SlackAgentError(AGENT_COPY.timeLimit);
 				try {

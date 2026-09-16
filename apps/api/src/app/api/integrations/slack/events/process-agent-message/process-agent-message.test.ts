@@ -190,6 +190,8 @@ beforeEach(() => {
 	beginThread.mockClear();
 	finishThread.mockClear();
 	setQuiet.mockClear();
+	requestStop.mockClear();
+	stopRequested.mockClear();
 	followUpsEnabled.mockReset();
 	followUpsEnabled.mockImplementation(async () => true);
 	release.mockClear();
@@ -245,6 +247,31 @@ test("!stop asks the running turn to stop and confirms", async () => {
 	expect(postMessage.mock.calls.at(-1)?.[0].text).toBe(
 		"Nothing is running in this thread.",
 	);
+});
+
+test("!stop works in a DM; !mute there stays ordinary text", async () => {
+	await processAgentMessage({
+		...params,
+		event: {
+			...params.event,
+			type: "message",
+			channel_type: "im",
+			text: "!stop",
+		},
+	});
+	expect(requestStop).toHaveBeenCalledTimes(1);
+	expect(runAgent).not.toHaveBeenCalled();
+	await processAgentMessage({
+		...params,
+		event: {
+			...params.event,
+			type: "message",
+			channel_type: "im",
+			text: "!mute",
+		},
+	});
+	expect(setQuiet).not.toHaveBeenCalled();
+	expect(runAgent).toHaveBeenCalledTimes(1);
 });
 
 test("the agent is given a way to check for a stop request", async () => {
