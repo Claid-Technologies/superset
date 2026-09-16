@@ -9,7 +9,7 @@ import { isCloudAgentId } from "@superset/shared/cloud-agent-launch";
 import type { TRPCRouterRecord } from "@trpc/server";
 import { TRPCError } from "@trpc/server";
 import { Client } from "@upstash/qstash";
-import { and, asc, desc, eq, inArray, isNull, ne } from "drizzle-orm";
+import { and, asc, desc, eq, isNull, ne } from "drizzle-orm";
 import { z } from "zod";
 import { env } from "../../env";
 import { assertCloudAccess, assertMember } from "../../lib/cloud-guards";

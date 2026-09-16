@@ -43,9 +43,16 @@ export interface GitAuthor {
 	email: string;
 }
 
-/** The API's own hostname, as the firewall needs it: no scheme, no path. */
-function apiHost(): string {
-	return new URL(env.NEXT_PUBLIC_API_URL).host;
+/**
+ * The API's own hostname, as the firewall needs it: no scheme, no path. Null
+ * where the API URL is not configured, which is a test and not a deployment.
+ */
+function apiHost(): string | null {
+	try {
+		return new URL(env.NEXT_PUBLIC_API_URL).host;
+	} catch {
+		return null;
+	}
 }
 
 /**
@@ -155,13 +162,16 @@ export async function deriveSandboxCredentials(
 	// The box's own hands: `superset` on its PATH speaks to the API as the
 	// workspace, and the credential is added here rather than given to the box.
 	// What it may do is narrowed on the API side, in sandboxCredentialProcedures.
-	allow[apiHost()] = rule({
-		[SANDBOX_API_CREDENTIAL_HEADER]: `${inputs.workspaceId}.${await sandboxApiCredential(
-			env.SANDBOX_GATE_SECRET,
-			inputs.workspaceId,
-		)}`,
-	});
-	managedEnv.SUPERSET_API_KEY = SANDBOX_CREDENTIAL_PLACEHOLDER;
+	const api = apiHost();
+	if (api) {
+		allow[api] = rule({
+			[SANDBOX_API_CREDENTIAL_HEADER]: `${inputs.workspaceId}.${await sandboxApiCredential(
+				env.SANDBOX_GATE_SECRET,
+				inputs.workspaceId,
+			)}`,
+		});
+		managedEnv.SUPERSET_API_KEY = SANDBOX_CREDENTIAL_PLACEHOLDER;
+	}
 
 	// The catch-all keeps the rest of the internet reachable; without it a
 	// custom policy denies everything it does not list.
