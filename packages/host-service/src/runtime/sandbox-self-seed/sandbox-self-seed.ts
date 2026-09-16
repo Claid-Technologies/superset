@@ -109,8 +109,6 @@ export function readSandboxIdentity(
 	};
 }
 
-const PROVISION_MARKER = join(SANDBOX_PATHS.state, "provisioned");
-const PROVISION_LOG = join(SANDBOX_PATHS.logs, "provision.log");
 const START_HOOK_MARKER = join(SANDBOX_PATHS.run, "start-hook.pid");
 const START_HOOK_LOG = join(SANDBOX_PATHS.logs, "start-hook.log");
 /** Long enough for exec to fail, short enough that boot does not wait on it. */
@@ -154,63 +152,6 @@ function readTail(path: string): string {
 }
 
 /**
- * The repository's `provision` hook: what a workspace needs once, not every
- * boot — dependencies, its own database, its `.env`. The marker lives in the
- * state directory, which a golden is stripped of, so a fork provisions itself
- * rather than inheriting the answer. Awaited, because the start hook that
- * follows is what needs the result.
- */
-export async function runSandboxProvisionHook(
-	identity: SandboxIdentity,
-): Promise<
-	| { provisioned: true; command: string }
-	| {
-			provisioned: false;
-			reason: "already-provisioned" | "no-hook" | "failed";
-			exitCode?: number | null;
-			log?: string;
-	  }
-> {
-	if (existsSync(PROVISION_MARKER))
-		return { provisioned: false, reason: "already-provisioned" };
-	const resolved = resolveScript("provision", {
-		repoPath: identity.hooksPath,
-		projectId: identity.workspaceId,
-	});
-	const commands = !resolved
-		? null
-		: resolved.kind === "commands"
-			? resolved.commands
-			: [`bash ${shellSingleQuote(resolved.scriptPath)}`];
-	if (!commands?.length) return { provisioned: false, reason: "no-hook" };
-	const command = commands.join(" && ");
-	const cwd = resolved?.cwd
-		? resolve(identity.hooksPath, resolved.cwd)
-		: identity.hooksPath;
-	const log = openSync(PROVISION_LOG, "a");
-	const child = spawn("bash", ["-lc", command], {
-		cwd: existsSync(cwd) ? cwd : identity.hooksPath,
-		env: { ...process.env, ...getManagedEnv(), IS_SANDBOX: "1" },
-		stdio: ["ignore", log, log],
-	});
-	const code = await new Promise<number | null>((settle) => {
-		child.once("exit", (exitCode) => settle(exitCode));
-	});
-	if (code !== 0) {
-		console.error(`[sandbox] provision hook failed (exit ${code}): ${command}`);
-		return {
-			provisioned: false,
-			reason: "failed",
-			exitCode: code,
-			log: readTail(PROVISION_LOG),
-		};
-	}
-	writeFileSync(PROVISION_MARKER, `${new Date().toISOString()}\n`);
-	console.log(`[sandbox] provisioned: ${command}`);
-	return { provisioned: true, command };
-}
-
-/**
  * Runs the repository's `start` hook: the services a workspace needs on
  * every boot. The boot runner asks for it once host-service answers, the
  * managed environment has been pushed and the checkout is in; it runs here
@@ -233,17 +174,24 @@ export async function runSandboxStartHook(
 			? resolved.commands
 			: [`bash ${shellSingleQuote(resolved.scriptPath)}`];
 	if (!commands?.length) return { started: false, reason: "no-hook" };
-	const command = commands.join(" && ");
+	// A repository lists steps; running them as one `&&` chain made a step that
+	// failed take the rest with it. Each is its own process, and the services
+	// still come up when something earlier had nothing to do.
 	const configured = resolved?.cwd
 		? resolve(identity.hooksPath, resolved.cwd)
 		: identity.hooksPath;
 	const log = openSync(START_HOOK_LOG, "a");
-	const child = spawn("bash", ["-lc", command], {
-		cwd: existsSync(configured) ? configured : identity.hooksPath,
-		env: { ...process.env, ...getManagedEnv(), IS_SANDBOX: "1" },
-		stdio: ["ignore", log, log],
-		detached: true,
-	});
+	const command = commands.join("; ");
+	const child = spawn(
+		"bash",
+		["-lc", commands.map((one) => `{ ${one}; }`).join("\n")],
+		{
+			cwd: existsSync(configured) ? configured : identity.hooksPath,
+			env: { ...process.env, ...getManagedEnv(), IS_SANDBOX: "1" },
+			stdio: ["ignore", log, log],
+			detached: true,
+		},
+	);
 	child.unref();
 	const pid = child.pid ?? 0;
 	startHookState = { state: "running", command, pid, since: Date.now() };

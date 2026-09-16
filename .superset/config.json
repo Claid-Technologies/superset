@@ -2,6 +2,5 @@
 	"setup": ["./.superset/setup.sh"],
 	"teardown": ["./.superset/teardown.sh"],
 	"run": ["bun dev"],
-	"provision": ["./.superset/setup.cloud.sh"],
-	"start": ["./.superset/dev-stack.cloud.sh"]
+	"start": ["./.superset/setup.cloud.sh", "./.superset/dev-stack.cloud.sh"]
 }

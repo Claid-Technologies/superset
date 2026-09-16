@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 # setup.sh for a cloud workspace: the variables arrive in this process's own
 # environment rather than a checkout's .env, and there is no machine state to
-# copy. The `provision` hook decides when it runs, which is once.
+# copy. Runs from the start hook on every boot and does nothing after the
+# first — a workspace's database and .env are ours to set up, not something
+# the platform should carry a phase for.
 set -uo pipefail
 
 SUPERSET_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -44,7 +46,19 @@ cloud_write_environment_env() {
   install -m 600 "$tmp" "$out"
 }
 
+# The branch name is derived, so this is how the script knows it already ran:
+# the workspace's .env names its own database.
+already_set_up() {
+  [ -f "$ROOT_DIR/.env" ] || return 1
+  grep -q "cloud-${SUPERSET_SANDBOX_WORKSPACE_ID}" "$ROOT_DIR/.env"
+}
+
 cloud_setup_main() {
+  if already_set_up; then
+    echo "This workspace already has its database and .env"
+    return 0
+  fi
+
   FAILED_STEPS=()
   SKIPPED_STEPS=()
 

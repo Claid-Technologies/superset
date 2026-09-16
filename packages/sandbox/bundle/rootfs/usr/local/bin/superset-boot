@@ -165,12 +165,17 @@ as_user env "DISPLAY=${SUPERSET_DISPLAY}" "HOME=${SUPERSET_HOME_DIR}" "USER=${SU
 	/usr/local/bin/superset-desktop-init >> "${SUPERSET_LOG_DIR}/desktop.log" 2>&1 &
 stamp "desktop.start"
 
-# The repository's provision and start hooks: what a workspace needs once,
-# then the services it needs every boot.
+# The repository's start hook: the services a workspace needs every boot.
 # host-service runs it, because the environment the hook needs is pushed
 # into host-service after boot and never leaves it; this runner decides
 # when: once host-service answers, the push has landed and the checkout is in.
 start_hook() {
+	# A probe boots an image to check it and is thrown away; the repository's
+	# services are not what it is checking.
+	if [ "${SUPERSET_SANDBOX_ROLE:-workspace}" = "probe" ]; then
+		stamp "hook.skipped role=probe"
+		return 0
+	fi
 	local api="http://127.0.0.1:${SUPERSET_HOST_SERVICE_PORT}/trpc/sandbox"
 	local auth="Authorization: Bearer ${HOST_SERVICE_SECRET}"
 	local i
@@ -181,20 +186,6 @@ start_hook() {
 	done
 	if [ "$i" -ge 1200 ]; then stamp "hook.skipped no environment push within 120s"; return 0; fi
 	local out
-	# Once per workspace, and before the services that need what it installs.
-	if [ "${SUPERSET_SANDBOX_ROLE:-workspace}" = "probe" ]; then
-		stamp "provision.skipped role=probe"
-	else
-	out="$(curl -fs --max-time 3600 -X POST -H "$auth" -H 'Content-Type: application/json' -d '{}' "${api}.runProvisionHook" 2>&1)" ||
-		{ stamp "provision.failed ${out:0:160}"; }
-	case "$out" in
-		*'"provisioned":true'*) stamp "provision.done" ;;
-		*'"already-provisioned"'*) stamp "provision.skipped already done" ;;
-		*'"no-hook"'*) stamp "provision.none" ;;
-		*'"failed"'*) stamp "provision.failed ${out:0:200}" ;;
-	esac
-	fi
-
 	out="$(curl -fs -X POST -H "$auth" -H 'Content-Type: application/json' -d '{}' "${api}.runStartHook" 2>&1)" ||
 		{ stamp "hook.failed ${out:0:160}"; return 0; }
 	case "$out" in

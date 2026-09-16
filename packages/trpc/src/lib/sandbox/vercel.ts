@@ -398,7 +398,6 @@ const INHERITED_IDENTITY = [
 	SANDBOX_PATHS.checkouts,
 	`${SANDBOX_PATHS.state}/agent-launched`,
 	`${SANDBOX_PATHS.state}/db-branch`,
-	`${SANDBOX_PATHS.state}/provisioned`,
 	`${SANDBOX_PATHS.home}/.superset/host`,
 	`${SANDBOX_PATHS.home}/.gitconfig`,
 	`${SANDBOX_PATHS.workspace}/.env`,

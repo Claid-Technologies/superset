@@ -97,8 +97,8 @@ export const sandboxIdentitySchema = z.object({
 	SUPERSET_SANDBOX_PROVIDER: z.string().min(1),
 	/**
 	 * What this box is for. A `probe` boots an image to check it and is thrown
-	 * away, so it skips the repository's `provision` hook — that hook gives a
-	 * workspace its own database, and a probe would leave one behind.
+	 * away, so it does not run the repository's start hook: those are a
+	 * workspace's services, and whatever they create would be left behind.
 	 */
 	SUPERSET_SANDBOX_ROLE: z.enum(["workspace", "probe"]).optional(),
 	/**
