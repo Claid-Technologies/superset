@@ -16,13 +16,17 @@ import {
 
 interface ReplyBarProps {
 	replyingTo: string | null;
+	excerpt?: string;
 	pending: boolean;
 	onCancelReply: () => void;
 	onSubmit: (body: string) => Promise<void>;
 }
 
 export const ReplyBar = forwardRef<CommentComposerHandle, ReplyBarProps>(
-	function ReplyBar({ replyingTo, pending, onCancelReply, onSubmit }, ref) {
+	function ReplyBar(
+		{ replyingTo, excerpt, pending, onCancelReply, onSubmit },
+		ref,
+	) {
 		const { t } = useLingui();
 		const insets = useSafeAreaInsets();
 		const keyboard = useAnimatedKeyboard();
@@ -37,13 +41,20 @@ export const ReplyBar = forwardRef<CommentComposerHandle, ReplyBarProps>(
 				className="border-border bg-background border-t px-4 pt-2"
 			>
 				{replyingTo ? (
-					<View className="mb-2 flex-row items-center justify-between">
-						<Text
-							className="text-muted-foreground shrink text-xs"
-							numberOfLines={1}
-						>
-							{t({ message: `Replying to ${replyingTo}` })}
-						</Text>
+					<View className="mb-2 flex-row items-center justify-between gap-2">
+						<View className="shrink flex-row items-baseline gap-1.5">
+							<Text className="text-muted-foreground text-xs" numberOfLines={1}>
+								{t({ message: `Replying to ${replyingTo}` })}
+							</Text>
+							{excerpt ? (
+								<Text
+									className="text-muted-foreground/60 shrink text-xs"
+									numberOfLines={1}
+								>
+									{excerpt}
+								</Text>
+							) : null}
+						</View>
 						<Pressable
 							accessibilityRole="button"
 							accessibilityLabel={t({ message: "Cancel reply" })}
