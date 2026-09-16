@@ -32,6 +32,9 @@ function readTrimmed(path: string): string | null {
 }
 
 /** What the boot log and the runtime pointer say about this box. */
+/** When this process started, so a client can tell a restart from a reconnect. */
+const STARTED_AT = Date.now();
+
 export function readSandboxBootStatus(): {
 	bundle: string | null;
 	runtime: string | null;
@@ -39,9 +42,11 @@ export function readSandboxBootStatus(): {
 	ready: Record<string, boolean>;
 	/** Whether the control plane has pushed the managed environment this process. */
 	environmentPushed: boolean;
+	startedAt: number;
 } {
 	const log = readTrimmed(SANDBOX_PATHS.bootLog);
 	return {
+		startedAt: STARTED_AT,
 		environmentPushed: hasManagedEnv(),
 		bundle: readTrimmed(`${SANDBOX_PATHS.bundleRoot}/current.bundle-hash`),
 		runtime: readTrimmed(`${SANDBOX_PATHS.hostRoot}/current.version`),
