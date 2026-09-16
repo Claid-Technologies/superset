@@ -29,19 +29,11 @@ export const FRAME_CHANNEL = "superset-comments/frame";
 
 export const PENDING_ANCHOR_ID = "superset-pending-anchor";
 
-export interface RuntimePin {
-	id: string;
-	anchor: CommentAnchor;
-	label: string;
-	resolved: boolean;
-}
-
 export type HostMessageBody =
 	| { type: "ready" }
 	| { type: "enable-pinch-zoom" }
 	| { type: "set-mode"; enabled: boolean; locked: boolean }
 	| { type: "track"; anchors: { id: string; anchor: CommentAnchor }[] }
-	| { type: "render-pins"; pins: RuntimePin[] }
 	| { type: "restore-scroll"; y: number };
 
 export type HostMessage = HostMessageBody & { channel: typeof HOST_CHANNEL };
@@ -67,8 +59,7 @@ export type FrameMessage =
 			channel: typeof FRAME_CHANNEL;
 			type: "rects";
 			entries: { id: string; rect: FrameRect | null }[];
-	  }
-	| { channel: typeof FRAME_CHANNEL; type: "pin-press"; id: string };
+	  };
 
 /**
  * Runs inside the served page. It is generic — it never reads page content,
@@ -91,9 +82,6 @@ export const PAGE_COMMENTS_RUNTIME_SOURCE = `(() => {
 	let restoreDeadline = 0;
 	let lastScrollPost = 0;
 	let settleTimer = 0;
-	let pins = [];
-	let pinLayer = null;
-	let placeFrame = 0;
 	const SCROLL_POST_IDLE_MS = 150;
 
 	const post = (message) => {
@@ -143,11 +131,6 @@ export const PAGE_COMMENTS_RUNTIME_SOURCE = `(() => {
 		return Math.min(Math.max(offset / extent, 0), 1);
 	};
 
-	const inset = (offset, extent) => {
-		if (extent <= PIN_SIZE) return extent / 2;
-		return Math.min(Math.max(offset, PIN_SIZE / 2), extent - PIN_SIZE / 2);
-	};
-
 	const targetAt = (x, y) => {
 		const el = document.elementFromPoint(x, y);
 		if (!el || el === document.body || el === document.documentElement) return null;
@@ -170,94 +153,6 @@ export const PAGE_COMMENTS_RUNTIME_SOURCE = `(() => {
 				const el = resolve(t.anchor.path);
 				return { id: t.id, rect: el ? rectOf(el) : null };
 			}),
-		});
-	};
-
-	const PIN_SIZE = 28;
-	const STACK_OFFSET = 24;
-
-	const ensurePinLayer = () => {
-		if (pinLayer && pinLayer.isConnected) return pinLayer;
-		pinLayer = document.createElement("div");
-		pinLayer.setAttribute("data-superset-pins", "");
-		pinLayer.style.cssText =
-			"position:absolute;top:0;left:0;width:0;height:0;z-index:2147483646;";
-		document.body.appendChild(pinLayer);
-		return pinLayer;
-	};
-
-	const pinElement = (pin) => {
-		const el = document.createElement("button");
-		el.type = "button";
-		el.textContent = pin.label || "?";
-		el.style.cssText =
-			"position:absolute;display:flex;align-items:center;justify-content:center;" +
-			"width:" + PIN_SIZE + "px;height:" + PIN_SIZE + "px;padding:0;margin:0;" +
-			"border-radius:9999px;border-bottom-left-radius:4px;" +
-			"border:1px solid rgba(255,255,255,0.2);" +
-			"background:" + (pin.resolved ? "#737373" : "#2563eb") + ";" +
-			"color:#fff;font:600 11px system-ui,-apple-system,sans-serif;" +
-			"box-shadow:0 2px 6px rgba(0,0,0,0.3);cursor:pointer;" +
-			"-webkit-tap-highlight-color:transparent;touch-action:manipulation;";
-		el.addEventListener(
-			"click",
-			(event) => {
-				event.preventDefault();
-				event.stopPropagation();
-				post({ type: "pin-press", id: pin.id });
-			},
-			true,
-		);
-		return el;
-	};
-
-	const placePins = () => {
-		if (!pins.length) {
-			if (pinLayer) pinLayer.replaceChildren();
-			return;
-		}
-		const layer = ensurePinLayer();
-		const placed = [];
-		const next = document.createDocumentFragment();
-
-		for (const pin of pins) {
-			const el = resolve(pin.anchor.path);
-			if (!el) continue;
-			const r = el.getBoundingClientRect();
-			if (r.width === 0 && r.height === 0) continue;
-
-			const fx = pin.anchor.offsetX === undefined ? 0 : pin.anchor.offsetX;
-			const fy = pin.anchor.offsetY === undefined ? 0 : pin.anchor.offsetY;
-			const x = r.left + scrollX + inset(fx * r.width, r.width);
-			const y = r.top + scrollY + inset(fy * r.height, r.height);
-
-			let index = 0;
-			while (
-				placed.some(
-					(p) =>
-						Math.abs(p.x - (x + index * STACK_OFFSET)) < STACK_OFFSET &&
-						Math.abs(p.y - y) < PIN_SIZE,
-				)
-			) {
-				index += 1;
-			}
-			placed.push({ x: x + index * STACK_OFFSET, y });
-
-			const node = pinElement(pin);
-			node.style.left = x - PIN_SIZE / 2 + index * STACK_OFFSET + "px";
-			node.style.top = y - PIN_SIZE / 2 + "px";
-			node.style.zIndex = String(index);
-			next.appendChild(node);
-		}
-
-		layer.replaceChildren(next);
-	};
-
-	const schedulePlace = () => {
-		if (placeFrame) return;
-		placeFrame = requestAnimationFrame(() => {
-			placeFrame = 0;
-			placePins();
 		});
 	};
 
@@ -378,10 +273,7 @@ export const PAGE_COMMENTS_RUNTIME_SOURCE = `(() => {
 		},
 		true,
 	);
-	addEventListener("resize", () => {
-		schedule();
-		schedulePlace();
-	});
+	addEventListener("resize", schedule);
 	for (const type of ["wheel", "touchstart", "keydown"]) {
 		addEventListener(type, () => {
 			restoreY = null;
@@ -390,21 +282,15 @@ export const PAGE_COMMENTS_RUNTIME_SOURCE = `(() => {
 	new ResizeObserver(() => {
 		applyRestore();
 		schedule();
-		schedulePlace();
 	}).observe(document.documentElement);
 	new MutationObserver((records) => {
-		let ours = true;
 		for (const record of records) {
-			if (pinLayer && pinLayer.contains(record.target)) continue;
-			ours = false;
 			if (record.type === "childList") {
 				resolveCache.clear();
 				break;
 			}
 		}
-		if (ours) return;
 		schedule();
-		schedulePlace();
 	}).observe(document.documentElement, {
 		subtree: true,
 		childList: true,
@@ -430,10 +316,6 @@ export const PAGE_COMMENTS_RUNTIME_SOURCE = `(() => {
 		if (data.type === "track") {
 			tracked = Array.isArray(data.anchors) ? data.anchors : [];
 			schedule();
-		}
-		if (data.type === "render-pins") {
-			pins = Array.isArray(data.pins) ? data.pins : [];
-			schedulePlace();
 		}
 		if (data.type === "restore-scroll") {
 			restoreY = Number(data.y) || 0;

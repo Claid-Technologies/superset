@@ -24,10 +24,12 @@ import { Text } from "@/components/ui/text";
 import { errorCopy } from "@/lib/errors";
 import { PressableScale } from "@/screens/(authenticated)/components/PressableScale";
 import { usePageQuery } from "../hooks/usePages";
+import { CommentPin } from "./components/CommentPin";
 import { CommentPopover } from "./components/CommentPopover";
 import { PageFrame, type PageFrameHandle } from "./components/PageFrame";
 import { usePageCommentUser } from "./hooks/usePageCommentUser";
 import { usePageCommentStore } from "./stores/pageCommentStore";
+import { pinPointOf, stackPins } from "./utils/pinLayout";
 
 interface Selection {
 	anchor: CommentAnchor;
@@ -76,7 +78,6 @@ export function PageDetailScreen({
 	const [commentMode, setCommentMode] = useState(false);
 	const [selection, setSelection] = useState<Selection | null>(null);
 	const rememberPickRef = useRef<(anchor: CommentAnchor) => void>(() => {});
-	const openThreadRef = useRef<(threadId: string) => void>(() => {});
 	const dismissSelectionRef = useRef<() => void>(() => {});
 	const selectionRef = useRef(selection);
 	selectionRef.current = selection;
@@ -136,30 +137,16 @@ export function PageDetailScreen({
 	useEffect(() => {
 		send({
 			type: "track",
-			anchors: selection
-				? [{ id: PENDING_ANCHOR_ID, anchor: selection.anchor }]
-				: [],
+			anchors: [
+				...unresolvedThreads.flatMap((thread) =>
+					thread.anchor ? [{ id: thread.id, anchor: thread.anchor }] : [],
+				),
+				...(selection
+					? [{ id: PENDING_ANCHOR_ID, anchor: selection.anchor }]
+					: []),
+			],
 		});
-	}, [selection, frameEpoch, send]);
-
-	// biome-ignore lint/correctness/useExhaustiveDependencies: frameEpoch redraws pins into a runtime that just restarted
-	useEffect(() => {
-		send({
-			type: "render-pins",
-			pins: unresolvedThreads.flatMap((thread) =>
-				thread.anchor
-					? [
-							{
-								id: thread.id,
-								anchor: thread.anchor,
-								label: getInitials(thread.comments[0]?.authorName) || "?",
-								resolved: thread.resolved,
-							},
-						]
-					: [],
-			),
-		});
-	}, [unresolvedThreads, frameEpoch, send]);
+	}, [unresolvedThreads, selection, frameEpoch, send]);
 
 	const selectionRect = selection
 		? (rects[PENDING_ANCHOR_ID] ?? selection.rect)
@@ -194,7 +181,6 @@ export function PageDetailScreen({
 		if (message.type === "pointer-down" && !submittingRef.current) {
 			dismissSelectionRef.current();
 		}
-		if (message.type === "pin-press") openThreadRef.current(message.id);
 		if (message.type === "pick") {
 			if (!selectionRef.current) {
 				const next = { anchor: message.anchor, rect: message.rect };
@@ -206,6 +192,22 @@ export function PageDetailScreen({
 		}
 	}, []);
 
+	const pins = useMemo(() => {
+		const out: Array<{ id: string; point: { x: number; y: number } }> = [];
+		for (const thread of unresolvedThreads) {
+			const rect = rects[thread.id];
+			if (rect && thread.anchor)
+				out.push({ id: thread.id, point: pinPointOf(rect, thread.anchor) });
+		}
+		return out;
+	}, [rects, unresolvedThreads]);
+
+	const stackIndex = useMemo(() => stackPins(pins), [pins]);
+	const pinPoints = useMemo(
+		() => new Map(pins.map((pin) => [pin.id, pin.point])),
+		[pins],
+	);
+
 	rememberPickRef.current = useCallback(
 		(anchor: CommentAnchor) => {
 			if (!pageId || !version) return;
@@ -214,7 +216,7 @@ export function PageDetailScreen({
 		[pageId, setPick, version],
 	);
 
-	openThreadRef.current = useCallback(
+	const openThread = useCallback(
 		(threadId: string) => {
 			void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 			setFocusThreadId(threadId);
@@ -377,6 +379,22 @@ export function PageDetailScreen({
 							);
 						}}
 					>
+						{unresolvedThreads.map((thread) => {
+							const point = pinPoints.get(thread.id);
+							if (!point) return null;
+							return (
+								<CommentPin
+									key={thread.id}
+									point={point}
+									stackIndex={stackIndex[thread.id] ?? 0}
+									initials={getInitials(thread.comments[0]?.authorName) || "?"}
+									resolved={thread.resolved}
+									active={false}
+									onPress={() => openThread(thread.id)}
+								/>
+							);
+						})}
+
 						{selectionRect ? (
 							<View
 								pointerEvents="none"

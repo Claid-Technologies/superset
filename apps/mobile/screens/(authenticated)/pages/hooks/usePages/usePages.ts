@@ -29,6 +29,7 @@ export function usePageQuery(slug: string): UseQueryResult<PulledPage> {
 	return useQuery({
 		queryKey: ["cloud", "page", "pull", organizationId, slug],
 		queryFn: () => apiClient.page.pull.query({ slug }),
+		enabled: Boolean(slug),
 		staleTime: PULLED_PAGE_STALE_MS,
 		retry: false,
 	});

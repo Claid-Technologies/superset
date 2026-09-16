@@ -276,7 +276,7 @@ msgstr "{0, plural, one {Ini akan mengimpor # worktree yang ada ke Superset seba
 
 #. placeholder {0}: resolved.length
 msgid "{0, plural, one {View # resolved comment} other {View # resolved comments}}"
-msgstr "{0, plural, other {Lihat # komentar yang selesai}}"
+msgstr "{0, plural, other {Lihat # komentar yang terselesaikan}}"
 
 #. placeholder {0}: mine.length
 msgid "{0, plural, one {Watching # page for comments} other {Watching # pages for comments}}"
@@ -7175,7 +7175,7 @@ msgid "Hide resolved ({resolvedCount})"
 msgstr "Sembunyikan yang terselesaikan ({resolvedCount})"
 
 msgid "Hide resolved comments"
-msgstr "Sembunyikan komentar yang selesai"
+msgstr "Sembunyikan komentar yang terselesaikan"
 
 msgid "Hide review comments"
 msgstr "Sembunyikan komentar review"

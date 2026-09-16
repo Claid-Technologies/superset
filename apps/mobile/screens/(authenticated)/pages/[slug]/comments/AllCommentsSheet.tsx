@@ -4,7 +4,7 @@ import {
 	usePageComments,
 	usePageCommentThreads,
 } from "@superset/cloud-client";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { Stack, useGlobalSearchParams, useRouter } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Alert, Pressable, ScrollView, View } from "react-native";
 import { Spinner } from "@/components/ui/spinner";
@@ -30,7 +30,7 @@ type PendingScroll = "end" | { threadId: string; atBottom: boolean };
 export function AllCommentsSheet() {
 	const { t } = useLingui();
 	const router = useRouter();
-	const { slug } = useLocalSearchParams<{ slug: string }>();
+	const { slug } = useGlobalSearchParams<{ slug: string }>();
 	const scrollRef = useRef<ScrollView>(null);
 	const composerRef = useRef<CommentComposerHandle>(null);
 	const threadLayout = useRef<Record<string, { y: number; height: number }>>(
@@ -148,153 +148,150 @@ export function AllCommentsSheet() {
 				/>
 			</Stack.Toolbar>
 
-			<View className="bg-background flex-1">
-				<ScrollView
-					ref={scrollRef}
-					className="flex-1"
-					contentContainerClassName="px-4 pb-4 pt-1"
-					contentInsetAdjustmentBehavior="automatic"
-					keyboardShouldPersistTaps="handled"
-					onLayout={(event) => {
-						viewportHeight.current = event.nativeEvent.layout.height;
-					}}
-					onContentSizeChange={() => {
-						const target = pendingScroll.current;
-						if (!target) return;
-						pendingScroll.current = null;
-						if (target === "end") {
-							scrollRef.current?.scrollToEnd({ animated: true });
-							return;
-						}
-						scrollToThread(target.threadId, target.atBottom);
-					}}
-				>
-					{loadError ? (
-						<View className="items-center justify-center px-8 py-24">
-							<Text className="text-center font-medium">
-								{t({ message: "Comments could not be loaded" })}
-							</Text>
-							<Text className="text-muted-foreground mt-1 text-center text-sm">
-								{errorCopy(loadError)}
-							</Text>
-							<Pressable
-								accessibilityRole="button"
-								onPress={() => refetchThreads()}
-								hitSlop={8}
-								className="mt-3 active:opacity-60"
-							>
-								<Text className="text-[13px] font-medium">
-									{t({ message: "Try again" })}
-								</Text>
-							</Pressable>
-						</View>
-					) : null}
-
-					{loading ? (
-						<View className="items-center justify-center py-24">
-							<Spinner className="size-5" />
-						</View>
-					) : null}
-
-					{!loadError && !loading && visible.length === 0 ? (
-						<View className="items-center justify-center px-8 py-24">
-							<Text className="text-muted-foreground text-center">
-								{t({ message: "No comments on this page yet" })}
-							</Text>
-							<Text className="text-muted-foreground/70 mt-1 text-center text-sm">
-								{t({ message: "Say something, or tap a block to pin a note." })}
-							</Text>
-						</View>
-					) : null}
-
-					{visible.map((thread) => {
-						const [root, ...replies] = thread.comments;
-						if (!root) return null;
-						const isExpanded = expanded[thread.id] ?? false;
-						const shown = isExpanded
-							? replies
-							: replies.slice(0, VISIBLE_REPLIES);
-						const hidden = replies.length - shown.length;
-
-						return (
-							<View
-								key={thread.id}
-								onLayout={(event) => {
-									const { y, height } = event.nativeEvent.layout;
-									threadLayout.current[thread.id] = { y, height };
-								}}
-								className={cn(
-									thread.resolved && "opacity-50",
-									replyingTo?.threadId === thread.id &&
-										"bg-muted/40 rounded-lg",
-								)}
-							>
-								<CommentRow
-									comment={root}
-									resolved={thread.resolved}
-									onReply={() => startReply(thread)}
-									onToggleResolved={() => void toggleResolved(thread)}
-								/>
-
-								{shown.map((reply) => (
-									<CommentRow key={reply.id} comment={reply} indented />
-								))}
-
-								{hidden > 0 ? (
-									<Pressable
-										accessibilityRole="button"
-										onPress={() =>
-											setExpanded((previous) => ({
-												...previous,
-												[thread.id]: true,
-											}))
-										}
-										hitSlop={8}
-										className="self-start py-1 pl-11 active:opacity-60"
-									>
-										<Text className="text-muted-foreground text-xs font-medium">
-											<Plural
-												value={hidden}
-												one="View # more reply"
-												other="View # more replies"
-											/>
-										</Text>
-									</Pressable>
-								) : null}
-							</View>
-						);
-					})}
-
-					{resolved.length > 0 ? (
+			<ScrollView
+				ref={scrollRef}
+				className="bg-background flex-1"
+				contentContainerClassName="px-4 pb-4 pt-1"
+				contentInsetAdjustmentBehavior="automatic"
+				keyboardShouldPersistTaps="handled"
+				onLayout={(event) => {
+					viewportHeight.current = event.nativeEvent.layout.height;
+				}}
+				onContentSizeChange={() => {
+					const target = pendingScroll.current;
+					if (!target) return;
+					pendingScroll.current = null;
+					if (target === "end") {
+						scrollRef.current?.scrollToEnd({ animated: true });
+						return;
+					}
+					scrollToThread(target.threadId, target.atBottom);
+				}}
+			>
+				{loadError ? (
+					<View className="items-center justify-center px-8 py-24">
+						<Text className="text-center font-medium">
+							{t({ message: "Comments could not be loaded" })}
+						</Text>
+						<Text className="text-muted-foreground mt-1 text-center text-sm">
+							{errorCopy(loadError)}
+						</Text>
 						<Pressable
 							accessibilityRole="button"
-							onPress={() => setShowResolved((shown) => !shown)}
+							onPress={() => refetchThreads()}
 							hitSlop={8}
-							className="self-start py-3 active:opacity-60"
+							className="mt-3 active:opacity-60"
 						>
-							<Text className="text-muted-foreground text-[13px] font-medium">
-								{showResolved ? (
-									t({ message: "Hide resolved comments" })
-								) : (
-									<Plural
-										value={resolved.length}
-										one="View # resolved comment"
-										other="View # resolved comments"
-									/>
-								)}
+							<Text className="text-[13px] font-medium">
+								{t({ message: "Try again" })}
 							</Text>
 						</Pressable>
-					) : null}
-				</ScrollView>
+					</View>
+				) : null}
 
-				<ReplyBar
-					ref={composerRef}
-					replyingTo={replyingTo?.name ?? null}
-					pending={store.submitting}
-					onCancelReply={() => setReplyingTo(null)}
-					onSubmit={submit}
-				/>
-			</View>
+				{loading ? (
+					<View className="items-center justify-center py-24">
+						<Spinner className="size-5" />
+					</View>
+				) : null}
+
+				{!loadError && !loading && visible.length === 0 ? (
+					<View className="items-center justify-center px-8 py-24">
+						<Text className="text-muted-foreground text-center">
+							{t({ message: "No comments on this page yet" })}
+						</Text>
+						<Text className="text-muted-foreground/70 mt-1 text-center text-sm">
+							{t({ message: "Say something, or tap a block to pin a note." })}
+						</Text>
+					</View>
+				) : null}
+
+				{visible.map((thread) => {
+					const [root, ...replies] = thread.comments;
+					if (!root) return null;
+					const isExpanded = expanded[thread.id] ?? false;
+					const shown = isExpanded
+						? replies
+						: replies.slice(0, VISIBLE_REPLIES);
+					const hidden = replies.length - shown.length;
+
+					return (
+						<View
+							key={thread.id}
+							onLayout={(event) => {
+								const { y, height } = event.nativeEvent.layout;
+								threadLayout.current[thread.id] = { y, height };
+							}}
+							className={cn(
+								thread.resolved && "opacity-50",
+								replyingTo?.threadId === thread.id && "bg-muted/40 rounded-lg",
+							)}
+						>
+							<CommentRow
+								comment={root}
+								resolved={thread.resolved}
+								onReply={() => startReply(thread)}
+								onToggleResolved={() => void toggleResolved(thread)}
+							/>
+
+							{shown.map((reply) => (
+								<CommentRow key={reply.id} comment={reply} indented />
+							))}
+
+							{hidden > 0 ? (
+								<Pressable
+									accessibilityRole="button"
+									onPress={() =>
+										setExpanded((previous) => ({
+											...previous,
+											[thread.id]: true,
+										}))
+									}
+									hitSlop={8}
+									className="self-start py-1 pl-11 active:opacity-60"
+								>
+									<Text className="text-muted-foreground text-xs font-medium">
+										<Plural
+											value={hidden}
+											one="View # more reply"
+											other="View # more replies"
+										/>
+									</Text>
+								</Pressable>
+							) : null}
+						</View>
+					);
+				})}
+
+				{resolved.length > 0 ? (
+					<Pressable
+						accessibilityRole="button"
+						onPress={() => setShowResolved((shown) => !shown)}
+						hitSlop={8}
+						className="self-start py-3 active:opacity-60"
+					>
+						<Text className="text-muted-foreground text-[13px] font-medium">
+							{showResolved ? (
+								t({ message: "Hide resolved comments" })
+							) : (
+								<Plural
+									value={resolved.length}
+									one="View # resolved comment"
+									other="View # resolved comments"
+								/>
+							)}
+						</Text>
+					</Pressable>
+				) : null}
+			</ScrollView>
+
+			<ReplyBar
+				ref={composerRef}
+				replyingTo={replyingTo?.name ?? null}
+				pending={store.submitting}
+				onCancelReply={() => setReplyingTo(null)}
+				onSubmit={submit}
+			/>
 		</>
 	);
 }
