@@ -158,6 +158,8 @@ interface RunSlackAgentParams {
 	/** The newest thread message the agent had read before this turn. */
 	lastContextTs?: string;
 	onProgress?: (status: string) => void | Promise<void>;
+	/** Checked between steps; true ends the turn with the stopped copy. */
+	shouldStop?: () => Promise<boolean>;
 }
 
 /** Everything after the handler's claim shares one budget (job maxDuration is 300s). */
@@ -183,6 +185,7 @@ const AGENT_COPY = {
 	truncated:
 		"My reply was cut off before it finished. Ask me to continue, or narrow the request. Anything I completed is listed below.",
 	refusal: "I can't help with that request.",
+	stopped: "Stopped. Anything I completed before that is listed below.",
 	empty: "I finished without an answer to show. Ask again with more detail.",
 } as const;
 
@@ -661,7 +664,13 @@ ${agentContext}`;
 			},
 		];
 
-		const request = () => {
+		const stopIfRequested = async () => {
+			if (await params.shouldStop?.()) {
+				throw new SlackAgentError(AGENT_COPY.stopped);
+			}
+		};
+		const request = async () => {
+			await stopIfRequested();
 			const remaining = deadline - Date.now();
 			if (remaining <= 0) throw new SlackAgentError(AGENT_COPY.timeLimit);
 			return anthropic.messages.create(
@@ -747,6 +756,7 @@ ${agentContext}`;
 				(b): b is Anthropic.ToolUseBlock => b.type === "tool_use",
 			);
 
+			await stopIfRequested();
 			const toolResults: Anthropic.ToolResultBlockParam[] = [];
 
 			for (const toolUse of toolUseBlocks) {

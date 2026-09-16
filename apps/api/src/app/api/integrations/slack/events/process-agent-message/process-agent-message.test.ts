@@ -94,6 +94,8 @@ const beginThread = mock(
 const finishThread = mock(async (_args: unknown) => {});
 const setQuiet = mock(async (_args: unknown) => {});
 const followUpsEnabled = mock(async (_teamId: string) => true);
+const requestStop = mock(async (_key: unknown) => true);
+const stopRequested = mock(async (_id: string) => false);
 const takeQueued = mock(
 	async (
 		_id: string,
@@ -107,6 +109,8 @@ mock.module("../utils/thread-sessions", () => ({
 	finishThreadRun: finishThread,
 	setThreadQuiet: setQuiet,
 	threadFollowUpsEnabled: followUpsEnabled,
+	requestThreadStop: requestStop,
+	threadStopRequested: stopRequested,
 	takeQueuedEvents: takeQueued,
 	completeHandBack: completeHandoff,
 	abandonHandBack: abandonHandoff,
@@ -117,6 +121,7 @@ mock.module("../utils/thread-sessions", () => ({
 			.toLowerCase();
 		if (t.startsWith("!mute")) return "mute";
 		if (t.startsWith("!unmute")) return "unmute";
+		if (t.startsWith("!stop")) return "stop";
 		return null;
 	},
 	renderThreadMemory: (entities: { label: string }[]) =>
@@ -220,6 +225,36 @@ test("with the flag off, !mute is an ordinary message", async () => {
 	});
 	expect(setQuiet).not.toHaveBeenCalled();
 	expect(runAgent).toHaveBeenCalledTimes(1);
+});
+
+test("!stop asks the running turn to stop and confirms", async () => {
+	await processAgentMessage({
+		...params,
+		event: { ...params.event, text: "<@UBOT> !stop" },
+	});
+	expect(requestStop).toHaveBeenCalledWith(
+		expect.objectContaining({ threadTs: "1.0" }),
+	);
+	expect(runAgent).not.toHaveBeenCalled();
+	expect(postMessage.mock.calls[0]?.[0].text).toBe("Stopping.");
+	requestStop.mockImplementationOnce(async () => false);
+	await processAgentMessage({
+		...params,
+		event: { ...params.event, text: "<@UBOT> !stop" },
+	});
+	expect(postMessage.mock.calls.at(-1)?.[0].text).toBe(
+		"Nothing is running in this thread.",
+	);
+});
+
+test("the agent is given a way to check for a stop request", async () => {
+	stopRequested.mockImplementationOnce(async () => true);
+	await processAgentMessage(params);
+	const args = runAgent.mock.calls[0]?.[0] as {
+		shouldStop: () => Promise<boolean>;
+	};
+	expect(await args.shouldStop()).toBe(true);
+	expect(stopRequested).toHaveBeenCalledWith("thread-session");
 });
 
 test("!unmute reopens the thread without running the agent", async () => {

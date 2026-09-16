@@ -5,6 +5,7 @@ export {
 	finishThreadRun,
 	parseThreadCommand,
 	renderThreadMemory,
+	requestThreadStop,
 	resetThreadFollowUpFlagCache,
 	setThreadQuiet,
 	type ThreadCommand,
@@ -12,4 +13,5 @@ export {
 	takeQueuedEvents,
 	threadFollowUpsEnabled,
 	threadFollowUpTarget,
+	threadStopRequested,
 } from "./thread-sessions";

@@ -270,6 +270,31 @@ describe("agent loop", () => {
 		expect(rateLimitWaitMs(headers(null), now)).toBe(2_000);
 	});
 
+	test("a stop request ends the turn with the stopped copy and keeps completed actions", async () => {
+		create.mockImplementation(async () => toolResponse());
+		callTool.mockImplementation(async ({ name }) =>
+			name === "tasks_create"
+				? {
+						structuredContent: {
+							task: { id: "task", title: "Task", slug: "SUP-1" },
+						},
+					}
+				: {},
+		);
+		// First check (before the first request) passes; the stop lands before
+		// the second request, after one tool call has completed.
+		let checks = 0;
+		const result = await runSlackAgent({
+			...params,
+			shouldStop: async () => ++checks > 2,
+		});
+		expect(result.text).toContain("Stopped");
+		expect(result.actions).toHaveLength(1);
+		expect(
+			create.mock.calls.filter(([req]) => "tools" in (req as object)),
+		).toHaveLength(1);
+	});
+
 	test("text split around citations comes back as one paragraph", async () => {
 		create.mockImplementationOnce(async () => ({
 			stop_reason: "end_turn",

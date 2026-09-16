@@ -29,7 +29,7 @@ interface ThreadKey {
 	threadTs: string;
 }
 
-export type ThreadCommand = "mute" | "unmute";
+export type ThreadCommand = "mute" | "unmute" | "stop";
 
 /**
  * Explicit commands only. Intent phrased in prose ("only reply when I
@@ -43,7 +43,26 @@ export function parseThreadCommand(text: string): ThreadCommand | null {
 		.toLowerCase();
 	if (/^!(mute|quiet)\b/.test(stripped)) return "mute";
 	if (/^!(unmute|unquiet)\b/.test(stripped)) return "unmute";
+	if (/^!(stop|cancel)\b/.test(stripped)) return "stop";
 	return null;
+}
+
+/** Ask the running turn to stop at its next step. False when nothing is running. */
+export async function requestThreadStop(key: ThreadKey): Promise<boolean> {
+	const [row] = await db
+		.update(slackThreadSessions)
+		.set({ stopRequestedAt: new Date() })
+		.where(and(whereThread(key), eq(slackThreadSessions.status, "running")))
+		.returning({ id: slackThreadSessions.id });
+	return row !== undefined;
+}
+
+export async function threadStopRequested(id: string): Promise<boolean> {
+	const row = await db.query.slackThreadSessions.findFirst({
+		where: eq(slackThreadSessions.id, id),
+		columns: { stopRequestedAt: true },
+	});
+	return row?.stopRequestedAt != null;
 }
 
 const flagCache = new Map<string, { enabled: boolean; expiresAt: number }>();
@@ -187,7 +206,7 @@ export async function beginThreadRun(
 		const now = new Date();
 		const [claimed] = await db
 			.update(slackThreadSessions)
-			.set({ status: "running", lastActivityAt: now })
+			.set({ status: "running", lastActivityAt: now, stopRequestedAt: null })
 			.where(
 				and(
 					whereThread(key),
@@ -332,6 +351,7 @@ export async function finishThreadRun(params: {
 		.update(slackThreadSessions)
 		.set({
 			status: "idle",
+			stopRequestedAt: null,
 			lastContextTs: params.lastContextTs,
 			lastActivityAt: new Date(),
 			...(entities.length > 0
