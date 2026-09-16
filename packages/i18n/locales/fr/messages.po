@@ -16586,6 +16586,9 @@ msgstr "Espace de travail créé"
 msgid "Workspace created from PR"
 msgstr "Espace de travail créé depuis la pull request"
 
+msgid "Workspace details"
+msgstr "Détails de l'espace de travail"
+
 msgid "Workspace ID copied"
 msgstr "ID de l'espace de travail copié"
 

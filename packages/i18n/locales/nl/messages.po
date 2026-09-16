@@ -16586,6 +16586,9 @@ msgstr "Werkruimte aangemaakt"
 msgid "Workspace created from PR"
 msgstr "Werkruimte aangemaakt vanuit PR"
 
+msgid "Workspace details"
+msgstr "Werkruimtedetails"
+
 msgid "Workspace ID copied"
 msgstr "Werkruimte-ID gekopieerd"
 

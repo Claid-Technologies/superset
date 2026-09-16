@@ -16586,6 +16586,9 @@ msgstr "Área de trabalho criada"
 msgid "Workspace created from PR"
 msgstr "Área de trabalho criada a partir do PR"
 
+msgid "Workspace details"
+msgstr "Detalhes da área de trabalho"
+
 msgid "Workspace ID copied"
 msgstr "ID da área de trabalho copiado"
 

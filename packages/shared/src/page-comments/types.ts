@@ -12,6 +12,7 @@ export interface PageComment {
 	authorImage: string | null;
 	authorKind: "human" | "agent";
 	authorUserId: string | null;
+	agentLabel: string | null;
 	body: string;
 	createdAt: number;
 }

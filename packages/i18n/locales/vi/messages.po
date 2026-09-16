@@ -16586,6 +16586,9 @@ msgstr "Đã tạo workspace"
 msgid "Workspace created from PR"
 msgstr "Đã tạo workspace từ PR"
 
+msgid "Workspace details"
+msgstr "Chi tiết workspace"
+
 msgid "Workspace ID copied"
 msgstr "Đã sao chép ID workspace"
 

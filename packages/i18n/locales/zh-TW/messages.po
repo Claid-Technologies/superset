@@ -16586,6 +16586,9 @@ msgstr "工作區已建立"
 msgid "Workspace created from PR"
 msgstr "已從PR建立工作區"
 
+msgid "Workspace details"
+msgstr "工作區詳細資料"
+
 msgid "Workspace ID copied"
 msgstr "已複製工作區ID"
 

@@ -16586,6 +16586,9 @@ msgstr "Pracovní prostor vytvořen"
 msgid "Workspace created from PR"
 msgstr "Pracovní prostor vytvořen z PR"
 
+msgid "Workspace details"
+msgstr "Podrobnosti pracovního prostoru"
+
 msgid "Workspace ID copied"
 msgstr "ID pracovního prostoru zkopírováno"
 

@@ -16586,6 +16586,9 @@ msgstr "워크스페이스를 만들었습니다"
 msgid "Workspace created from PR"
 msgstr "PR에서 워크스페이스를 만들었습니다"
 
+msgid "Workspace details"
+msgstr "워크스페이스 세부 정보"
+
 msgid "Workspace ID copied"
 msgstr "워크스페이스 ID 복사됨"
 

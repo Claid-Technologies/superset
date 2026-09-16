@@ -16586,6 +16586,9 @@ msgstr "Рабочая область создана"
 msgid "Workspace created from PR"
 msgstr "Рабочая область создана из PR"
 
+msgid "Workspace details"
+msgstr "Сведения о рабочей области"
+
 msgid "Workspace ID copied"
 msgstr "ID рабочей области скопирован"
 

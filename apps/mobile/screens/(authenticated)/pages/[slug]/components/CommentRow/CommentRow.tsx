@@ -2,6 +2,7 @@ import { useLingui } from "@lingui/react/macro";
 import type { ServerThread } from "@superset/cloud-client";
 import { formatDate } from "@superset/i18n/format";
 import { getInitials } from "@superset/shared/names";
+import { commentAuthor } from "@superset/shared/page-comments";
 import { Bot } from "lucide-react-native";
 import { Pressable, View } from "react-native";
 import { Icon } from "@/components/ui/icon";
@@ -23,8 +24,7 @@ export function CommentRow({
 	indented?: boolean;
 }) {
 	const { t } = useLingui();
-	const isAgent = comment.authorKind === "agent";
-	const name = comment.authorName ?? "";
+	const { name, isAgent } = commentAuthor(comment);
 
 	return (
 		<View

@@ -23,6 +23,7 @@ export function optimisticComment({
 		authorUserId: user.id,
 		authorName: user.name,
 		authorImage: user.image,
+		agentLabel: null,
 		createdAt: new Date(),
 	};
 }

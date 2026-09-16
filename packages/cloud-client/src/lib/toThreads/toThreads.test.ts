@@ -21,6 +21,7 @@ function row(overrides: Partial<ServerThread> = {}): ServerThread {
 				authorUserId: "user-1",
 				authorName: "Sarah",
 				authorImage: null,
+				agentLabel: null,
 				createdAt: new Date("2026-09-11T01:00:00Z"),
 			},
 		],

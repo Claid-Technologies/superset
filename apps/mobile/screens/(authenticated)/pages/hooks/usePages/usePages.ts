@@ -20,6 +20,21 @@ export function usePagesQuery(): UseQueryResult<OrgPage[]> {
 	});
 }
 
+export function useWorkspacePagesQuery(
+	workspaceId: string | null,
+): UseQueryResult<OrgPage[]> {
+	const { data: session } = useSession();
+	const organizationId = session?.session?.activeOrganizationId ?? null;
+
+	return useQuery({
+		queryKey: ["cloud", "page", "list", organizationId, workspaceId],
+		enabled: organizationId !== null && workspaceId !== null,
+		queryFn: () =>
+			apiClient.page.list.query({ workspaceId: workspaceId ?? "" }),
+		staleTime: 30_000,
+	});
+}
+
 const PULLED_PAGE_STALE_MS = 5 * 60_000;
 
 export function usePageQuery(slug: string): UseQueryResult<PulledPage> {

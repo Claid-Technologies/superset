@@ -24,6 +24,7 @@ export function toThreads(rows: ServerThread[]): CommentThread[] {
 			authorImage: comment.authorImage,
 			authorKind: comment.authorKind,
 			authorUserId: comment.authorUserId,
+			agentLabel: comment.agentLabel,
 			createdAt: comment.createdAt.getTime(),
 		})),
 	}));

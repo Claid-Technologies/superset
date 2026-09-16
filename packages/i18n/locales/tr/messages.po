@@ -16586,6 +16586,9 @@ msgstr "Çalışma alanı oluşturuldu"
 msgid "Workspace created from PR"
 msgstr "PR'dan çalışma alanı oluşturuldu"
 
+msgid "Workspace details"
+msgstr "Çalışma alanı ayrıntıları"
+
 msgid "Workspace ID copied"
 msgstr "Çalışma alanı kimliği kopyalandı"
 

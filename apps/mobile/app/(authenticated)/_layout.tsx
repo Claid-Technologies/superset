@@ -192,7 +192,9 @@ export default function AuthenticatedLayout() {
 				name="workspace/[id]/actions"
 				options={{
 					presentation: "formSheet",
-					sheetAllowedDetents: [0.65],
+					// Half height is the whole sheet when there is nothing but Info;
+					// the full detent is what the pages grid needs to be scrollable.
+					sheetAllowedDetents: [0.65, 1.0],
 					sheetGrabberVisible: true,
 					// The workspace name is the sheet's own centred headline, so
 					// the bar carries no title — only the native close button.
