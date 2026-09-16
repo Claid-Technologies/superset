@@ -42,7 +42,7 @@ type PublishedVersion = Pick<
 	Pick<
 		SelectPageVersion,
 		"version" | "label" | "contentType" | "sizeBytes" | "createdAt"
-	> & { url: string };
+	> & { url: string; linked: boolean };
 
 /**
  * The page this publish reserved its version under was created or removed
@@ -335,10 +335,17 @@ async function runPublish({
 			key,
 			contentType: document.contentType,
 		});
+		const [link] = await tx
+			.select({ pageId: workspacePages.pageId })
+			.from(workspacePages)
+			.where(eq(workspacePages.pageId, page.id))
+			.limit(1);
+
 		return {
 			id: page.id,
 			slug: page.slug,
 			url: pageUrl(page.slug),
+			linked: Boolean(link),
 			title: page.title,
 			description: page.description,
 			visibility: page.visibility,
