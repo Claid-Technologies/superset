@@ -13,7 +13,9 @@ export default command({
 		local: boolean().desc("The workspace is on this machine"),
 		terminal: string()
 			.required()
-			.desc("Terminal ID the agent runs in (the sessionId `agents create` returned)"),
+			.desc(
+				"Terminal ID the agent runs in (the sessionId `agents create` returned)",
+			),
 	},
 	run: async ({ ctx, options }) => {
 		const organizationId = ctx.config.organizationId;
