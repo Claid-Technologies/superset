@@ -660,6 +660,10 @@ msgstr "před {distance}"
 msgid "{duration, plural, one {Thought for # second} other {Thought for # seconds}}"
 msgstr "{duration, plural, one {Přemýšlel # sekundu} few {Přemýšlel # sekundy} many {Přemýšlel # sekundy} other {Přemýšlel # sekund}}"
 
+#. js-lingui-explicit-id
+msgid "serverError.page.entryPathHeldByAnotherOrganization"
+msgstr "{entryPath} v tomto workspace je už publikovaný jako stránka v jiné organizaci. Přesuň soubor nebo publikuj s ID té stránky."
+
 msgid "{failed, plural, one {# failed} other {# failed}}"
 msgstr "{failed, plural, one {# selhalo} few {# selhalo} many {# selhalo} other {# selhalo}}"
 
@@ -13727,6 +13731,10 @@ msgstr "Některé motivy byly přeskočeny"
 msgid "Some triggers need additional configuration"
 msgstr "Některé spouštěče potřebují další nastavení"
 
+#. js-lingui-explicit-id
+msgid "serverError.page.entryPathHeldByColleague"
+msgstr "Někdo jiný už {entryPath} z tohoto workspace publikoval. Publikuj s výslovným ID stránky a přidej verzi k jeho stránce, nebo soubor přesuň."
+
 msgid "someone external"
 msgstr "někdo externí"
 
@@ -16768,6 +16776,10 @@ msgstr "Vy"
 
 msgid "YOU"
 msgstr "VY"
+
+#. js-lingui-explicit-id
+msgid "serverError.page.entryPathHeldByYou"
+msgstr "{entryPath} z tohoto workspace jsi už publikoval jako jinou stránku. Publikuj s --page {pageId} a přidej jí verzi, nebo soubor přesuň."
 
 msgid "You appear to be offline"
 msgstr "Vypadá to, že jste offline"

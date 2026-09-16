@@ -41,6 +41,7 @@ const WORKSPACE_SNAPSHOT_EXPIRATION_MS = 30 * 24 * 60 * 60 * 1000;
 const IMAGE_SANDBOX_VCPUS = 8;
 const GOLDEN_SESSION_TIMEOUT_MS = 30 * 60 * 1000;
 const BOOT_COMMAND = "/usr/local/bin/superset-boot";
+const HOST_PROBE_TIMEOUT_MS = 1_500;
 
 function credentials() {
 	return {
@@ -316,6 +317,18 @@ export async function describeSandbox(providerSandboxId: string): Promise<{
 	}
 }
 
+/** Whether host-service is already serving, so a wake can skip the boot. */
+async function hostServiceAnswers(hostTarget: string): Promise<boolean> {
+	try {
+		const response = await fetch(`${hostTarget}/trpc/health.check`, {
+			signal: AbortSignal.timeout(HOST_PROBE_TIMEOUT_MS),
+		});
+		return response.ok;
+	} catch {
+		return false;
+	}
+}
+
 /**
  * Brings a workspace's box to serving and returns once host-service answers.
  *
@@ -350,9 +363,11 @@ export async function wakeSandbox(args: {
 				await sandbox.extendTimeout(SESSION_TIMEOUT_MS).catch(() => {});
 			}
 		}
-		// The policy goes out alongside the identity write: the first call to
-		// touch a stopped session pays the resume, and the rules are in place
-		// long before anything on the box makes a request.
+		// A box that is already serving needs neither a fresh identity file nor
+		// another boot: the runner would refuse to stack a second host-service
+		// anyway, and every open client wakes on a timer, so this is the common
+		// call. The policy still goes out — a credential may have aged.
+		const serving = wasRunning && (await hostServiceAnswers(hostTarget));
 		await Promise.all([
 			sandbox
 				.update({ networkPolicy: args.claim.networkPolicy })
@@ -362,9 +377,9 @@ export async function wakeSandbox(args: {
 						error,
 					),
 				),
-			writeIdentity(sandbox, args.claim.identity),
+			serving ? null : writeIdentity(sandbox, args.claim.identity),
 		]);
-		await runBoot(sandbox, args.claim.hostSecret);
+		if (!serving) await runBoot(sandbox, args.claim.hostSecret);
 		await settleSandbox({
 			providerSandboxId: args.providerSandboxId,
 			hostTarget,

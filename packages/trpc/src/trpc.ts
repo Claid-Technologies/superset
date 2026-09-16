@@ -154,17 +154,25 @@ export const protectedProcedure = t.procedure
 					eq(members.organizationId, headerOrgId),
 				),
 			});
-			if (!membership) {
-				throw new TRPCError({
-					code: "FORBIDDEN",
-					message: `Not a member of organization ${headerOrgId}`,
-				});
-			}
+			if (!membership) throw notAMemberOfOrganization(headerOrgId);
 			activeOrganizationId = headerOrgId;
 		}
 
 		return next({ ctx: { ...ctx, activeOrganizationId } });
 	});
+
+/**
+ * Callers pass the organization in a header (the CLI sends
+ * SUPERSET_ORGANIZATION_ID, or the organization it last logged into), so the
+ * id in this error is usually one the caller never typed. Saying where it
+ * came from is what turns "not a member" into something actionable.
+ */
+function notAMemberOfOrganization(organizationId: string): TRPCError {
+	return new TRPCError({
+		code: "FORBIDDEN",
+		message: `Not a member of organization ${organizationId}, which was asked for in the x-superset-organization-id header`,
+	});
+}
 
 function resolveActiveOrganizationId(
 	organizationIds: string[],
@@ -175,10 +183,7 @@ function resolveActiveOrganizationId(
 	}
 
 	if (!organizationIds.includes(requestedOrganizationId)) {
-		throw new TRPCError({
-			code: "FORBIDDEN",
-			message: `Not a member of organization ${requestedOrganizationId}`,
-		});
+		throw notAMemberOfOrganization(requestedOrganizationId);
 	}
 
 	return requestedOrganizationId;

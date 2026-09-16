@@ -660,6 +660,10 @@ msgstr "{distance} önce"
 msgid "{duration, plural, one {Thought for # second} other {Thought for # seconds}}"
 msgstr "{duration, plural, one {# saniye düşündü} other {# saniye düşündü}}"
 
+#. js-lingui-explicit-id
+msgid "serverError.page.entryPathHeldByAnotherOrganization"
+msgstr "Bu çalışma alanındaki {entryPath} başka bir organizasyonda zaten sayfa olarak yayımlanmış. Dosyayı taşı ya da o sayfanın kimliğiyle yayımla."
+
 msgid "{failed, plural, one {# failed} other {# failed}}"
 msgstr "{failed, plural, one {# başarısız} other {# başarısız}}"
 
@@ -13727,6 +13731,10 @@ msgstr "Bazı temalar atlandı"
 msgid "Some triggers need additional configuration"
 msgstr "Bazı tetikleyiciler ek yapılandırma gerektiriyor"
 
+#. js-lingui-explicit-id
+msgid "serverError.page.entryPathHeldByColleague"
+msgstr "Bu çalışma alanından {entryPath} dosyasını başkası zaten yayımlamış. Onun sayfasına sürüm eklemek için açık bir sayfa kimliğiyle yayımla ya da dosyayı taşı."
+
 msgid "someone external"
 msgstr "dışarıdan biri"
 
@@ -16768,6 +16776,10 @@ msgstr "Siz"
 
 msgid "YOU"
 msgstr "SİZ"
+
+#. js-lingui-explicit-id
+msgid "serverError.page.entryPathHeldByYou"
+msgstr "{entryPath} dosyasını bu çalışma alanından başka bir sayfa olarak zaten yayımladın. Ona sürüm eklemek için --page {pageId} ile yayımla ya da dosyayı taşı."
 
 msgid "You appear to be offline"
 msgstr "Çevrimdışı görünüyorsunuz"

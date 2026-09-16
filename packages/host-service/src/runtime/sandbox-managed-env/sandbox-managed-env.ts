@@ -1,3 +1,8 @@
+import { execFile } from "node:child_process";
+import { promisify } from "node:util";
+
+const run = promisify(execFile);
+
 /**
  * The managed environment of a cloud workspace sandbox: the environment's
  * variables and the credential placeholders the control plane pushes after
@@ -28,7 +33,32 @@ export function setManagedEnv(variables: Record<string, string>): void {
 	}
 	managed = { ...variables };
 	Object.assign(process.env, managed);
+	void writeGitIdentity(managed);
 	resolveFirstPush();
+}
+
+/**
+ * The GIT_AUTHOR_* variables only reach what host-service spawns. A commit
+ * made by anything else on the box — a detached process, a nested container,
+ * a shell started before the push — would be attributed to the sandbox user,
+ * so the identity is written to the user's git config as well.
+ */
+async function writeGitIdentity(
+	variables: Record<string, string>,
+): Promise<void> {
+	const name = variables.GIT_AUTHOR_NAME;
+	const email = variables.GIT_AUTHOR_EMAIL;
+	if (!name || !email) return;
+	for (const [key, value] of [
+		["user.name", name],
+		["user.email", email],
+	] as const) {
+		try {
+			await run("git", ["config", "--global", key, value]);
+		} catch (error) {
+			console.warn(`[sandbox] could not write git ${key}`, error);
+		}
+	}
 }
 
 /** The current set, or empty until the first push. */

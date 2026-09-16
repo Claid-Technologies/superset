@@ -660,6 +660,10 @@ msgstr "{distance}前"
 msgid "{duration, plural, one {Thought for # second} other {Thought for # seconds}}"
 msgstr "{duration, plural, one {思考了#秒} other {思考了#秒}}"
 
+#. js-lingui-explicit-id
+msgid "serverError.page.entryPathHeldByAnotherOrganization"
+msgstr "该工作区中的 {entryPath} 已在另一个组织中发布为页面。请移动该文件，或使用那个页面的 id 发布。"
+
 msgid "{failed, plural, one {# failed} other {# failed}}"
 msgstr "{failed, plural, one {#项失败} other {#项失败}}"
 
@@ -13727,6 +13731,10 @@ msgstr "部分主题已被跳过"
 msgid "Some triggers need additional configuration"
 msgstr "部分触发器需要额外配置"
 
+#. js-lingui-explicit-id
+msgid "serverError.page.entryPathHeldByColleague"
+msgstr "其他人已发布该工作区中的 {entryPath}。使用明确的页面 id 发布以向其页面添加版本，或移动该文件。"
+
 msgid "someone external"
 msgstr "外部人员"
 
@@ -16768,6 +16776,10 @@ msgstr "你"
 
 msgid "YOU"
 msgstr "你"
+
+#. js-lingui-explicit-id
+msgid "serverError.page.entryPathHeldByYou"
+msgstr "你已把该工作区中的 {entryPath} 发布为另一个页面。使用 --page {pageId} 发布以向其添加版本，或移动该文件。"
 
 msgid "You appear to be offline"
 msgstr "你似乎处于离线状态"

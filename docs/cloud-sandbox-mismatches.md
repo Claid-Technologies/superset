@@ -118,8 +118,10 @@ a Claude subscription token counts as Anthropic being provided, since a rule
 would otherwise add a second, conflicting auth header to its requests.
 
 **The firewall terminates TLS for the domains it rewrites, and the terminal
-must trust its CA.** The platform mounts a per-sandbox CA and points
-`NODE_EXTRA_CA_CERTS`, `SSL_CERT_FILE` and friends at the system bundle.
+must trust its CA.** The CA is in the image's system bundle, which curl, git,
+gh, python and bun read. Node does not read it, and the platform sets no CA
+variable of its own, so `superset-boot` defaults `NODE_EXTRA_CA_CERTS` to that
+bundle before it builds host-service's environment.
 host-service builds PTY env from a login-shell snapshot, never from its own
 process env, so those variables would be lost and every model call from a
 terminal would fail with a certificate error; the sandbox-mode passthrough

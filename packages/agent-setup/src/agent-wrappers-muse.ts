@@ -3,6 +3,7 @@ import os from "node:os";
 import path from "node:path";
 import {
 	buildWrapperScript,
+	commandInstalled,
 	createWrapper,
 	getManagedNotifyHookCommand,
 	writeFileIfChanged,
@@ -166,6 +167,7 @@ export function getMuseSettingsJsonWithoutManagedHooks(
 }
 
 export function createMuseSettingsJson(): void {
+	if (!commandInstalled("muse")) return;
 	const settingsPath = getMuseSettingsJsonPath();
 	let raw: string | null = null;
 	try {

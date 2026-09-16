@@ -2,6 +2,7 @@ import { createNodeWebSocket } from "@hono/node-ws";
 import { trpcServer } from "@hono/trpc-server";
 import { Octokit } from "@octokit/rest";
 import { SUPERSET_USER_ID_HEADER } from "@superset/shared/host-routing";
+import { SANDBOX_PORTS } from "@superset/shared/sandbox-contract";
 import { TRPCError } from "@trpc/server";
 import type { MiddlewareHandler } from "hono";
 import { Hono } from "hono";
@@ -38,6 +39,10 @@ import {
 } from "./terminal-agents";
 import { appRouter } from "./trpc/router";
 import { gitStatusStore } from "./trpc/router/git/utils/git-status-store";
+import {
+	resumeCrashedAgentSessions,
+	resumeSessionDepsFor,
+} from "./trpc/router/terminal-agents/terminal-agents";
 import { provisionSelectedAccounts } from "./trpc/router/usage/account-provisioning";
 import {
 	execGh as defaultExecGh,
@@ -97,6 +102,7 @@ export interface CreateAppResult {
 	 * the first.
 	 */
 	launchSandboxAgent: () => Promise<void>;
+	resumeCrashedAgents: () => Promise<void>;
 	dispose: () => Promise<void>;
 }
 
@@ -310,6 +316,43 @@ export function createApp(options: CreateAppOptions): CreateAppResult {
 	app.use("/desktop/*", wsAuth);
 	app.use("/fwd", wsAuth);
 
+	// The sandbox's display. websockify listens on loopback with no
+	// credential of its own, so the check that admits a pane is this route's:
+	// the same host secret or JWT every other route requires. Published
+	// directly, as it used to be, the display answered anyone who knew the
+	// sandbox's address.
+	app.get(
+		"/desktop/websockify",
+		upgradeWebSocket(() => {
+			let upstream: WebSocket | null = null;
+			const pending: (string | ArrayBuffer)[] = [];
+			return {
+				onOpen: (_event, ws) => {
+					upstream = new WebSocket(
+						`ws://127.0.0.1:${SANDBOX_PORTS.desktop}/websockify`,
+						["binary"],
+					);
+					upstream.binaryType = "arraybuffer";
+					upstream.onopen = () => {
+						for (const message of pending.splice(0)) upstream?.send(message);
+					};
+					upstream.onmessage = (event) => {
+						ws.send(event.data as string | ArrayBuffer);
+					};
+					upstream.onclose = () => ws.close();
+					upstream.onerror = () => ws.close(1011, "display unreachable");
+				},
+				onMessage: (event) => {
+					const data = event.data as string | ArrayBuffer;
+					if (upstream?.readyState === WebSocket.OPEN) upstream.send(data);
+					else pending.push(data);
+				},
+				onClose: () => upstream?.close(),
+				onError: () => upstream?.close(),
+			};
+		}),
+	);
+
 	registerEventBusRoute({ app, eventBus, upgradeWebSocket });
 	registerBrowserCdpRoute({
 		app,
@@ -435,6 +478,28 @@ export function createApp(options: CreateAppOptions): CreateAppResult {
 		);
 	};
 
+	/**
+	 * Agents whose terminals died with the box. Same context the launcher
+	 * above builds, because a resume runs the agent exactly as a launch does.
+	 */
+	const resumeCrashedAgents = async () => {
+		const ctx = {
+			git,
+			credentials: providers.credentials,
+			github,
+			execGh,
+			api,
+			db,
+			runtime,
+			eventBus,
+			terminalAgentStore,
+			organizationId: config.organizationId,
+			isAuthenticated: true,
+			browserBridge: config.browserBridge,
+		} as HostServiceContext;
+		await resumeCrashedAgentSessions(resumeSessionDepsFor(ctx));
+	};
+
 	return {
 		app,
 		injectWebSocket,
@@ -442,6 +507,7 @@ export function createApp(options: CreateAppOptions): CreateAppResult {
 		db,
 		eventBus,
 		launchSandboxAgent,
+		resumeCrashedAgents,
 		dispose,
 	};
 }

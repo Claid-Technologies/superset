@@ -660,6 +660,10 @@ msgstr "{distance} 전"
 msgid "{duration, plural, one {Thought for # second} other {Thought for # seconds}}"
 msgstr "{duration, plural, one {#초 동안 생각함} other {#초 동안 생각함}}"
 
+#. js-lingui-explicit-id
+msgid "serverError.page.entryPathHeldByAnotherOrganization"
+msgstr "이 워크스페이스의 {entryPath}는 다른 조직에서 이미 페이지로 게시되었습니다. 파일을 옮기거나 해당 페이지 ID로 게시하세요."
+
 msgid "{failed, plural, one {# failed} other {# failed}}"
 msgstr "{failed, plural, one {#개 실패} other {#개 실패}}"
 
@@ -13727,6 +13731,10 @@ msgstr "일부 테마를 건너뛰었습니다"
 msgid "Some triggers need additional configuration"
 msgstr "일부 트리거에는 추가 설정이 필요합니다"
 
+#. js-lingui-explicit-id
+msgid "serverError.page.entryPathHeldByColleague"
+msgstr "다른 사람이 이 워크스페이스의 {entryPath}를 이미 게시했습니다. 페이지 ID를 명시해 그 페이지에 버전을 추가하거나 파일을 옮기세요."
+
 msgid "someone external"
 msgstr "외부 참석자"
 
@@ -16768,6 +16776,10 @@ msgstr "나"
 
 msgid "YOU"
 msgstr "나"
+
+#. js-lingui-explicit-id
+msgid "serverError.page.entryPathHeldByYou"
+msgstr "이 워크스페이스의 {entryPath}를 이미 다른 페이지로 게시했습니다. --page {pageId}로 게시해 버전을 추가하거나 파일을 옮기세요."
 
 msgid "You appear to be offline"
 msgstr "오프라인 상태로 보입니다"

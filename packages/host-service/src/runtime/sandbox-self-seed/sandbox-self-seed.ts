@@ -111,10 +111,45 @@ export function readSandboxIdentity(
 
 const START_HOOK_MARKER = join(SANDBOX_PATHS.run, "start-hook.pid");
 const START_HOOK_LOG = join(SANDBOX_PATHS.logs, "start-hook.log");
+/** Long enough for exec to fail, short enough that boot does not wait on it. */
+const START_HOOK_SETTLE_MS = 3_000;
 
 export type StartHookOutcome =
 	| { started: true; pid: number; command: string }
-	| { started: false; reason: "already-started" | "no-hook" };
+	| {
+			started: false;
+			reason: "already-started" | "no-hook" | "failed";
+			command?: string;
+			exitCode?: number | null;
+			log?: string;
+	  };
+
+/** What the hook is doing now, for `sandbox.status`. */
+export type StartHookState =
+	| { state: "none" }
+	| { state: "running"; command: string; pid: number; since: number }
+	| {
+			state: "exited";
+			command: string;
+			exitCode: number | null;
+			since: number;
+			log: string;
+	  };
+
+let startHookState: StartHookState = { state: "none" };
+
+export function getStartHookState(): StartHookState {
+	return startHookState;
+}
+
+/** The tail of the hook's log, for a failure a person has to read. */
+function startHookLogTail(): string {
+	try {
+		return readFileSync(START_HOOK_LOG, "utf8").slice(-4000);
+	} catch {
+		return "";
+	}
+}
 
 /**
  * Runs the repository's `start` hook: the services a workspace needs on
@@ -124,9 +159,9 @@ export type StartHookOutcome =
  * variables never leave it. Once per boot: the marker lives in the run
  * directory the boot runner clears.
  */
-export function runSandboxStartHook(
+export async function runSandboxStartHook(
 	identity: SandboxIdentity,
-): StartHookOutcome {
+): Promise<StartHookOutcome> {
 	if (existsSync(START_HOOK_MARKER))
 		return { started: false, reason: "already-started" };
 	const resolved = resolveScript("start", {
@@ -152,8 +187,41 @@ export function runSandboxStartHook(
 	});
 	child.unref();
 	writeFileSync(START_HOOK_MARKER, `${child.pid ?? 0}\n`);
-	console.log(`[sandbox] start hook running (pid ${child.pid}): ${command}`);
-	return { started: true, pid: child.pid ?? 0, command };
+	const pid = child.pid ?? 0;
+	startHookState = { state: "running", command, pid, since: Date.now() };
+	child.on("exit", (code) => {
+		startHookState = {
+			state: "exited",
+			command,
+			exitCode: code,
+			since: Date.now(),
+			log: startHookLogTail(),
+		};
+	});
+
+	// A command the image does not have exits within milliseconds, and
+	// reporting that as started is what let a broken start hook look healthy
+	// on every boot. A command that daemonizes (tmux new-session -d) also
+	// exits at once, but with 0, and that is a real start.
+	const failure = await new Promise<number | null>((resolve) => {
+		const timer = setTimeout(() => resolve(null), START_HOOK_SETTLE_MS);
+		child.once("exit", (code) => {
+			clearTimeout(timer);
+			resolve(code ?? null);
+		});
+	});
+	if (failure !== null && failure !== 0) {
+		console.error(`[sandbox] start hook failed (exit ${failure}): ${command}`);
+		return {
+			started: false,
+			reason: "failed",
+			command,
+			exitCode: failure,
+			log: startHookLogTail(),
+		};
+	}
+	console.log(`[sandbox] start hook running (pid ${pid}): ${command}`);
+	return { started: true, pid, command };
 }
 
 /**

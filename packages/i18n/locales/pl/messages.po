@@ -660,6 +660,10 @@ msgstr "{distance} temu"
 msgid "{duration, plural, one {Thought for # second} other {Thought for # seconds}}"
 msgstr "{duration, plural, one {Myślał # sekundę} few {Myślał # sekundy} many {Myślał # sekund} other {Myślał # sekundy}}"
 
+#. js-lingui-explicit-id
+msgid "serverError.page.entryPathHeldByAnotherOrganization"
+msgstr "{entryPath} w tym workspace jest już opublikowany jako strona w innej organizacji. Przenieś plik albo opublikuj z identyfikatorem tamtej strony."
+
 msgid "{failed, plural, one {# failed} other {# failed}}"
 msgstr "{failed, plural, one {# nieudany} few {# nieudane} many {# nieudanych} other {# nieudanego}}"
 
@@ -13727,6 +13731,10 @@ msgstr "Część motywów pominięto"
 msgid "Some triggers need additional configuration"
 msgstr "Część wyzwalaczy wymaga dodatkowej konfiguracji"
 
+#. js-lingui-explicit-id
+msgid "serverError.page.entryPathHeldByColleague"
+msgstr "Ktoś inny opublikował już {entryPath} z tego workspace. Opublikuj z jawnym identyfikatorem strony, aby dodać wersję do jego strony, albo przenieś plik."
+
 msgid "someone external"
 msgstr "ktoś z zewnątrz"
 
@@ -16768,6 +16776,10 @@ msgstr "Ty"
 
 msgid "YOU"
 msgstr "TY"
+
+#. js-lingui-explicit-id
+msgid "serverError.page.entryPathHeldByYou"
+msgstr "Masz już opublikowany {entryPath} z tego workspace jako inną stronę. Opublikuj z --page {pageId}, aby dodać do niej wersję, albo przenieś plik."
 
 msgid "You appear to be offline"
 msgstr "Wygląda na to, że jesteś offline"

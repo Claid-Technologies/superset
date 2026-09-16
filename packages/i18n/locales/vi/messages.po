@@ -660,6 +660,10 @@ msgstr "{distance} trước"
 msgid "{duration, plural, one {Thought for # second} other {Thought for # seconds}}"
 msgstr "{duration, plural, one {Đã suy nghĩ # giây} other {Đã suy nghĩ # giây}}"
 
+#. js-lingui-explicit-id
+msgid "serverError.page.entryPathHeldByAnotherOrganization"
+msgstr "{entryPath} trong workspace này đã được xuất bản thành một trang ở tổ chức khác. Hãy di chuyển tệp hoặc xuất bản kèm id của trang đó."
+
 msgid "{failed, plural, one {# failed} other {# failed}}"
 msgstr "{failed, plural, one {# thất bại} other {# thất bại}}"
 
@@ -13727,6 +13731,10 @@ msgstr "Một số theme đã bị bỏ qua"
 msgid "Some triggers need additional configuration"
 msgstr "Một số trigger cần cấu hình thêm"
 
+#. js-lingui-explicit-id
+msgid "serverError.page.entryPathHeldByColleague"
+msgstr "Người khác đã xuất bản {entryPath} từ workspace này. Hãy xuất bản kèm id trang cụ thể để thêm phiên bản vào trang của họ, hoặc di chuyển tệp."
+
 msgid "someone external"
 msgstr "người bên ngoài"
 
@@ -16768,6 +16776,10 @@ msgstr "Bạn"
 
 msgid "YOU"
 msgstr "BẠN"
+
+#. js-lingui-explicit-id
+msgid "serverError.page.entryPathHeldByYou"
+msgstr "Bạn đã xuất bản {entryPath} từ workspace này thành một trang khác. Hãy xuất bản với --page {pageId} để thêm phiên bản cho trang đó, hoặc di chuyển tệp."
 
 msgid "You appear to be offline"
 msgstr "Có vẻ bạn đang ngoại tuyến"

@@ -660,6 +660,10 @@ msgstr "{distance}前"
 msgid "{duration, plural, one {Thought for # second} other {Thought for # seconds}}"
 msgstr "{duration, plural, one {#秒間思考しました} other {#秒間思考しました}}"
 
+#. js-lingui-explicit-id
+msgid "serverError.page.entryPathHeldByAnotherOrganization"
+msgstr "このワークスペースの {entryPath} は、別の組織のページとしてすでに公開されています。ファイルを移動するか、そのページの ID を指定して公開してください。"
+
 msgid "{failed, plural, one {# failed} other {# failed}}"
 msgstr "{failed, plural, one {#件失敗} other {#件失敗}}"
 
@@ -13727,6 +13731,10 @@ msgstr "一部のテーマはスキップされました"
 msgid "Some triggers need additional configuration"
 msgstr "一部のトリガーには追加の設定が必要です"
 
+#. js-lingui-explicit-id
+msgid "serverError.page.entryPathHeldByColleague"
+msgstr "このワークスペースの {entryPath} は、他の人がすでに公開しています。ページ ID を明示して相手のページにバージョンを追加するか、ファイルを移動してください。"
+
 msgid "someone external"
 msgstr "社外の人"
 
@@ -16768,6 +16776,10 @@ msgstr "あなた"
 
 msgid "YOU"
 msgstr "あなた"
+
+#. js-lingui-explicit-id
+msgid "serverError.page.entryPathHeldByYou"
+msgstr "このワークスペースの {entryPath} は、すでに別のページとして公開済みです。--page {pageId} を指定してそのページにバージョンを追加するか、ファイルを移動してください。"
 
 msgid "You appear to be offline"
 msgstr "オフラインのようです"

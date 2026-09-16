@@ -660,6 +660,10 @@ msgstr "vor {distance}"
 msgid "{duration, plural, one {Thought for # second} other {Thought for # seconds}}"
 msgstr "{duration, plural, one {# Sekunde nachgedacht} other {# Sekunden nachgedacht}}"
 
+#. js-lingui-explicit-id
+msgid "serverError.page.entryPathHeldByAnotherOrganization"
+msgstr "{entryPath} wird in diesem Workspace bereits als Seite in einer anderen Organisation veröffentlicht. Verschiebe die Datei oder veröffentliche mit der ID jener Seite."
+
 msgid "{failed, plural, one {# failed} other {# failed}}"
 msgstr "{failed, plural, one {# fehlgeschlagen} other {# fehlgeschlagen}}"
 
@@ -13727,6 +13731,10 @@ msgstr "Einige Themes wurden übersprungen"
 msgid "Some triggers need additional configuration"
 msgstr "Einige Trigger brauchen weitere Konfiguration"
 
+#. js-lingui-explicit-id
+msgid "serverError.page.entryPathHeldByColleague"
+msgstr "Jemand anderes hat {entryPath} aus diesem Workspace bereits veröffentlicht. Veröffentliche mit einer ausdrücklichen Seiten-ID, um eine Version zu dessen Seite hinzuzufügen, oder verschiebe die Datei."
+
 msgid "someone external"
 msgstr "jemand Externes"
 
@@ -16768,6 +16776,10 @@ msgstr "Du"
 
 msgid "YOU"
 msgstr "DU"
+
+#. js-lingui-explicit-id
+msgid "serverError.page.entryPathHeldByYou"
+msgstr "Du hast {entryPath} aus diesem Workspace bereits als andere Seite veröffentlicht. Veröffentliche mit --page {pageId}, um eine Version hinzuzufügen, oder verschiebe die Datei."
 
 msgid "You appear to be offline"
 msgstr "Du scheinst offline zu sein"

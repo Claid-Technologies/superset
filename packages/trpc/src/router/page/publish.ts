@@ -125,6 +125,46 @@ async function verifyUploadedObject({
 }
 
 /**
+ * A workspace path can hold one page. Which message applies depends on whose
+ * page holds it, and the caller can see neither the page nor its owner — so
+ * the error is the only place that can say.
+ */
+function entryPathConflict(args: {
+	entryPath: string;
+	holder: {
+		pageId: string;
+		organizationId: string;
+		createdByUserId: string | null;
+	} | null;
+	organizationId: string;
+	userId: string;
+}): TRPCError {
+	const { entryPath, holder } = args;
+	if (holder && holder.organizationId !== args.organizationId) {
+		return userError({
+			code: "CONFLICT",
+			message: `${entryPath} in this workspace is already published as a page in another organization. Move the file, or publish with that page's id.`,
+			i18nKey: "serverError.page.entryPathHeldByAnotherOrganization",
+			params: { entryPath },
+		});
+	}
+	if (holder && holder.createdByUserId === args.userId) {
+		return userError({
+			code: "CONFLICT",
+			message: `You already published ${entryPath} from this workspace as another page. Publish with --page ${holder.pageId} to add a version to it, or move the file.`,
+			i18nKey: "serverError.page.entryPathHeldByYou",
+			params: { entryPath, pageId: holder.pageId },
+		});
+	}
+	return userError({
+		code: "CONFLICT",
+		message: `Someone else has already published ${entryPath} from this workspace. Publish with an explicit page id to add a version to their page, or move the file.`,
+		i18nKey: "serverError.page.entryPathHeldByColleague",
+		params: { entryPath },
+	});
+}
+
+/**
  * The document this caller uploaded, verified before a version is reserved
  * for it. The row is consumed inside the publish transaction, not here.
  *
@@ -236,6 +276,32 @@ async function runPublish({
 				workspaceId: input.workspaceId,
 				organizationId,
 			});
+			// Who holds this path is read before the insert, not from the unique
+			// violation: a failed insert aborts the transaction, so nothing can
+			// be looked up afterwards to say whose page it is.
+			const [holder] = await tx
+				.select({
+					pageId: pages.id,
+					organizationId: pages.organizationId,
+					createdByUserId: pages.createdByUserId,
+				})
+				.from(workspacePages)
+				.innerJoin(pages, eq(pages.id, workspacePages.pageId))
+				.where(
+					and(
+						eq(workspacePages.workspaceId, input.workspaceId),
+						eq(workspacePages.entryPath, input.entryPath),
+					),
+				)
+				.limit(1);
+			if (holder && holder.pageId !== page.id) {
+				throw entryPathConflict({
+					entryPath: input.entryPath,
+					holder,
+					organizationId,
+					userId,
+				});
+			}
 			try {
 				await tx
 					.insert(workspacePages)
@@ -253,11 +319,12 @@ async function runPublish({
 					});
 			} catch (error) {
 				if (!isEntryPathConflict(error)) throw error;
-				// Reachable because the republish lookup only matches the caller's own
-				// pages: a colleague's page holding this path is invisible to it.
-				throw new TRPCError({
-					code: "CONFLICT",
-					message: `Someone else has already published ${input.entryPath} from this workspace. Publish with an explicit page id to add a version to their page, or move the file.`,
+				// A publish that raced the lookup above.
+				throw entryPathConflict({
+					entryPath: input.entryPath,
+					holder: null,
+					organizationId,
+					userId,
 				});
 			}
 		}

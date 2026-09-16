@@ -21,7 +21,6 @@ import {
 import { nudge } from "../../lib/realtime";
 import {
 	buildSandboxClaim,
-	DESKTOP_PORT,
 	deleteSandbox,
 	describeSandbox,
 	environmentRepositoryRows,
@@ -480,26 +479,21 @@ export const cloudWorkspaceRouter = {
 					cause: { kind: "CLOUD_WORKSPACE_NOT_READY", status: "failed" },
 				});
 			}
-			const [host, desktop] = await Promise.all([
-				mintSandboxGateAccess({
-					workspaceId: row.id,
-					userId: ctx.userId,
-					port: HOST_SERVICE_PORT,
-					target: address.hostTarget,
-				}),
-				mintSandboxGateAccess({
-					workspaceId: row.id,
-					userId: ctx.userId,
-					port: DESKTOP_PORT,
-					target: address.desktopTarget,
-				}),
-			]);
+			const host = await mintSandboxGateAccess({
+				workspaceId: row.id,
+				userId: ctx.userId,
+				port: HOST_SERVICE_PORT,
+				target: address.hostTarget,
+			});
 			return {
 				url: host.url,
 				token: host.token,
 				expiresAt: host.expiresAt,
 				running: address.running,
-				desktop: { url: desktop.url, token: desktop.token },
+				// The display is served by host-service too, so it is the same
+				// address and the same ticket. The sandbox's own desktop port is
+				// not published: it had no authentication of its own.
+				desktop: { url: host.url, token: host.token },
 			};
 		}),
 

@@ -660,6 +660,10 @@ msgstr "{distance} назад"
 msgid "{duration, plural, one {Thought for # second} other {Thought for # seconds}}"
 msgstr "{duration, plural, one {Думал # секунду} few {Думал # секунды} many {Думал # секунд} other {Думал # секунды}}"
 
+#. js-lingui-explicit-id
+msgid "serverError.page.entryPathHeldByAnotherOrganization"
+msgstr "{entryPath} в этом рабочем пространстве уже опубликован как страница в другой организации. Переместите файл или опубликуйте с идентификатором той страницы."
+
 msgid "{failed, plural, one {# failed} other {# failed}}"
 msgstr "{failed, plural, one {# не пройдено} few {# не пройдено} many {# не пройдено} other {# не пройдено}}"
 
@@ -13727,6 +13731,10 @@ msgstr "Некоторые темы пропущены"
 msgid "Some triggers need additional configuration"
 msgstr "Некоторым триггерам нужна дополнительная настройка"
 
+#. js-lingui-explicit-id
+msgid "serverError.page.entryPathHeldByColleague"
+msgstr "Кто-то другой уже опубликовал {entryPath} из этого рабочего пространства. Опубликуйте с явным идентификатором страницы, чтобы добавить версию к его странице, или переместите файл."
+
 msgid "someone external"
 msgstr "кто-то извне"
 
@@ -16768,6 +16776,10 @@ msgstr "Вы"
 
 msgid "YOU"
 msgstr "ВЫ"
+
+#. js-lingui-explicit-id
+msgid "serverError.page.entryPathHeldByYou"
+msgstr "Вы уже опубликовали {entryPath} из этого рабочего пространства как другую страницу. Опубликуйте с --page {pageId}, чтобы добавить к ней версию, или переместите файл."
 
 msgid "You appear to be offline"
 msgstr "Похоже, вы офлайн"

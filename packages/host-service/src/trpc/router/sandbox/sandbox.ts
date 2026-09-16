@@ -10,6 +10,7 @@ import {
 	setManagedEnv,
 } from "../../../runtime/sandbox-managed-env/sandbox-managed-env.ts";
 import {
+	getStartHookState,
 	readSandboxIdentity,
 	runSandboxStartHook,
 } from "../../../runtime/sandbox-self-seed";
@@ -70,7 +71,7 @@ export const sandboxRouter = router({
 
 	status: protectedProcedure.query(() => {
 		sandboxOnly();
-		return readSandboxBootStatus();
+		return { ...readSandboxBootStatus(), startHook: getStartHookState() };
 	}),
 
 	/**
@@ -79,7 +80,7 @@ export const sandboxRouter = router({
 	 * been pushed and the checkout is in, so every boot-time action is
 	 * sequenced from one place and reads in one log.
 	 */
-	runStartHook: protectedProcedure.mutation(() => {
+	runStartHook: protectedProcedure.mutation(async () => {
 		sandboxOnly();
 		const identity = readSandboxIdentity();
 		if (!identity) {
@@ -88,6 +89,6 @@ export const sandboxRouter = router({
 				message: "This host-service has no sandbox identity",
 			});
 		}
-		return runSandboxStartHook(identity);
+		return await runSandboxStartHook(identity);
 	}),
 });

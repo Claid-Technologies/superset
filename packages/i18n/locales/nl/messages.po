@@ -660,6 +660,10 @@ msgstr "{distance} geleden"
 msgid "{duration, plural, one {Thought for # second} other {Thought for # seconds}}"
 msgstr "{duration, plural, one {# seconde nagedacht} other {# seconden nagedacht}}"
 
+#. js-lingui-explicit-id
+msgid "serverError.page.entryPathHeldByAnotherOrganization"
+msgstr "{entryPath} in deze workspace is al gepubliceerd als pagina in een andere organisatie. Verplaats het bestand of publiceer met het id van die pagina."
+
 msgid "{failed, plural, one {# failed} other {# failed}}"
 msgstr "{failed, plural, one {# mislukt} other {# mislukt}}"
 
@@ -13727,6 +13731,10 @@ msgstr "Sommige thema's zijn overgeslagen"
 msgid "Some triggers need additional configuration"
 msgstr "Sommige triggers hebben extra configuratie nodig"
 
+#. js-lingui-explicit-id
+msgid "serverError.page.entryPathHeldByColleague"
+msgstr "Iemand anders heeft {entryPath} vanuit deze workspace al gepubliceerd. Publiceer met een expliciet pagina-id om een versie aan hun pagina toe te voegen, of verplaats het bestand."
+
 msgid "someone external"
 msgstr "iemand extern"
 
@@ -16768,6 +16776,10 @@ msgstr "Jij"
 
 msgid "YOU"
 msgstr "JIJ"
+
+#. js-lingui-explicit-id
+msgid "serverError.page.entryPathHeldByYou"
+msgstr "Je hebt {entryPath} vanuit deze workspace al als een andere pagina gepubliceerd. Publiceer met --page {pageId} om er een versie aan toe te voegen, of verplaats het bestand."
 
 msgid "You appear to be offline"
 msgstr "Je lijkt offline te zijn"

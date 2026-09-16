@@ -5,6 +5,7 @@ import {
 	SUPERSET_MANAGED_BINARIES,
 	type SupersetManagedBinary,
 } from "./agent-setup-targets";
+import { commandInstalled } from "./agent-wrappers-common";
 import { getBashDir, getBinDir, getZshDir } from "./paths";
 import { writeFileIfChanged } from "./write-file-if-changed";
 
@@ -135,6 +136,8 @@ function escapeFishDoubleQuoted(value: string): string {
 export function createZshWrapper(
 	paths: ShellWrapperPaths = getDefaultPaths(),
 ): void {
+	// A sandbox image without zsh would get four files nothing ever sources.
+	if (!commandInstalled("zsh")) return;
 	logModeDiagnostics("zsh");
 	const quotedZshDir = quoteShellLiteral(paths.ZSH_DIR);
 

@@ -561,6 +561,27 @@ export const serverErrorMessages: Record<
 				message: "This page is being published from somewhere else — retry",
 			}),
 		),
+	"serverError.page.entryPathHeldByAnotherOrganization": (params) =>
+		i18n._({
+			id: "serverError.page.entryPathHeldByAnotherOrganization",
+			message:
+				"{entryPath} in this workspace is already published as a page in another organization. Move the file, or publish with that page's id.",
+			values: params,
+		}),
+	"serverError.page.entryPathHeldByYou": (params) =>
+		i18n._({
+			id: "serverError.page.entryPathHeldByYou",
+			message:
+				"You already published {entryPath} from this workspace as another page. Publish with --page {pageId} to add a version to it, or move the file.",
+			values: params,
+		}),
+	"serverError.page.entryPathHeldByColleague": (params) =>
+		i18n._({
+			id: "serverError.page.entryPathHeldByColleague",
+			message:
+				"Someone else has already published {entryPath} from this workspace. Publish with an explicit page id to add a version to their page, or move the file.",
+			values: params,
+		}),
 	"serverError.page.workspaceNotFound": () =>
 		i18n._(
 			msg({
