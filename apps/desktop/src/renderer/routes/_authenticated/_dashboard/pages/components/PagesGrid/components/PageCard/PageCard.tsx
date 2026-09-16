@@ -213,13 +213,12 @@ export function PageCard({
 								peekOpen && "bg-accent",
 							)}
 						>
-							{page.openThreadCount > 0 ? (
-								<span
-									aria-hidden="true"
-									className="size-1.5 rounded-full bg-emerald-500"
-								/>
-							) : null}
-							<MessageCircle className="size-3.5" aria-hidden="true" />
+							<span className="relative flex shrink-0" aria-hidden="true">
+								<MessageCircle className="size-3.5" />
+								{page.openThreadCount > 0 ? (
+									<span className="-top-0.5 -right-0.5 absolute size-1.5 rounded-full bg-emerald-500" />
+								) : null}
+							</span>
 							<span aria-hidden="true">{page.commentCount}</span>
 							<span className="sr-only">
 								<Plural

@@ -223,10 +223,12 @@
     transition: opacity 0.22s ease, background-color 0.15s ease;
   }
   .replies svg { width: 11px; height: 11px; }
+  .replies { position: relative; }
   .replies:hover { background: rgba(255, 255, 255, 0.07); }
   .replies.open::before {
-    content: ""; width: 5px; height: 5px; border-radius: 50%;
-    background: #4cc38a; flex: none;
+    content: ""; position: absolute; left: 12px; top: 0;
+    width: 5px; height: 5px; border-radius: 50%;
+    background: #4cc38a;
   }
   .trow { display: flex; align-items: center; gap: 8px; min-width: 0; }
   .trow .card-title { min-width: 0; flex: 1; }
@@ -386,9 +388,11 @@
   }
   .bcount svg { width: 14px; height: 14px; flex: none; }
   .bcount.open { background: #292b30; }
+  .bcount { position: relative; }
   .bcount.unresolved::before {
-    content: ""; width: 5px; height: 5px; border-radius: 50%;
-    background: #4cc38a; flex: none;
+    content: ""; position: absolute; left: 17px; top: 6px;
+    width: 5px; height: 5px; border-radius: 50%;
+    background: #4cc38a;
   }
   .bmeta { display: flex; align-items: center; gap: 6px; margin-top: 4px; color: #9b9da5; font-size: 12px; line-height: 1.5; }
 
@@ -827,7 +831,7 @@
   <div class="rows">
     <div class="row">
       <span class="lead">The count</span>
-      <span class="body">Every comment on the page, across threads and versions, in plain white beside the title. A small green dot marks unresolved threads; it disappears once the conversation settles. Screen readers get the whole phrase: &ldquo;5 replies, 2 open threads.&rdquo;</span>
+      <span class="body">Every comment on the page, across threads and versions, in plain white beside the title. A small green dot badges the icon&rsquo;s corner while unresolved threads remain; it disappears once the conversation settles. Screen readers get the whole phrase: &ldquo;5 replies, 2 open threads.&rdquo;</span>
     </div>
     <div class="row">
       <span class="lead">The peek</span>
