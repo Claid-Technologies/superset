@@ -120,11 +120,7 @@ export async function sandboxApiCredential(
 		["sign"],
 	);
 	const signature = new Uint8Array(
-		await crypto.subtle.sign(
-			"HMAC",
-			key,
-			encoder.encode(`api:${workspaceId}`),
-		),
+		await crypto.subtle.sign("HMAC", key, encoder.encode(`api:${workspaceId}`)),
 	);
 	return btoa(String.fromCharCode(...signature))
 		.replace(/\+/g, "-")

@@ -1206,6 +1206,10 @@ msgstr "更好用的應用程式內瀏覽器：預覽改動，點選任意元素
 msgid "A better Superset is ready"
 msgstr "更好的 Superset 已準備就緒"
 
+#. js-lingui-explicit-id
+msgid "serverError.common.cloudWorkspaceCannotCallThis"
+msgstr "雲端工作區無法呼叫 {path}。請在你已登入的用戶端中執行。"
+
 msgid "A delete is already in progress for {workspaceName}."
 msgstr "{workspaceName}已經在刪除中。"
 

@@ -313,6 +313,13 @@ export const serverErrorMessages: Record<
 				message: "Not authenticated. Please sign in.",
 			}),
 		),
+	"serverError.common.cloudWorkspaceCannotCallThis": (params) =>
+		i18n._({
+			id: "serverError.common.cloudWorkspaceCannotCallThis",
+			message:
+				"A cloud workspace cannot call {path}. Run this from a client you are signed into.",
+			values: params,
+		}),
 	"serverError.common.notAuthenticatedProvideABearerJwt": () =>
 		i18n._(
 			msg({

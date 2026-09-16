@@ -7,6 +7,7 @@ import { SANDBOX_PORTS } from "@superset/shared/sandbox-contract";
 /** One frame of a 1920x1200 display is ~9 MB; this is a stalled reader, not a burst. */
 const MAX_DISPLAY_BUFFER_BYTES = 32 * 1024 * 1024;
 const MAX_DISPLAY_PENDING = 64;
+
 import { TRPCError } from "@trpc/server";
 import type { MiddlewareHandler } from "hono";
 import { Hono } from "hono";
@@ -326,7 +327,9 @@ export function createApp(options: CreateAppOptions): CreateAppResult {
 	// "/websockify" is where desktop builds shipped before the display moved
 	// behind this check look for it.
 	app.use("/websockify", wsAuth);
-	app.on(["GET"], ["/desktop/websockify", "/websockify"],
+	app.on(
+		["GET"],
+		["/desktop/websockify", "/websockify"],
 		async (c, next) => {
 			if (process.env.SUPERSET_HOST_RUN_MODE !== "sandbox") {
 				return c.json({ error: "Not found" }, 404);
