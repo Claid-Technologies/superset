@@ -90,6 +90,20 @@ describe("popoverPlacement pinSize", () => {
 		expect(top + 200).toBeLessThanOrEqual(blockTop);
 	});
 
+	test("the keyboard taking the bottom flips the card clear of its block", () => {
+		const blockTop = 300;
+		const blockHeight = 120;
+		const cardHeight = 180;
+		const { top } = popoverPlacement({
+			point: { x: 40, y: blockTop + blockHeight },
+			container: { width: 390, height: 800 - 340 },
+			height: cardHeight,
+			pinSize: blockHeight,
+		});
+		expect(top + cardHeight).toBeLessThanOrEqual(blockTop);
+		expect(top).toBeGreaterThanOrEqual(EDGE);
+	});
+
 	test("a taller pin pushes a flipped card further up", () => {
 		const args = {
 			point: { x: 40, y: 380 },
