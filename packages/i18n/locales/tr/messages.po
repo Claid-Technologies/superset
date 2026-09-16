@@ -305,11 +305,6 @@ msgstr "{0} {actorVerb}"
 msgid "{0} → {1} pending"
 msgstr "{0} → {1} bekliyor"
 
-#. placeholder {0}: selected[0]?.fullName
-#. placeholder {1}: selected.length - 1
-msgid "{0} +{1}"
-msgstr "{0} +{1}"
-
 #. placeholder {0}: skill.name
 msgid "{0} actions"
 msgstr "{0} eylemleri"
@@ -664,6 +659,10 @@ msgstr "{distance} önce"
 
 msgid "{duration, plural, one {Thought for # second} other {Thought for # seconds}}"
 msgstr "{duration, plural, one {# saniye düşündü} other {# saniye düşündü}}"
+
+#. js-lingui-explicit-id
+msgid "serverError.page.entryPathHeldByAnotherOrganization"
+msgstr "Bu çalışma alanındaki {entryPath} başka bir organizasyonda zaten sayfa olarak yayımlanmış. Dosyayı taşı ya da o sayfanın kimliğiyle yayımla."
 
 msgid "{failed, plural, one {# failed} other {# failed}}"
 msgstr "{failed, plural, one {# başarısız} other {# başarısız}}"
@@ -1053,9 +1052,6 @@ msgstr "bu hafta için ~{stars} öngörülüyor"
 msgid "~{totalSeconds}s typical"
 msgstr "tipik ~{totalSeconds} sn"
 
-msgid "~{TYPICAL_SECONDS}s typical"
-msgstr "tipik ~{TYPICAL_SECONDS} sn"
-
 msgid "~/agent $"
 msgstr "~/agent $"
 
@@ -1206,6 +1202,10 @@ msgstr "Daha iyi bir uygulama içi tarayıcı: değişikliklerinizi önizleyin v
 
 msgid "A better Superset is ready"
 msgstr "Daha iyi bir Superset hazır"
+
+#. js-lingui-explicit-id
+msgid "serverError.common.cloudWorkspaceCannotCallThis"
+msgstr "Bulut çalışma alanı {path} çağıramaz. Bunu oturum açtığın bir istemciden yap."
 
 msgid "A delete is already in progress for {workspaceName}."
 msgstr "{workspaceName} için zaten bir silme işlemi sürüyor."
@@ -2008,6 +2008,9 @@ msgstr "Herkes"
 msgid "Anyone in your organization"
 msgstr "Kuruluşunuzdaki herkes"
 
+msgid "Anyone with the link"
+msgstr "Bağlantıya sahip herkes"
+
 msgid "anything"
 msgstr "herhangi bir şey"
 
@@ -2414,6 +2417,9 @@ msgstr "Değişiklik günlüğüne dön"
 
 msgid "Back to checklist"
 msgstr "Kontrol listesine dön"
+
+msgid "Back to current"
+msgstr "Güncel sürüme dön"
 
 msgid "Back to GitHub issues"
 msgstr "GitHub issue'larına dön"
@@ -4261,6 +4267,9 @@ msgstr "Ortam kaydedilemedi"
 
 msgid "Could not rename the session"
 msgstr "Oturum yeniden adlandırılamadı"
+
+msgid "Could not rename this page"
+msgstr "Bu sayfa yeniden adlandırılamadı"
 
 msgid "Could not reopen"
 msgstr "Yeniden açılamadı"
@@ -9573,12 +9582,6 @@ msgstr "Henüz herkese açık ajan yapılandırması yok. Bu bölüm gelecekteki
 msgid "No pull requests found."
 msgstr "Pull request bulunamadı."
 
-msgid "No repositories connected."
-msgstr "Bağlı depo yok."
-
-msgid "No repositories found"
-msgstr "Depo bulunamadı"
-
 msgid "No repositories found. Make sure your GitHub App has access to repositories."
 msgstr "Depo bulunamadı. GitHub App'inizin depolara erişimi olduğundan emin olun."
 
@@ -10699,6 +10702,9 @@ msgstr "Sayfa bulunamadı"
 msgid "Page Not Found"
 msgstr "Sayfa bulunamadı"
 
+msgid "Page title"
+msgstr "Sayfa başlığı"
+
 msgid "Page views"
 msgstr "Sayfa görüntülemeleri"
 
@@ -10907,9 +10913,6 @@ msgstr "Bir üst dizin seçin"
 msgid "Pick a project location"
 msgstr "Bir proje konumu seçin"
 
-msgid "Pick a repository for this cloud workspace"
-msgstr "Bu bulut çalışma alanı için bir depo seçin"
-
 msgid "Pick a sound or add your own. Custom audio supports .mp3, .wav, and .ogg."
 msgstr "Bir ses seçin veya kendinizinkini ekleyin. Özel ses .mp3, .wav ve .ogg destekler."
 
@@ -10921,9 +10924,6 @@ msgstr "Bir çalışma alanı seçin"
 
 msgid "Pick an icon and a color, or upload a custom image. Defaults to the linked GitHub owner's avatar."
 msgstr "Bir simge ve renk seçin ya da özel bir görsel yükleyin. Varsayılan olarak bağlı GitHub sahibinin avatarı kullanılır."
-
-msgid "Pick at least one repository for this workspace"
-msgstr "Bu çalışma alanı için en az bir depo seçin"
 
 msgid "Pick how {label} signs in inside a sandbox. The credential is handed to the agent process when it launches and is not stored in the sandbox."
 msgstr "{label} ajanının bir sandbox içinde nasıl oturum açacağını seçin. Kimlik bilgisi, başlatıldığında ajan sürecine verilir ve sandbox'ta saklanmaz."
@@ -11926,6 +11926,9 @@ msgstr "Grubu yeniden adlandır"
 
 msgid "Rename host"
 msgstr "Host'u yeniden adlandır"
+
+msgid "Rename page"
+msgstr "Sayfayı yeniden adlandır"
 
 msgid "Rename session"
 msgstr "Oturumu yeniden adlandır"
@@ -13263,6 +13266,9 @@ msgstr "Tasarımları ve raporları paylaşın. Geri bildirimleri ajanınız ele
 msgid "Share page"
 msgstr "Sayfayı paylaş"
 
+msgid "Share settings"
+msgstr "Paylaşım ayarları"
+
 msgid "Share this page"
 msgstr "Bu sayfayı paylaş"
 
@@ -13283,6 +13289,9 @@ msgstr "Superset'e içe aktarabileceğiniz paylaşılan tema JSON dosyaları."
 
 msgid "Shared version"
 msgstr "Paylaşılan sürüm"
+
+msgid "Shared with everyone"
+msgstr "Herkesle paylaşıldı"
 
 msgid "Shares the project's checkout — files, git index and branch — with its other local workspaces"
 msgstr "Projenin checkout'unu (dosyalar, git indeksi ve dal) diğer yerel çalışma alanlarıyla paylaşır"
@@ -13491,6 +13500,9 @@ msgstr "Superset'e devam etmek için oturum açın"
 
 msgid "Sign in to get started"
 msgstr "Başlamak için oturum açın"
+
+msgid "Sign in to view this page"
+msgstr "Bu sayfayı görmek için oturum açın"
 
 msgid "Sign in with email"
 msgstr "E-posta ile oturum aç"
@@ -13719,6 +13731,10 @@ msgstr "Bazı temalar atlandı"
 
 msgid "Some triggers need additional configuration"
 msgstr "Bazı tetikleyiciler ek yapılandırma gerektiriyor"
+
+#. js-lingui-explicit-id
+msgid "serverError.page.entryPathHeldByColleague"
+msgstr "Bu çalışma alanından {entryPath} dosyasını başkası zaten yayımlamış. Onun sayfasına sürüm eklemek için açık bir sayfa kimliğiyle yayımla ya da dosyayı taşı."
 
 msgid "someone external"
 msgstr "dışarıdan biri"
@@ -14978,6 +14994,9 @@ msgstr "hedef host"
 msgid "The team invitation has either expired or doesn't exist. Request a new link from the team owner or check the URL to make sure it is entered correctly."
 msgstr "Takım daveti ya süresi dolmuş ya da mevcut değil. Takım sahibinden yeni bir bağlantı isteyin veya URL'nin doğru girildiğini kontrol edin."
 
+msgid "The title shows everywhere this page is listed and in its link preview."
+msgstr "Başlık, bu sayfanın listelendiği her yerde ve bağlantı önizlemesinde görünür."
+
 msgid "The web agents UI is a read-only preview for now."
 msgstr "Web ajan arayüzü şimdilik salt okunur bir önizlemedir."
 
@@ -15093,6 +15112,9 @@ msgstr "Bu dizin mevcut değil. Terminal betiği çalışma alanı köküne geri
 msgid "This email is already registered with another sign-in method, and the provider did not confirm it as verified. Sign in with the method you used before."
 msgstr "Bu e-posta zaten başka bir oturum açma yöntemiyle kayıtlı ve sağlayıcı bunu doğrulanmış olarak onaylamadı. Daha önce kullandığınız yöntemle oturum açın."
 
+msgid "This environment has no repositories. Create an environment with repositories in Settings, then start the workspace from it"
+msgstr "Bu ortamda depo yok. Ayarlar'da depoları olan bir ortam oluşturun, ardından çalışma alanını o ortamdan başlatın"
+
 msgid "This environment was promoted from a workspace, so its repositories are fixed. Promote a workspace again to change them."
 msgstr "Bu ortam bir çalışma alanından yükseltildiği için depoları sabittir. Değiştirmek için bir çalışma alanını yeniden yükseltin."
 
@@ -15173,6 +15195,10 @@ msgstr "Bu sayfa başka bir yerden yayımlanıyor — yeniden deneyin"
 
 msgid "This page is in another organization"
 msgstr "Bu sayfa başka bir kuruluşta"
+
+#. placeholder {0}: url.replace(/^https?:\/\//, "")
+msgid "This page is live at <0>{0}</0>"
+msgstr "Bu sayfa <0>{0}</0> adresinde yayında"
 
 msgid "This page isn't here"
 msgstr "Bu sayfa burada değil"
@@ -16776,6 +16802,9 @@ msgstr "Başka üyeleri olan bir kuruluşun tek sahibisiniz. Önce sahipliği de
 #. placeholder {0}: String(MIN_ACTIVE_DAYS)
 msgid "You are unranked until {0} days carry usage. Scoring starts once the board can see a full picture."
 msgstr "{0} gün kullanım birikene kadar sıralama dışısın. Tablo bütün resmi gördüğünde puanlama başlar."
+
+msgid "You are viewing version {version}, read-only"
+msgstr "Sürüm {version} görüntüleniyor, salt okunur"
 
 msgid "You can attach up to {MAX_ATTACHMENTS} files"
 msgstr "En fazla {MAX_ATTACHMENTS} dosya ekleyebilirsiniz"

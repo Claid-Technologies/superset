@@ -81,12 +81,10 @@ export function NewChatWidget({
 	const selectedTarget =
 		targets.find((target) => target.key === targetKey) ?? defaultTarget;
 	const isCloudTarget = selectedTarget?.kind === "cloud";
+	const isSessionTarget = selectedTarget?.projectId === null;
 	const cloudScope = useWorkspaceScope() === "cloud";
-	const {
-		environment: selectedEnvironment,
-		picksRepository,
-		repository: cloudRepository,
-	} = useCloudCreateSelection();
+	const { environment: selectedEnvironment, repository: cloudRepository } =
+		useCloudCreateSelection();
 
 	const { data: session } = useSession();
 	const organizationId = session?.session?.activeOrganizationId ?? null;
@@ -99,10 +97,13 @@ export function NewChatWidget({
 			cloudRepository?.id ?? null,
 			"",
 		],
-		enabled: selectedTarget !== null && (!isCloudTarget || !!organizationId),
+		enabled:
+			selectedTarget !== null &&
+			!isSessionTarget &&
+			(!isCloudTarget || !!organizationId),
 		networkMode: "always" as const,
 		queryFn: async () => {
-			if (!selectedTarget) return null;
+			if (!selectedTarget?.projectId) return null;
 			if (selectedTarget.kind === "cloud") {
 				if (!organizationId || !cloudRepository) return null;
 				return apiClient.cloudWorkspace.listBranches.query({
@@ -163,7 +164,9 @@ export function NewChatWidget({
 		: [];
 	// Null until the branch list resolves. The previous fallback was the literal
 	// string "default", which reads as a branch name and is not one.
-	const branchLabel = baseBranch ?? branchData?.defaultBranch ?? null;
+	const branchLabel = isSessionTarget
+		? null
+		: (baseBranch ?? branchData?.defaultBranch ?? null);
 
 	// Only a request made after mount counts: the store keeps the last nonce,
 	// and a remount that read it as "positive" would focus without anyone
@@ -228,15 +231,10 @@ export function NewChatWidget({
 			return;
 		}
 		if (selectedTarget.kind === "cloud") {
-			if (picksRepository && !cloudRepository) {
-				router.push("/(authenticated)/(home)/new-session/repository");
-				return;
-			}
 			await createCloudWorkspace
 				.mutateAsync({
 					branch: baseBranch ?? branchData?.defaultBranch ?? null,
 					environmentId: selectedEnvironment?.id ?? null,
-					repositoryId: picksRepository ? (cloudRepository?.id ?? null) : null,
 					agent: effectiveAgentId,
 					model,
 					effort,
@@ -288,8 +286,7 @@ export function NewChatWidget({
 
 	// Under Cloud there is no project to show: a sandbox has no real project
 	// structure yet, so the chip is the place itself. The repo it clones comes
-	// from the environment, or from the repository chip when the environment
-	// has none.
+	// from the environment.
 	const headerChips = [
 		cloudScope
 			? {
@@ -299,7 +296,7 @@ export function NewChatWidget({
 			: {
 					id: "project",
 					label: selectedTarget?.projectName ?? t({ message: "No project" }),
-					avatar: true,
+					avatar: !isSessionTarget,
 					iconUri: selectedTarget?.projectIconUrl ?? undefined,
 				},
 		...(cloudScope
@@ -311,15 +308,6 @@ export function NewChatWidget({
 							t({
 								message: "Environment",
 							}),
-					},
-				]
-			: []),
-		...(cloudScope && picksRepository
-			? [
-					{
-						id: "repository",
-						label:
-							cloudRepository?.fullName ?? t({ message: "Select repository" }),
 					},
 				]
 			: []),
@@ -403,8 +391,6 @@ export function NewChatWidget({
 				void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 				if (id === "environment") {
 					router.push("/(authenticated)/(home)/new-session/environment");
-				} else if (id === "repository") {
-					router.push("/(authenticated)/(home)/new-session/repository");
 				} else if (id === "project") {
 					if (targets.length > 0) {
 						router.push({
@@ -412,7 +398,7 @@ export function NewChatWidget({
 							params: { selectedKey: selectedTarget?.key ?? "" },
 						});
 					}
-				} else if (selectedTarget) {
+				} else if (selectedTarget?.projectId) {
 					router.push({
 						pathname: "/(authenticated)/(home)/new-session/branch",
 						params: {

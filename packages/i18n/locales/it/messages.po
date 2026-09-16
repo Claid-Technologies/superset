@@ -305,11 +305,6 @@ msgstr "{0} {actorVerb}"
 msgid "{0} → {1} pending"
 msgstr "{0} → {1} in attesa"
 
-#. placeholder {0}: selected[0]?.fullName
-#. placeholder {1}: selected.length - 1
-msgid "{0} +{1}"
-msgstr "{0} +{1}"
-
 #. placeholder {0}: skill.name
 msgid "{0} actions"
 msgstr "Azioni di {0}"
@@ -664,6 +659,10 @@ msgstr "{distance} fa"
 
 msgid "{duration, plural, one {Thought for # second} other {Thought for # seconds}}"
 msgstr "{duration, plural, one {Ha pensato per # secondo} other {Ha pensato per # secondi}}"
+
+#. js-lingui-explicit-id
+msgid "serverError.page.entryPathHeldByAnotherOrganization"
+msgstr "{entryPath} in questo workspace è già pubblicato come pagina in un'altra organizzazione. Sposta il file oppure pubblica con l'id di quella pagina."
 
 msgid "{failed, plural, one {# failed} other {# failed}}"
 msgstr "{failed, plural, one {# fallito} other {# falliti}}"
@@ -1053,9 +1052,6 @@ msgstr "~{stars} previste questa settimana"
 msgid "~{totalSeconds}s typical"
 msgstr "~{totalSeconds}s tipici"
 
-msgid "~{TYPICAL_SECONDS}s typical"
-msgstr "~{TYPICAL_SECONDS}s tipici"
-
 msgid "~/agent $"
 msgstr "~/agent $"
 
@@ -1206,6 +1202,10 @@ msgstr "Un browser interno migliore: guarda l'anteprima delle tue modifiche e cl
 
 msgid "A better Superset is ready"
 msgstr "Una versione migliore di Superset è pronta"
+
+#. js-lingui-explicit-id
+msgid "serverError.common.cloudWorkspaceCannotCallThis"
+msgstr "Un workspace cloud non può chiamare {path}. Fallo da un client in cui hai effettuato l'accesso."
 
 msgid "A delete is already in progress for {workspaceName}."
 msgstr "Un'eliminazione è già in corso per {workspaceName}."
@@ -2008,6 +2008,9 @@ msgstr "Chiunque"
 msgid "Anyone in your organization"
 msgstr "Chiunque nella tua organizzazione"
 
+msgid "Anyone with the link"
+msgstr "Chiunque abbia il link"
+
 msgid "anything"
 msgstr "qualsiasi cosa"
 
@@ -2414,6 +2417,9 @@ msgstr "Torna al changelog"
 
 msgid "Back to checklist"
 msgstr "Torna alla checklist"
+
+msgid "Back to current"
+msgstr "Torna alla versione corrente"
 
 msgid "Back to GitHub issues"
 msgstr "Torna alle issue GitHub"
@@ -4261,6 +4267,9 @@ msgstr "Impossibile salvare l'ambiente"
 
 msgid "Could not rename the session"
 msgstr "Impossibile rinominare la sessione"
+
+msgid "Could not rename this page"
+msgstr "Impossibile rinominare questa pagina"
 
 msgid "Could not reopen"
 msgstr "Impossibile riaprire"
@@ -9573,12 +9582,6 @@ msgstr "Ancora nessuna configurazione di agente pubblica. Questa sezione è pron
 msgid "No pull requests found."
 msgstr "Nessuna pull request trovata."
 
-msgid "No repositories connected."
-msgstr "Nessun repository collegato."
-
-msgid "No repositories found"
-msgstr "Nessun repository trovato"
-
 msgid "No repositories found. Make sure your GitHub App has access to repositories."
 msgstr "Nessun repository trovato. Assicurati che la tua GitHub App abbia accesso ai repository."
 
@@ -10699,6 +10702,9 @@ msgstr "Pagina non trovata"
 msgid "Page Not Found"
 msgstr "Pagina non trovata"
 
+msgid "Page title"
+msgstr "Titolo della pagina"
+
 msgid "Page views"
 msgstr "Visualizzazioni di pagina"
 
@@ -10907,9 +10913,6 @@ msgstr "Scegli una directory padre"
 msgid "Pick a project location"
 msgstr "Scegli una posizione per il progetto"
 
-msgid "Pick a repository for this cloud workspace"
-msgstr "Scegli un repository per questo workspace cloud"
-
 msgid "Pick a sound or add your own. Custom audio supports .mp3, .wav, and .ogg."
 msgstr "Scegli un suono o aggiungine uno tuo. L'audio personalizzato supporta .mp3, .wav e .ogg."
 
@@ -10921,9 +10924,6 @@ msgstr "Scegli un workspace"
 
 msgid "Pick an icon and a color, or upload a custom image. Defaults to the linked GitHub owner's avatar."
 msgstr "Scegli un'icona e un colore oppure carica un'immagine personalizzata. Per impostazione predefinita usa l'avatar del proprietario GitHub collegato."
-
-msgid "Pick at least one repository for this workspace"
-msgstr "Scegli almeno un repository per questo workspace"
 
 msgid "Pick how {label} signs in inside a sandbox. The credential is handed to the agent process when it launches and is not stored in the sandbox."
 msgstr "Scegli come {label} accede dentro una sandbox. La credenziale viene passata al processo dell'agente all'avvio e non viene salvata nella sandbox."
@@ -11926,6 +11926,9 @@ msgstr "Rinomina il gruppo"
 
 msgid "Rename host"
 msgstr "Rinomina l'host"
+
+msgid "Rename page"
+msgstr "Rinomina pagina"
 
 msgid "Rename session"
 msgstr "Rinomina la sessione"
@@ -13263,6 +13266,9 @@ msgstr "Condividi design e report. Lascia che il tuo agente gestisca il feedback
 msgid "Share page"
 msgstr "Condividi la pagina"
 
+msgid "Share settings"
+msgstr "Impostazioni di condivisione"
+
 msgid "Share this page"
 msgstr "Condividi questa pagina"
 
@@ -13283,6 +13289,9 @@ msgstr "File JSON di temi condivisi che puoi importare in Superset."
 
 msgid "Shared version"
 msgstr "Versione condivisa"
+
+msgid "Shared with everyone"
+msgstr "Condivisa con tutti"
 
 msgid "Shares the project's checkout — files, git index and branch — with its other local workspaces"
 msgstr "Condivide il checkout del progetto (file, indice git e branch) con gli altri workspace locali"
@@ -13491,6 +13500,9 @@ msgstr "Accedi per continuare su Superset"
 
 msgid "Sign in to get started"
 msgstr "Accedi per iniziare"
+
+msgid "Sign in to view this page"
+msgstr "Accedi per vedere questa pagina"
 
 msgid "Sign in with email"
 msgstr "Accedi con email"
@@ -13719,6 +13731,10 @@ msgstr "Alcuni temi sono stati saltati"
 
 msgid "Some triggers need additional configuration"
 msgstr "Alcuni trigger richiedono una configurazione aggiuntiva"
+
+#. js-lingui-explicit-id
+msgid "serverError.page.entryPathHeldByColleague"
+msgstr "Qualcun altro ha già pubblicato {entryPath} da questo workspace. Pubblica con un id di pagina esplicito per aggiungere una versione alla sua pagina, oppure sposta il file."
 
 msgid "someone external"
 msgstr "qualcuno esterno"
@@ -14978,6 +14994,9 @@ msgstr "l'host di destinazione"
 msgid "The team invitation has either expired or doesn't exist. Request a new link from the team owner or check the URL to make sure it is entered correctly."
 msgstr "L'invito al team è scaduto oppure non esiste. Chiedi un nuovo link al proprietario del team o controlla che l'URL sia corretto."
 
+msgid "The title shows everywhere this page is listed and in its link preview."
+msgstr "Il titolo compare ovunque questa pagina sia elencata e nell'anteprima del suo link."
+
 msgid "The web agents UI is a read-only preview for now."
 msgstr "L'interfaccia web degli agenti è per ora un'anteprima in sola lettura."
 
@@ -15093,6 +15112,9 @@ msgstr "Questa directory non esiste. Lo script del terminale userà la radice de
 msgid "This email is already registered with another sign-in method, and the provider did not confirm it as verified. Sign in with the method you used before."
 msgstr "Questa email è già registrata con un altro metodo di accesso e il provider non l'ha confermata come verificata. Accedi con il metodo usato in precedenza."
 
+msgid "This environment has no repositories. Create an environment with repositories in Settings, then start the workspace from it"
+msgstr "Questo ambiente non ha repository. Crea un ambiente con repository nelle Impostazioni, poi avvia il workspace da lì"
+
 msgid "This environment was promoted from a workspace, so its repositories are fixed. Promote a workspace again to change them."
 msgstr "Questo ambiente è stato promosso da un workspace, quindi i suoi repository sono fissi. Promuovi di nuovo un workspace per cambiarli."
 
@@ -15173,6 +15195,10 @@ msgstr "Questa pagina è in fase di pubblicazione da un'altra parte — riprova"
 
 msgid "This page is in another organization"
 msgstr "Questa pagina è in un'altra organizzazione"
+
+#. placeholder {0}: url.replace(/^https?:\/\//, "")
+msgid "This page is live at <0>{0}</0>"
+msgstr "Questa pagina è online su <0>{0}</0>"
 
 msgid "This page isn't here"
 msgstr "Questa pagina non c'è"
@@ -16776,6 +16802,9 @@ msgstr "Sei l'unico proprietario di un'organizzazione che ha altri membri. Trasf
 #. placeholder {0}: String(MIN_ACTIVE_DAYS)
 msgid "You are unranked until {0} days carry usage. Scoring starts once the board can see a full picture."
 msgstr "Non sei classificato finché {0} giorni non registrano attività. Il punteggio parte quando il quadro è completo."
+
+msgid "You are viewing version {version}, read-only"
+msgstr "Stai visualizzando la versione {version}, in sola lettura"
 
 msgid "You can attach up to {MAX_ATTACHMENTS} files"
 msgstr "Puoi allegare fino a {MAX_ATTACHMENTS} file"

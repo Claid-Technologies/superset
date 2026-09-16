@@ -305,11 +305,6 @@ msgstr "{0} {actorVerb}"
 msgid "{0} → {1} pending"
 msgstr "{0} → {1} đang chờ"
 
-#. placeholder {0}: selected[0]?.fullName
-#. placeholder {1}: selected.length - 1
-msgid "{0} +{1}"
-msgstr "{0} +{1}"
-
 #. placeholder {0}: skill.name
 msgid "{0} actions"
 msgstr "Hành động {0}"
@@ -664,6 +659,10 @@ msgstr "{distance} trước"
 
 msgid "{duration, plural, one {Thought for # second} other {Thought for # seconds}}"
 msgstr "{duration, plural, one {Đã suy nghĩ # giây} other {Đã suy nghĩ # giây}}"
+
+#. js-lingui-explicit-id
+msgid "serverError.page.entryPathHeldByAnotherOrganization"
+msgstr "{entryPath} trong workspace này đã được xuất bản thành một trang ở tổ chức khác. Hãy di chuyển tệp hoặc xuất bản kèm id của trang đó."
 
 msgid "{failed, plural, one {# failed} other {# failed}}"
 msgstr "{failed, plural, one {# thất bại} other {# thất bại}}"
@@ -1053,9 +1052,6 @@ msgstr "dự kiến ~{stars} tuần này"
 msgid "~{totalSeconds}s typical"
 msgstr "thường ~{totalSeconds}s"
 
-msgid "~{TYPICAL_SECONDS}s typical"
-msgstr "thường ~{TYPICAL_SECONDS}s"
-
 msgid "~/agent $"
 msgstr "~/agent $"
 
@@ -1206,6 +1202,10 @@ msgstr "Trình duyệt trong ứng dụng tốt hơn: xem trước thay đổi v
 
 msgid "A better Superset is ready"
 msgstr "Phiên bản Superset tốt hơn đã sẵn sàng"
+
+#. js-lingui-explicit-id
+msgid "serverError.common.cloudWorkspaceCannotCallThis"
+msgstr "Workspace trên cloud không thể gọi {path}. Hãy làm việc này từ một client bạn đã đăng nhập."
 
 msgid "A delete is already in progress for {workspaceName}."
 msgstr "Đang có một thao tác xóa cho {workspaceName}."
@@ -2008,6 +2008,9 @@ msgstr "Bất kỳ ai"
 msgid "Anyone in your organization"
 msgstr "Bất kỳ ai trong tổ chức của bạn"
 
+msgid "Anyone with the link"
+msgstr "Bất kỳ ai có liên kết"
+
 msgid "anything"
 msgstr "bất kỳ điều gì"
 
@@ -2414,6 +2417,9 @@ msgstr "Quay lại Changelog"
 
 msgid "Back to checklist"
 msgstr "Quay lại danh sách kiểm"
+
+msgid "Back to current"
+msgstr "Quay lại bản hiện tại"
 
 msgid "Back to GitHub issues"
 msgstr "Quay lại issue GitHub"
@@ -4261,6 +4267,9 @@ msgstr "Không thể lưu environment"
 
 msgid "Could not rename the session"
 msgstr "Không thể đổi tên phiên"
+
+msgid "Could not rename this page"
+msgstr "Không thể đổi tên trang này"
 
 msgid "Could not reopen"
 msgstr "Không thể mở lại"
@@ -9573,12 +9582,6 @@ msgstr "Chưa có cấu hình agent công khai nào. Đường dẫn này đã s
 msgid "No pull requests found."
 msgstr "Không tìm thấy pull request nào."
 
-msgid "No repositories connected."
-msgstr "Chưa có repository nào được kết nối."
-
-msgid "No repositories found"
-msgstr "Không tìm thấy repository nào"
-
 msgid "No repositories found. Make sure your GitHub App has access to repositories."
 msgstr "Không tìm thấy repository nào. Hãy đảm bảo GitHub App của bạn có quyền truy cập repository."
 
@@ -10699,6 +10702,9 @@ msgstr "Không tìm thấy trang"
 msgid "Page Not Found"
 msgstr "Không tìm thấy trang"
 
+msgid "Page title"
+msgstr "Tiêu đề trang"
+
 msgid "Page views"
 msgstr "Lượt xem trang"
 
@@ -10907,9 +10913,6 @@ msgstr "Hãy chọn một thư mục cha"
 msgid "Pick a project location"
 msgstr "Hãy chọn vị trí dự án"
 
-msgid "Pick a repository for this cloud workspace"
-msgstr "Chọn một repository cho workspace cloud này"
-
 msgid "Pick a sound or add your own. Custom audio supports .mp3, .wav, and .ogg."
 msgstr "Chọn một âm thanh hoặc thêm âm thanh riêng. Âm thanh riêng hỗ trợ .mp3, .wav và .ogg."
 
@@ -10921,9 +10924,6 @@ msgstr "Chọn một workspace"
 
 msgid "Pick an icon and a color, or upload a custom image. Defaults to the linked GitHub owner's avatar."
 msgstr "Chọn biểu tượng và màu, hoặc tải ảnh riêng lên. Mặc định dùng ảnh đại diện của chủ sở hữu GitHub đã liên kết."
-
-msgid "Pick at least one repository for this workspace"
-msgstr "Chọn ít nhất một repository cho workspace này"
 
 msgid "Pick how {label} signs in inside a sandbox. The credential is handed to the agent process when it launches and is not stored in the sandbox."
 msgstr "Chọn cách {label} đăng nhập bên trong sandbox. Thông tin xác thực được chuyển cho tiến trình agent khi khởi chạy và không được lưu trong sandbox."
@@ -11926,6 +11926,9 @@ msgstr "Đổi tên nhóm"
 
 msgid "Rename host"
 msgstr "Đổi tên host"
+
+msgid "Rename page"
+msgstr "Đổi tên trang"
 
 msgid "Rename session"
 msgstr "Đổi tên phiên"
@@ -13263,6 +13266,9 @@ msgstr "Chia sẻ thiết kế và báo cáo. Hãy để agent của bạn xử 
 msgid "Share page"
 msgstr "Chia sẻ trang"
 
+msgid "Share settings"
+msgstr "Cài đặt chia sẻ"
+
 msgid "Share this page"
 msgstr "Chia sẻ trang này"
 
@@ -13283,6 +13289,9 @@ msgstr "Các tệp JSON chủ đề được chia sẻ, bạn có thể nhập v
 
 msgid "Shared version"
 msgstr "Phiên bản được chia sẻ"
+
+msgid "Shared with everyone"
+msgstr "Đã chia sẻ với mọi người"
 
 msgid "Shares the project's checkout — files, git index and branch — with its other local workspaces"
 msgstr "Dùng chung checkout của dự án — tệp, chỉ mục git và nhánh — với các workspace cục bộ khác"
@@ -13491,6 +13500,9 @@ msgstr "Đăng nhập để tiếp tục vào Superset"
 
 msgid "Sign in to get started"
 msgstr "Đăng nhập để bắt đầu"
+
+msgid "Sign in to view this page"
+msgstr "Đăng nhập để xem trang này"
 
 msgid "Sign in with email"
 msgstr "Đăng nhập bằng email"
@@ -13719,6 +13731,10 @@ msgstr "Một số theme đã bị bỏ qua"
 
 msgid "Some triggers need additional configuration"
 msgstr "Một số trigger cần cấu hình thêm"
+
+#. js-lingui-explicit-id
+msgid "serverError.page.entryPathHeldByColleague"
+msgstr "Người khác đã xuất bản {entryPath} từ workspace này. Hãy xuất bản kèm id trang cụ thể để thêm phiên bản vào trang của họ, hoặc di chuyển tệp."
 
 msgid "someone external"
 msgstr "người bên ngoài"
@@ -14978,6 +14994,9 @@ msgstr "host đích"
 msgid "The team invitation has either expired or doesn't exist. Request a new link from the team owner or check the URL to make sure it is entered correctly."
 msgstr "Lời mời vào nhóm đã hết hạn hoặc không tồn tại. Hãy xin liên kết mới từ chủ sở hữu nhóm hoặc kiểm tra lại URL xem đã nhập đúng chưa."
 
+msgid "The title shows everywhere this page is listed and in its link preview."
+msgstr "Tiêu đề hiển thị ở mọi nơi trang này được liệt kê và trong bản xem trước liên kết."
+
 msgid "The web agents UI is a read-only preview for now."
 msgstr "Giao diện agent trên web hiện chỉ là bản xem trước chỉ đọc."
 
@@ -15093,6 +15112,9 @@ msgstr "Thư mục này không tồn tại. Script terminal sẽ quay về thư 
 msgid "This email is already registered with another sign-in method, and the provider did not confirm it as verified. Sign in with the method you used before."
 msgstr "Email này đã được đăng ký bằng phương thức đăng nhập khác và nhà cung cấp chưa xác nhận email đã được xác minh. Hãy đăng nhập bằng phương thức bạn đã dùng trước đây."
 
+msgid "This environment has no repositories. Create an environment with repositories in Settings, then start the workspace from it"
+msgstr "Environment này không có repository nào. Hãy tạo một environment có repository trong Settings, rồi khởi động workspace từ environment đó"
+
 msgid "This environment was promoted from a workspace, so its repositories are fixed. Promote a workspace again to change them."
 msgstr "Environment này được promote từ một workspace nên các repository của nó đã cố định. Hãy promote lại một workspace để thay đổi."
 
@@ -15173,6 +15195,10 @@ msgstr "Trang này đang được xuất bản từ nơi khác — hãy thử l�
 
 msgid "This page is in another organization"
 msgstr "Trang này thuộc một tổ chức khác"
+
+#. placeholder {0}: url.replace(/^https?:\/\//, "")
+msgid "This page is live at <0>{0}</0>"
+msgstr "Trang này đang hoạt động tại <0>{0}</0>"
 
 msgid "This page isn't here"
 msgstr "Trang này không có ở đây"
@@ -16776,6 +16802,9 @@ msgstr "Bạn là chủ sở hữu duy nhất của một tổ chức còn thàn
 #. placeholder {0}: String(MIN_ACTIVE_DAYS)
 msgid "You are unranked until {0} days carry usage. Scoring starts once the board can see a full picture."
 msgstr "Bạn chưa được xếp hạng cho đến khi có {0} ngày hoạt động. Việc tính điểm bắt đầu khi thấy được bức tranh đầy đủ."
+
+msgid "You are viewing version {version}, read-only"
+msgstr "Bạn đang xem phiên bản {version}, chỉ đọc"
 
 msgid "You can attach up to {MAX_ATTACHMENTS} files"
 msgstr "Bạn có thể đính kèm tối đa {MAX_ATTACHMENTS} tệp"
