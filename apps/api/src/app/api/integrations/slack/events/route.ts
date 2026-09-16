@@ -137,10 +137,13 @@ export async function POST(request: Request) {
 
 		if (event.type === "message") {
 			const messageEvent = event as SlackMessageEvent;
-			// Bot posts, edits, deletes and joins never launch the agent.
+			// Bot posts, edits, deletes and joins never launch the agent. A file
+			// share and a reply also sent to the channel are still messages.
 			const humanPost =
 				!messageEvent.bot_id &&
-				(!messageEvent.subtype || messageEvent.subtype === "file_share") &&
+				(!messageEvent.subtype ||
+					messageEvent.subtype === "file_share" ||
+					messageEvent.subtype === "thread_broadcast") &&
 				!!messageEvent.user;
 			if (!humanPost) {
 				return new Response("ok", { status: 200 });

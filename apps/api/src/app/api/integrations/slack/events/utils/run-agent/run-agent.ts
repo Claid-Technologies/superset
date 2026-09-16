@@ -472,14 +472,17 @@ async function fetchAgentContext({
 function buildUserMessageContent({
 	prompt,
 	threadContext,
+	threadMemory,
 	images,
 }: {
 	prompt: string;
 	threadContext: string;
+	threadMemory: string | undefined;
 	images: SlackImageAsset[] | undefined;
 }): string | Anthropic.ContentBlockParam[] {
-	const textContent = threadContext
-		? `${threadContext}\n\nCurrent message:\n${prompt}`
+	const preamble = [threadMemory, threadContext].filter(Boolean).join("\n\n");
+	const textContent = preamble
+		? `${preamble}\n\nCurrent message:\n${prompt}`
 		: prompt;
 
 	if (!images || images.length === 0) {
@@ -577,11 +580,12 @@ export async function runSlackAgent(
 - Thread: ${params.threadTs}
 - Organization ID: ${params.organizationId}
 
-${agentContext}${params.threadMemory ? `\n\n${params.threadMemory}` : ""}`;
+${agentContext}`;
 
 		const userContent = buildUserMessageContent({
 			prompt: params.prompt,
 			threadContext,
+			threadMemory: params.threadMemory,
 			images: params.images,
 		});
 

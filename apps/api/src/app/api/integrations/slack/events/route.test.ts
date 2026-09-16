@@ -308,6 +308,15 @@ describe("Slack agent delivery", () => {
 		expect(followUpTarget).toHaveBeenCalledTimes(1);
 	});
 
+	test("a reply also sent to the channel still counts as a thread reply", async () => {
+		followUpTarget.mockClear();
+		followUpTarget.mockImplementationOnce(async () => ({ id: "session" }));
+		await POST(
+			channelReply("broadcast reply", { subtype: "thread_broadcast" }),
+		);
+		expect(publishJSON).toHaveBeenCalledTimes(1);
+	});
+
 	test("a thread reply that mentions the bot is left to the app_mention path", async () => {
 		followUpTarget.mockClear();
 		followUpTarget.mockImplementationOnce(async () => ({ id: "session" }));

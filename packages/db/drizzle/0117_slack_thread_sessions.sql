@@ -13,9 +13,8 @@ CREATE TABLE "slack_thread_sessions" (
 	"last_activity_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
-	CONSTRAINT "slack_thread_sessions_thread_unique" UNIQUE("team_id","channel_id","thread_ts")
+	CONSTRAINT "slack_thread_sessions_thread_unique" UNIQUE("organization_id","team_id","channel_id","thread_ts")
 );
 --> statement-breakpoint
 ALTER TABLE "slack_thread_sessions" ADD CONSTRAINT "slack_thread_sessions_organization_id_organizations_id_fk" FOREIGN KEY ("organization_id") REFERENCES "auth"."organizations"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "slack_thread_sessions" ADD CONSTRAINT "slack_thread_sessions_started_by_user_id_users_id_fk" FOREIGN KEY ("started_by_user_id") REFERENCES "auth"."users"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
-CREATE INDEX "slack_thread_sessions_org_idx" ON "slack_thread_sessions" USING btree ("organization_id");
+ALTER TABLE "slack_thread_sessions" ADD CONSTRAINT "slack_thread_sessions_started_by_user_id_users_id_fk" FOREIGN KEY ("started_by_user_id") REFERENCES "auth"."users"("id") ON DELETE set null ON UPDATE no action;

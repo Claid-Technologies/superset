@@ -1,5 +1,5 @@
 {
-  "id": "3d2faad3-d9c1-427e-b718-6ebcffd9340f",
+  "id": "4b57d8fa-6398-4bb6-aa7e-5e2d9ba31470",
   "prevId": "929ff272-9f29-4ff3-9488-348ab495580a",
   "version": "7",
   "dialect": "postgresql",
@@ -10545,23 +10545,7 @@
           "default": "now()"
         }
       },
-      "indexes": {
-        "slack_thread_sessions_org_idx": {
-          "name": "slack_thread_sessions_org_idx",
-          "columns": [
-            {
-              "expression": "organization_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
+      "indexes": {},
       "foreignKeys": {
         "slack_thread_sessions_organization_id_organizations_id_fk": {
           "name": "slack_thread_sessions_organization_id_organizations_id_fk",
@@ -10598,6 +10582,7 @@
           "name": "slack_thread_sessions_thread_unique",
           "nullsNotDistinct": false,
           "columns": [
+            "organization_id",
             "team_id",
             "channel_id",
             "thread_ts"

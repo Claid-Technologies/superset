@@ -154,11 +154,21 @@ describe("agent loop", () => {
 		expect(create.mock.calls[0]?.[1]).toMatchObject({ maxRetries: 1 });
 		expect(cleanup).toHaveBeenCalledTimes(1);
 	});
-	test("thread memory is appended to the contextual system block", async () => {
-		await runSlackAgent({ ...params, threadMemory: "Earlier: workspace X" });
-		const system = create.mock.calls[0]?.[0].system as { text: string }[];
-		expect(system[1]?.text).toContain("Earlier: workspace X");
-		expect(system[0]?.text).not.toContain("Earlier: workspace X");
+	test("thread memory is user-turn data, never part of the system prompt", async () => {
+		await runSlackAgent({
+			...params,
+			threadMemory: "<thread_memory>ws X</thread_memory>",
+		});
+		const request = create.mock.calls[0]?.[0] as {
+			system: { text: string }[];
+			messages: { content: string }[];
+		};
+		expect(request.messages[0]?.content).toContain(
+			"<thread_memory>ws X</thread_memory>",
+		);
+		expect(request.messages[0]?.content).toContain("Current message:\nHelp");
+		for (const block of request.system)
+			expect(block.text).not.toContain("ws X");
 	});
 	test("does not send adaptive thinking or the new web search tool to Haiku", async () => {
 		await runSlackAgent({ ...params, model: "claude-haiku-4-5" });

@@ -19,6 +19,8 @@ export interface SlackThreadEntity {
 	label: string;
 	url?: string;
 	at: string;
+	/** Position within the run that created it; `at` alone ties within a run. */
+	seq: number;
 }
 
 /** A follow-up that arrived while the thread's agent was mid-turn. */
@@ -33,7 +35,9 @@ export interface SlackQueuedEvent {
  * durable session: replies reach the agent without a mention, and the
  * entity log is what lets "that workspace" resolve on a later turn. Slack
  * content is not stored here beyond ids, timestamps and the labels of things
- * the agent created.
+ * the agent created. Keyed by organization as well as thread: a Slack team
+ * can be disconnected and connected by another organization, which must not
+ * inherit the previous one's log.
  */
 export const slackThreadSessions = pgTable(
 	"slack_thread_sessions",
@@ -74,11 +78,11 @@ export const slackThreadSessions = pgTable(
 	},
 	(t) => [
 		unique("slack_thread_sessions_thread_unique").on(
+			t.organizationId,
 			t.teamId,
 			t.channelId,
 			t.threadTs,
 		),
-		index("slack_thread_sessions_org_idx").on(t.organizationId),
 	],
 );
 
