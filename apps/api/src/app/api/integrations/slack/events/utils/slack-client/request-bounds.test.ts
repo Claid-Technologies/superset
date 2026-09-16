@@ -1,5 +1,11 @@
 import { describe, expect, test } from "bun:test";
-import { SLACK_REQUEST_TIMEOUT_MS, slackRequestBounds } from "./request-bounds";
+import {
+	deadlineRequestInterceptor,
+	SLACK_REQUEST_TIMEOUT_MS,
+	SlackDeadlineExceededError,
+	slackRateLimitRetryAfterMs,
+	slackRequestBounds,
+} from "./request-bounds";
 
 describe("slackRequestBounds", () => {
 	const now = 1_000_000;
@@ -26,5 +32,35 @@ describe("slackRequestBounds", () => {
 			timeout: 1_000,
 			retries: 0,
 		});
+	});
+});
+
+describe("deadlineRequestInterceptor", () => {
+	const start = 1_000_000;
+	test("re-evaluates the timeout on every request as the budget drains", () => {
+		let now = start;
+		const intercept = deadlineRequestInterceptor(start + 100_000, () => now);
+		expect(intercept({ timeout: 0 }).timeout).toBe(SLACK_REQUEST_TIMEOUT_MS);
+		now = start + 95_000;
+		expect(intercept({ timeout: 0 }).timeout).toBe(5_000);
+	});
+	test("refuses to start a request once the deadline has passed", () => {
+		const intercept = deadlineRequestInterceptor(start, () => start + 1);
+		expect(() => intercept({ timeout: 0 })).toThrow(SlackDeadlineExceededError);
+	});
+});
+
+describe("slackRateLimitRetryAfterMs", () => {
+	test("reads the SDK's rejected 429", () => {
+		expect(
+			slackRateLimitRetryAfterMs({
+				code: "slack_webapi_rate_limited_error",
+				retryAfter: 3,
+			}),
+		).toBe(3_000);
+	});
+	test("ignores every other error", () => {
+		expect(slackRateLimitRetryAfterMs(new Error("boom"))).toBeUndefined();
+		expect(slackRateLimitRetryAfterMs(null)).toBeUndefined();
 	});
 });

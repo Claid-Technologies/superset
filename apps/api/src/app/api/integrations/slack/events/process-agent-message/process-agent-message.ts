@@ -15,7 +15,10 @@ import {
 	SlackAgentError,
 } from "../utils/run-agent";
 import { formatSideEffectsMessage } from "../utils/slack-blocks";
-import { createSlackClient } from "../utils/slack-client";
+import {
+	createSlackClient,
+	slackRateLimitRetryAfterMs,
+} from "../utils/slack-client";
 import {
 	extractSlackImageAssets,
 	formatSlackImageAssetError,
@@ -320,12 +323,21 @@ export async function processAgentMessage({
 		// A new final reply notifies thread participants; editing a placeholder
 		// silently would not. Model output goes in Slack's Markdown block.
 		for (const text of splitMarkdown(result.text)) {
-			await run.chat.postMessage({
-				channel: event.channel,
-				thread_ts: threadTs,
-				text,
-				blocks: [{ type: "markdown", text }],
-			});
+			const post = () =>
+				run.chat.postMessage({
+					channel: event.channel,
+					thread_ts: threadTs,
+					text,
+					blocks: [{ type: "markdown", text }],
+				});
+			try {
+				await post();
+			} catch (error) {
+				const wait = slackRateLimitRetryAfterMs(error);
+				if (wait === undefined || Date.now() + wait >= deadline) throw error;
+				await new Promise((resolve) => setTimeout(resolve, wait));
+				await post();
+			}
 		}
 		delivered = true;
 

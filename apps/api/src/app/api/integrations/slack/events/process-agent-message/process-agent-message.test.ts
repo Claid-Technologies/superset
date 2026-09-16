@@ -59,6 +59,9 @@ mock.module("../utils/agent-delivery", () => ({
 	claimAgentDelivery: claim,
 	finishAgentDelivery: finish,
 }));
+const { slackRateLimitRetryAfterMs } = await import(
+	"../utils/slack-client/request-bounds"
+);
 mock.module("../utils/slack-client", () => ({
 	createSlackClient: () => ({
 		chat: { postMessage, update: updateMessage, delete: deleteMessage },
@@ -66,6 +69,7 @@ mock.module("../utils/slack-client", () => ({
 		reactions: { add: addReaction, remove: removeReaction },
 	}),
 	isUnpostableChannelError: () => false,
+	slackRateLimitRetryAfterMs,
 }));
 // Mock the barrel only; the image utility's own tests import its implementation.
 mock.module("../utils/slack-image-assets", () => ({
@@ -90,7 +94,8 @@ const params = {
 
 beforeEach(() => {
 	postCount = 0;
-	postMessage.mockClear();
+	postMessage.mockReset();
+	postMessage.mockImplementation(async () => ({ ts: `msg-${++postCount}` }));
 	updateMessage.mockClear();
 	deleteMessage.mockClear();
 	setStatus.mockClear();
@@ -130,6 +135,40 @@ test("mentions run as their linked author and post a final Markdown reply", asyn
 	expect(setStatus).not.toHaveBeenCalled();
 	expect(finish).toHaveBeenCalledWith("delivery", true);
 	expect(removeReaction).toHaveBeenCalledTimes(1);
+});
+
+test("the final reply waits out a short rate limit and retries once", async () => {
+	const rateLimited = Object.assign(new Error("rate limited"), {
+		code: "slack_webapi_rate_limited_error",
+		retryAfter: 0,
+	});
+	postMessage.mockImplementation(async (args) => {
+		if (args.text === "**Completed**" && postMessage.mock.calls.length === 2) {
+			throw rateLimited;
+		}
+		return { ts: `msg-${++postCount}` };
+	});
+	await processAgentMessage(params);
+	const finals = postMessage.mock.calls.filter(
+		([args]) => args.text === "**Completed**",
+	);
+	expect(finals).toHaveLength(2);
+	expect(finish).toHaveBeenCalledWith("delivery", true);
+});
+
+test("a rate limit that outlives the budget is not waited on", async () => {
+	postMessage.mockImplementation(async (args) => {
+		if (args.text === "**Completed**") {
+			throw Object.assign(new Error("rate limited"), {
+				code: "slack_webapi_rate_limited_error",
+				retryAfter: 600,
+			});
+		}
+		return { ts: `msg-${++postCount}` };
+	});
+	await processAgentMessage(params);
+	expect(finish).toHaveBeenCalledWith("delivery", false);
+	expect(postMessage.mock.calls.at(-1)?.[0].text).toBe("Unable to finish");
 });
 
 test("channel progress updates edit the placeholder instead of posting", async () => {
