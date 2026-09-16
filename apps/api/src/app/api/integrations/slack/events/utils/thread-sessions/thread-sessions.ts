@@ -70,7 +70,10 @@ export async function requestThreadStop(
 		})
 		.onConflictDoUpdate({
 			target: THREAD_CONFLICT_TARGET,
-			set: { stopRequestedAt: stampedAt },
+			// Two stops can arrive out of order; the newer one must win.
+			set: {
+				stopRequestedAt: sql`GREATEST(${slackThreadSessions.stopRequestedAt}, ${stampedAt})`,
+			},
 		})
 		.returning({ status: slackThreadSessions.status });
 	return row?.status === "running";
