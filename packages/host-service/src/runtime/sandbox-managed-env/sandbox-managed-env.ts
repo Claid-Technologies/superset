@@ -38,10 +38,8 @@ export function setManagedEnv(variables: Record<string, string>): void {
 }
 
 /**
- * The GIT_AUTHOR_* variables only reach what host-service spawns. A commit
- * made by anything else on the box — a detached process, a nested container,
- * a shell started before the push — would be attributed to the sandbox user,
- * so the identity is written to the user's git config as well.
+ * The GIT_AUTHOR_* variables only reach what host-service spawns; anything
+ * else on the box would commit as the sandbox user.
  */
 async function writeGitIdentity(
 	variables: Record<string, string>,

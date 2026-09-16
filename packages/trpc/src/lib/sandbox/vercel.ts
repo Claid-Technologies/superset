@@ -364,9 +364,7 @@ export async function wakeSandbox(args: {
 			}
 		}
 		// A box that is already serving needs neither a fresh identity file nor
-		// another boot: the runner would refuse to stack a second host-service
-		// anyway, and every open client wakes on a timer, so this is the common
-		// call. The policy still goes out — a credential may have aged.
+		// another boot. The policy still goes out: a credential may have aged.
 		const serving = wasRunning && (await hostServiceAnswers(hostTarget));
 		await Promise.all([
 			sandbox

@@ -150,9 +150,8 @@ async function main(): Promise<void> {
 		// and event bus are up, and a person opening the workspace sees the
 		// agent's terminal the way they would on their own machine.
 		void launchSandboxAgent();
-		// A sandbox stop keeps the disk and drops every process, so the agents
-		// that were running are gone with nothing to notice but this. Not on a
-		// laptop: the same sweep spans every worktree the machine ever had.
+		// A stop keeps the disk and drops every process, so nothing else on the
+		// box will notice that its agents are gone.
 		if (env.SUPERSET_HOST_RUN_MODE === "sandbox") void resumeCrashedAgents();
 		const sandboxWorkspaceId = process.env.SUPERSET_SANDBOX_WORKSPACE_ID;
 		if (env.SUPERSET_HOST_RUN_MODE === "sandbox" && sandboxWorkspaceId) {

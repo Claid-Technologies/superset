@@ -69,9 +69,8 @@ local_allocate_ports() {
   local base="$SUPERSET_PORT_BASE"
   # DB stack host ports live in the free tail of the 20-port window
   # (app ports use +0..+13).
-  # +9 and +10 are retired app slots (Electric/Caddy); +14 and +15 belong to
-  # the usercontent and gate workers, and taking them here is what made
-  # `bun dev:all` fail with EADDRINUSE on a workspace set up this way.
+  # +9 and +10 are retired app slots; +14 and +15 belong to the usercontent
+  # and gate workers.
   LOCAL_PG_PORT=$((base + 9))
   LOCAL_NEON_PROXY_PORT=$((base + 10))
   LOCAL_REDIS_PORT=$((base + 16))

@@ -26,12 +26,9 @@ log "shell tooling installed"
 # the same way .superset/setup.sh does on a laptop.
 sudo npm install -g neonctl@2 >/dev/null 2>&1 && log "neonctl $(neonctl --version 2>/dev/null) installed" || { log "neonctl install failed"; exit 1; }
 
-# Everything this used to install by hand — materialising .env, branching the
-# database, starting the dev stack — now lives in the repository, as
-# .superset/setup.cloud.sh and .superset/dev-stack.cloud.sh, so every
-# environment built from it gets the same treatment and there is one copy to
-# fix. This shim stays only because a branch checked out from before that
-# change still asks for `superset-dev-stack` by name.
+# The work itself lives in the repository now (.superset/setup.cloud.sh and
+# .superset/dev-stack.cloud.sh). This shim stays because a branch checked out
+# from before that change still asks for `superset-dev-stack` by name.
 sudo tee /usr/local/bin/superset-dev-stack >/dev/null <<'DEVSTACK'
 #!/usr/bin/env bash
 # Compatibility shim: the scripts are in the checkout now.

@@ -199,10 +199,8 @@ export async function runSandboxStartHook(
 		};
 	});
 
-	// A command the image does not have exits within milliseconds, and
-	// reporting that as started is what let a broken start hook look healthy
-	// on every boot. A command that daemonizes (tmux new-session -d) also
-	// exits at once, but with 0, and that is a real start.
+	// A command that daemonizes (tmux new-session -d) also exits at once, so
+	// only a non-zero exit inside this window counts as a failure to start.
 	const failure = await new Promise<number | null>((resolve) => {
 		const timer = setTimeout(() => resolve(null), START_HOOK_SETTLE_MS);
 		child.once("exit", (code) => {

@@ -186,9 +186,8 @@ port_base_is_safe() {
   return 0
 }
 
-# Every service in a workspace gets its own offset from SUPERSET_PORT_BASE. Two
-# services on one offset only shows up later, as EADDRINUSE from whichever
-# starts second, so ports.json is written through this.
+# Two services on one offset surfaces much later, as EADDRINUSE from whichever
+# starts second.
 assert_unique_ports() {
   local dupes
   dupes=$(printf '%s\n' "$@" | sort | uniq -d)

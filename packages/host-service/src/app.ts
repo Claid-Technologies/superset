@@ -316,11 +316,8 @@ export function createApp(options: CreateAppOptions): CreateAppResult {
 	app.use("/desktop/*", wsAuth);
 	app.use("/fwd", wsAuth);
 
-	// The sandbox's display. websockify listens on loopback with no
-	// credential of its own, so the check that admits a pane is this route's:
-	// the same host secret or JWT every other route requires. Published
-	// directly, as it used to be, the display answered anyone who knew the
-	// sandbox's address.
+	// websockify listens on loopback with no credential of its own, so the
+	// check that admits a pane is this route's.
 	app.get(
 		"/desktop/websockify",
 		upgradeWebSocket(() => {
@@ -478,10 +475,7 @@ export function createApp(options: CreateAppOptions): CreateAppResult {
 		);
 	};
 
-	/**
-	 * Agents whose terminals died with the box. Same context the launcher
-	 * above builds, because a resume runs the agent exactly as a launch does.
-	 */
+	/** Same context the launcher above builds: a resume runs an agent. */
 	const resumeCrashedAgents = async () => {
 		const ctx = {
 			git,

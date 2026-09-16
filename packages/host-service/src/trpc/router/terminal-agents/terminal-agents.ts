@@ -258,16 +258,10 @@ export function resumeSessionDepsFor(
 }
 
 /**
- * Resume every agent whose terminal died without its own SessionEnd — what a
- * sandbox stop leaves behind, since the disk survives and the processes do
- * not. Runs from host-service startup, after `sweepDefunct` has marked those
- * bindings ended, because nothing else will: the desktop only resumes the
- * terminal whose pane someone opens, and a workspace reached from the CLI or
- * a phone has no pane at all.
- *
- * Capped, and deliberately sandbox-only. On a laptop the same sweep spans
- * every worktree that machine has ever had, and relaunching all of them at
- * login would spend an agent's quota on work nobody asked to continue.
+ * Resume every agent whose terminal died without its own SessionEnd. Called
+ * from startup, so it must run after `sweepDefunct` has marked those bindings
+ * ended. Sandbox-only and capped: on a laptop the same sweep spans every
+ * worktree that machine has ever had.
  */
 export async function resumeCrashedAgentSessions(
 	deps: ResumeSessionDeps,

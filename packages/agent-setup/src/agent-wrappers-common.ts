@@ -271,11 +271,8 @@ export function createWrapper(binaryName: string, script: string): void {
 }
 
 /**
- * Whether a binary exists on PATH. Provisioning writes config into an agent's
- * own directory ($XDG_CONFIG_HOME/muse, ~/.zshrc); doing that for an agent
- * nobody has installed either fails on the missing directory or leaves config
- * for a tool that will never read it. Read off PATH rather than by running
- * anything: this is called during boot provisioning, on the serving loop.
+ * Whether a binary exists on PATH. Read off PATH rather than by running
+ * anything: provisioning runs on the serving loop.
  */
 export function commandInstalled(binary: string): boolean {
 	const dirs = (process.env.PATH ?? "").split(path.delimiter).filter(Boolean);

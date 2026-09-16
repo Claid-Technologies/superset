@@ -4,9 +4,9 @@ import type { OrganizationRole } from "@superset/shared/auth/roles";
 
 /**
  * The role's display name in the active locale. It lives here rather than
- * beside the role data in `@superset/shared` because that module is imported
- * by the auth server, and scripts that run it uncompiled (`db:seed-dev`) have
- * no macro transform, so the macro's runtime entry throws on import.
+ * beside the role data in `@superset/shared`: that module reaches the auth
+ * server, and a script running it uncompiled (`db:seed-dev`) has no macro
+ * transform, so the macro's runtime entry throws on import.
  */
 export function organizationRoleName(role: OrganizationRole): string {
 	switch (role) {

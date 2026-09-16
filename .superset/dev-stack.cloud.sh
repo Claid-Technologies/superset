@@ -1,9 +1,5 @@
 #!/usr/bin/env bash
-# The dev stack a Superset engineer expects in a cloud workspace: api, web and
-# the Electron desktop on the box's display, in tmux so the logs are reachable
-# from any terminal (`tmux attach -t superset`). Lived in the internal
-# environment's image until it was needed by every environment built from this
-# repository, not just that one.
+# In tmux so the logs stay reachable: `tmux attach -t superset`.
 set -uo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"

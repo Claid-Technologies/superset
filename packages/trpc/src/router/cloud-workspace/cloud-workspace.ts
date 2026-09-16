@@ -490,9 +490,8 @@ export const cloudWorkspaceRouter = {
 				token: host.token,
 				expiresAt: host.expiresAt,
 				running: address.running,
-				// The display is served by host-service too, so it is the same
-				// address and the same ticket. The sandbox's own desktop port is
-				// not published: it had no authentication of its own.
+				// The display is served by host-service too: same address, same
+				// ticket. The sandbox's own desktop port is not published.
 				desktop: { url: host.url, token: host.token },
 			};
 		}),

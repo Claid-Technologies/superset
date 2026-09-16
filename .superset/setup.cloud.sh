@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
-# A cloud workspace's first start. Same job as setup.sh on a laptop — install
-# what the repo needs, give the workspace its own database, write its .env —
-# but the inputs are different: the variables arrive as the environment's own
-# process environment rather than a checkout's .env, and there is no local
-# machine state to copy. Runs from the start hook, and marks itself done.
+# setup.sh for a cloud workspace: the variables arrive in this process's own
+# environment rather than a checkout's .env, and there is no machine state to
+# copy. Runs from the start hook, once per workspace.
 set -uo pipefail
 
 SUPERSET_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
