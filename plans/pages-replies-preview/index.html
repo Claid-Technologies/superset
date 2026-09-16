@@ -58,6 +58,14 @@
   section { margin-top: 84px; }
   @media (max-width: 640px) { section { margin-top: 60px; } header { padding-top: 56px; } }
 
+
+  /* ------------------------------------------------ live captures */
+  .shots { margin-top: 24px; display: flex; flex-direction: column; gap: 20px; }
+  .shots figure { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: #101114; }
+  .shots img { display: block; width: 100%; }
+  .shots figcaption { padding: 10px 14px; font-size: 12.5px; color: var(--muted); border-top: 1px solid var(--line-soft); }
+  .shots figcaption b { color: var(--text); font-weight: 550; }
+
   /* ------------------------------------------------ stage */
   .stage { position: relative; margin-top: 34px; }
   .stage-glow {
@@ -420,6 +428,26 @@
   <p class="deck">A <b>reply count</b> beside the title — white, with a small green dot while threads are open. The <b>newest reply</b> peeks out when you hover the count; clicking the count opens the page on that comment, clicking anywhere else opens the page. A page nobody has commented on is untouched.</p>
   <p class="status">Implemented on <s>show-replies-view</s>. The desktop shows real data after the next API deploy; until then, this page is the accurate stand-in.</p>
 </header>
+
+
+<section aria-label="Live captures" style="margin-top: 56px;">
+  <h2>Captured live</h2>
+  <p class="section-note" style="margin-top: 8px; color: var(--muted); font-size: 13.5px; max-width: 66ch;">Real screenshots from the dev build on <s style="text-decoration: none; color: #a9adb6; font-family: var(--mono); font-size: 11.5px;">show-replies-view</s>, real org data.</p>
+  <div class="shots">
+    <figure>
+      <img src="shots/rest.png" alt="The Pages gallery at rest: white reply counts beside titles, green dots on pages with open threads, quiet pages unchanged" loading="lazy">
+      <figcaption><b>Rest.</b> White counts beside the title; the green dot marks open threads. Pages without comments are untouched.</figcaption>
+    </figure>
+    <figure>
+      <img src="shots/peek.png" alt="Hovering the count floats the newest reply over the thumbnail" loading="lazy">
+      <figcaption><b>Hovering the count.</b> The newest reply floats over the thumbnail after the 180ms intent delay — here the Agent&rsquo;s reply, with the count pilled while the peek is open.</figcaption>
+    </figure>
+    <figure>
+      <img src="shots/thread.png" alt="Clicking the count opens the page with the comments panel showing that thread" loading="lazy">
+      <figcaption><b>Clicking the count.</b> The page opens with the comments panel already on that reply&rsquo;s thread. Clicking anywhere else on the card opens the page plain.</figcaption>
+    </figure>
+  </div>
+</section>
 
 <div class="horizon" role="presentation"></div>
 
