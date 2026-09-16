@@ -16777,10 +16777,6 @@ msgstr "You"
 msgid "YOU"
 msgstr "YOU"
 
-#. js-lingui-explicit-id
-msgid "serverError.page.entryPathHeldByYou"
-msgstr "You already published {entryPath} from this workspace as another page. Publish with --page {pageId} to add a version to it, or move the file."
-
 msgid "You appear to be offline"
 msgstr "You appear to be offline"
 

@@ -16777,10 +16777,6 @@ msgstr "Vy"
 msgid "YOU"
 msgstr "VY"
 
-#. js-lingui-explicit-id
-msgid "serverError.page.entryPathHeldByYou"
-msgstr "{entryPath} z tohoto workspace jsi už publikoval jako jinou stránku. Publikuj s --page {pageId} a přidej jí verzi, nebo soubor přesuň."
-
 msgid "You appear to be offline"
 msgstr "Vypadá to, že jste offline"
 

@@ -16777,10 +16777,6 @@ msgstr "你"
 msgid "YOU"
 msgstr "你"
 
-#. js-lingui-explicit-id
-msgid "serverError.page.entryPathHeldByYou"
-msgstr "你已將此工作區中的 {entryPath} 發佈為另一個頁面。使用 --page {pageId} 發佈以為其新增版本，或移動該檔案。"
-
 msgid "You appear to be offline"
 msgstr "你似乎處於離線狀態"
 

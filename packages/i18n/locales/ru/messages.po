@@ -16777,10 +16777,6 @@ msgstr "Вы"
 msgid "YOU"
 msgstr "ВЫ"
 
-#. js-lingui-explicit-id
-msgid "serverError.page.entryPathHeldByYou"
-msgstr "Вы уже опубликовали {entryPath} из этого рабочего пространства как другую страницу. Опубликуйте с --page {pageId}, чтобы добавить к ней версию, или переместите файл."
-
 msgid "You appear to be offline"
 msgstr "Похоже, вы офлайн"
 

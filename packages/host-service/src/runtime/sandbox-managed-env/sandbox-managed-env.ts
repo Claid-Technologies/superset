@@ -27,13 +27,17 @@ reset();
  * agent) sees it the way a terminal does; a key dropped by the next push
  * leaves the process environment too.
  */
-export function setManagedEnv(variables: Record<string, string>): void {
+export async function setManagedEnv(
+	variables: Record<string, string>,
+): Promise<void> {
 	for (const key of Object.keys(managed ?? {})) {
 		if (!(key in variables)) delete process.env[key];
 	}
 	managed = { ...variables };
 	Object.assign(process.env, managed);
-	void writeGitIdentity(managed);
+	// Before the push resolves: an agent launched the moment it does would
+	// otherwise commit as the sandbox user.
+	await writeGitIdentity(managed);
 	resolveFirstPush();
 }
 

@@ -16777,10 +16777,6 @@ msgstr "Siz"
 msgid "YOU"
 msgstr "SİZ"
 
-#. js-lingui-explicit-id
-msgid "serverError.page.entryPathHeldByYou"
-msgstr "{entryPath} dosyasını bu çalışma alanından başka bir sayfa olarak zaten yayımladın. Ona sürüm eklemek için --page {pageId} ile yayımla ya da dosyayı taşı."
-
 msgid "You appear to be offline"
 msgstr "Çevrimdışı görünüyorsunuz"
 

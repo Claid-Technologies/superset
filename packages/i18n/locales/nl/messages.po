@@ -16777,10 +16777,6 @@ msgstr "Jij"
 msgid "YOU"
 msgstr "JIJ"
 
-#. js-lingui-explicit-id
-msgid "serverError.page.entryPathHeldByYou"
-msgstr "Je hebt {entryPath} vanuit deze workspace al als een andere pagina gepubliceerd. Publiceer met --page {pageId} om er een versie aan toe te voegen, of verplaats het bestand."
-
 msgid "You appear to be offline"
 msgstr "Je lijkt offline te zijn"
 

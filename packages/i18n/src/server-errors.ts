@@ -568,13 +568,6 @@ export const serverErrorMessages: Record<
 				"{entryPath} in this workspace is already published as a page in another organization. Move the file, or publish with that page's id.",
 			values: params,
 		}),
-	"serverError.page.entryPathHeldByYou": (params) =>
-		i18n._({
-			id: "serverError.page.entryPathHeldByYou",
-			message:
-				"You already published {entryPath} from this workspace as another page. Publish with --page {pageId} to add a version to it, or move the file.",
-			values: params,
-		}),
 	"serverError.page.entryPathHeldByColleague": (params) =>
 		i18n._({
 			id: "serverError.page.entryPathHeldByColleague",

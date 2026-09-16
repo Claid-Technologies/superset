@@ -63,9 +63,9 @@ export const sandboxRouter = router({
 	 */
 	setEnvironment: protectedProcedure
 		.input(sandboxManagedEnvSchema)
-		.mutation(({ input }) => {
+		.mutation(async ({ input }) => {
 			sandboxOnly();
-			setManagedEnv(input.variables);
+			await setManagedEnv(input.variables);
 			return { count: Object.keys(input.variables).length };
 		}),
 

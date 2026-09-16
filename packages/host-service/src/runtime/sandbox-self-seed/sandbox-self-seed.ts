@@ -186,7 +186,6 @@ export async function runSandboxStartHook(
 		detached: true,
 	});
 	child.unref();
-	writeFileSync(START_HOOK_MARKER, `${child.pid ?? 0}\n`);
 	const pid = child.pid ?? 0;
 	startHookState = { state: "running", command, pid, since: Date.now() };
 	child.on("exit", (code) => {
@@ -218,6 +217,9 @@ export async function runSandboxStartHook(
 			log: startHookLogTail(),
 		};
 	}
+	// Written only now: a hook that failed to start must be runnable again on
+	// this boot, and the marker is what makes the next call a no-op.
+	writeFileSync(START_HOOK_MARKER, `${pid}\n`);
 	console.log(`[sandbox] start hook running (pid ${pid}): ${command}`);
 	return { started: true, pid, command };
 }

@@ -131,13 +131,8 @@ async function verifyUploadedObject({
  */
 function entryPathConflict(args: {
 	entryPath: string;
-	holder: {
-		pageId: string;
-		organizationId: string;
-		createdByUserId: string | null;
-	} | null;
+	holder: { pageId: string; organizationId: string } | null;
 	organizationId: string;
-	userId: string;
 }): TRPCError {
 	const { entryPath, holder } = args;
 	if (holder && holder.organizationId !== args.organizationId) {
@@ -146,14 +141,6 @@ function entryPathConflict(args: {
 			message: `${entryPath} in this workspace is already published as a page in another organization. Move the file, or publish with that page's id.`,
 			i18nKey: "serverError.page.entryPathHeldByAnotherOrganization",
 			params: { entryPath },
-		});
-	}
-	if (holder && holder.createdByUserId === args.userId) {
-		return userError({
-			code: "CONFLICT",
-			message: `You already published ${entryPath} from this workspace as another page. Publish with --page ${holder.pageId} to add a version to it, or move the file.`,
-			i18nKey: "serverError.page.entryPathHeldByYou",
-			params: { entryPath, pageId: holder.pageId },
 		});
 	}
 	return userError({
@@ -280,11 +267,7 @@ async function runPublish({
 			// violation: a failed insert aborts the transaction, so nothing can
 			// be looked up afterwards to say whose page it is.
 			const [holder] = await tx
-				.select({
-					pageId: pages.id,
-					organizationId: pages.organizationId,
-					createdByUserId: pages.createdByUserId,
-				})
+				.select({ pageId: pages.id, organizationId: pages.organizationId })
 				.from(workspacePages)
 				.innerJoin(pages, eq(pages.id, workspacePages.pageId))
 				.where(
@@ -299,7 +282,6 @@ async function runPublish({
 					entryPath: input.entryPath,
 					holder,
 					organizationId,
-					userId,
 				});
 			}
 			try {
@@ -324,7 +306,6 @@ async function runPublish({
 					entryPath: input.entryPath,
 					holder: null,
 					organizationId,
-					userId,
 				});
 			}
 		}

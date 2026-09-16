@@ -433,7 +433,6 @@ export const cloudWorkspaceRouter = {
 			const row = await loadReadyWorkspace(ctx, input.id);
 			let address: {
 				hostTarget: string;
-				desktopTarget: string;
 				running: boolean;
 			};
 			try {

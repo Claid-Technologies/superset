@@ -16777,10 +16777,6 @@ msgstr "나"
 msgid "YOU"
 msgstr "나"
 
-#. js-lingui-explicit-id
-msgid "serverError.page.entryPathHeldByYou"
-msgstr "이 워크스페이스의 {entryPath}를 이미 다른 페이지로 게시했습니다. --page {pageId}로 게시해 버전을 추가하거나 파일을 옮기세요."
-
 msgid "You appear to be offline"
 msgstr "오프라인 상태로 보입니다"
 

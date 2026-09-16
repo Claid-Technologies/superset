@@ -26,7 +26,6 @@ import {
 import { env } from "../../env";
 
 export const HOST_SERVICE_PORT = SANDBOX_PORTS.hostService;
-export const DESKTOP_PORT = SANDBOX_PORTS.desktop;
 /**
  * A session ends after this long; the workspace's files survive and the next
  * open resumes it. A workspace someone has open is extended before it gets
@@ -161,7 +160,6 @@ export async function provisionSandbox(args: {
 	providerSandboxId: string;
 	sandboxUrl: string;
 	hostTarget: string;
-	desktopTarget: string;
 }> {
 	const kind = args.kind ?? "workspace";
 	const config = {
@@ -198,7 +196,6 @@ export async function provisionSandbox(args: {
 		providerSandboxId: args.name,
 		sandboxUrl: sandbox.domain(HOST_SERVICE_PORT),
 		hostTarget: sandbox.domain(HOST_SERVICE_PORT),
-		desktopTarget: sandbox.domain(DESKTOP_PORT),
 	};
 }
 
@@ -296,7 +293,6 @@ export async function applySandboxPolicy(args: {
 /** The sandbox's addresses and whether a session is running, waking nothing. */
 export async function describeSandbox(providerSandboxId: string): Promise<{
 	hostTarget: string;
-	desktopTarget: string;
 	running: boolean;
 }> {
 	try {
@@ -307,7 +303,6 @@ export async function describeSandbox(providerSandboxId: string): Promise<{
 		});
 		return {
 			hostTarget: sandbox.domain(HOST_SERVICE_PORT),
-			desktopTarget: sandbox.domain(DESKTOP_PORT),
 			running: sandbox.status === "running",
 		};
 	} catch (error) {
@@ -343,7 +338,6 @@ export async function wakeSandbox(args: {
 	claim: SandboxClaim;
 }): Promise<{
 	hostTarget: string;
-	desktopTarget: string;
 	wasRunning: boolean;
 }> {
 	try {
@@ -353,7 +347,6 @@ export async function wakeSandbox(args: {
 			resume: false,
 		});
 		const hostTarget = sandbox.domain(HOST_SERVICE_PORT);
-		const desktopTarget = sandbox.domain(DESKTOP_PORT);
 		const wasRunning = sandbox.status === "running";
 		if (wasRunning) {
 			const remaining = (sandbox.expiresAt?.getTime() ?? 0) - Date.now();
@@ -383,7 +376,7 @@ export async function wakeSandbox(args: {
 			hostTarget,
 			claim: args.claim,
 		});
-		return { hostTarget, desktopTarget, wasRunning };
+		return { hostTarget, wasRunning };
 	} catch (error) {
 		if (isUnavailable(error))
 			throw new SandboxUnavailableError(args.providerSandboxId, error);
@@ -405,6 +398,7 @@ const INHERITED_IDENTITY = [
 	SANDBOX_PATHS.checkouts,
 	`${SANDBOX_PATHS.state}/agent-launched`,
 	`${SANDBOX_PATHS.state}/db-branch`,
+	`${SANDBOX_PATHS.state}/setup-cloud.done`,
 	`${SANDBOX_PATHS.home}/.superset/host`,
 	`${SANDBOX_PATHS.home}/.gitconfig`,
 	`${SANDBOX_PATHS.workspace}/.env`,

@@ -12,6 +12,7 @@ import {
 	hasHarnessSession,
 	readHarnessTranscript,
 } from "../../../terminal/harness-transcript";
+import { markStaleActiveRows } from "../../../terminal/reaper/reaper";
 import {
 	createTerminalSessionInternal,
 	disposeSessionAndWait,
@@ -80,6 +81,11 @@ export interface ResumeSessionDeps {
 const resumeInflight = new Map<string, Promise<ResumeResult>>();
 /** A box holds a handful of agents; a runaway list is a bug, not a workload. */
 const MAX_BOOT_RESUMES = 8;
+/**
+ * An agent the person let die last week must not come back because its box
+ * was reopened; one that died with the box was ended by the sweep moments ago.
+ */
+const RESUMABLE_WINDOW_MS = 5 * 60_000;
 
 /**
  * Whether the harness behind `binding` still holds its conversation, read
@@ -267,8 +273,18 @@ export async function resumeCrashedAgentSessions(
 	deps: ResumeSessionDeps,
 	limit = MAX_BOOT_RESUMES,
 ): Promise<{ resumedTerminalIds: string[] }> {
+	// A stop leaves the terminal rows saying "active": nothing on the box was
+	// alive to write otherwise. `sweepDefunct` only backfills bindings whose
+	// row already says exited, so without this the list is empty on the boot
+	// that matters and the agents come back one boot late.
+	markStaleActiveRows(deps.db, [], new Map());
+
 	const resumedTerminalIds: string[] = [];
-	for (const binding of listResumeCandidateBindings(deps.db).slice(0, limit)) {
+	const since = Date.now() - RESUMABLE_WINDOW_MS;
+	const candidates = listResumeCandidateBindings(deps.db)
+		.filter((binding) => (binding.endedAt ?? 0) >= since)
+		.slice(0, limit);
+	for (const binding of candidates) {
 		try {
 			const result = await resumeTerminalAgentSession(deps, {
 				workspaceId: binding.workspaceId,
@@ -472,15 +488,25 @@ export const terminalAgentsRouter = router({
 		.input(z.object({ workspaceId: z.string(), terminalId: z.string() }))
 		.query(({ ctx, input }) => {
 			const binding = getTerminalAgentBinding(ctx.db, input.terminalId);
+			if (!binding || binding.workspaceId !== input.workspaceId) return null;
 			const worktreePath = ctx.db
 				.select({ path: workspaces.worktreePath })
 				.from(workspaces)
 				.where(eq(workspaces.id, input.workspaceId))
 				.get()?.path;
+			const config = resolveHostAgentConfig(
+				ctx.db,
+				binding.definitionId ?? binding.agentId,
+			);
 			return readHarnessTranscript({
-				agentId: binding?.agentId,
-				agentSessionId: binding?.agentSessionId,
+				agentId: binding.agentId,
+				agentSessionId: binding.agentSessionId,
 				worktreePath,
+				// A pinned provider account keeps its transcript under its own
+				// config directory.
+				env: config
+					? resolveDefaultAccountEnv(ctx.db, config.presetId)
+					: undefined,
 			});
 		}),
 

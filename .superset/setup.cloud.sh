@@ -12,7 +12,7 @@ source "$SUPERSET_SCRIPT_DIR/lib/common.sh"
 source "$SUPERSET_SCRIPT_DIR/lib/setup/steps.sh"
 cd "$ROOT_DIR" || exit 1
 
-STAMP_DIR="${SUPERSET_STATE_DIR:-/var/lib/superset}"
+STAMP_DIR="${SUPERSET_STATE_DIR:-/var/lib/superset}"  # stripped from goldens by INHERITED_IDENTITY
 STAMP="$STAMP_DIR/setup-cloud.done"
 
 # The environment's variables, as a file, because step_write_env copies one.
@@ -54,6 +54,12 @@ cloud_setup_main() {
   fi
   if [ -f "$STAMP" ] && [ -f "$ROOT_DIR/.env" ]; then
     echo "Cloud setup already done for this workspace"
+    return 0
+  fi
+  # A release probe boots a throwaway sandbox to check the image. Branching the
+  # database for it would leave the branch behind when the sandbox goes.
+  if [ "${SUPERSET_RELEASE_PROBE:-}" = "1" ]; then
+    echo "Release probe: skipping cloud setup"
     return 0
   fi
 

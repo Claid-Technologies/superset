@@ -16777,10 +16777,6 @@ msgstr "Tu"
 msgid "YOU"
 msgstr "TU"
 
-#. js-lingui-explicit-id
-msgid "serverError.page.entryPathHeldByYou"
-msgstr "Hai già pubblicato {entryPath} da questo workspace come un'altra pagina. Pubblica con --page {pageId} per aggiungerle una versione, oppure sposta il file."
-
 msgid "You appear to be offline"
 msgstr "Sembra che tu sia offline"
 

@@ -317,9 +317,16 @@ export function createApp(options: CreateAppOptions): CreateAppResult {
 	app.use("/fwd", wsAuth);
 
 	// websockify listens on loopback with no credential of its own, so the
-	// check that admits a pane is this route's.
+	// check that admits a pane is this route's. Sandboxes only: on a laptop
+	// this would forward a caller's bytes to whatever holds port 6080.
 	app.get(
 		"/desktop/websockify",
+		async (c, next) => {
+			if (process.env.SUPERSET_HOST_RUN_MODE !== "sandbox") {
+				return c.json({ error: "Not found" }, 404);
+			}
+			return next();
+		},
 		upgradeWebSocket(() => {
 			let upstream: WebSocket | null = null;
 			const pending: (string | ArrayBuffer)[] = [];

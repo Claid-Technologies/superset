@@ -26,7 +26,6 @@ export {
 	workspaceRepositories,
 } from "./repositories";
 export {
-	DESKTOP_PORT,
 	deleteSandbox,
 	describeSandbox,
 	HOST_SERVICE_PORT,
