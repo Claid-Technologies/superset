@@ -17,7 +17,8 @@ const slackFileSchema = z.object({
 
 const payloadSchema = z.object({
 	event: z.object({
-		type: z.literal("app_mention"),
+		type: z.enum(["app_mention", "message"]),
+		channel_type: z.enum(["channel", "group", "mpim"]).optional(),
 		user: z.string(),
 		text: z.string().default(""),
 		ts: z.string(),

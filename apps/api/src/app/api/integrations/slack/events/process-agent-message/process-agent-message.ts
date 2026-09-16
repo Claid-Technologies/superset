@@ -14,7 +14,10 @@ import {
 	runSlackAgent,
 	SlackAgentError,
 } from "../utils/run-agent";
-import { formatSideEffectsMessage } from "../utils/slack-blocks";
+import {
+	type AgentAction,
+	formatSideEffectsMessage,
+} from "../utils/slack-blocks";
 import {
 	createSlackClient,
 	slackRateLimitRetryAfterMs,
@@ -24,6 +27,13 @@ import {
 	formatSlackImageAssetError,
 	SlackImageAssetError,
 } from "../utils/slack-image-assets";
+import {
+	beginThreadRun,
+	finishThreadRun,
+	QUIET_THREAD_PATTERN,
+	quietThread,
+	renderThreadMemory,
+} from "../utils/thread-sessions";
 
 import { splitMarkdown } from "./utils/split-markdown";
 
@@ -32,6 +42,8 @@ const RUN_BUDGET_MS = 240_000;
 
 const LOST_TRACK_TEXT =
 	"I lost track of this request partway through. Anything listed as changed in this thread did happen; ask again for the rest.";
+const QUIETED_TEXT =
+	"Got it. I'll stay out of this thread unless someone mentions me.";
 
 interface SlackEventFile {
 	id: string;
@@ -44,7 +56,7 @@ interface SlackEventFile {
 
 export interface SlackAgentMessageEvent {
 	type: "app_mention" | "message";
-	channel_type?: "im";
+	channel_type?: "im" | "channel" | "group" | "mpim";
 	user: string;
 	text?: string;
 	ts: string;
@@ -197,6 +209,22 @@ export async function processAgentMessage({
 	}
 
 	const threadTs = event.thread_ts ?? event.ts;
+
+	if (QUIET_THREAD_PATTERN.test(event.text ?? "")) {
+		await quietThread({
+			organizationId: connection.organizationId,
+			teamId,
+			channelId: event.channel,
+			threadTs,
+			userId: slackUserLink.userId,
+		});
+		await slack.chat.postMessage({
+			channel: event.channel,
+			thread_ts: threadTs,
+			text: QUIETED_TEXT,
+		});
+		return;
+	}
 	// assistant.threads.setStatus only works in assistant (DM) threads; Slack
 	// answers method_not_supported_for_channel_type anywhere else. Channels get
 	// a placeholder message that carries progress and is removed once the final
@@ -278,6 +306,8 @@ export async function processAgentMessage({
 	}
 	const deliveryId = claim.id;
 	let delivered = false;
+	let actions: AgentAction[] = [];
+	let threadSessionId: string | undefined;
 
 	try {
 		try {
@@ -306,6 +336,15 @@ export async function processAgentMessage({
 			slack: run,
 		});
 
+		const threadSession = await beginThreadRun({
+			organizationId: connection.organizationId,
+			teamId,
+			channelId: event.channel,
+			threadTs,
+			userId: slackUserLink.userId,
+		});
+		threadSessionId = threadSession.id;
+
 		const result = await runSlackAgent({
 			prompt: resolve(event.text ?? ""),
 			channelId: event.channel,
@@ -317,8 +356,10 @@ export async function processAgentMessage({
 			model: slackUserLink.modelPreference ?? undefined,
 			images: imageAssets,
 			deadline,
+			threadMemory: renderThreadMemory(threadSession.entityLog),
 			onProgress: showProgress,
 		});
+		actions = result.actions;
 
 		// A new final reply notifies thread participants; editing a placeholder
 		// silently would not. Model output goes in Slack's Markdown block.
@@ -382,6 +423,20 @@ export async function processAgentMessage({
 			text: errorText,
 		});
 	} finally {
+		if (threadSessionId) {
+			try {
+				await finishThreadRun({
+					id: threadSessionId,
+					actions,
+					lastContextTs: event.ts,
+				});
+			} catch (error) {
+				console.error(
+					"[slack/process-agent-message] Failed to finish thread session",
+					error,
+				);
+			}
+		}
 		try {
 			await finishAgentDelivery(deliveryId, delivered);
 		} catch (error) {

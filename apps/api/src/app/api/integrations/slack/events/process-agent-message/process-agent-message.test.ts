@@ -42,6 +42,9 @@ mock.module("@superset/db/client", () => ({
 		},
 	},
 }));
+mock.module("@/env", () => ({
+	env: { NEXT_PUBLIC_WEB_URL: "https://app.superset.sh" },
+}));
 mock.module("@/lib/analytics", () => ({ posthog: { capture: () => {} } }));
 mock.module("../../lib/find-slack-user-link", () => ({
 	findSlackUserLink: findLink,
@@ -58,6 +61,22 @@ mock.module("../utils/run-agent", () => ({
 mock.module("../utils/agent-delivery", () => ({
 	claimAgentDelivery: claim,
 	finishAgentDelivery: finish,
+}));
+const beginThread = mock(async (_args: unknown) => ({
+	id: "thread-session",
+	entityLog: [
+		{ kind: "workspace", id: "ws-1", label: "fix-login (feat/login)", at: "x" },
+	],
+}));
+const finishThread = mock(async (_args: unknown) => {});
+const quiet = mock(async (_args: unknown) => {});
+mock.module("../utils/thread-sessions", () => ({
+	beginThreadRun: beginThread,
+	finishThreadRun: finishThread,
+	quietThread: quiet,
+	renderThreadMemory: (entities: { label: string }[]) =>
+		entities.map((e) => e.label).join(", "),
+	QUIET_THREAD_PATTERN: /\bonly\s+(?:respond|reply)\b.*\b(?:mention|@|tag)/i,
 }));
 const { slackRateLimitRetryAfterMs } = await import(
 	"../utils/slack-client/request-bounds"
@@ -105,6 +124,70 @@ beforeEach(() => {
 	claim.mockClear();
 	finish.mockClear();
 	findLink.mockClear();
+	beginThread.mockClear();
+	finishThread.mockClear();
+	quiet.mockClear();
+});
+
+test("a run opens the thread session, hands its memory to the agent, and records what was made", async () => {
+	runAgent.mockImplementationOnce(async () => ({
+		text: "Done",
+		actions: [
+			{
+				type: "task_created",
+				tasks: [{ id: "t1", slug: "SUP-9", title: "x" }],
+			},
+		],
+	}));
+	await processAgentMessage(params);
+	expect(beginThread).toHaveBeenCalledWith({
+		organizationId: "org",
+		teamId: "T1",
+		channelId: "C1",
+		threadTs: "1.0",
+		userId: "linked-user",
+	});
+	expect(runAgent.mock.calls[0]?.[0]).toMatchObject({
+		threadMemory: "fix-login (feat/login)",
+	});
+	expect(finishThread).toHaveBeenCalledWith({
+		id: "thread-session",
+		actions: [
+			{
+				type: "task_created",
+				tasks: [{ id: "t1", slug: "SUP-9", title: "x" }],
+			},
+		],
+		lastContextTs: "10.0",
+	});
+});
+
+test("asking it to only respond when mentioned quiets the thread without running", async () => {
+	await processAgentMessage({
+		...params,
+		event: { ...params.event, text: "<@UBOT> only respond when I mention you" },
+	});
+	expect(quiet).toHaveBeenCalledWith({
+		organizationId: "org",
+		teamId: "T1",
+		channelId: "C1",
+		threadTs: "1.0",
+		userId: "linked-user",
+	});
+	expect(runAgent).not.toHaveBeenCalled();
+	expect(claim).not.toHaveBeenCalled();
+	expect(postMessage.mock.calls[0]?.[0].text).toContain(
+		"stay out of this thread",
+	);
+});
+
+test("a thread reply without a mention runs through the same path", async () => {
+	await processAgentMessage({
+		...params,
+		event: { ...params.event, type: "message", channel_type: "channel" },
+	});
+	expect(runAgent).toHaveBeenCalledTimes(1);
+	expect(beginThread).toHaveBeenCalledTimes(1);
 });
 
 test("mentions run as their linked author and post a final Markdown reply", async () => {

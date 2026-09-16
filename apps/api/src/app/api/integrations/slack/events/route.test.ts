@@ -41,6 +41,24 @@ mock.module("./process-link-shared", () => ({
 	processLinkShared: mock(async () => ({})),
 }));
 
+const followUpTarget = mock(
+	async (_key: unknown): Promise<{ id: string } | null> => null,
+);
+// Complete on purpose: bun keeps the first registration of a module across
+// test files, so a partial mock here would break the handler test's imports.
+mock.module("./utils/thread-sessions", () => ({
+	threadFollowUpTarget: followUpTarget,
+	beginThreadRun: async () => ({ id: "session", entityLog: [] }),
+	finishThreadRun: async () => {},
+	quietThread: async () => {},
+	renderThreadMemory: () => "",
+	QUIET_THREAD_PATTERN: /\bonly\s+(?:respond|reply)\b.*\b(?:mention|@|tag)/i,
+}));
+mock.module("./process-automation-event/normalizeSlackDelivery", () => ({
+	ownBotUserIds: (envelope: { authorizations?: { user_id?: string }[] }) =>
+		(envelope.authorizations ?? []).map((a) => a.user_id),
+}));
+
 const { POST } = await import("./route");
 
 const VALID_HEADERS = {
@@ -241,5 +259,60 @@ describe("Slack agent delivery", () => {
 			).status,
 		).toBe(200);
 		expect(publishJSON).toHaveBeenCalledTimes(1);
+	});
+
+	function channelReply(text: string, extra: Record<string, unknown> = {}) {
+		return new Request("http://localhost/api/integrations/slack/events", {
+			method: "POST",
+			headers: VALID_HEADERS,
+			body: JSON.stringify({
+				type: "event_callback",
+				team_id: "T1",
+				event_id: "Ev-thread",
+				authorizations: [{ user_id: "UBOT", is_bot: true }],
+				event: {
+					type: "message",
+					channel_type: "channel",
+					channel: "C1",
+					user: "U1",
+					text,
+					ts: "20.0",
+					thread_ts: "1.0",
+					...extra,
+				},
+			}),
+		});
+	}
+
+	test("a reply in a thread the agent has joined is queued as a mention job", async () => {
+		followUpTarget.mockImplementationOnce(async () => ({ id: "session" }));
+		const response = await POST(channelReply("also add a test"));
+		expect(response.status).toBe(200);
+		expect(followUpTarget).toHaveBeenCalledWith({
+			teamId: "T1",
+			channelId: "C1",
+			threadTs: "1.0",
+		});
+		expect(publishJSON).toHaveBeenCalledTimes(1);
+		expect(publishJSON.mock.calls[0]?.[0]).toMatchObject({
+			url: expect.stringContaining("/jobs/process-mention"),
+			deduplicationId: "Ev-thread",
+		});
+	});
+
+	test("a reply in a thread without a session, or a top-level channel post, is ignored", async () => {
+		followUpTarget.mockClear();
+		await POST(channelReply("random chatter"));
+		await POST(channelReply("top level", { thread_ts: undefined }));
+		expect(publishJSON).not.toHaveBeenCalled();
+		expect(followUpTarget).toHaveBeenCalledTimes(1);
+	});
+
+	test("a thread reply that mentions the bot is left to the app_mention path", async () => {
+		followUpTarget.mockClear();
+		followUpTarget.mockImplementationOnce(async () => ({ id: "session" }));
+		await POST(channelReply("<@UBOT> and this"));
+		expect(followUpTarget).not.toHaveBeenCalled();
+		expect(publishJSON).not.toHaveBeenCalled();
 	});
 });

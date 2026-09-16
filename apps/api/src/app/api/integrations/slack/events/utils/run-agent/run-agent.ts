@@ -135,6 +135,8 @@ interface RunSlackAgentParams {
 	images?: SlackImageAsset[];
 	/** Epoch ms after which no further model or tool call starts. */
 	deadline?: number;
+	/** What the agent already created in this thread; see renderThreadMemory. */
+	threadMemory?: string;
 	onProgress?: (status: string) => void | Promise<void>;
 }
 
@@ -575,7 +577,7 @@ export async function runSlackAgent(
 - Thread: ${params.threadTs}
 - Organization ID: ${params.organizationId}
 
-${agentContext}`;
+${agentContext}${params.threadMemory ? `\n\n${params.threadMemory}` : ""}`;
 
 		const userContent = buildUserMessageContent({
 			prompt: params.prompt,
