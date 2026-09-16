@@ -170,12 +170,6 @@ stamp "desktop.start"
 # into host-service after boot and never leaves it; this runner decides
 # when: once host-service answers, the push has landed and the checkout is in.
 start_hook() {
-	# A probe boots an image to check it and is thrown away; the repository's
-	# services are not what it is checking.
-	if [ "${SUPERSET_SANDBOX_ROLE:-workspace}" = "probe" ]; then
-		stamp "hook.skipped role=probe"
-		return 0
-	fi
 	local api="http://127.0.0.1:${SUPERSET_HOST_SERVICE_PORT}/trpc/sandbox"
 	local auth="Authorization: Bearer ${HOST_SERVICE_SECRET}"
 	local i

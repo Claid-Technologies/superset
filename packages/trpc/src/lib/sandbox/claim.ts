@@ -95,7 +95,6 @@ export async function buildSandboxClaim(args: {
 		SUPERSET_SANDBOX_REPOSITORIES: JSON.stringify(repositories),
 		SUPERSET_SANDBOX_IMAGE_TAG: environment.sourceRef,
 		SUPERSET_SANDBOX_PROVIDER: args.row.provider,
-		SUPERSET_SANDBOX_ROLE: "workspace" as const,
 		...(environment.bundleSha
 			? { SUPERSET_BUNDLE_SHA: environment.bundleSha }
 			: {}),

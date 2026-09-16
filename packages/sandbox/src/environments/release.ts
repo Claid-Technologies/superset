@@ -149,13 +149,8 @@ const setupScript = readFileSync(
 );
 const setupHook = [setupScript];
 
-function identityFor(
-	workspaceId: string,
-	sourceRef: string,
-	role: "workspace" | "probe" = "probe",
-): SandboxIdentity {
+function identityFor(workspaceId: string, sourceRef: string): SandboxIdentity {
 	return {
-		SUPERSET_SANDBOX_ROLE: role,
 		SUPERSET_SANDBOX_CONTRACT: String(SANDBOX_CONTRACT_VERSION) as "1",
 		SUPERSET_BUNDLE_SHA: bundle.sha256,
 		SUPERSET_API_URL: API_URL,
@@ -306,6 +301,11 @@ log(`golden: ${golden} stripped, stopped and snapshotted`);
 // 4. probe, as a workspace
 const RESERVED_PREFIXES = ["SUPERSET_", "HOST_SERVICE_", "VERCEL_"];
 const RESERVED_KEYS = new Set([
+	// A box the release throws away must not be able to create a database
+	// branch: setup then keeps the environment's own DATABASE_URL, which is
+	// what a check of the image wants anyway.
+	"NEON_API_KEY",
+	"NEON_PROJECT_ID",
 	"ORGANIZATION_ID",
 	"AUTH_TOKEN",
 	"HOST_DB_PATH",
