@@ -3,6 +3,10 @@ import { trpcServer } from "@hono/trpc-server";
 import { Octokit } from "@octokit/rest";
 import { SUPERSET_USER_ID_HEADER } from "@superset/shared/host-routing";
 import { SANDBOX_PORTS } from "@superset/shared/sandbox-contract";
+
+/** One frame of a 1920x1200 display is ~9 MB; this is a stalled reader, not a burst. */
+const MAX_DISPLAY_BUFFER_BYTES = 32 * 1024 * 1024;
+const MAX_DISPLAY_PENDING = 64;
 import { TRPCError } from "@trpc/server";
 import type { MiddlewareHandler } from "hono";
 import { Hono } from "hono";
@@ -319,8 +323,10 @@ export function createApp(options: CreateAppOptions): CreateAppResult {
 	// websockify listens on loopback with no credential of its own, so the
 	// check that admits a pane is this route's. Sandboxes only: on a laptop
 	// this would forward a caller's bytes to whatever holds port 6080.
-	app.get(
-		"/desktop/websockify",
+	// "/websockify" is where desktop builds shipped before the display moved
+	// behind this check look for it.
+	app.use("/websockify", wsAuth);
+	app.on(["GET"], ["/desktop/websockify", "/websockify"],
 		async (c, next) => {
 			if (process.env.SUPERSET_HOST_RUN_MODE !== "sandbox") {
 				return c.json({ error: "Not found" }, 404);
@@ -341,6 +347,13 @@ export function createApp(options: CreateAppOptions): CreateAppResult {
 						for (const message of pending.splice(0)) upstream?.send(message);
 					};
 					upstream.onmessage = (event) => {
+						// A pane that stopped reading (a laptop asleep, a stalled
+						// renderer) would otherwise grow this buffer without limit.
+						const raw = ws.raw as { bufferedAmount?: number } | undefined;
+						if ((raw?.bufferedAmount ?? 0) > MAX_DISPLAY_BUFFER_BYTES) {
+							ws.close(1013, "display backlog");
+							return;
+						}
 						ws.send(event.data as string | ArrayBuffer);
 					};
 					upstream.onclose = () => ws.close();
@@ -349,7 +362,7 @@ export function createApp(options: CreateAppOptions): CreateAppResult {
 				onMessage: (event) => {
 					const data = event.data as string | ArrayBuffer;
 					if (upstream?.readyState === WebSocket.OPEN) upstream.send(data);
-					else pending.push(data);
+					else if (pending.length < MAX_DISPLAY_PENDING) pending.push(data);
 				},
 				onClose: () => upstream?.close(),
 				onError: () => upstream?.close(),

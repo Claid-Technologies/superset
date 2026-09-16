@@ -6,7 +6,6 @@ import {
 	githubRepositories,
 } from "@superset/db/schema";
 import { isCloudAgentId } from "@superset/shared/cloud-agent-launch";
-import { SHARED_ENVIRONMENT_ORGANIZATION_ID } from "@superset/shared/constants";
 import type { TRPCRouterRecord } from "@trpc/server";
 import { TRPCError } from "@trpc/server";
 import { Client } from "@upstash/qstash";
@@ -234,10 +233,7 @@ export const cloudWorkspaceRouter = {
 			const environment = await db.query.environments.findFirst({
 				where: and(
 					eq(environments.id, input.environmentId),
-					inArray(environments.organizationId, [
-						input.organizationId,
-						SHARED_ENVIRONMENT_ORGANIZATION_ID,
-					]),
+					eq(environments.organizationId, input.organizationId),
 					isNull(environments.archivedAt),
 				),
 			});

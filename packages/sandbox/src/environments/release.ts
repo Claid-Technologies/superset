@@ -337,7 +337,8 @@ if (ENV_FILE) {
 const probe = `ws-release-probe-${Date.now().toString(36)}`;
 const probeWorkspaceId = randomUUID();
 const probeSecret = await sandboxHostSecretFor(probeWorkspaceId);
-const { networkPolicy, managedEnv } = deriveSandboxCredentials({
+const { networkPolicy, managedEnv } = await deriveSandboxCredentials({
+	workspaceId: probeWorkspaceId,
 	environmentEnv: probeEnv,
 	userAgentEnv: {},
 	githubToken: null,

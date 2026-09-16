@@ -66,8 +66,9 @@ cloud_setup_main() {
   FAILED_STEPS=()
   SKIPPED_STEPS=()
 
-  # A directory of our own, so the environment's variables never sit beside
-  # the checkout and never outlive this run.
+  # The environment's variables land in .env beside the checkout either way —
+  # step_write_env copies this file there. What this keeps out of the checkout
+  # is the intermediate, and its mode.
   local env_source
   env_source="$(mktemp -d)"
   # shellcheck disable=SC2064
@@ -80,7 +81,9 @@ cloud_setup_main() {
   set +a
 
   # Cloud workspaces share a display name, so the branch is named after the id.
-  export SUPERSET_WORKSPACE_NAME="cloud-${SUPERSET_SANDBOX_WORKSPACE_ID%%-*}"
+  # The whole id: the first block alone is 8 hex characters, and two
+  # workspaces that collided would silently share one database.
+  export SUPERSET_WORKSPACE_NAME="cloud-${SUPERSET_SANDBOX_WORKSPACE_ID}"
 
   step_setup_neon_branch || step_failed "Set up Neon branch"
   allocate_port_base || step_failed "Allocate port base"

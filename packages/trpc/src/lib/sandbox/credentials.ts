@@ -14,10 +14,16 @@
  */
 import { agentCredentialToEnv } from "@superset/shared/agent-credentials";
 import { SANDBOX_CREDENTIAL_PLACEHOLDER } from "@superset/shared/constants";
+import {
+	SANDBOX_API_CREDENTIAL_HEADER,
+	sandboxApiCredential,
+} from "@superset/shared/sandbox-gate";
 import type { NetworkPolicy } from "@vercel/sandbox";
 import { env } from "../../env";
 
 export interface SandboxCredentialInputs {
+	/** Which workspace the box is, for the credential it presents to the API. */
+	workspaceId: string;
 	/** The environment's variables, as the person configured them. */
 	environmentEnv: Record<string, string>;
 	/** The workspace creator's own agent sign-ins, already decrypted. */
@@ -35,6 +41,11 @@ export interface SandboxCredentialInputs {
 export interface GitAuthor {
 	name: string;
 	email: string;
+}
+
+/** The API's own hostname, as the firewall needs it: no scheme, no path. */
+function apiHost(): string {
+	return new URL(env.NEXT_PUBLIC_API_URL).host;
 }
 
 /**
@@ -71,9 +82,9 @@ function rule(headers: Record<string, string>): HeaderRule[] {
  * environment's variable, which beats the organization's key. Whichever
  * wins becomes the header rule; the box only ever sees the placeholder.
  */
-export function deriveSandboxCredentials(
+export async function deriveSandboxCredentials(
 	inputs: SandboxCredentialInputs,
-): SandboxCredentials {
+): Promise<SandboxCredentials> {
 	const allow: Record<string, HeaderRule[]> = {};
 	const managedEnv: Record<string, string> = {};
 
@@ -140,6 +151,17 @@ export function deriveSandboxCredentials(
 		// gh refuses to call without a token in hand; the value never matters.
 		managedEnv.GH_TOKEN = SANDBOX_CREDENTIAL_PLACEHOLDER;
 	}
+
+	// The box's own hands: `superset` on its PATH speaks to the API as the
+	// workspace, and the credential is added here rather than given to the box.
+	// What it may do is narrowed on the API side, in sandboxCredentialProcedures.
+	allow[apiHost()] = rule({
+		[SANDBOX_API_CREDENTIAL_HEADER]: `${inputs.workspaceId}.${await sandboxApiCredential(
+			env.SANDBOX_GATE_SECRET,
+			inputs.workspaceId,
+		)}`,
+	});
+	managedEnv.SUPERSET_API_KEY = SANDBOX_CREDENTIAL_PLACEHOLDER;
 
 	// The catch-all keeps the rest of the internet reachable; without it a
 	// custom policy denies everything it does not list.
