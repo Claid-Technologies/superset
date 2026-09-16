@@ -221,6 +221,12 @@ describe("agent loop", () => {
 			timeout: expect.any(Number),
 		});
 	});
+	test("starts no MCP request once the deadline has passed", async () => {
+		listTools.mockClear();
+		const result = await runSlackAgent({ ...params, deadline: Date.now() - 1 });
+		expect(result.text).toContain("ran out of time");
+		expect(listTools).not.toHaveBeenCalled();
+	});
 	test("skips the error rewrite when the budget is nearly spent", async () => {
 		const text = await formatErrorForSlack(
 			new Error("boom"),

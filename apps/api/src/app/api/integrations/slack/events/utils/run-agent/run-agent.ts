@@ -513,9 +513,11 @@ export async function runSlackAgent(
 	});
 	const actions: AgentAction[] = [];
 	const deadline = params.deadline ?? Date.now() + DEFAULT_RUN_BUDGET_MS;
-	const mcpRequestOptions = (): McpRequestOptions => ({
-		timeout: Math.max(1_000, deadline - Date.now()),
-	});
+	const mcpRequestOptions = (): McpRequestOptions => {
+		const remaining = deadline - Date.now();
+		if (remaining <= 0) throw new SlackAgentError(AGENT_COPY.timeLimit);
+		return { timeout: remaining };
+	};
 
 	let supersetMcp: Client | null = null;
 	let cleanupSuperset: (() => Promise<void>) | null = null;

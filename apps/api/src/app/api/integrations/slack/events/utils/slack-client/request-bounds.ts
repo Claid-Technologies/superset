@@ -1,6 +1,9 @@
 export const SLACK_REQUEST_TIMEOUT_MS = 15_000;
 const MIN_REQUEST_TIMEOUT_MS = 1_000;
 const RETRIES = 2;
+export const RETRY_BACKOFF = { minTimeout: 200, maxTimeout: 1_000 };
+const RETRY_BUDGET_MS =
+	SLACK_REQUEST_TIMEOUT_MS * (RETRIES + 1) + RETRY_BACKOFF.maxTimeout * RETRIES;
 
 export interface SlackRequestBounds {
 	timeout: number;
@@ -22,7 +25,7 @@ export function slackRequestBounds(
 		MIN_REQUEST_TIMEOUT_MS,
 		Math.min(SLACK_REQUEST_TIMEOUT_MS, remaining),
 	);
-	const retries = remaining >= timeout * (RETRIES + 1) ? RETRIES : 0;
+	const retries = remaining >= RETRY_BUDGET_MS ? RETRIES : 0;
 	return { timeout, retries };
 }
 

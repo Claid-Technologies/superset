@@ -1,6 +1,7 @@
 import { WebClient } from "@slack/web-api";
 import {
 	deadlineRequestInterceptor,
+	RETRY_BACKOFF,
 	slackRequestBounds,
 } from "./request-bounds";
 
@@ -25,8 +26,6 @@ export function isUnpostableChannelError(error: unknown): boolean {
 	const code = (error as { data?: { error?: string } } | null)?.data?.error;
 	return typeof code === "string" && UNPOSTABLE_CHANNEL_ERRORS.has(code);
 }
-
-const RETRY_BACKOFF = { minTimeout: 200, maxTimeout: 1_000 };
 
 export function createSlackClient(
 	token: string,

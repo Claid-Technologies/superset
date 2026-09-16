@@ -21,6 +21,10 @@ describe("slackRequestBounds", () => {
 			retries: 2,
 		});
 	});
+	test("drops retries once their backoff would not fit either", () => {
+		expect(slackRequestBounds(now + 45_000, now).retries).toBe(0);
+		expect(slackRequestBounds(now + 47_000, now).retries).toBe(2);
+	});
 	test("shrinks the cap and drops retries as the deadline nears", () => {
 		expect(slackRequestBounds(now + 8_000, now)).toEqual({
 			timeout: 8_000,
