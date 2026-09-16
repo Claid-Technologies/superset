@@ -47,18 +47,27 @@ export function parseThreadCommand(text: string): ThreadCommand | null {
 	return null;
 }
 
-/** Ask the running turn to stop at its next step. False when nothing is running. */
 /**
  * Ask the running turn to stop at its next step. Recorded even when nothing
- * is running yet: a delivery claims its session only after preflight, and a
- * stop sent in that gap still applies once the claim sees it is newer than
- * the message that started the turn. Returns whether a turn was running.
+ * is running yet, and even before the thread has a session row: a delivery
+ * claims its session only after preflight, and a stop sent in that gap
+ * still applies once the claim sees it is newer than the message that
+ * started the turn. Returns whether a turn was running.
  */
 export async function requestThreadStop(key: ThreadKey): Promise<boolean> {
 	const [row] = await db
-		.update(slackThreadSessions)
-		.set({ stopRequestedAt: new Date() })
-		.where(whereThread(key))
+		.insert(slackThreadSessions)
+		.values({
+			organizationId: key.organizationId,
+			teamId: key.teamId,
+			channelId: key.channelId,
+			threadTs: key.threadTs,
+			stopRequestedAt: new Date(),
+		})
+		.onConflictDoUpdate({
+			target: THREAD_CONFLICT_TARGET,
+			set: { stopRequestedAt: new Date() },
+		})
 		.returning({ status: slackThreadSessions.status });
 	return row?.status === "running";
 }
