@@ -27,7 +27,7 @@ export function PageDetailView({ slug }: PageDetailViewProps) {
 		onRename,
 		onRefresh,
 		onDelete,
-	} = usePageHeaderData({ slug });
+	} = usePageHeaderData({ slug, version: previewVersion });
 
 	const goBack = () => navigate({ to: "/pages" });
 

@@ -17,9 +17,10 @@ interface PagePaneTitleProps {
 }
 
 export function PagePaneTitle({ data, paneId, onClose }: PagePaneTitleProps) {
+	const { setShareOpen, previewVersion, setPreviewVersion } =
+		usePagePaneUi(paneId);
 	const { page, versions, currentUserId, onRename, onRefresh, onDelete } =
-		usePageHeaderData(data);
-	const { setShareOpen, setPreviewVersion } = usePagePaneUi(paneId);
+		usePageHeaderData({ ...data, version: previewVersion });
 	const [menuOpen, setMenuOpen] = useState(false);
 	const [deleteOpen, setDeleteOpen] = useState(false);
 	const [renameOpen, setRenameOpen] = useState(false);

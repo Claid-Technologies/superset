@@ -13,6 +13,7 @@ export interface PageHeaderTarget {
 	slug: string;
 	pageId?: string;
 	title?: string;
+	version?: number | null;
 }
 
 interface PageHeaderData {
@@ -38,7 +39,7 @@ export function usePageHeaderData(data: PageHeaderTarget): PageHeaderData {
 	const versions = cloudTrpc.page.versions.useQuery(ref, { enabled });
 	const access = cloudTrpc.page.access.useQuery(ref, { enabled });
 
-	const version = pull.data?.version ?? 0;
+	const version = data.version ?? pull.data?.version ?? 0;
 	const { threads } = usePageCommentThreads({
 		pageId: pageId ?? "",
 		version,
