@@ -20,6 +20,10 @@ export interface ToolDefinition {
 	annotations?: Record<string, unknown>;
 }
 
+export interface DispatchOptions {
+	signal?: AbortSignal;
+}
+
 const REQUEST_ID = 1;
 
 export class PluginDispatchError extends Error {
@@ -35,6 +39,7 @@ async function post(
 	url: string,
 	headers: Record<string, string>,
 	body: unknown,
+	signal?: AbortSignal,
 ): Promise<Response> {
 	return await credentialFetch(
 		url,
@@ -46,6 +51,7 @@ async function post(
 				...headers,
 			},
 			body: JSON.stringify(body),
+			signal,
 		},
 		"mcp",
 	);
@@ -56,13 +62,14 @@ async function rpc(
 	headers: Record<string, string>,
 	method: string,
 	params: unknown,
+	signal?: AbortSignal,
 ): Promise<{ result: unknown; response: Response }> {
-	const response = await post(url, headers, {
-		jsonrpc: "2.0",
-		id: REQUEST_ID,
-		method,
-		params,
-	});
+	const response = await post(
+		url,
+		headers,
+		{ jsonrpc: "2.0", id: REQUEST_ID, method, params },
+		signal,
+	);
 
 	if (response.status === 401 || response.status === 403) {
 		throw new PluginDispatchError(
@@ -120,12 +127,19 @@ const PROTOCOL_VERSION = "2025-06-18";
 async function initialize(
 	url: string,
 	headers: Record<string, string>,
+	signal?: AbortSignal,
 ): Promise<Record<string, string>> {
-	const { result, response } = await rpc(url, headers, "initialize", {
-		protocolVersion: PROTOCOL_VERSION,
-		capabilities: {},
-		clientInfo: { name: "superset", version: "1.0.0" },
-	});
+	const { result, response } = await rpc(
+		url,
+		headers,
+		"initialize",
+		{
+			protocolVersion: PROTOCOL_VERSION,
+			capabilities: {},
+			clientInfo: { name: "superset", version: "1.0.0" },
+		},
+		signal,
+	);
 
 	const session: Record<string, string> = {
 		"mcp-protocol-version":
@@ -139,6 +153,7 @@ async function initialize(
 		url,
 		{ ...headers, ...session },
 		{ jsonrpc: "2.0", method: "notifications/initialized" },
+		signal,
 	);
 	return session;
 }
@@ -147,18 +162,26 @@ async function mcpCall(
 	target: { url: string; headers: Record<string, string> },
 	method: string,
 	params: unknown,
+	signal?: AbortSignal,
 ): Promise<unknown> {
 	try {
-		return (await rpc(target.url, target.headers, method, params)).result;
+		return (await rpc(target.url, target.headers, method, params, signal))
+			.result;
 	} catch (error) {
 		const wantsSession =
 			error instanceof PluginDispatchError &&
 			(error.status === 400 || error.status === 404);
 		if (!wantsSession) throw error;
 
-		const session = await initialize(target.url, target.headers);
+		const session = await initialize(target.url, target.headers, signal);
 		return (
-			await rpc(target.url, { ...target.headers, ...session }, method, params)
+			await rpc(
+				target.url,
+				{ ...target.headers, ...session },
+				method,
+				params,
+				signal,
+			)
 		).result;
 	}
 }
@@ -383,6 +406,7 @@ export async function listTools(
 	scope: TemplateScope,
 	method?: string | null,
 	source?: BundledSource | null,
+	options?: DispatchOptions,
 ): Promise<ToolDefinition[]> {
 	const target = remoteTarget(manifest, scope, method);
 	if (!target) {
@@ -396,7 +420,7 @@ export async function listTools(
 		return Array.isArray(tools) ? (tools as ToolDefinition[]) : [];
 	}
 
-	const result = (await mcpCall(target, "tools/list", {})) as {
+	const result = (await mcpCall(target, "tools/list", {}, options?.signal)) as {
 		tools?: ToolDefinition[];
 	};
 	return result.tools ?? [];
@@ -409,6 +433,7 @@ export async function callTool(
 	args: Record<string, unknown>,
 	method?: string | null,
 	source?: BundledSource | null,
+	options?: DispatchOptions,
 ): Promise<unknown> {
 	const target = remoteTarget(manifest, scope, method);
 	if (!target) {
@@ -418,8 +443,10 @@ export async function callTool(
 		});
 	}
 
-	return await mcpCall(target, "tools/call", {
-		name: tool,
-		arguments: args,
-	});
+	return await mcpCall(
+		target,
+		"tools/call",
+		{ name: tool, arguments: args },
+		options?.signal,
+	);
 }

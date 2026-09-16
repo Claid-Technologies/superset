@@ -13,6 +13,7 @@ import {
 import { generateConnectUrl } from "../utils/generate-connect-url";
 import {
 	formatErrorForSlack,
+	mentionsPlugin,
 	resolveUserMentions,
 	runSlackAgent,
 	SlackAgentError,
@@ -504,6 +505,42 @@ export async function processAgentMessage({
 			} catch (err) {
 				console.error(
 					"[slack/process-agent-message] Failed to post side effects:",
+					err,
+				);
+			}
+		}
+
+		const toConnect = result.unconnectedPlugins.filter((plugin) =>
+			mentionsPlugin(result.text, plugin),
+		);
+		if (toConnect.length > 0) {
+			const names = toConnect.map((plugin) => plugin.displayName).join(" and ");
+			const text = `${names} ${toConnect.length === 1 ? "isn't" : "aren't"} connected to your Superset account yet.`;
+			try {
+				await run.chat.postMessage({
+					channel: event.channel,
+					thread_ts: threadTs,
+					text,
+					blocks: [
+						{ type: "section", text: { type: "mrkdwn", text } },
+						{
+							type: "actions",
+							elements: toConnect.map((plugin) => ({
+								type: "button",
+								text: {
+									type: "plain_text",
+									text: `Connect ${plugin.displayName}`,
+									emoji: true,
+								},
+								url: `${env.NEXT_PUBLIC_WEB_URL}/plugins`,
+								style: "primary",
+							})),
+						},
+					],
+				});
+			} catch (err) {
+				console.error(
+					"[slack/process-agent-message] Failed to post connect prompt:",
 					err,
 				);
 			}

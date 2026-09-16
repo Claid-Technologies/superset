@@ -12,7 +12,9 @@ const removeReaction = mock(async (_args: unknown) => ({}));
 const runAgent = mock(async (_args: Record<string, unknown>) => ({
 	text: "**Completed**",
 	actions: [],
+	unconnectedPlugins: [] as { name: string; displayName: string }[],
 }));
+const linearPlugin = { name: "linear", displayName: "Linear", capability: "" };
 type Claim =
 	| { status: "claimed"; id: string }
 	| { status: "duplicate" }
@@ -67,6 +69,8 @@ mock.module("../utils/run-agent", () => ({
 	runSlackAgent: runAgent,
 	resolveUserMentions: async () => (text: string) => text,
 	formatErrorForSlack: async () => "Unable to finish",
+	mentionsPlugin: (text: string, plugin: { displayName: string }) =>
+		text.toLowerCase().includes(plugin.displayName.toLowerCase()),
 	SlackAgentError: class extends Error {},
 }));
 mock.module("../utils/agent-delivery", () => ({
@@ -692,7 +696,7 @@ test("a run that spends its whole budget still posts its reply and clears its in
 test("channel progress updates edit the placeholder instead of posting", async () => {
 	runAgent.mockImplementationOnce(async (args) => {
 		await (args.onProgress as (s: string) => Promise<void>)("Creating task...");
-		return { text: "Done", actions: [] };
+		return { text: "Done", actions: [], unconnectedPlugins: [] };
 	});
 	await processAgentMessage(params);
 	expect(updateMessage).toHaveBeenCalledWith({
@@ -757,4 +761,42 @@ test("DMs use the same guarded path with assistant status instead of a placehold
 	expect(postMessage).toHaveBeenCalledTimes(1);
 	expect(postMessage.mock.calls[0]?.[0].text).toBe("**Completed**");
 	expect(deleteMessage).not.toHaveBeenCalled();
+});
+
+test("a reply that names an unconnected plugin gets a Connect button after it", async () => {
+	runAgent.mockImplementationOnce(async () => ({
+		text: "Linear isn't connected to your account, so I can't file that yet.",
+		actions: [],
+		unconnectedPlugins: [linearPlugin],
+	}));
+	await processAgentMessage(params);
+	expect(postMessage).toHaveBeenCalledTimes(3);
+	expect(postMessage.mock.calls[2]?.[0]).toMatchObject({
+		thread_ts: "1.0",
+		text: "Linear isn't connected to your Superset account yet.",
+		blocks: [
+			{ type: "section" },
+			{
+				type: "actions",
+				elements: [
+					{
+						type: "button",
+						text: { type: "plain_text", text: "Connect Linear" },
+						url: "https://app.superset.sh/plugins",
+					},
+				],
+			},
+		],
+	});
+	expect(finish).toHaveBeenCalledWith("delivery", true);
+});
+
+test("no Connect button when the reply never mentions the unconnected plugin", async () => {
+	runAgent.mockImplementationOnce(async () => ({
+		text: "**Completed**",
+		actions: [],
+		unconnectedPlugins: [linearPlugin],
+	}));
+	await processAgentMessage(params);
+	expect(postMessage).toHaveBeenCalledTimes(2);
 });

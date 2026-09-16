@@ -11,6 +11,11 @@ import {
 	mcpToolToAnthropicTool,
 	parseToolName,
 } from "./mcp-clients";
+import {
+	callPluginTool,
+	loadPluginTools,
+	type ToolCallResult,
+} from "./plugin-tools";
 
 /**
  * Collect unique Slack user IDs from `<@U...>` mentions in text,
@@ -212,6 +217,7 @@ export function rateLimitWaitMs(
 export interface SlackAgentResult {
 	text: string;
 	actions: AgentAction[];
+	unconnectedPlugins: SlackPlugin[];
 }
 
 const ERROR_REWRITE_TIMEOUT_MS = 45_000;
@@ -259,14 +265,32 @@ export async function formatErrorForSlack(
 	}
 }
 
-function getActionFromToolResult(
-	toolName: string,
-	// biome-ignore lint/suspicious/noExplicitAny: MCP result varies by tool
-	result: any,
-): AgentAction | null {
-	const data = result.structuredContent ?? parseTextContent(result.content);
+function getActionFromToolResult({
+	prefix,
+	toolName,
+	input,
+	result,
+}: {
+	prefix: string;
+	toolName: string;
+	input: Record<string, unknown>;
+	result: ToolCallResult;
+}): AgentAction | null {
+	const data =
+		(result.structuredContent as Record<string, unknown> | undefined) ??
+		parseTextContent(result.content);
 	if (!data) return null;
 
+	if (prefix === "superset") return getSupersetAction(toolName, data);
+	if (prefix === "linear") return getLinearAction(toolName, input, data);
+	if (prefix === "github") return getGithubAction(toolName, input, data);
+	return null;
+}
+
+function getSupersetAction(
+	toolName: string,
+	data: Record<string, unknown>,
+): AgentAction | null {
 	if (toolName === "tasks_create" && data.task) {
 		const t = data.task as { id: string; slug: string; title: string };
 		return {
@@ -298,18 +322,76 @@ function getActionFromToolResult(
 	return null;
 }
 
-// biome-ignore lint/suspicious/noExplicitAny: MCP content is loosely typed
-function parseTextContent(content: any): Record<string, unknown> | null {
+// Linear's server serialises an issue with its identifier (SUP-12) as `id`.
+function getLinearAction(
+	toolName: string,
+	input: Record<string, unknown>,
+	data: Record<string, unknown>,
+): AgentAction | null {
+	if (toolName !== "save_issue" || input.id !== undefined) return null;
+	const issue = (data.issue ?? data) as {
+		id?: unknown;
+		identifier?: unknown;
+		title?: unknown;
+		url?: unknown;
+	};
+	const identifier =
+		typeof issue.identifier === "string" ? issue.identifier : issue.id;
+	if (
+		typeof identifier !== "string" ||
+		typeof issue.title !== "string" ||
+		typeof issue.url !== "string"
+	) {
+		return null;
+	}
+	return {
+		type: "issue_created",
+		issues: [{ identifier, title: issue.title, url: issue.url }],
+	};
+}
+
+// GitHub's server answers a create with `{ id, url }` only: the number is in
+// the URL and the title is the one that was requested.
+function getGithubAction(
+	toolName: string,
+	input: Record<string, unknown>,
+	data: Record<string, unknown>,
+): AgentAction | null {
+	const url = data.url;
+	if (typeof url !== "string") return null;
+	const title = typeof input.title === "string" ? input.title : "";
+
+	if (toolName === "create_pull_request") {
+		const number = Number(url.match(/\/pull\/(\d+)$/)?.[1]);
+		if (!number) return null;
+		return { type: "pr_opened", pullRequests: [{ number, title, url }] };
+	}
+
+	if (toolName === "issue_write" && input.method === "create") {
+		const match = url.match(/github\.com\/([^/]+\/[^/]+)\/issues\/(\d+)$/);
+		if (!match) return null;
+		return {
+			type: "issue_created",
+			issues: [{ identifier: `${match[1]}#${match[2]}`, title, url }],
+		};
+	}
+
+	return null;
+}
+
+function parseTextContent(content: unknown): Record<string, unknown> | null {
+	const first = Array.isArray(content) ? content[0] : undefined;
+	if (
+		!first ||
+		typeof first !== "object" ||
+		!("text" in first) ||
+		typeof first.text !== "string"
+	) {
+		return null;
+	}
 	try {
-		const contentItem = content?.[0];
-		if (
-			!contentItem ||
-			typeof contentItem !== "object" ||
-			!("text" in contentItem)
-		) {
-			return null;
-		}
-		return JSON.parse(contentItem.text as string);
+		const parsed = JSON.parse(first.text);
+		return parsed && typeof parsed === "object" ? parsed : null;
 	} catch {
 		return null;
 	}
@@ -335,6 +417,16 @@ const TOOL_PROGRESS_STATUS: Record<string, string> = {
 	// Server-side
 	slack_get_channel_history: "Reading channel history...",
 	slack_thread_quiet: "Updating thread settings...",
+	linear_list_issues: "Searching Linear issues...",
+	linear_get_issue: "Fetching Linear issue...",
+	linear_save_issue: "Saving Linear issue...",
+	linear_save_comment: "Commenting in Linear...",
+	github_search_issues: "Searching GitHub issues...",
+	github_search_pull_requests: "Searching pull requests...",
+	github_search_code: "Searching code on GitHub...",
+	github_issue_write: "Saving GitHub issue...",
+	github_add_issue_comment: "Commenting on GitHub...",
+	github_create_pull_request: "Opening pull request...",
 };
 
 // Explicit opt-in: newly added MCP tools must not silently acquire Slack access.
@@ -377,6 +469,66 @@ const SLACK_THREAD_QUIET_TOOL: Anthropic.Tool = {
 		required: ["quiet"],
 	},
 };
+
+export interface SlackPlugin {
+	name: string;
+	displayName: string;
+	capability: string;
+}
+
+export const SLACK_PLUGINS: readonly SlackPlugin[] = [
+	{
+		name: "linear",
+		displayName: "Linear",
+		capability:
+			"search and read issues, file issues, comment, and look up teams, projects, users, statuses and labels",
+	},
+	{
+		name: "github",
+		displayName: "GitHub",
+		capability:
+			"search and read issues, pull requests and code, file or update issues, comment, and open pull requests",
+	},
+];
+
+// Same opt-in rule as ALLOWED_SLACK_TOOLS, per plugin. Names are what each
+// plugin's MCP server lists. save_issue and issue_write are the only way to
+// file an issue on those servers and also edit one issue at a time.
+export const PLUGIN_SLACK_TOOLS: Record<string, Set<string>> = {
+	linear: new Set([
+		"list_issues",
+		"get_issue",
+		"save_issue",
+		"list_comments",
+		"save_comment",
+		"list_teams",
+		"list_projects",
+		"get_project",
+		"list_users",
+		"list_issue_statuses",
+		"list_issue_labels",
+	]),
+	github: new Set([
+		"get_me",
+		"search_issues",
+		"search_pull_requests",
+		"search_code",
+		"list_issues",
+		"issue_read",
+		"issue_write",
+		"add_issue_comment",
+		"list_pull_requests",
+		"pull_request_read",
+		"create_pull_request",
+		"get_file_contents",
+	]),
+};
+
+const EMPTY_INPUT_SCHEMA = { type: "object", properties: {} } as const;
+
+export function mentionsPlugin(text: string, plugin: SlackPlugin): boolean {
+	return text.toLowerCase().includes(plugin.displayName.toLowerCase());
+}
 
 const SLACK_GET_CHANNEL_HISTORY_TOOL: Anthropic.Tool = {
 	name: "slack_get_channel_history",
@@ -578,12 +730,18 @@ export async function runSlackAgent(
 		maxRetries: 1,
 	});
 	const actions: AgentAction[] = [];
+	let unconnectedPlugins: SlackPlugin[] = [...SLACK_PLUGINS];
 	const deadline = params.deadline ?? Date.now() + DEFAULT_RUN_BUDGET_MS;
-	const mcpRequestOptions = (): McpRequestOptions => {
+	const remainingBudget = (): number => {
 		const remaining = deadline - Date.now();
 		if (remaining <= 0) throw new SlackAgentError(AGENT_COPY.timeLimit);
-		return { timeout: remaining };
+		return remaining;
 	};
+	const mcpRequestOptions = (): McpRequestOptions => ({
+		timeout: remainingBudget(),
+	});
+	const pluginSignal = (): AbortSignal =>
+		AbortSignal.timeout(remainingBudget());
 
 	let supersetMcp: Client | null = null;
 	let cleanupSuperset: (() => Promise<void>) | null = null;
@@ -607,18 +765,41 @@ export async function runSlackAgent(
 		supersetMcp = supersetMcpResult.client;
 		cleanupSuperset = supersetMcpResult.cleanup;
 
-		const [supersetToolsResult, agentContext] = await Promise.all([
-			supersetMcp.listTools(undefined, mcpRequestOptions()),
-			fetchAgentContext({
-				mcpClient: supersetMcp,
-				userId: params.userId,
-				requestOptions: mcpRequestOptions,
-			}),
-		]);
+		const [supersetToolsResult, agentContext, pluginToolSets] =
+			await Promise.all([
+				supersetMcp.listTools(undefined, mcpRequestOptions()),
+				fetchAgentContext({
+					mcpClient: supersetMcp,
+					userId: params.userId,
+					requestOptions: mcpRequestOptions,
+				}),
+				loadPluginTools({
+					userId: params.userId,
+					pluginNames: Object.keys(PLUGIN_SLACK_TOOLS),
+					signal: pluginSignal(),
+				}),
+			]);
+		unconnectedPlugins = SLACK_PLUGINS.filter(
+			(plugin) => !pluginToolSets.has(plugin.name),
+		);
 
 		const supersetTools = supersetToolsResult.tools
 			.filter((t) => ALLOWED_SLACK_TOOLS.has(t.name))
 			.map((t) => mcpToolToAnthropicTool(t, "superset"));
+		const curatedPluginTools = new Map(
+			[...pluginToolSets.entries()].map(([pluginName, { tools: listed }]) => [
+				pluginName,
+				listed
+					.filter((t) => PLUGIN_SLACK_TOOLS[pluginName]?.has(t.name))
+					.map((t) =>
+						mcpToolToAnthropicTool(
+							{ ...t, inputSchema: t.inputSchema ?? EMPTY_INPUT_SCHEMA },
+							pluginName,
+						),
+					),
+			]),
+		);
+		const pluginTools = [...curatedPluginTools.values()].flat();
 
 		const model = params.model ?? DEFAULT_SLACK_MODEL;
 		// Haiku 4.5 only supports the basic web search tool; the 4.6+ models take
@@ -633,6 +814,7 @@ export async function runSlackAgent(
 		} as unknown as Anthropic.Messages.ToolUnion;
 		const tools: Anthropic.Messages.ToolUnion[] = [
 			...supersetTools,
+			...pluginTools,
 			SLACK_GET_CHANNEL_HISTORY_TOOL,
 			...(params.threadQuiet ? [SLACK_THREAD_QUIET_TOOL] : []),
 			webSearchTool,
@@ -643,11 +825,30 @@ export async function runSlackAgent(
 				? "\n- This thread is quiet: only replies that mention you reach you. If asked to respond without mentions again, call slack_thread_quiet with quiet=false. People can also type !unmute."
 				: "\n- This thread is open: every reply in it reaches you without a mention. If asked to only respond when mentioned, call slack_thread_quiet with quiet=true. People can also type !mute."
 			: "";
+		const integrationLines = SLACK_PLUGINS.flatMap((plugin) => {
+			if (curatedPluginTools.get(plugin.name)?.length) {
+				return [
+					`- ${plugin.displayName} is connected: ${plugin.capability} with the ${plugin.name}_* tools`,
+				];
+			}
+			if (pluginToolSets.has(plugin.name)) {
+				return [
+					`- ${plugin.displayName} is connected but its tools could not be loaded for this run. Say so if the request needs ${plugin.displayName}.`,
+				];
+			}
+			if (mentionsPlugin(params.prompt, plugin)) {
+				return [
+					`- ${plugin.displayName} is not connected to this user's Superset account, so there are no ${plugin.name}_* tools. If the request needs ${plugin.displayName}, say it is not connected instead of guessing; they can connect it from the Plugins page in Superset.`,
+				];
+			}
+			return [];
+		});
+
 		const contextualSystem = `Current context:
 - Slack Channel: ${params.channelId}
 - Thread: ${params.threadTs}
 - Organization ID: ${params.organizationId}${threadState}
-
+${integrationLines.length > 0 ? `\nIntegrations:\n${integrationLines.join("\n")}\n` : ""}
 ${agentContext}`;
 
 		const userContent = buildUserMessageContent({
@@ -765,11 +966,13 @@ ${agentContext}`;
 				if (Date.now() >= deadline)
 					throw new SlackAgentError(AGENT_COPY.timeLimit);
 				try {
-					const { toolName: rawToolName } = parseToolName(toolUse.name);
+					const { prefix, toolName } = parseToolName(toolUse.name);
+					const plugin = SLACK_PLUGINS.find((p) => p.name === prefix);
 					const progressStatus =
 						TOOL_PROGRESS_STATUS[toolUse.name] ??
-						TOOL_PROGRESS_STATUS[rawToolName] ??
-						"Working...";
+						(plugin
+							? `Working in ${plugin.displayName}...`
+							: (TOOL_PROGRESS_STATUS[toolName] ?? "Working..."));
 
 					try {
 						await params.onProgress?.(progressStatus);
@@ -796,13 +999,28 @@ ${agentContext}`;
 						params.threadQuiet.quiet = quiet;
 						resultContent = JSON.stringify({ quiet });
 					} else {
-						const { prefix, toolName } = parseToolName(toolUse.name);
+						const input = toolUse.input as Record<string, unknown>;
+						const pluginSet = pluginToolSets.get(prefix);
+						let result: ToolCallResult;
 
 						if (
-							prefix !== "superset" ||
-							!supersetMcp ||
-							!ALLOWED_SLACK_TOOLS.has(toolName)
+							prefix === "superset" &&
+							supersetMcp &&
+							ALLOWED_SLACK_TOOLS.has(toolName)
 						) {
+							result = await supersetMcp.callTool(
+								{ name: toolName, arguments: input },
+								undefined,
+								mcpRequestOptions(),
+							);
+						} else if (pluginSet && PLUGIN_SLACK_TOOLS[prefix]?.has(toolName)) {
+							result = await callPluginTool({
+								context: pluginSet.context,
+								tool: toolName,
+								args: input,
+								signal: pluginSignal(),
+							});
+						} else {
 							toolResults.push({
 								type: "tool_result",
 								tool_use_id: toolUse.id,
@@ -813,15 +1031,6 @@ ${agentContext}`;
 							});
 							continue;
 						}
-
-						const result = await supersetMcp.callTool(
-							{
-								name: toolName,
-								arguments: toolUse.input as Record<string, unknown>,
-							},
-							undefined,
-							mcpRequestOptions(),
-						);
 
 						resultContent = JSON.stringify(result.content);
 
@@ -834,7 +1043,12 @@ ${agentContext}`;
 							});
 							continue;
 						}
-						const action = getActionFromToolResult(toolName, result);
+						const action = getActionFromToolResult({
+							prefix,
+							toolName,
+							input,
+							result,
+						});
 						if (action) {
 							actions.push(action);
 						}
@@ -883,7 +1097,7 @@ ${agentContext}`;
 					: response.stop_reason === "max_tokens"
 						? AGENT_COPY.truncated
 						: AGENT_COPY.turnLimit;
-			return { text, actions };
+			return { text, actions, unconnectedPlugins };
 		}
 		// Web search splits one paragraph into several text blocks around its
 		// citations: the block after a cited block continues its sentence.
@@ -900,14 +1114,14 @@ ${agentContext}`;
 							block.text,
 				"",
 			);
-		return { text: text || AGENT_COPY.empty, actions };
+		return { text: text || AGENT_COPY.empty, actions, unconnectedPlugins };
 	} catch (error) {
 		console.error("[slack-agent] Agent request failed", error);
 		const text =
 			error instanceof SlackAgentError
 				? error.message
 				: await formatErrorForSlack(error, deadline);
-		return { text, actions };
+		return { text, actions, unconnectedPlugins };
 	} finally {
 		if (cleanupSuperset) {
 			try {
