@@ -382,17 +382,41 @@ function bundledConfig(scope: TemplateScope): Record<string, unknown> {
 	return { ...(scope.inputs ?? {}), ...(scope.config ?? {}) };
 }
 
+function abortable<T>(promise: Promise<T>, signal?: AbortSignal): Promise<T> {
+	if (!signal) return promise;
+	return new Promise<T>((resolve, reject) => {
+		const onAbort = () =>
+			reject(
+				signal.reason instanceof Error
+					? signal.reason
+					: new Error("Plugin call aborted"),
+			);
+		if (signal.aborted) return onAbort();
+		signal.addEventListener("abort", onAbort, { once: true });
+		promise.then(resolve, reject).finally(() => {
+			signal.removeEventListener("abort", onAbort);
+		});
+	});
+}
+
 async function bundledDispatch(
 	manifest: PluginManifest,
 	scope: TemplateScope,
 	source: BundledSource | null,
 	event: "get-tools" | "call-tool",
 	eventBody: Record<string, unknown>,
+	signal?: AbortSignal,
 ): Promise<unknown> {
 	const pluginName = manifest.name;
+	signal?.throwIfAborted();
 	const run = await bundledRun(pluginName, manifest, source);
 	try {
-		return await run({ event, eventBody, config: bundledConfig(scope) });
+		// A bundled server runs in-process and cannot be cancelled; stop
+		// waiting on it when the caller's deadline passes instead.
+		return await abortable(
+			Promise.resolve(run({ event, eventBody, config: bundledConfig(scope) })),
+			signal,
+		);
 	} catch (error) {
 		throw new PluginDispatchError(
 			`Bundled server for "${pluginName}" failed: ${error instanceof Error ? error.message : String(error)}`,
@@ -416,6 +440,7 @@ export async function listTools(
 			source ?? null,
 			"get-tools",
 			{},
+			options?.signal,
 		);
 		return Array.isArray(tools) ? (tools as ToolDefinition[]) : [];
 	}
@@ -437,10 +462,14 @@ export async function callTool(
 ): Promise<unknown> {
 	const target = remoteTarget(manifest, scope, method);
 	if (!target) {
-		return await bundledDispatch(manifest, scope, source ?? null, "call-tool", {
-			name: tool,
-			arguments: args,
-		});
+		return await bundledDispatch(
+			manifest,
+			scope,
+			source ?? null,
+			"call-tool",
+			{ name: tool, arguments: args },
+			options?.signal,
+		);
 	}
 
 	return await mcpCall(

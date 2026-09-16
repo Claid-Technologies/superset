@@ -125,12 +125,12 @@ const textResult = (value: unknown) => ({
 	content: [{ type: "text", text: JSON.stringify(value) }],
 });
 const requestToolNames = (call = 0) =>
-	(create.mock.calls[call]?.[0].tools as Array<{ name: string }>).map(
+	((create.mock.calls[call]?.[0].tools ?? []) as Array<{ name: string }>).map(
 		(t) => t.name,
 	);
 const contextualSystemText = (call = 0) =>
-	(create.mock.calls[call]?.[0].system as Array<{ text: string }>)[1]?.text ??
-	"";
+	((create.mock.calls[call]?.[0].system ?? []) as Array<{ text: string }>)[1]
+		?.text ?? "";
 
 beforeEach(() => {
 	create.mockReset();
@@ -752,13 +752,28 @@ describe("plugin tools", () => {
 		toolConnections.mockImplementationOnce(async () => {
 			throw new Error("ambiguous install");
 		});
-		const result = await runSlackAgent(params);
+		const result = await runSlackAgent({
+			...params,
+			prompt: "file this in Linear",
+		});
 		expect(result.text).toBe("Finished");
-		const names = (create.mock.calls[0]?.[0].tools as { name: string }[]).map(
-			(t) => t.name,
-		);
+		const names = requestToolNames();
 		expect(names.some((n) => n.startsWith("linear_"))).toBe(false);
 		expect(names).toContain("superset_tasks_create");
+		// Unknown is not unconnected: no Connect prompt, no "not connected" line.
+		expect(result.unconnectedPlugins).toEqual([]);
+		expect(contextualSystemText()).not.toContain("is not connected");
+		expect(contextualSystemText()).toContain("Linear could not be checked");
+	});
+
+	test("mentionsPlugin matches whole terms only", async () => {
+		const { mentionsPlugin, SLACK_PLUGINS } = await import("./run-agent");
+		const linear = SLACK_PLUGINS.find((p) => p.name === "linear");
+		if (!linear) throw new Error("linear plugin missing");
+		expect(mentionsPlugin("file it in linear please", linear)).toBe(true);
+		expect(mentionsPlugin("Linear: MOB-1", linear)).toBe(true);
+		expect(mentionsPlugin("this growth is nonlinear", linear)).toBe(false);
+		expect(mentionsPlugin("linearize the model", linear)).toBe(false);
 	});
 	test("a failing plugin listing skips that plugin without failing the run or calling it unconnected", async () => {
 		toolConnections.mockImplementation(async () => [

@@ -527,7 +527,10 @@ export const PLUGIN_SLACK_TOOLS: Record<string, Set<string>> = {
 const EMPTY_INPUT_SCHEMA = { type: "object", properties: {} } as const;
 
 export function mentionsPlugin(text: string, plugin: SlackPlugin): boolean {
-	return text.toLowerCase().includes(plugin.displayName.toLowerCase());
+	const name = plugin.displayName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+	return new RegExp(`(?<![\\p{L}\\p{N}])${name}(?![\\p{L}\\p{N}])`, "iu").test(
+		text,
+	);
 }
 
 const SLACK_GET_CHANNEL_HISTORY_TOOL: Anthropic.Tool = {
@@ -765,23 +768,25 @@ export async function runSlackAgent(
 		supersetMcp = supersetMcpResult.client;
 		cleanupSuperset = supersetMcpResult.cleanup;
 
-		const [supersetToolsResult, agentContext, pluginToolSets] =
-			await Promise.all([
-				supersetMcp.listTools(undefined, mcpRequestOptions()),
-				fetchAgentContext({
-					mcpClient: supersetMcp,
-					userId: params.userId,
-					requestOptions: mcpRequestOptions,
-				}),
-				loadPluginTools({
-					userId: params.userId,
-					pluginNames: Object.keys(PLUGIN_SLACK_TOOLS),
-					signal: pluginSignal(),
-				}),
-			]);
-		unconnectedPlugins = SLACK_PLUGINS.filter(
-			(plugin) => !pluginToolSets.has(plugin.name),
-		);
+		const [supersetToolsResult, agentContext, pluginLoad] = await Promise.all([
+			supersetMcp.listTools(undefined, mcpRequestOptions()),
+			fetchAgentContext({
+				mcpClient: supersetMcp,
+				userId: params.userId,
+				requestOptions: mcpRequestOptions,
+			}),
+			loadPluginTools({
+				userId: params.userId,
+				pluginNames: Object.keys(PLUGIN_SLACK_TOOLS),
+				signal: pluginSignal(),
+			}),
+		]);
+		const pluginToolSets = pluginLoad.sets;
+		// Unresolved connections are unknown, not absent: no Connect prompt and
+		// no "not connected" line on a transient failure.
+		unconnectedPlugins = pluginLoad.resolved
+			? SLACK_PLUGINS.filter((plugin) => !pluginToolSets.has(plugin.name))
+			: [];
 
 		const supersetTools = supersetToolsResult.tools
 			.filter((t) => ALLOWED_SLACK_TOOLS.has(t.name))
@@ -835,6 +840,13 @@ export async function runSlackAgent(
 				return [
 					`- ${plugin.displayName} is connected but its tools could not be loaded for this run. Say so if the request needs ${plugin.displayName}.`,
 				];
+			}
+			if (!pluginLoad.resolved) {
+				return mentionsPlugin(params.prompt, plugin)
+					? [
+							`- ${plugin.displayName} could not be checked this run. If the request needs ${plugin.displayName}, say it is unavailable right now rather than not connected.`,
+						]
+					: [];
 			}
 			if (mentionsPlugin(params.prompt, plugin)) {
 				return [

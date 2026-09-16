@@ -12,6 +12,12 @@ export interface PluginToolSet {
 	tools: ToolDefinition[];
 }
 
+export interface PluginTools {
+	sets: Map<string, PluginToolSet>;
+	/** False when connections could not be listed: absence then means unknown, not unconnected. */
+	resolved: boolean;
+}
+
 export interface ToolCallResult {
 	content?: unknown;
 	isError?: boolean;
@@ -62,7 +68,7 @@ export async function loadPluginTools({
 	userId: string;
 	pluginNames: Iterable<string>;
 	signal: AbortSignal;
-}): Promise<Map<string, PluginToolSet>> {
+}): Promise<PluginTools> {
 	const wanted = new Set(pluginNames);
 	const byPlugin = new Map<string, ConnectionContext>();
 	let contexts: ConnectionContext[];
@@ -70,7 +76,7 @@ export async function loadPluginTools({
 		contexts = await toolConnections(userId);
 	} catch (error) {
 		console.warn("[slack-agent] Skipping plugin tools this run:", error);
-		return new Map();
+		return { sets: new Map(), resolved: false };
 	}
 	for (const context of contexts) {
 		const name = context.connection.pluginName;
@@ -92,7 +98,7 @@ export async function loadPluginTools({
 			}
 		}),
 	);
-	return sets;
+	return { sets, resolved: true };
 }
 
 export async function callPluginTool({
