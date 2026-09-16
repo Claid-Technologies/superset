@@ -1,6 +1,6 @@
 import { msg } from "@lingui/core/macro";
 import { i18n } from "@superset/i18n";
-import type { OrganizationRole } from "@superset/shared/auth/roles";
+import type { OrganizationRole } from "@superset/shared/auth";
 
 /**
  * The role's display name in the active locale. It lives here rather than
@@ -14,7 +14,7 @@ export function organizationRoleName(role: OrganizationRole): string {
 			return i18n._(msg({ message: "Owner" }));
 		case "admin":
 			return i18n._(msg({ message: "Admin" }));
-		case "member":
+		default:
 			return i18n._(msg({ message: "Member" }));
 	}
 }
