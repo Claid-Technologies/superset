@@ -510,7 +510,7 @@ export async function processAgentMessage({
 			}
 		}
 
-		const toConnect = result.unconnectedPlugins.filter((plugin) =>
+		const toConnect = (result.unconnectedPlugins ?? []).filter((plugin) =>
 			mentionsPlugin(result.text, plugin),
 		);
 		if (toConnect.length > 0) {
