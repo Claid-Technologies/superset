@@ -47,3 +47,41 @@ test("a host-reported dial failure fails immediately", async () => {
 	expect(await result).toEqual({ ok: false, reason: "dial-failed" });
 	expect(exchanges.has("ticket")).toBe(false);
 });
+
+test("completion removes the timeout and ignores late frames", async () => {
+	const exchanges = new HttpExchanges();
+	const result = exchanges.begin("ticket", request);
+	const dial = { send: mock(() => {}), close: mock(() => {}) };
+	exchanges.onDialConnect("ticket", dial);
+	exchanges.onDialMessage(
+		"ticket",
+		dial,
+		JSON.stringify({ type: "http:response", status: 201, headers: {} }),
+	);
+	exchanges.onDialMessage(
+		"ticket",
+		dial,
+		new TextEncoder().encode("response").buffer,
+	);
+	exchanges.onDialMessage("ticket", dial, JSON.stringify({ type: "http:end" }));
+	expect(await result).toMatchObject({
+		ok: true,
+		status: 201,
+		body: new TextEncoder().encode("response"),
+	});
+	jest.advanceTimersByTime(100_000);
+	exchanges.onDialMessage("ticket", dial, JSON.stringify({ type: "http:end" }));
+	expect(dial.close).toHaveBeenCalledTimes(1);
+});
+
+test("shutdown settles all pending exchanges", async () => {
+	const exchanges = new HttpExchanges();
+	const first = exchanges.begin("first", request);
+	const second = exchanges.begin("second", request);
+	exchanges.abortAll();
+	expect(await first).toEqual({ ok: false, reason: "timeout" });
+	expect(await second).toEqual({ ok: false, reason: "timeout" });
+	expect(exchanges.has("first")).toBe(false);
+	expect(exchanges.has("second")).toBe(false);
+	jest.advanceTimersByTime(100_000);
+});

@@ -116,3 +116,43 @@ test("an opened ticket is never retried when its stream closes", () => {
 	expect(attach).toHaveBeenCalledTimes(1);
 	expect(failed).not.toHaveBeenCalled();
 });
+
+test("a successful second attempt cancels the shared deadline", () => {
+	const { attach, failed } = startDial();
+	advance(10_000);
+	FakeSocket.at(0).close();
+	advance(19_999);
+	FakeSocket.at(1).open();
+	advance(60_000);
+	expect(attach).toHaveBeenCalledTimes(1);
+	expect(failed).not.toHaveBeenCalled();
+	expect(FakeSocket.at(1).close).not.toHaveBeenCalled();
+});
+
+test("two explicit failures stop without a third attempt", () => {
+	const { attach, failed } = startDial();
+	FakeSocket.at(0).close();
+	FakeSocket.at(1).close();
+	advance(60_000);
+	expect(FakeSocket.instances).toHaveLength(2);
+	expect(failed).toHaveBeenCalledTimes(1);
+	expect(attach).not.toHaveBeenCalled();
+});
+
+test("wall-clock changes cannot extend the dial budget", () => {
+	const { failed } = startDial();
+	advance(20_000);
+	spyOn(Date, "now").mockReturnValue(-1_000_000);
+	FakeSocket.at(0).close();
+	advance(10_000);
+	expect(failed).toHaveBeenCalledTimes(1);
+	expect(FakeSocket.instances).toHaveLength(2);
+});
+
+test("timer rounding cannot start a retry with a fractional budget", () => {
+	const { failed } = startDial();
+	elapsed = 29_999.5;
+	jest.advanceTimersByTime(30_000);
+	expect(failed).toHaveBeenCalledTimes(1);
+	expect(FakeSocket.instances).toHaveLength(1);
+});

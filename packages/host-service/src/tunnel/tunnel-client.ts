@@ -254,7 +254,7 @@ export class TunnelClient {
 			const timer = setTimeout(() => {
 				listeners.abort();
 				closeQuietly(ws, 1000, "Dial connect timed out");
-				retry();
+				this.reportDialFailed(ticket);
 			}, remaining);
 			ws.addEventListener(
 				"open",
