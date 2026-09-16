@@ -43,6 +43,7 @@ import {
 	setPageWatchSchema,
 	setSharedVersionSchema,
 } from "./schema";
+import { pageSearchFilter } from "./search";
 import { resolveSharedVersion, servedVersion } from "./shared-version";
 import {
 	deletePageObjects,
@@ -279,6 +280,7 @@ export const pageRouter = {
 				.leftJoin(users, eq(users.id, pages.createdByUserId))
 				.leftJoinLateral(latest, sql`true`);
 
+			const search = input?.search ? pageSearchFilter(input.search) : undefined;
 			const scoped = input?.workspaceId
 				? base
 						.innerJoin(workspacePages, eq(workspacePages.pageId, pages.id))
@@ -287,12 +289,14 @@ export const pageRouter = {
 								eq(pages.organizationId, organizationId),
 								eq(workspacePages.workspaceId, input.workspaceId),
 								visibilityFilter(userId),
+								search,
 							),
 						)
 				: base.where(
 						and(
 							eq(pages.organizationId, organizationId),
 							visibilityFilter(userId),
+							search,
 						),
 					);
 
