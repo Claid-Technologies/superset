@@ -38,7 +38,6 @@ export async function probeBox(args: ProbeArgs): Promise<number> {
 		resume: false,
 	});
 	const host = sandbox.domain(SANDBOX_PORTS.hostService);
-	const desktop = sandbox.domain(SANDBOX_PORTS.desktop);
 	let failed = 0;
 	const check = (label: string, ok: boolean, detail = "") => {
 		log(`${ok ? "ok  " : "FAIL"} ${label}${detail ? `: ${detail}` : ""}`);
@@ -142,11 +141,16 @@ export async function probeBox(args: ProbeArgs): Promise<number> {
 		/up/,
 		90,
 	);
-	const rfb = await rfbHandshake(desktop);
+	// From inside: the desktop port is not published, and the pane reaches it
+	// through host-service, which only answers with a ticket the release has
+	// no reason to mint.
+	const rfb = await run(
+		`node -e 'const ws=new WebSocket("ws://127.0.0.1:${SANDBOX_PORTS.desktop}/websockify",["binary"]);ws.binaryType="arraybuffer";const t=setTimeout(()=>{console.log("timeout");process.exit(0)},30000);ws.onmessage=(e)=>{clearTimeout(t);console.log(new TextDecoder().decode(new Uint8Array(e.data).slice(0,12)));process.exit(0)};ws.onerror=(e)=>{clearTimeout(t);console.log("error "+(e.message??""));process.exit(0)}'`,
+	);
 	check(
 		"desktop stream answers RFB over websockify",
-		rfb.startsWith("RFB "),
-		JSON.stringify(rfb),
+		rfb.includes("RFB "),
+		JSON.stringify(rfb.trim().split("\n").pop() ?? ""),
 	);
 	if (args.expectAnthropicRule) {
 		const code = (
@@ -182,33 +186,6 @@ export async function probeBox(args: ProbeArgs): Promise<number> {
 		);
 	}
 	return failed;
-}
-
-/** The first bytes websockify relays from the VNC server, or why it did not. */
-function rfbHandshake(desktopOrigin: string): Promise<string> {
-	const url = new URL("/websockify", desktopOrigin);
-	url.protocol = "wss:";
-	return new Promise<string>((resolve) => {
-		const ws = new WebSocket(url.toString());
-		ws.binaryType = "arraybuffer";
-		const timer = setTimeout(() => {
-			resolve("timeout");
-			ws.close();
-		}, 30_000);
-		ws.onmessage = (event) => {
-			clearTimeout(timer);
-			resolve(
-				new TextDecoder().decode(
-					new Uint8Array(event.data as ArrayBuffer).slice(0, 12),
-				),
-			);
-			ws.close();
-		};
-		ws.onerror = () => {
-			clearTimeout(timer);
-			resolve("error");
-		};
-	});
 }
 
 /** The second boot of a box: what a wake looks like in its log. */
