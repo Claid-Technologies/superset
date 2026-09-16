@@ -57,7 +57,7 @@ const { Route } = await import("../../../routes/__root");
 const home = createRoute({
 	getParentRoute: () => Route,
 	path: "/",
-	component: () => <div>Recovered home</div>,
+	component: () => <div data-testid="recovered-home" />,
 });
 const broken = createRoute({
 	getParentRoute: () => Route,
@@ -142,7 +142,7 @@ try {
 			});
 			await waitFor(() =>
 				check(
-					document.body.textContent?.includes("Recovered home"),
+					document.querySelector('[data-testid="recovered-home"]'),
 					"Go home did not recover",
 				),
 			);
