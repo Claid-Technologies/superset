@@ -385,12 +385,12 @@ function cli(): void {
 	const binary = readFileSync(
 		join(REPO_ROOT, "packages", "cli", "dist", "superset-linux-x64"),
 	);
-	const { sha256: hash } = cache(binary, "");
+	const { sha256: hash } = cache(binary, ".bin");
 	rewriteRows({
 		cli: {
 			sha256: hash,
-			suffix: "",
-			dest: `${SANDBOX_PATHS.media}/superset-${pkg.version}`,
+			suffix: ".bin",
+			dest: `${SANDBOX_PATHS.media}/superset-${pkg.version}.bin`,
 			mode: "0755",
 			version: pkg.version,
 		},
