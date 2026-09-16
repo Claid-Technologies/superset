@@ -1,4 +1,4 @@
-export type AgentTurnEnd = "stopped" | "failed" | "exited";
+export type AgentTurnEnd = "stopped" | "failed" | "exited" | "waiting";
 
 export interface CompletionPullRequest {
 	url: string;
@@ -79,6 +79,7 @@ const END_VERB: Record<AgentTurnEnd, string> = {
 	stopped: "finished",
 	failed: "hit an error",
 	exited: "exited",
+	waiting: "is waiting for a permission",
 };
 
 export function buildCompletionMessage(
@@ -92,7 +93,12 @@ export function buildCompletionMessage(
 		? collapse(input.workspaceBranch, MAX_LABEL_CHARS)
 		: "";
 	const verb = END_VERB[input.end];
-	const tail = input.end === "exited" ? " before reporting back" : "";
+	const tail =
+		input.end === "exited"
+			? " before reporting back"
+			: input.end === "waiting"
+				? "; open the workspace in Superset to answer it"
+				: "";
 
 	const whereText = workspace
 		? ` in ${workspace}${branch ? ` (${branch})` : ""}`
@@ -102,19 +108,29 @@ export function buildCompletionMessage(
 		: "";
 
 	const lines = [`**${agent} ${verb}**${whereMarkdown}${tail}.`];
-	if (input.summary) lines.push(`> ${input.summary}`);
+	const plain = [`${agent} ${verb}${whereText}${tail}.`];
+	if (input.summary) {
+		lines.push(`> ${input.summary}`);
+		plain.push(input.summary);
+	}
 	if (input.pullRequest) {
 		const pr = input.pullRequest;
 		const title = collapse(pr.title, MAX_LABEL_CHARS).replace(/[[\]]/g, "");
 		lines.push(
 			`${pullRequestVerb(pr.state)} [#${pr.number}${title ? ` ${title}` : ""}](${pr.url})`,
 		);
+		plain.push(
+			`${pullRequestVerb(pr.state)} #${pr.number}${title ? ` ${title}` : ""} ${pr.url}`,
+		);
 	} else if (input.end === "stopped") {
 		lines.push("No pull request yet.");
+		plain.push("No pull request yet.");
 	}
 
+	// The plain text is what notifications and screen readers get; it carries
+	// the same details as the block, without the formatting.
 	return {
-		text: `${agent} ${verb}${whereText}${tail}.`,
+		text: plain.join(" "),
 		markdown: lines.join("\n"),
 	};
 }

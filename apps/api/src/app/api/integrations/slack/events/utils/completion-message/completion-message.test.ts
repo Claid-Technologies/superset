@@ -57,7 +57,9 @@ describe("buildCompletionMessage", () => {
 				"Opened [#418 Fix Safari login 500](https://github.com/acme/app/pull/418)",
 			].join("\n"),
 		);
-		expect(message.text).toBe("Claude finished in fix-login (feat/login).");
+		expect(message.text).toBe(
+			"Claude finished in fix-login (feat/login). Fixed the redirect and added a test. Opened #418 Fix Safari login 500 https://github.com/acme/app/pull/418",
+		);
 	});
 
 	test("a finished agent without a PR says so", () => {
@@ -100,6 +102,22 @@ describe("buildCompletionMessage", () => {
 		expect(exited.text).toBe(
 			"Claude exited in fix-login (feat/login) before reporting back.",
 		);
+	});
+
+	test("an agent waiting on a permission says where to answer it", () => {
+		const message = buildCompletionMessage({
+			agentLabel: "Claude",
+			workspaceName: "fix-login",
+			workspaceBranch: null,
+			end: "waiting",
+			summary: "May I run bun install?",
+			pullRequest: null,
+		});
+		expect(message.markdown).toContain(
+			"**Claude is waiting for a permission** in **fix-login**; open the workspace in Superset to answer it.",
+		);
+		expect(message.text).toContain("May I run bun install?");
+		expect(message.markdown).not.toContain("No pull request yet.");
 	});
 
 	test("user-chosen names are kept to one short line", () => {

@@ -177,6 +177,14 @@ describe("agentTurnState", () => {
 		).toEqual({ kind: "running" });
 	});
 
+	test("a binding parked on a permission request ends the watch as waiting", () => {
+		expect(
+			agentTurnState({
+				binding: { terminalId: "t", lastEventType: "PermissionRequest" },
+			}),
+		).toEqual({ kind: "ended", end: "waiting" });
+	});
+
 	test("without a binding, a busy terminal is an agent still booting and anything else has exited", () => {
 		const terminal = { terminalId: "t", exited: false };
 		expect(agentTurnState({ terminal, processRunning: true })).toEqual({
@@ -200,7 +208,7 @@ describe("processAgentCompletion", () => {
 		expect(postMessage.mock.calls[0]?.[0]).toMatchObject({
 			channel: "C1",
 			thread_ts: "1.0",
-			text: "Claude finished in fix-login (feat/login).",
+			text: "Claude finished in fix-login (feat/login). Fixed the redirect. PR is up. Opened #418 Fix login https://github.com/acme/app/pull/418",
 			blocks: [
 				{
 					type: "markdown",

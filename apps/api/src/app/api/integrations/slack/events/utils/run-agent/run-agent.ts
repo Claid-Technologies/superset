@@ -279,14 +279,17 @@ function launchedAgents(
 	workspace: { id: string; name?: string; branch?: string; hostId?: string },
 ): LaunchedAgentData[] {
 	if (!Array.isArray(launches)) return [];
-	return (launches as HostAgentLaunchResult[])
+	return (launches as unknown[])
 		.filter(
 			(launch): launch is HostAgentLaunchResult & { sessionId: string } =>
-				launch.ok === true && typeof launch.sessionId === "string",
+				typeof launch === "object" &&
+				launch !== null &&
+				(launch as HostAgentLaunchResult).ok === true &&
+				typeof (launch as HostAgentLaunchResult).sessionId === "string",
 		)
 		.map((launch) => ({
 			sessionId: launch.sessionId,
-			label: launch.label ?? "Agent",
+			label: typeof launch.label === "string" ? launch.label : "Agent",
 			workspaceId: workspace.id,
 			hostId: workspace.hostId,
 			workspaceName: workspace.name,

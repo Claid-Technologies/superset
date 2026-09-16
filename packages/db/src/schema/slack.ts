@@ -107,6 +107,7 @@ export type SelectSlackThreadSession = typeof slackThreadSessions.$inferSelect;
 
 export type SlackAgentLaunchOutcome =
 	| "posted"
+	| "waiting"
 	| "post_failed"
 	| "expired"
 	| "quieted"

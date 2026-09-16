@@ -42,6 +42,7 @@ beforeEach(() => {
 	publishJSON.mockClear();
 	fake.calls.length = 0;
 	fake.results.insert = [{ id: "launch-1" }];
+	fake.results.select = [];
 });
 
 describe("hostLaunchesFromActions", () => {
@@ -127,6 +128,20 @@ describe("recordAgentLaunches", () => {
 			actions: [launched],
 		});
 		expect(publishJSON).not.toHaveBeenCalled();
+	});
+
+	test("a launch whose first check never got published is scheduled by the next launch", async () => {
+		fake.results.select = [{ id: "orphan-1" }];
+		await recordAgentLaunches({
+			threadSessionId: "thread-1",
+			userId: "user-1",
+			actions: [launched],
+		});
+		expect(publishJSON).toHaveBeenCalledTimes(2);
+		expect(publishJSON.mock.calls[1]?.[0]).toMatchObject({
+			body: { launchId: "orphan-1" },
+			deduplicationId: "slack-agent-launch:orphan-1:0",
+		});
 	});
 
 	test("a scheduling failure never fails the run", async () => {

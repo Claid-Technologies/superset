@@ -1,6 +1,7 @@
 import { db } from "@superset/db/client";
 import { slackAgentLaunches } from "@superset/db/schema";
 import { Client } from "@upstash/qstash";
+import { and, eq, isNull, lt } from "drizzle-orm";
 import { env } from "@/env";
 import type { AgentAction, LaunchedAgentData } from "../slack-blocks";
 
@@ -12,6 +13,9 @@ export const COMPLETION_JOB_PATH =
 
 const FIRST_CHECK_DELAY_SECONDS = 30;
 const MAX_CHECK_DELAY_SECONDS = 300;
+/** A launch never looked at by now had its first check publish fail. */
+const UNSCHEDULED_AFTER_MS = 5 * 60_000;
+const UNSCHEDULED_SWEEP_LIMIT = 20;
 
 export function hostLaunchesFromActions(
 	actions: AgentAction[],
@@ -95,16 +99,44 @@ export async function recordAgentLaunches(params: {
 		return;
 	}
 
-	await Promise.all(
-		inserted.map(async ({ id }) => {
-			try {
-				await scheduleCompletionCheck({ launchId: id, polls: 0 });
-			} catch (error) {
-				console.error(
-					"[slack/agent-launches] Failed to schedule completion check",
-					{ launchId: id, error },
-				);
-			}
-		}),
-	);
+	await Promise.all(inserted.map(({ id }) => scheduleFirstCheck(id)));
+	await rescheduleUnscheduled();
+}
+
+async function scheduleFirstCheck(launchId: string): Promise<void> {
+	try {
+		await scheduleCompletionCheck({ launchId, polls: 0 });
+	} catch (error) {
+		console.error(
+			"[slack/agent-launches] Failed to schedule completion check",
+			{ launchId, error },
+		);
+	}
+}
+
+/**
+ * A publish that failed after the insert left a launch nothing will look
+ * at. The next launch anywhere picks those up; the QStash id makes a repeat
+ * schedule harmless.
+ */
+async function rescheduleUnscheduled(): Promise<void> {
+	try {
+		const orphans = await db
+			.select({ id: slackAgentLaunches.id })
+			.from(slackAgentLaunches)
+			.where(
+				and(
+					eq(slackAgentLaunches.polls, 0),
+					isNull(slackAgentLaunches.completedAt),
+					lt(
+						slackAgentLaunches.launchedAt,
+						new Date(Date.now() - UNSCHEDULED_AFTER_MS),
+					),
+				),
+			)
+			.limit(UNSCHEDULED_SWEEP_LIMIT);
+		await Promise.all((orphans ?? []).map(({ id }) => scheduleFirstCheck(id)));
+	} catch (error) {
+		console.error("[slack/agent-launches] Orphan sweep failed", error);
+	}
 }

@@ -11,7 +11,7 @@ import {
 	HostServiceUnreachableError,
 	hostServiceCall,
 } from "@superset/mcp/host-service-client";
-import { and, desc, eq, isNull } from "drizzle-orm";
+import { and, desc, eq, isNull, lt, or } from "drizzle-orm";
 import { posthog } from "@/lib/analytics";
 import { scheduleCompletionCheck } from "../utils/agent-launches";
 import {
@@ -26,6 +26,24 @@ import { createSlackClient } from "../utils/slack-client";
 /** Past this the thread has moved on; a late "finished" would only confuse. */
 export const LAUNCH_MAX_AGE_MS = 24 * 60 * 60_000;
 const TRANSCRIPT_MAX_CHARS = 12_000;
+/** A hung relay must not burn the job's 60s; a look that times out is retried. */
+const RELAY_TIMEOUT_MS = 15_000;
+/**
+ * completed_at is a lease as well as a claim: a worker that took it and died
+ * before posting (outcome still null) is retaken after this long.
+ */
+const CLAIM_LEASE_MS = 2 * 60_000;
+
+function relay<T>(
+	host: HostAccess,
+	procedure: string,
+	method: "query" | "mutation",
+	input?: unknown,
+): Promise<T> {
+	return hostServiceCall<T>(host, procedure, method, input, {
+		signal: AbortSignal.timeout(RELAY_TIMEOUT_MS),
+	});
+}
 
 interface HostBinding {
 	terminalId: string;
@@ -61,6 +79,11 @@ export function agentTurnState(host: {
 		if (binding.lastEventType === "Failed") {
 			return { kind: "ended", end: "failed" };
 		}
+		// Parked on a permission prompt, the agent will not report on its
+		// own; the thread is told once and someone answers it in Superset.
+		if (binding.lastEventType === "PermissionRequest") {
+			return { kind: "ended", end: "waiting" };
+		}
 		return { kind: "running" };
 	}
 	if (!terminal || terminal.exited || !host.processRunning) {
@@ -73,7 +96,7 @@ async function probeAgentTurn(
 	host: HostAccess,
 	launch: SelectSlackAgentLaunch,
 ): Promise<AgentTurnState> {
-	const bindings = await hostServiceCall<HostBinding[]>(
+	const bindings = await relay<HostBinding[]>(
 		host,
 		"terminalAgents.listByWorkspace",
 		"query",
@@ -84,7 +107,7 @@ async function probeAgentTurn(
 	);
 	if (binding) return agentTurnState({ binding });
 
-	const { sessions } = await hostServiceCall<{ sessions: HostTerminal[] }>(
+	const { sessions } = await relay<{ sessions: HostTerminal[] }>(
 		host,
 		"terminal.list",
 		"query",
@@ -95,7 +118,7 @@ async function probeAgentTurn(
 	);
 	if (!terminal || terminal.exited) return agentTurnState({ terminal });
 
-	const { running } = await hostServiceCall<{ running: boolean }>(
+	const { running } = await relay<{ running: boolean }>(
 		host,
 		"terminal.hasRunningProcess",
 		"query",
@@ -111,14 +134,9 @@ async function linkedPullRequest(
 	// The host links a PR on its next branch sync; a PR the agent opened in its
 	// last minute may not be linked yet, so ask for a sync first.
 	try {
-		await hostServiceCall(
-			host,
-			"pullRequests.refreshByWorkspaces",
-			"mutation",
-			{
-				workspaceIds: [workspaceId],
-			},
-		);
+		await relay(host, "pullRequests.refreshByWorkspaces", "mutation", {
+			workspaceIds: [workspaceId],
+		});
 	} catch (error) {
 		console.warn("[slack/agent-completion] PR refresh failed", {
 			workspaceId,
@@ -126,7 +144,7 @@ async function linkedPullRequest(
 		});
 	}
 	try {
-		const { workspaces } = await hostServiceCall<{
+		const { workspaces } = await relay<{
 			workspaces: {
 				workspaceId: string;
 				pullRequest: CompletionPullRequest | null;
@@ -152,7 +170,7 @@ async function agentSummary(
 	launch: SelectSlackAgentLaunch,
 ): Promise<string | null> {
 	try {
-		const transcript = await hostServiceCall<{
+		const transcript = await relay<{
 			text: string;
 			source: "harness" | "stream" | "screen";
 		}>(host, "terminal.transcript", "query", {
@@ -193,7 +211,7 @@ async function finishLaunch(
 		.where(
 			and(
 				eq(slackAgentLaunches.id, launchId),
-				isNull(slackAgentLaunches.completedAt),
+				isNull(slackAgentLaunches.outcome),
 			),
 		);
 }
@@ -220,7 +238,15 @@ export async function processAgentCompletion({
 	const launch = await db.query.slackAgentLaunches.findFirst({
 		where: eq(slackAgentLaunches.id, launchId),
 	});
-	if (!launch || launch.completedAt) return;
+	if (!launch || launch.outcome) return;
+	if (launch.completedAt) {
+		// Another worker holds the claim. It posts, or dies and the lease
+		// expires; either way the next look settles it.
+		if (Date.now() - launch.completedAt.getTime() < CLAIM_LEASE_MS) {
+			await checkAgain(launch);
+			return;
+		}
+	}
 	if (Date.now() - launch.launchedAt.getTime() > LAUNCH_MAX_AGE_MS) {
 		await finishLaunch(launch.id, "expired");
 		return;
@@ -285,7 +311,14 @@ export async function processAgentCompletion({
 		.where(
 			and(
 				eq(slackAgentLaunches.id, launch.id),
-				isNull(slackAgentLaunches.completedAt),
+				isNull(slackAgentLaunches.outcome),
+				or(
+					isNull(slackAgentLaunches.completedAt),
+					lt(
+						slackAgentLaunches.completedAt,
+						new Date(Date.now() - CLAIM_LEASE_MS),
+					),
+				),
 			),
 		)
 		.returning({ id: slackAgentLaunches.id });
@@ -304,7 +337,8 @@ export async function processAgentCompletion({
 		pullRequest,
 	});
 
-	let outcome: SlackAgentLaunchOutcome = "posted";
+	let outcome: SlackAgentLaunchOutcome =
+		state.end === "waiting" ? "waiting" : "posted";
 	try {
 		await createSlackClient(connection.accessToken).chat.postMessage({
 			channel: session.channelId,
