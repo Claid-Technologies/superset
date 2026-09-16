@@ -68,7 +68,10 @@ function startDial() {
 		hostServiceSecret: "test",
 	});
 	const attach = mock(() => {});
-	const failed = spyOn(console, "warn").mockImplementation(() => {});
+	const failed = spyOn(
+		client as unknown as { reportDialFailed(ticket: string): void },
+		"reportDialFailed",
+	).mockImplementation(() => {});
 	// biome-ignore lint/complexity/useLiteralKeys: Bracket access permits testing the private dial without a control connection.
 	client["dialRelay"]("ticket", attach);
 	return { attach, failed };
