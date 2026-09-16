@@ -65,7 +65,14 @@ export async function loadPluginTools({
 }): Promise<Map<string, PluginToolSet>> {
 	const wanted = new Set(pluginNames);
 	const byPlugin = new Map<string, ConnectionContext>();
-	for (const context of await toolConnections(userId)) {
+	let contexts: ConnectionContext[];
+	try {
+		contexts = await toolConnections(userId);
+	} catch (error) {
+		console.warn("[slack-agent] Skipping plugin tools this run:", error);
+		return new Map();
+	}
+	for (const context of contexts) {
 		const name = context.connection.pluginName;
 		if (wanted.has(name) && !byPlugin.has(name)) byPlugin.set(name, context);
 	}

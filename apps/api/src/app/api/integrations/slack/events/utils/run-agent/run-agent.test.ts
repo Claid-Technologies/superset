@@ -748,6 +748,18 @@ describe("plugin tools", () => {
 		]);
 	});
 
+	test("a failure resolving plugin connections leaves the run with Superset tools only", async () => {
+		toolConnections.mockImplementationOnce(async () => {
+			throw new Error("ambiguous install");
+		});
+		const result = await runSlackAgent(params);
+		expect(result.text).toBe("Finished");
+		const names = (create.mock.calls[0]?.[0].tools as { name: string }[]).map(
+			(t) => t.name,
+		);
+		expect(names.some((n) => n.startsWith("linear_"))).toBe(false);
+		expect(names).toContain("superset_tasks_create");
+	});
 	test("a failing plugin listing skips that plugin without failing the run or calling it unconnected", async () => {
 		toolConnections.mockImplementation(async () => [
 			pluginContext("linear"),
