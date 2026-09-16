@@ -1,7 +1,6 @@
 import { sql } from "drizzle-orm";
 import {
 	boolean,
-	index,
 	jsonb,
 	pgTable,
 	text,
