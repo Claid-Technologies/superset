@@ -109,6 +109,8 @@ export function readSandboxIdentity(
 	};
 }
 
+const PROVISION_MARKER = join(SANDBOX_PATHS.state, "provisioned");
+const PROVISION_LOG = join(SANDBOX_PATHS.logs, "provision.log");
 const START_HOOK_MARKER = join(SANDBOX_PATHS.run, "start-hook.pid");
 const START_HOOK_LOG = join(SANDBOX_PATHS.logs, "start-hook.log");
 /** Long enough for exec to fail, short enough that boot does not wait on it. */
@@ -142,13 +144,70 @@ export function getStartHookState(): StartHookState {
 	return startHookState;
 }
 
-/** The tail of the hook's log, for a failure a person has to read. */
-function startHookLogTail(): string {
+/** The tail of a hook's log, for a failure a person has to read. */
+function readTail(path: string): string {
 	try {
-		return readFileSync(START_HOOK_LOG, "utf8").slice(-4000);
+		return readFileSync(path, "utf8").slice(-4000);
 	} catch {
 		return "";
 	}
+}
+
+/**
+ * The repository's `provision` hook: what a workspace needs once, not every
+ * boot — dependencies, its own database, its `.env`. The marker lives in the
+ * state directory, which a golden is stripped of, so a fork provisions itself
+ * rather than inheriting the answer. Awaited, because the start hook that
+ * follows is what needs the result.
+ */
+export async function runSandboxProvisionHook(
+	identity: SandboxIdentity,
+): Promise<
+	| { provisioned: true; command: string }
+	| {
+			provisioned: false;
+			reason: "already-provisioned" | "no-hook" | "failed";
+			exitCode?: number | null;
+			log?: string;
+	  }
+> {
+	if (existsSync(PROVISION_MARKER))
+		return { provisioned: false, reason: "already-provisioned" };
+	const resolved = resolveScript("provision", {
+		repoPath: identity.hooksPath,
+		projectId: identity.workspaceId,
+	});
+	const commands = !resolved
+		? null
+		: resolved.kind === "commands"
+			? resolved.commands
+			: [`bash ${shellSingleQuote(resolved.scriptPath)}`];
+	if (!commands?.length) return { provisioned: false, reason: "no-hook" };
+	const command = commands.join(" && ");
+	const cwd = resolved?.cwd
+		? resolve(identity.hooksPath, resolved.cwd)
+		: identity.hooksPath;
+	const log = openSync(PROVISION_LOG, "a");
+	const child = spawn("bash", ["-lc", command], {
+		cwd: existsSync(cwd) ? cwd : identity.hooksPath,
+		env: { ...process.env, ...getManagedEnv(), IS_SANDBOX: "1" },
+		stdio: ["ignore", log, log],
+	});
+	const code = await new Promise<number | null>((settle) => {
+		child.once("exit", (exitCode) => settle(exitCode));
+	});
+	if (code !== 0) {
+		console.error(`[sandbox] provision hook failed (exit ${code}): ${command}`);
+		return {
+			provisioned: false,
+			reason: "failed",
+			exitCode: code,
+			log: readTail(PROVISION_LOG),
+		};
+	}
+	writeFileSync(PROVISION_MARKER, `${new Date().toISOString()}\n`);
+	console.log(`[sandbox] provisioned: ${command}`);
+	return { provisioned: true, command };
 }
 
 /**
@@ -194,7 +253,7 @@ export async function runSandboxStartHook(
 			command,
 			exitCode: code,
 			since: Date.now(),
-			log: startHookLogTail(),
+			log: readTail(START_HOOK_LOG),
 		};
 	});
 
@@ -214,7 +273,7 @@ export async function runSandboxStartHook(
 			reason: "failed",
 			command,
 			exitCode: failure,
-			log: startHookLogTail(),
+			log: readTail(START_HOOK_LOG),
 		};
 	}
 	// Written only now: a hook that failed to start must be runnable again on

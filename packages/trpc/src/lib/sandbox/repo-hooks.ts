@@ -8,12 +8,14 @@ import { z } from "zod";
 import type { RepositoryRow } from "./repositories";
 
 /**
- * The cloud keys of `.superset/config.json`: `setup` runs when an
- * environment's golden is built, `start` on every boot once host-service is
- * up, and `ports` are published beside the platform's own.
+ * The cloud keys of `.superset/config.json`. `setup` runs when an
+ * environment's golden is built, `provision` once per workspace on its first
+ * boot, `start` on every boot once host-service is up, and `ports` are
+ * published beside the platform's own.
  */
 export const repositoryHooksSchema = z.object({
 	setup: z.array(z.string()).optional(),
+	provision: z.array(z.string()).optional(),
 	start: z.array(z.string()).optional(),
 	ports: z.array(z.number().int().min(1).max(65535)).max(13).optional(),
 });

@@ -5,14 +5,7 @@ set -uo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 LOG_DIR="${SUPERSET_LOG_DIR:-/var/log/superset}"
 
-# Sequenced here rather than chained in the start hook, whose commands are
-# joined with &&: a database that failed to branch must not also mean no
-# editor, and setup retries on the next boot either way.
-if [ -x "$ROOT_DIR/.superset/setup.cloud.sh" ]; then
-  "$ROOT_DIR/.superset/setup.cloud.sh" || echo "dev-stack: cloud setup reported failures; continuing"
-fi
-
-[ -f "$ROOT_DIR/.env" ] || { echo "dev-stack: no .env yet; setup.cloud.sh runs first"; exit 0; }
+[ -f "$ROOT_DIR/.env" ] || { echo "dev-stack: no .env; the provision hook writes it"; exit 0; }
 command -v tmux >/dev/null || { echo "dev-stack: tmux is not installed"; exit 0; }
 tmux has-session -t superset 2>/dev/null && { echo "dev-stack: already running"; exit 0; }
 

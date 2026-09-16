@@ -149,8 +149,13 @@ const setupScript = readFileSync(
 );
 const setupHook = [setupScript];
 
-function identityFor(workspaceId: string, sourceRef: string): SandboxIdentity {
+function identityFor(
+	workspaceId: string,
+	sourceRef: string,
+	role: "workspace" | "probe" = "probe",
+): SandboxIdentity {
 	return {
+		SUPERSET_SANDBOX_ROLE: role,
 		SUPERSET_SANDBOX_CONTRACT: String(SANDBOX_CONTRACT_VERSION) as "1",
 		SUPERSET_BUNDLE_SHA: bundle.sha256,
 		SUPERSET_API_URL: API_URL,
@@ -327,7 +332,7 @@ if (ENV_FILE) {
 	}
 	// A real workspace branches the database for itself at first start; a
 	// probe must not leave a Neon branch behind.
-	probeEnv.SUPERSET_RELEASE_PROBE = "1";
+
 	log(
 		`probe env: ${Object.keys(probeEnv).length} variables from the env file (reserved names skipped)`,
 	);

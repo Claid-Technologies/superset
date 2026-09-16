@@ -12,6 +12,7 @@ import {
 import {
 	getStartHookState,
 	readSandboxIdentity,
+	runSandboxProvisionHook,
 	runSandboxStartHook,
 } from "../../../runtime/sandbox-self-seed";
 import { protectedProcedure, router } from "../../index";
@@ -85,6 +86,23 @@ export const sandboxRouter = router({
 	 * been pushed and the checkout is in, so every boot-time action is
 	 * sequenced from one place and reads in one log.
 	 */
+	/**
+	 * The repository's `provision` hook, once per workspace. The boot runner
+	 * asks for it before the start hook, and waits: the services the start
+	 * hook brings up are what this installs.
+	 */
+	runProvisionHook: protectedProcedure.mutation(async () => {
+		sandboxOnly();
+		const identity = readSandboxIdentity();
+		if (!identity) {
+			throw new TRPCError({
+				code: "PRECONDITION_FAILED",
+				message: "This host-service has no sandbox identity",
+			});
+		}
+		return await runSandboxProvisionHook(identity);
+	}),
+
 	runStartHook: protectedProcedure.mutation(async () => {
 		sandboxOnly();
 		const identity = readSandboxIdentity();

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # setup.sh for a cloud workspace: the variables arrive in this process's own
 # environment rather than a checkout's .env, and there is no machine state to
-# copy. Runs from the start hook, once per workspace.
+# copy. The `provision` hook decides when it runs, which is once.
 set -uo pipefail
 
 SUPERSET_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -11,9 +11,6 @@ source "$SUPERSET_SCRIPT_DIR/lib/common.sh"
 # shellcheck source=/dev/null
 source "$SUPERSET_SCRIPT_DIR/lib/setup/steps.sh"
 cd "$ROOT_DIR" || exit 1
-
-STAMP_DIR="${SUPERSET_STATE_DIR:-/var/lib/superset}"  # stripped from goldens by INHERITED_IDENTITY
-STAMP="$STAMP_DIR/setup-cloud.done"
 
 # The environment's variables, as a file, because step_write_env copies one.
 # install -m 600 and the trap because that file holds every secret the
@@ -48,21 +45,6 @@ cloud_write_environment_env() {
 }
 
 cloud_setup_main() {
-  if [ "${IS_SANDBOX:-}" != "1" ]; then
-    error "setup.cloud.sh runs inside a cloud workspace (IS_SANDBOX=1)"
-    return 1
-  fi
-  if [ -f "$STAMP" ] && [ -f "$ROOT_DIR/.env" ]; then
-    echo "Cloud setup already done for this workspace"
-    return 0
-  fi
-  # A release probe boots a throwaway sandbox to check the image. Branching the
-  # database for it would leave the branch behind when the sandbox goes.
-  if [ "${SUPERSET_RELEASE_PROBE:-}" = "1" ]; then
-    echo "Release probe: skipping cloud setup"
-    return 0
-  fi
-
   FAILED_STEPS=()
   SKIPPED_STEPS=()
 
@@ -92,11 +74,7 @@ cloud_setup_main() {
   ( set -a; . "$ROOT_DIR/.env"; set +a; NODE_ENV=development bun run db:seed-dev ) ||
     step_failed "Seed dev account"
 
-  if print_summary "Cloud setup"; then
-    mkdir -p "$STAMP_DIR" && touch "$STAMP"
-    return 0
-  fi
-  return 1
+  print_summary "Cloud setup"
 }
 
 cloud_setup_main "$@"
