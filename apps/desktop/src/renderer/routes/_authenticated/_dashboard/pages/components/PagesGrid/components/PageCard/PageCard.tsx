@@ -111,54 +111,48 @@ export function PageCard({
 				<div className="relative">
 					<PageThumbnail src={page.thumbnailUrl} />
 					{page.lastComment && lastAuthor ? (
-						<div className="absolute inset-x-0 bottom-0 flex items-center gap-2 border-border/60 border-t bg-background/85 px-3 py-2 text-xs opacity-0 backdrop-blur transition-opacity group-focus-within:opacity-100 group-hover:opacity-100">
-							<Avatar className="size-4 shrink-0">
-								<AvatarImage src={lastAuthor.image ?? undefined} alt="" />
-								<AvatarFallback className="text-[8px]">
-									{lastAuthor.isAgent ? (
-										<Bot className="size-2.5" />
-									) : (
-										getInitials(lastAuthor.name) || "?"
+						// The CommentPreviewCard peek: floats inside the thumbnail, waits
+						// 180ms for hover intent, opens instantly on keyboard focus.
+						<div className="pointer-events-none absolute inset-x-3 bottom-3 translate-y-[5px] rounded-[10px] border border-border bg-popover px-3 pt-2.5 pb-3 opacity-0 shadow-lg transition-[opacity,transform] duration-150 group-hover:translate-y-0 group-hover:opacity-100 group-hover:delay-[180ms] group-focus-within:translate-y-0 group-focus-within:opacity-100 group-focus-within:delay-0">
+							<div className="flex items-center gap-2 text-[11px] text-muted-foreground">
+								<Avatar className="size-5 shrink-0">
+									<AvatarImage src={lastAuthor.image ?? undefined} alt="" />
+									<AvatarFallback className="text-[9px]">
+										{lastAuthor.isAgent ? (
+											<Bot className="size-3" />
+										) : (
+											getInitials(lastAuthor.name) || "?"
+										)}
+									</AvatarFallback>
+								</Avatar>
+								<span className="min-w-0 truncate">{lastAuthor.name}</span>
+								<span className="ml-auto shrink-0">
+									{formatCompactRelativeTime(
+										new Date(page.lastComment.createdAt),
 									)}
-								</AvatarFallback>
-							</Avatar>
-							<span className="min-w-0 flex-1 truncate">
-								<span className="font-medium">{lastAuthor.name}</span>{" "}
-								<span className="text-muted-foreground">
-									{page.lastComment.body}
 								</span>
-							</span>
-							<span className="shrink-0 text-[11px] text-muted-foreground">
-								{formatCompactRelativeTime(
-									new Date(page.lastComment.createdAt),
-								)}
-							</span>
+							</div>
+							<p className="mt-1.5 line-clamp-2 text-[13px] text-foreground leading-snug">
+								{page.lastComment.body}
+							</p>
 						</div>
 					) : null}
 				</div>
 				<div className="flex flex-col gap-1 border-border/60 border-t px-3 py-2.5">
-					<span className="truncate font-medium text-sm">{page.title}</span>
-					<span className="flex items-center gap-1.5 text-muted-foreground text-xs">
-						<VisibilityIcon className="size-3 shrink-0" />
-						<span aria-hidden="true">·</span>
-						<span className="truncate">
-							{wasEdited ? <Trans>Edited</Trans> : <Trans>Created</Trans>}{" "}
-							{timestamp}
+					<span className="flex items-center gap-2">
+						<span className="min-w-0 flex-1 truncate font-medium text-sm">
+							{page.title}
 						</span>
-						{ownerName ? (
-							<>
-								<span aria-hidden="true">·</span>
-								<span className="truncate">{ownerName}</span>
-							</>
-						) : null}
 						{page.commentCount > 0 ? (
 							<span
 								className={cn(
-									"ml-auto flex shrink-0 items-center gap-1 tabular-nums",
-									page.openThreadCount > 0 && "text-amber-500",
+									"-my-0.5 flex shrink-0 items-center gap-1 rounded-md px-1.5 py-0.5 text-xs tabular-nums transition-colors group-hover:bg-accent",
+									page.openThreadCount > 0
+										? "text-amber-500"
+										: "text-muted-foreground",
 								)}
 							>
-								<MessageCircle className="size-3" aria-hidden="true" />
+								<MessageCircle className="size-3.5" aria-hidden="true" />
 								<span aria-hidden="true">{page.commentCount}</span>
 								<span className="sr-only">
 									<Plural
@@ -178,6 +172,20 @@ export function PageCard({
 									) : null}
 								</span>
 							</span>
+						) : null}
+					</span>
+					<span className="flex items-center gap-1.5 text-muted-foreground text-xs">
+						<VisibilityIcon className="size-3 shrink-0" />
+						<span aria-hidden="true">·</span>
+						<span className="truncate">
+							{wasEdited ? <Trans>Edited</Trans> : <Trans>Created</Trans>}{" "}
+							{timestamp}
+						</span>
+						{ownerName ? (
+							<>
+								<span aria-hidden="true">·</span>
+								<span className="truncate">{ownerName}</span>
+							</>
 						) : null}
 					</span>
 				</div>
