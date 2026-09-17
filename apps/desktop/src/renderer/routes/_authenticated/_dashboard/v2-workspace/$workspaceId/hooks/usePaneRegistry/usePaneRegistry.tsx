@@ -93,6 +93,7 @@ import { TerminalSessionDropdown } from "./components/TerminalPane/components/Te
 import { terminalContextMenuLinkStore } from "./components/TerminalPane/contextMenuLinkStore";
 import { openInActions } from "./utils/openInActions";
 import { pagePaneLabel } from "./utils/pagePaneLabel";
+import { replaceEndedTerminal } from "./utils/replaceEndedTerminal";
 
 function getFileName(filePath: string): string {
 	return getBaseName(filePath);
@@ -446,11 +447,14 @@ export function usePaneRegistry({
 						},
 					);
 				},
-				onAfterClose: (pane) => {
+				onAfterClose: (pane, closedPanes) => {
 					const { terminalId } = pane.data as TerminalPaneData;
-					// Another pane still shows this terminal (one that followed a
-					// resumed session while its adopted duplicate closes): only
-					// this pane's runtime goes, the session stays.
+					const firstClosed = closedPanes.find(
+						(candidate) =>
+							candidate.kind === "terminal" &&
+							(candidate.data as TerminalPaneData).terminalId === terminalId,
+					);
+					if (firstClosed?.id !== pane.id) return;
 					if (findTerminalPaneLocation(store.getState(), terminalId)) {
 						terminalRuntimeRegistry.release(terminalId, pane.id);
 						return;
@@ -462,6 +466,12 @@ export function usePaneRegistry({
 					clearWorkspaceRunTerminal(terminalId);
 					terminalRuntimeRegistry.dispose(terminalId);
 					killTerminalSessionSilently({ terminalId, workspaceId });
+				},
+				onAfterRemove: (pane) => {
+					terminalRuntimeRegistry.release(
+						(pane.data as TerminalPaneData).terminalId,
+						pane.id,
+					);
 				},
 				renderTitle: (ctx: RendererContext<PaneViewerData>) => (
 					<div className="flex min-w-0 flex-1 items-center gap-1.5">
@@ -482,6 +492,26 @@ export function usePaneRegistry({
 							workspaceId={workspaceId}
 							terminalId={terminalId}
 							terminalInstanceId={ctx.pane.id}
+							onNewShell={() =>
+								replaceEndedTerminal({
+									store: ctx.store,
+									paneId: ctx.pane.id,
+									terminalId,
+									create: () => launcher.create(),
+									dispose: (id) =>
+										workspaceTrpcUtils.client.terminal.killSession.mutate({
+											terminalId: id,
+											workspaceId,
+										}),
+									prepare: (id) =>
+										terminalRuntimeRegistry.prepareReplacement(
+											terminalId,
+											id,
+											ctx.pane.id,
+											t({ message: "New shell" }),
+										),
+								})
+							}
 							onCreateNewAgentSession={createNewAgentSession}
 							onOpenSubagent={(data) =>
 								openSubagentPaneInStore(ctx.store, data)

@@ -5990,6 +5990,9 @@ msgstr "Не удалось создать задачу"
 msgid "Failed to create team"
 msgstr "Не удалось создать команду"
 
+msgid "Failed to create terminal"
+msgstr "Не удалось создать терминал"
+
 msgid "Failed to create thread"
 msgstr "Не удалось создать ветку обсуждения"
 
@@ -8993,6 +8996,9 @@ msgstr "Новые релизы и обновления продукта."
 
 msgid "New session"
 msgstr "Новая сессия"
+
+msgid "New shell"
+msgstr "Новая оболочка"
 
 msgid "New stars"
 msgstr "Новые звёзды"
@@ -13014,6 +13020,9 @@ msgstr "Создание сессий в вебе скоро появится"
 
 msgid "Session details"
 msgstr "Детали сессии"
+
+msgid "Session ended"
+msgstr "Сеанс завершён"
 
 msgid "Session name"
 msgstr "Имя сессии"

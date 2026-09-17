@@ -5990,6 +5990,9 @@ msgstr "Nie udało się utworzyć zadania"
 msgid "Failed to create team"
 msgstr "Nie udało się utworzyć zespołu"
 
+msgid "Failed to create terminal"
+msgstr "Nie udało się utworzyć terminala"
+
 msgid "Failed to create thread"
 msgstr "Nie udało się utworzyć wątku"
 
@@ -8993,6 +8996,9 @@ msgstr "Nowe wydania i aktualizacje produktu."
 
 msgid "New session"
 msgstr "Nowa sesja"
+
+msgid "New shell"
+msgstr "Nowa powłoka"
 
 msgid "New stars"
 msgstr "Nowe gwiazdki"
@@ -13014,6 +13020,9 @@ msgstr "Tworzenie sesji w przeglądarce już wkrótce"
 
 msgid "Session details"
 msgstr "Szczegóły sesji"
+
+msgid "Session ended"
+msgstr "Sesja zakończona"
 
 msgid "Session name"
 msgstr "Nazwa sesji"

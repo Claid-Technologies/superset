@@ -231,6 +231,7 @@ export function TerminalSessionDropdown({
 			context.store.getState().closePane({
 				tabId: location.tabId,
 				paneId: location.paneId,
+				intent: "remove",
 			});
 		}
 

@@ -1,3 +1,4 @@
+import { reconcileMissingTerminalSessions } from "./reaper/reaper.ts";
 // create-on-attach: a WS attach carrying `create=1` + `workspaceId` creates
 // the session when no session row exists, so the renderer can insert a
 // terminal pane optimistically instead of pre-awaiting an HTTP mutation that
@@ -25,10 +26,15 @@ import { Hono } from "hono";
 import { createDb, type HostDb } from "../db/index.ts";
 import { projects, terminalSessions, workspaces } from "../db/schema.ts";
 import type { EventBus } from "../events/index.ts";
-import { disposeDaemonClient } from "./daemon-client-singleton.ts";
+import {
+	disposeDaemonClient,
+	getDaemonClient,
+} from "./daemon-client-singleton.ts";
 import { initTerminalBaseEnv } from "./env.ts";
 import {
 	__resetSessionsForTesting,
+	createTerminalSessionInternal,
+	disposeSessionAndWait,
 	isLiveTerminalSession,
 	listTerminalSessions,
 	registerWorkspaceTerminalRoute,
@@ -287,4 +293,98 @@ test("concurrent create=1 attaches share one session", async () => {
 		(session) => session.terminalId === terminalId,
 	);
 	assert.equal(matching.length, 1);
+});
+
+test("cleanup before attach preserves a lost session's recovery path", async () => {
+	const terminalId = randomUUID();
+	db.insert(terminalSessions)
+		.values({
+			id: terminalId,
+			originWorkspaceId: workspaceId,
+			status: "active",
+			createdAt: Date.now() - 600_000,
+		})
+		.run();
+	reconcileMissingTerminalSessions(db, [], new Map());
+	assert.equal(
+		db.query.terminalSessions
+			.findFirst({ where: eq(terminalSessions.id, terminalId) })
+			.sync()?.status,
+		"active",
+	);
+	assert.deepEqual(await dial(terminalId, `?workspaceId=${workspaceId}`), {
+		kind: "attached",
+	});
+	await disposeSessionAndWait(terminalId, db);
+});
+
+test("pending dispose blocks attach even while the row says active", async () => {
+	const terminalId = randomUUID();
+	db.insert(terminalSessions)
+		.values({
+			id: terminalId,
+			originWorkspaceId: workspaceId,
+			status: "active",
+			createdAt: Date.now(),
+			disposeRequestedAt: Date.now(),
+		})
+		.run();
+	const result = await dial(terminalId, `?workspaceId=${workspaceId}&create=1`);
+	assert.equal(result.kind, "error");
+	if (result.kind === "error") assert.equal(result.code, "session-gone");
+	const daemon = await getDaemonClient();
+	assert.ok(
+		!(await daemon.list()).some(
+			(session) => session.id === terminalId && session.alive,
+		),
+	);
+});
+
+test("dispose during an in-flight create wins without leaving a live shell", async () => {
+	const terminalId = randomUUID();
+	const daemon = await getDaemonClient();
+	const originalOpen = daemon.open.bind(daemon);
+	let release!: () => void;
+	let entered!: () => void;
+	const barrier = new Promise<void>((resolve) => {
+		release = resolve;
+	});
+	const started = new Promise<void>((resolve) => {
+		entered = resolve;
+	});
+	daemon.open = async (...args: Parameters<typeof daemon.open>) => {
+		if (args[0] === terminalId) {
+			entered();
+			await barrier;
+		}
+		return originalOpen(...args);
+	};
+	try {
+		const creating = createTerminalSessionInternal({
+			terminalId,
+			workspaceId,
+			db,
+		});
+		await started;
+		const disposing = disposeSessionAndWait(terminalId, db);
+		release();
+		const result = await creating;
+		assert.ok("error" in result);
+		await disposing;
+		assert.ok(!isLiveTerminalSession(terminalId));
+		assert.equal(
+			db.query.terminalSessions
+				.findFirst({ where: eq(terminalSessions.id, terminalId) })
+				.sync()?.status,
+			"disposed",
+		);
+		assert.ok(
+			!(await daemon.list()).some(
+				(session) => session.id === terminalId && session.alive,
+			),
+		);
+	} finally {
+		release();
+		daemon.open = originalOpen;
+	}
 });

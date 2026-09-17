@@ -5990,6 +5990,9 @@ msgstr "Nepodařilo se vytvořit úkol"
 msgid "Failed to create team"
 msgstr "Nepodařilo se vytvořit tým"
 
+msgid "Failed to create terminal"
+msgstr "Nepodařilo se vytvořit terminál"
+
 msgid "Failed to create thread"
 msgstr "Nepodařilo se vytvořit vlákno"
 
@@ -8993,6 +8996,9 @@ msgstr "Nová vydání a novinky v produktu."
 
 msgid "New session"
 msgstr "Nová relace"
+
+msgid "New shell"
+msgstr "Nový shell"
 
 msgid "New stars"
 msgstr "Nové hvězdy"
@@ -13014,6 +13020,9 @@ msgstr "Vytváření relací na webu bude brzy k dispozici"
 
 msgid "Session details"
 msgstr "Podrobnosti relace"
+
+msgid "Session ended"
+msgstr "Relace skončila"
 
 msgid "Session name"
 msgstr "Název relace"

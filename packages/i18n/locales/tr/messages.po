@@ -5990,6 +5990,9 @@ msgstr "Görev oluşturulamadı"
 msgid "Failed to create team"
 msgstr "Takım oluşturulamadı"
 
+msgid "Failed to create terminal"
+msgstr "Terminal oluşturulamadı"
+
 msgid "Failed to create thread"
 msgstr "Konu oluşturulamadı"
 
@@ -8993,6 +8996,9 @@ msgstr "Yeni sürümler ve ürün güncellemeleri."
 
 msgid "New session"
 msgstr "Yeni oturum"
+
+msgid "New shell"
+msgstr "Yeni kabuk"
 
 msgid "New stars"
 msgstr "Yeni yıldızlar"
@@ -13014,6 +13020,9 @@ msgstr "Web'de oturum oluşturma yakında geliyor"
 
 msgid "Session details"
 msgstr "Oturum ayrıntıları"
+
+msgid "Session ended"
+msgstr "Oturum sona erdi"
 
 msgid "Session name"
 msgstr "Oturum adı"

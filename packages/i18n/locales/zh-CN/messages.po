@@ -5990,6 +5990,9 @@ msgstr "创建任务失败"
 msgid "Failed to create team"
 msgstr "创建团队失败"
 
+msgid "Failed to create terminal"
+msgstr "无法创建终端"
+
 msgid "Failed to create thread"
 msgstr "创建讨论串失败"
 
@@ -8993,6 +8996,9 @@ msgstr "新版本与产品更新。"
 
 msgid "New session"
 msgstr "新建会话"
+
+msgid "New shell"
+msgstr "新建 Shell"
 
 msgid "New stars"
 msgstr "新增星标"
@@ -13014,6 +13020,9 @@ msgstr "网页端创建会话即将推出"
 
 msgid "Session details"
 msgstr "会话详情"
+
+msgid "Session ended"
+msgstr "会话已结束"
 
 msgid "Session name"
 msgstr "会话名称"

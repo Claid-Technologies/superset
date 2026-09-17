@@ -5990,6 +5990,9 @@ msgstr "Không thể tạo tác vụ"
 msgid "Failed to create team"
 msgstr "Không thể tạo nhóm"
 
+msgid "Failed to create terminal"
+msgstr "Không thể tạo terminal"
+
 msgid "Failed to create thread"
 msgstr "Không thể tạo luồng"
 
@@ -8993,6 +8996,9 @@ msgstr "Các bản phát hành mới và cập nhật sản phẩm."
 
 msgid "New session"
 msgstr "Phiên mới"
+
+msgid "New shell"
+msgstr "Shell mới"
 
 msgid "New stars"
 msgstr "Star mới"
@@ -13014,6 +13020,9 @@ msgstr "Tạo phiên trên web sẽ sớm có"
 
 msgid "Session details"
 msgstr "Chi tiết phiên"
+
+msgid "Session ended"
+msgstr "Phiên đã kết thúc"
 
 msgid "Session name"
 msgstr "Tên phiên"

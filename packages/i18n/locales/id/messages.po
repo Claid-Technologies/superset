@@ -5990,6 +5990,9 @@ msgstr "Gagal membuat tugas"
 msgid "Failed to create team"
 msgstr "Gagal membuat tim"
 
+msgid "Failed to create terminal"
+msgstr "Gagal membuat terminal"
+
 msgid "Failed to create thread"
 msgstr "Gagal membuat thread"
 
@@ -8993,6 +8996,9 @@ msgstr "Rilis baru dan pembaruan produk."
 
 msgid "New session"
 msgstr "Sesi baru"
+
+msgid "New shell"
+msgstr "Shell baru"
 
 msgid "New stars"
 msgstr "Star baru"
@@ -13014,6 +13020,9 @@ msgstr "Pembuatan sesi di web segera hadir"
 
 msgid "Session details"
 msgstr "Detail sesi"
+
+msgid "Session ended"
+msgstr "Sesi berakhir"
 
 msgid "Session name"
 msgstr "Nama sesi"

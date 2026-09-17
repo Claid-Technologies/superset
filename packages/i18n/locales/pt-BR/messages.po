@@ -5990,6 +5990,9 @@ msgstr "Falha ao criar a tarefa"
 msgid "Failed to create team"
 msgstr "Falha ao criar a equipe"
 
+msgid "Failed to create terminal"
+msgstr "Falha ao criar terminal"
+
 msgid "Failed to create thread"
 msgstr "Falha ao criar a thread"
 
@@ -8993,6 +8996,9 @@ msgstr "Novas versões e atualizações do produto."
 
 msgid "New session"
 msgstr "Nova sessão"
+
+msgid "New shell"
+msgstr "Novo shell"
 
 msgid "New stars"
 msgstr "Novas estrelas"
@@ -13014,6 +13020,9 @@ msgstr "Criar sessões pela web chega em breve"
 
 msgid "Session details"
 msgstr "Detalhes da sessão"
+
+msgid "Session ended"
+msgstr "Sessão encerrada"
 
 msgid "Session name"
 msgstr "Nome da sessão"

@@ -49,6 +49,7 @@ interface RegistryEntry {
 	terminalId: string;
 	instanceId: string;
 	runtime: TerminalRuntime | null;
+	initialBuffer?: string;
 	transport: TerminalTransport;
 	linkManager: TerminalLinkManager | null;
 	/** Stored until linkManager is created (mount called after setLinkHandlers). */
@@ -197,8 +198,11 @@ class TerminalRuntimeRegistryImpl {
 
 		if (!entry.runtime) {
 			entry.runtime = createRuntime(terminalId, appearance, {
-				initialBuffer: this.serializeExistingRuntime(terminalId, instanceId),
+				initialBuffer:
+					entry.initialBuffer ??
+					this.serializeExistingRuntime(terminalId, instanceId),
 			});
+			entry.initialBuffer = undefined;
 			// Pair the transport's stream position with what the fresh xterm
 			// actually contains: the persisted anchor belongs to the persisted
 			// snapshot only; sibling-seeded content has no known position.
@@ -662,6 +666,33 @@ class TerminalRuntimeRegistryImpl {
 		return (
 			this.getEntry(terminalId, instanceId)?.transport._terminated ?? false
 		);
+	}
+
+	isSessionEnded(terminalId: string, instanceId?: string): boolean {
+		return (
+			this.getEntry(terminalId, instanceId)?.transport.sessionEnded ?? false
+		);
+	}
+
+	prepareReplacement(
+		terminalId: string,
+		replacementId: string,
+		instanceId: string,
+		notice: string,
+	): void {
+		const previous = this.getEntry(terminalId, instanceId);
+		if (!previous?.transport.sessionEnded || !previous.runtime) return;
+		try {
+			const history = previous.runtime.serializeAddon.serialize({
+				scrollback: 1000,
+				excludeAltBuffer: true,
+				excludeModes: true,
+			});
+			this.getOrCreateEntry(replacementId, instanceId).initialBuffer =
+				`${history}\r\n\x1b[0m${notice}\r\n`;
+		} catch (error) {
+			console.warn("Failed to retain terminal history for replacement", error);
+		}
 	}
 
 	clearLogs(terminalId: string, instanceId?: string): void {

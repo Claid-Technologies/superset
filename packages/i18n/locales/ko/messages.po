@@ -5990,6 +5990,9 @@ msgstr "작업을 만들지 못했습니다"
 msgid "Failed to create team"
 msgstr "팀을 만들지 못했습니다"
 
+msgid "Failed to create terminal"
+msgstr "터미널을 만들지 못했습니다"
+
 msgid "Failed to create thread"
 msgstr "스레드를 만들지 못했습니다"
 
@@ -8993,6 +8996,9 @@ msgstr "새 릴리스와 제품 업데이트."
 
 msgid "New session"
 msgstr "새 세션"
+
+msgid "New shell"
+msgstr "새 셸"
 
 msgid "New stars"
 msgstr "신규 스타"
@@ -13014,6 +13020,9 @@ msgstr "웹에서 세션 만들기는 곧 지원됩니다"
 
 msgid "Session details"
 msgstr "세션 상세"
+
+msgid "Session ended"
+msgstr "세션 종료"
 
 msgid "Session name"
 msgstr "세션 이름"

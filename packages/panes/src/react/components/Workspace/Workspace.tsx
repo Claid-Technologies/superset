@@ -55,6 +55,15 @@ export function Workspace<TData>({
 		return activeTab;
 	}, [draggedTabId, activeTabId, tabs, activeTab]);
 
+	useEffect(
+		() =>
+			store.getState().subscribePaneClose((panes) => {
+				for (const pane of panes)
+					registry[pane.kind]?.onAfterClose?.(pane, panes);
+			}),
+		[store, registry],
+	);
+
 	const previousPanesRef = useRef<Map<string, Pane<TData>>>(new Map());
 	useEffect(() => {
 		const current = new Map<string, Pane<TData>>();
@@ -65,7 +74,7 @@ export function Workspace<TData>({
 		}
 		for (const [prevId, prevPane] of previousPanesRef.current) {
 			if (!current.has(prevId)) {
-				registry[prevPane.kind]?.onAfterClose?.(prevPane);
+				registry[prevPane.kind]?.onAfterRemove?.(prevPane);
 			}
 		}
 		previousPanesRef.current = current;

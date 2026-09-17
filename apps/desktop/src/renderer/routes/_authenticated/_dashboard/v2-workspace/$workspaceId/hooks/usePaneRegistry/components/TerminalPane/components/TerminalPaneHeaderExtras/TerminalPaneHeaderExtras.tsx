@@ -18,6 +18,7 @@ interface TerminalPaneHeaderExtrasProps {
 	workspaceId: string;
 	terminalId: string;
 	terminalInstanceId: string;
+	onNewShell: () => Promise<void>;
 	onCreateNewAgentSession: (input: {
 		configId: string;
 		placement: "split-pane" | "new-tab";
@@ -40,6 +41,7 @@ export function TerminalPaneHeaderExtras({
 	terminalInstanceId,
 	onCreateNewAgentSession,
 	onOpenSubagent,
+	onNewShell,
 }: TerminalPaneHeaderExtrasProps) {
 	const { t } = useLingui();
 	const isOpen = useTerminalRichInputOpen();
@@ -63,6 +65,7 @@ export function TerminalPaneHeaderExtras({
 			<TerminalConnectionIndicator
 				terminalId={terminalId}
 				terminalInstanceId={terminalInstanceId}
+				onNewShell={onNewShell}
 			/>
 			<TerminalPageWatchChip
 				workspaceId={workspaceId}
