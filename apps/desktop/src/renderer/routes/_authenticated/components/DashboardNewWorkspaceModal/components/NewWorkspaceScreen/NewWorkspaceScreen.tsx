@@ -800,7 +800,7 @@ export function NewWorkspaceScreen({
 						!draft.isSession &&
 						draft.checkout === "worktree" &&
 						!draft.linkedPR && (
-							<div className="mx-3 -mb-px flex items-center gap-2 rounded-t-xl border border-border bg-foreground/[0.02] px-3 py-2 text-muted-foreground focus-within:border-ring">
+							<div className="mb-2 flex min-h-7 items-center gap-2 px-1 text-muted-foreground">
 								<GitBranchIcon
 									className="size-3.5 shrink-0"
 									aria-hidden="true"
@@ -808,7 +808,7 @@ export function NewWorkspaceScreen({
 								<input
 									id="new-workspace-branch-name"
 									aria-label={t({ message: "Custom branch name" })}
-									className="min-w-0 flex-1 bg-transparent text-xs text-foreground outline-none placeholder:text-muted-foreground disabled:opacity-50"
+									className="min-w-0 flex-1 bg-transparent text-xs text-foreground outline-none placeholder:text-muted-foreground focus-visible:underline focus-visible:decoration-muted-foreground focus-visible:underline-offset-4 disabled:opacity-50"
 									placeholder={t({ message: "Custom branch name" })}
 									autoComplete="off"
 									onBlur={() => {
