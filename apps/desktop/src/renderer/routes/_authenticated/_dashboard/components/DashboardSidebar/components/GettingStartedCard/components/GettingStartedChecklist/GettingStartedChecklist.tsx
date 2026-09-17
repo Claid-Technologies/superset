@@ -31,15 +31,15 @@ export function GettingStartedChecklist({
 			</p>
 			<div
 				role="progressbar"
-				aria-label={t({ message: "Getting started" })}
+				aria-label={t({ message: "Get the best out of Pro" })}
 				aria-valuemin={0}
-				aria-valuemax={4}
+				aria-valuemax={GETTING_STARTED_STEPS.length}
 				aria-valuenow={count}
 				className="my-3 h-1 overflow-hidden rounded-full bg-muted"
 			>
 				<div
 					className="h-full rounded-full bg-foreground transition-[width] motion-reduce:transition-none"
-					style={{ width: `${count * 25}%` }}
+					style={{ width: `${(count / GETTING_STARTED_STEPS.length) * 100}%` }}
 				/>
 			</div>
 			<div className="-mx-1 flex flex-col gap-0.5">

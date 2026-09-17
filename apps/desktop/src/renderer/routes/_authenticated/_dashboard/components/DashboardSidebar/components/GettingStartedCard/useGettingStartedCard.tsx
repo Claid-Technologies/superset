@@ -11,7 +11,7 @@ export function useGettingStartedCard(): SidebarCardEntry | null {
 	const { t } = useLingui();
 	const { tried, dismissed, markTried, dismiss } = useGettingStartedStore();
 	const { createSession } = useCreateAgentSession();
-	const { gateFeature } = usePaywall();
+	const { gateFeature, hasAccess, isReady } = usePaywall();
 	const [pendingStep, setPendingStep] = useState<number | null>(null);
 	const busy = useRef(false);
 	const start = async (index: number) => {
@@ -26,19 +26,19 @@ export function useGettingStartedCard(): SidebarCardEntry | null {
 			setPendingStep(null);
 		}
 	};
-	if (dismissed) return null;
+	if (dismissed || !isReady || !hasAccess(GATED_FEATURES.REMOTE_ACCESS))
+		return null;
 	return {
-		id: "getting-started",
-		title: t({ message: "Getting started" }),
+		id: "pro-getting-started",
+		title: t({ message: "Get the best out of Pro" }),
 		onDismiss: dismiss,
 		children: (
 			<GettingStartedChecklist
 				tried={tried}
 				pendingStep={pendingStep}
 				onStart={(index) => {
-					if (index === 3)
-						gateFeature(GATED_FEATURES.AUTOMATIONS, () => void start(index));
-					else void start(index);
+					const step = GETTING_STARTED_STEPS[index];
+					if (step) gateFeature(step.feature, () => start(index));
 				}}
 			/>
 		),

@@ -3726,9 +3726,6 @@ msgstr "Připojte svůj Notion workspace a nasdílejte stránky a datové zdroje
 msgid "Connect your Slack workspace to manage tasks from conversations."
 msgstr "Připojte svůj Slack workspace a spravujte úkoly přímo z konverzací."
 
-msgid "Connect your tools"
-msgstr "Připojte své nástroje"
-
 msgid "Connected"
 msgstr "Připojeno"
 
@@ -5602,6 +5599,9 @@ msgstr "Zapnout auto-merge"
 msgid "Enable relay access…"
 msgstr "Povolit přístup přes relay…"
 
+msgid "Enable remote access"
+msgstr "Povolte vzdálený přístup"
+
 msgid "Enable skill"
 msgstr "Zapnout skill"
 
@@ -6824,8 +6824,8 @@ msgstr "Získejte Superset na svůj Mac"
 msgid "Get Superset Pro"
 msgstr "Pořídit Superset Pro"
 
-msgid "Getting started"
-msgstr "Začínáme"
+msgid "Get the best out of Pro"
+msgstr "Využijte Pro naplno"
 
 msgid "Ghost"
 msgstr "Ghost"
@@ -10419,9 +10419,6 @@ msgstr "Řiďte paralelní agenty"
 msgid "Orchestrate Them All."
 msgstr "Řiďte je všechny."
 
-msgid "Orchestrate your agents"
-msgstr "Koordinujte své agenty"
-
 msgid "Orchestrated"
 msgstr "Orchestrovaný"
 
@@ -11305,9 +11302,6 @@ msgstr "Veřejný"
 
 msgid "Public leaderboard"
 msgstr "Veřejný žebříček"
-
-msgid "Publish your first page"
-msgstr "Publikujte svou první stránku"
 
 msgid "Published"
 msgstr "Publikováno"
@@ -15827,6 +15821,9 @@ msgstr "Použít pro nové agenty"
 
 msgid "Use global default"
 msgstr "Použít globální výchozí"
+
+msgid "Use Superset on mobile"
+msgstr "Používejte Superset na mobilu"
 
 msgid "Use the desktop app to start running parallel coding agents."
 msgstr "Pro spouštění paralelních kódovacích agentů použijte desktopovou aplikaci."

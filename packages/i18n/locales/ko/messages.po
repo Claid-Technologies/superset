@@ -3726,9 +3726,6 @@ msgstr "Notion 워크스페이스를 연결하고 자동화가 지켜볼 페이�
 msgid "Connect your Slack workspace to manage tasks from conversations."
 msgstr "Slack 워크스페이스를 연결해 대화에서 바로 작업을 관리하세요."
 
-msgid "Connect your tools"
-msgstr "도구 연결하기"
-
 msgid "Connected"
 msgstr "연결됨"
 
@@ -5602,6 +5599,9 @@ msgstr "자동 머지 활성화"
 msgid "Enable relay access…"
 msgstr "릴레이 접근 활성화…"
 
+msgid "Enable remote access"
+msgstr "원격 액세스 활성화하기"
+
 msgid "Enable skill"
 msgstr "스킬 활성화"
 
@@ -6824,8 +6824,8 @@ msgstr "Mac에서 Superset 사용하기"
 msgid "Get Superset Pro"
 msgstr "Superset Pro 시작하기"
 
-msgid "Getting started"
-msgstr "시작하기"
+msgid "Get the best out of Pro"
+msgstr "Pro를 최대한 활용하기"
 
 msgid "Ghost"
 msgstr "고스트"
@@ -10419,9 +10419,6 @@ msgstr "병렬 에이전트 오케스트레이션"
 msgid "Orchestrate Them All."
 msgstr "모두 오케스트레이션하세요."
 
-msgid "Orchestrate your agents"
-msgstr "에이전트 조율하기"
-
 msgid "Orchestrated"
 msgstr "오케스트레이션"
 
@@ -11305,9 +11302,6 @@ msgstr "공개"
 
 msgid "Public leaderboard"
 msgstr "공개 리더보드"
-
-msgid "Publish your first page"
-msgstr "첫 페이지 게시하기"
 
 msgid "Published"
 msgstr "게시일"
@@ -15827,6 +15821,9 @@ msgstr "새 에이전트에 사용"
 
 msgid "Use global default"
 msgstr "전역 기본값 사용"
+
+msgid "Use Superset on mobile"
+msgstr "모바일에서 Superset 사용하기"
 
 msgid "Use the desktop app to start running parallel coding agents."
 msgstr "데스크톱 앱에서 병렬 코딩 에이전트를 실행하세요."

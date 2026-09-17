@@ -15,14 +15,14 @@ export const useGettingStartedStore = create<GettingStartedState>()(
 			tried: 0,
 			dismissed: false,
 			markTried: (step) => {
-				if (Number.isInteger(step) && step >= 0 && step < 4)
-					set((state) => ({ tried: (state.tried | (1 << step)) & 15 }));
+				if (Number.isInteger(step) && step >= 0 && step < 3)
+					set((state) => ({ tried: (state.tried | (1 << step)) & 7 }));
 			},
 			dismiss: () => set({ dismissed: true }),
 			show: () => set({ dismissed: false }),
 		}),
 		{
-			name: "getting-started-v1",
+			name: "pro-getting-started-v1",
 			partialize: ({ tried, dismissed }) => ({ tried, dismissed }),
 		},
 	),

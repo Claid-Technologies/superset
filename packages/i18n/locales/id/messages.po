@@ -3726,9 +3726,6 @@ msgstr "Hubungkan workspace Notion Anda dan bagikan halaman serta sumber data ya
 msgid "Connect your Slack workspace to manage tasks from conversations."
 msgstr "Hubungkan workspace Slack Anda untuk mengelola tugas dari percakapan."
 
-msgid "Connect your tools"
-msgstr "Hubungkan alatmu"
-
 msgid "Connected"
 msgstr "Terhubung"
 
@@ -5602,6 +5599,9 @@ msgstr "Aktifkan auto-merge"
 msgid "Enable relay access…"
 msgstr "Aktifkan akses relay…"
 
+msgid "Enable remote access"
+msgstr "Aktifkan akses jarak jauh"
+
 msgid "Enable skill"
 msgstr "Aktifkan skill"
 
@@ -6824,8 +6824,8 @@ msgstr "Dapatkan Superset di Mac Anda"
 msgid "Get Superset Pro"
 msgstr "Dapatkan Superset Pro"
 
-msgid "Getting started"
-msgstr "Mulai"
+msgid "Get the best out of Pro"
+msgstr "Maksimalkan Pro"
 
 msgid "Ghost"
 msgstr "Ghost"
@@ -10419,9 +10419,6 @@ msgstr "Orkestrasi Agen Paralel"
 msgid "Orchestrate Them All."
 msgstr "Orkestrasi Semuanya."
 
-msgid "Orchestrate your agents"
-msgstr "Koordinasikan agenmu"
-
 msgid "Orchestrated"
 msgstr "Terorkestrasi"
 
@@ -11305,9 +11302,6 @@ msgstr "Publik"
 
 msgid "Public leaderboard"
 msgstr "Papan peringkat publik"
-
-msgid "Publish your first page"
-msgstr "Terbitkan halaman pertamamu"
 
 msgid "Published"
 msgstr "Diterbitkan"
@@ -15827,6 +15821,9 @@ msgstr "Pakai untuk agen baru"
 
 msgid "Use global default"
 msgstr "Pakai bawaan global"
+
+msgid "Use Superset on mobile"
+msgstr "Gunakan Superset di ponsel"
 
 msgid "Use the desktop app to start running parallel coding agents."
 msgstr "Pakai aplikasi desktop untuk mulai menjalankan agen coding paralel."

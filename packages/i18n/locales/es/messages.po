@@ -3726,9 +3726,6 @@ msgstr "Conecta tu espacio de trabajo de Notion y comparte las páginas y fuente
 msgid "Connect your Slack workspace to manage tasks from conversations."
 msgstr "Conecta tu espacio de trabajo de Slack para gestionar tareas desde las conversaciones."
 
-msgid "Connect your tools"
-msgstr "Conecta tus herramientas"
-
 msgid "Connected"
 msgstr "Conectado"
 
@@ -5602,6 +5599,9 @@ msgstr "Activar la fusión automática"
 msgid "Enable relay access…"
 msgstr "Habilitar el acceso por relay…"
 
+msgid "Enable remote access"
+msgstr "Activa el acceso remoto"
+
 msgid "Enable skill"
 msgstr "Activar skill"
 
@@ -6824,8 +6824,8 @@ msgstr "Consigue Superset en tu Mac"
 msgid "Get Superset Pro"
 msgstr "Obtener Superset Pro"
 
-msgid "Getting started"
-msgstr "Primeros pasos"
+msgid "Get the best out of Pro"
+msgstr "Aprovecha Pro al máximo"
 
 msgid "Ghost"
 msgstr "Fantasma"
@@ -10419,9 +10419,6 @@ msgstr "Orquestar agentes en paralelo"
 msgid "Orchestrate Them All."
 msgstr "Orquéstalos todos."
 
-msgid "Orchestrate your agents"
-msgstr "Coordina tus agentes"
-
 msgid "Orchestrated"
 msgstr "Orquestado"
 
@@ -11305,9 +11302,6 @@ msgstr "Público"
 
 msgid "Public leaderboard"
 msgstr "Clasificación pública"
-
-msgid "Publish your first page"
-msgstr "Publica tu primera página"
 
 msgid "Published"
 msgstr "Publicada"
@@ -15827,6 +15821,9 @@ msgstr "Usar para los agentes nuevos"
 
 msgid "Use global default"
 msgstr "Usar el valor global predeterminado"
+
+msgid "Use Superset on mobile"
+msgstr "Usa Superset en el móvil"
 
 msgid "Use the desktop app to start running parallel coding agents."
 msgstr "Usa la app de escritorio para empezar a ejecutar agentes de programación en paralelo."

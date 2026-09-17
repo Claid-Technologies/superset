@@ -3726,9 +3726,6 @@ msgstr "Notionのワークスペースを接続し、オートメーションに
 msgid "Connect your Slack workspace to manage tasks from conversations."
 msgstr "Slackのワークスペースを接続して、会話からタスクを管理します。"
 
-msgid "Connect your tools"
-msgstr "ツールを接続する"
-
 msgid "Connected"
 msgstr "接続済み"
 
@@ -5602,6 +5599,9 @@ msgstr "自動マージを有効にする"
 msgid "Enable relay access…"
 msgstr "リレーアクセスを有効にする…"
 
+msgid "Enable remote access"
+msgstr "リモートアクセスを有効にする"
+
 msgid "Enable skill"
 msgstr "スキルを有効にする"
 
@@ -6824,8 +6824,8 @@ msgstr "MacでSupersetを使う"
 msgid "Get Superset Pro"
 msgstr "Superset Proを入手"
 
-msgid "Getting started"
-msgstr "はじめに"
+msgid "Get the best out of Pro"
+msgstr "Proを最大限に活用する"
 
 msgid "Ghost"
 msgstr "Ghost"
@@ -10419,9 +10419,6 @@ msgstr "並列エージェントを指揮"
 msgid "Orchestrate Them All."
 msgstr "すべてを指揮する。"
 
-msgid "Orchestrate your agents"
-msgstr "エージェントを連携させる"
-
 msgid "Orchestrated"
 msgstr "オーケストレーション"
 
@@ -11305,9 +11302,6 @@ msgstr "パブリック"
 
 msgid "Public leaderboard"
 msgstr "公開リーダーボード"
-
-msgid "Publish your first page"
-msgstr "最初のページを公開する"
 
 msgid "Published"
 msgstr "公開日"
@@ -15827,6 +15821,9 @@ msgstr "新規エージェントに使用"
 
 msgid "Use global default"
 msgstr "グローバルのデフォルトを使用"
+
+msgid "Use Superset on mobile"
+msgstr "モバイルでSupersetを使う"
 
 msgid "Use the desktop app to start running parallel coding agents."
 msgstr "デスクトップアプリで並列コーディングエージェントの実行を始めましょう。"

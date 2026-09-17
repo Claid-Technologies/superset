@@ -3726,9 +3726,6 @@ msgstr "連線你的Notion工作區，並共享需要自動化監聽的頁面和
 msgid "Connect your Slack workspace to manage tasks from conversations."
 msgstr "連線你的Slack工作區，直接在對話中管理任務。"
 
-msgid "Connect your tools"
-msgstr "連接你的工具"
-
 msgid "Connected"
 msgstr "已連線"
 
@@ -5602,6 +5599,9 @@ msgstr "啟用自動合併"
 msgid "Enable relay access…"
 msgstr "啟用中繼存取…"
 
+msgid "Enable remote access"
+msgstr "啟用遠端存取"
+
 msgid "Enable skill"
 msgstr "啟用技能"
 
@@ -6824,8 +6824,8 @@ msgstr "在Mac上獲取Superset"
 msgid "Get Superset Pro"
 msgstr "獲取Superset Pro"
 
-msgid "Getting started"
-msgstr "開始使用"
+msgid "Get the best out of Pro"
+msgstr "充分運用 Pro"
 
 msgid "Ghost"
 msgstr "幽靈"
@@ -10419,9 +10419,6 @@ msgstr "編排並行代理程式"
 msgid "Orchestrate Them All."
 msgstr "統一編排。"
 
-msgid "Orchestrate your agents"
-msgstr "協調你的代理程式"
-
 msgid "Orchestrated"
 msgstr "編排"
 
@@ -11305,9 +11302,6 @@ msgstr "公開"
 
 msgid "Public leaderboard"
 msgstr "公開排行榜"
-
-msgid "Publish your first page"
-msgstr "發布你的第一個頁面"
 
 msgid "Published"
 msgstr "發布時間"
@@ -15827,6 +15821,9 @@ msgstr "用於新代理程式"
 
 msgid "Use global default"
 msgstr "使用全域性預設值"
+
+msgid "Use Superset on mobile"
+msgstr "在手機上使用 Superset"
 
 msgid "Use the desktop app to start running parallel coding agents."
 msgstr "使用桌面應用程式開始並行執行編碼代理程式。"

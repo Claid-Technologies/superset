@@ -3726,9 +3726,6 @@ msgstr "Notion çalışma alanınızı bağlayın ve otomasyonların izlemesi ge
 msgid "Connect your Slack workspace to manage tasks from conversations."
 msgstr "Görevleri konuşmalardan yönetmek için Slack çalışma alanınızı bağlayın."
 
-msgid "Connect your tools"
-msgstr "Araçlarını bağla"
-
 msgid "Connected"
 msgstr "Bağlı"
 
@@ -5602,6 +5599,9 @@ msgstr "Otomatik birleştirmeyi etkinleştir"
 msgid "Enable relay access…"
 msgstr "Röle erişimini etkinleştir…"
 
+msgid "Enable remote access"
+msgstr "Uzaktan erişimi etkinleştirin"
+
 msgid "Enable skill"
 msgstr "Beceriyi etkinleştir"
 
@@ -6824,8 +6824,8 @@ msgstr "Superset'i Mac'inize alın"
 msgid "Get Superset Pro"
 msgstr "Superset Pro'yu edinin"
 
-msgid "Getting started"
-msgstr "Başlangıç"
+msgid "Get the best out of Pro"
+msgstr "Pro’dan en iyi şekilde yararlanın"
 
 msgid "Ghost"
 msgstr "Hayalet"
@@ -10419,9 +10419,6 @@ msgstr "Paralel ajanları orkestre edin"
 msgid "Orchestrate Them All."
 msgstr "Hepsini orkestre edin."
 
-msgid "Orchestrate your agents"
-msgstr "Ajanlarını koordine et"
-
 msgid "Orchestrated"
 msgstr "Orkestre edilmiş"
 
@@ -11305,9 +11302,6 @@ msgstr "Herkese açık"
 
 msgid "Public leaderboard"
 msgstr "Herkese açık lider tablosu"
-
-msgid "Publish your first page"
-msgstr "İlk sayfanı yayınla"
 
 msgid "Published"
 msgstr "Yayınlanma"
@@ -15827,6 +15821,9 @@ msgstr "Yeni ajanlar için kullan"
 
 msgid "Use global default"
 msgstr "Genel varsayılanı kullan"
+
+msgid "Use Superset on mobile"
+msgstr "Superset’i mobilde kullanın"
 
 msgid "Use the desktop app to start running parallel coding agents."
 msgstr "Paralel kodlama ajanları çalıştırmaya başlamak için masaüstü uygulamasını kullanın."
