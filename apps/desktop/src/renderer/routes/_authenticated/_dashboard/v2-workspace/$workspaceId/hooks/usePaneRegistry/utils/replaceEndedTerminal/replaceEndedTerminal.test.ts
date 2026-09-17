@@ -91,6 +91,27 @@ describe("ended terminal replacement", () => {
 			expect(input.prepare).not.toHaveBeenCalled();
 		});
 	}
+	it("removes a cancelled replacement adopted while creation or disposal was pending", async () => {
+		const { input, resolve } = setup();
+		const result = replaceEndedTerminal(input);
+		input.store.getState().closePane({ tabId: "tab", paneId: "pane" });
+		const closed = mock(() => {});
+		input.store.getState().subscribePaneClose(closed);
+		const adopt = (id: string) =>
+			input.store.getState().addTab({
+				id,
+				panes: [{ id, kind: "terminal", data: { terminalId: "unused" } }],
+			});
+		adopt("adopted-before-response");
+		input.dispose.mockImplementation(async () => {
+			adopt("adopted-during-disposal");
+		});
+		resolve("unused");
+		await result;
+		expect(input.store.getState().tabs).toHaveLength(0);
+		expect(input.dispose).toHaveBeenCalledTimes(1);
+		expect(closed).not.toHaveBeenCalled();
+	});
 	it("never creates for a stale callback", async () => {
 		const { input } = setup();
 		input.store.getState().removeTab("tab");

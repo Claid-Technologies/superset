@@ -28,6 +28,18 @@ async function replace({
 	const replacementId = await create();
 	if (!matches()) {
 		await dispose(replacementId);
+		for (const tab of store.getState().tabs) {
+			for (const pane of Object.values(tab.panes)) {
+				if (
+					pane.kind === "terminal" &&
+					(pane.data as TerminalPaneData).terminalId === replacementId
+				) {
+					store
+						.getState()
+						.closePane({ tabId: tab.id, paneId: pane.id, intent: "remove" });
+				}
+			}
+		}
 		return;
 	}
 	prepare(replacementId);
