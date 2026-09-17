@@ -25,6 +25,7 @@ import {
 	V2WorktreeLocationPicker,
 } from "../../../components/V2WorktreeLocationPicker";
 import { useDefaultWorktreePath } from "../../../components/WorktreeLocationPicker";
+import { BranchNameInputSection } from "./components/BranchNameInputSection";
 
 interface V2GitSettingsProps {
 	hostId: string | null;
@@ -201,6 +202,9 @@ export function V2GitSettings({ hostId }: V2GitSettingsProps) {
 			</header>
 
 			<section>
+				<h3 className="mb-2 text-sm font-medium">
+					<Trans>Branch naming</Trans>
+				</h3>
 				<SettingsRow
 					label={t({
 						message: "Branch prefix",
@@ -226,6 +230,7 @@ export function V2GitSettings({ hostId }: V2GitSettingsProps) {
 						}
 					/>
 				</SettingsRow>
+				<BranchNameInputSection />
 				<SettingsRow
 					label={t({
 						message: "Worktree location",
