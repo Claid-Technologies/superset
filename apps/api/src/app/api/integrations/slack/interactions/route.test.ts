@@ -25,8 +25,13 @@ mock.module("@superset/db/client", () => ({
 // The route resolves the Slack workspace to an organization before it looks at
 // any action. Returning a connection is what lets the tests below reach the
 // action handling at all.
+// `mock.module` is process-wide, so every export the real module has must be
+// here: another file's import of `connectionBotToken` resolves against this
+// stub too.
 mock.module("@superset/trpc/connectors", () => ({
 	accountConnection: async () => ({ organizationId: "org-1" }),
+	accountConnections: async () => [{ organizationId: "org-1" }],
+	connectionBotToken: async () => "bot-token",
 }));
 
 mock.module("../verify-signature", () => ({

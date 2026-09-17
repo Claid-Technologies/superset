@@ -62,7 +62,9 @@ export type PluginTarget = TargetIdentity &
 export interface TargetRequest {
 	userId: string;
 	organizationId: string | null;
-	marketplace: string;
+	/** Omitted by in-process callers with no URL to read it from; the install
+	 * is then resolved by name alone and ambiguity across marketplaces throws. */
+	marketplace?: string;
 	plugin: string;
 	connectionId?: string | null;
 }
@@ -125,7 +127,9 @@ export async function resolveTarget(
 	);
 	if (!install) {
 		throw new PluginTargetError(
-			`"${request.plugin}" is not installed from ${request.marketplace}.`,
+			request.marketplace
+				? `"${request.plugin}" is not installed from ${request.marketplace}.`
+				: `"${request.plugin}" is not installed.`,
 			404,
 		);
 	}

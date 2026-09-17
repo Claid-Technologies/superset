@@ -16,9 +16,13 @@ function connection(id: string, userId: string) {
 }
 
 let subscribers: ReturnType<typeof connection>[] = [];
+// `mock.module` is process-wide, so every export the real module has must be
+// here: another file's import of `connectionBotToken` resolves against this
+// stub too.
 mock.module("@superset/trpc/connectors", () => ({
 	accountConnection: mock(async () => subscribers[0] ?? null),
 	accountConnections: mock(async () => subscribers),
+	connectionBotToken: mock(async () => "bot-token"),
 }));
 
 mock.module("@superset/trpc/integrations/linear", () => ({
