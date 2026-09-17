@@ -275,8 +275,8 @@
     transition: opacity 150ms ease, transform 150ms ease;
     pointer-events: none;
   }
-  .card:has(.replies:hover) .bubble, .bubble.shown { opacity: 1; transform: none; transition-delay: 180ms; }
-  .bubble.shown { transition-delay: 0ms; }
+  .bubble.live, .bubble.shown { opacity: 1; transform: none; }
+  .bubble.live { pointer-events: auto; cursor: pointer; }
   .bhead { display: flex; align-items: center; gap: 7px; color: #9b9da5; font-size: 11px; line-height: 1.4; }
   .bav {
     display: flex; align-items: center; justify-content: center;
@@ -344,8 +344,7 @@
   .demo-stage { position: relative; }
   .bcard.hovering, .bcard:hover { border-color: #4a4d55; }
   /* the component's contract on the real cards: hover waits 180ms, focus is instant */
-  .bcard:has(.bcount:hover) .bubble { opacity: 1; transform: none; transition-delay: 180ms; }
-  .bcard:focus-visible .bubble { opacity: 1; transform: none; transition-delay: 0ms; }
+  .bcard:focus-visible .bubble { opacity: 1; transform: none; }
   .bcount:hover, .bcard:focus-visible .bcount { background: #292b30; }
   .democursor {
     position: absolute; z-index: 4; width: 20px; height: 20px;
@@ -835,7 +834,7 @@
     </div>
     <div class="row">
       <span class="lead">The peek</span>
-      <span class="body">Hovering or focusing the count — not the card — reveals the newest reply: avatar, author, first 240 characters. Per <code>CommentPreviewCard.tsx</code>, hover waits 180ms and keyboard focus opens instantly; Escape closes. Clicking the count opens the page with that comment&rsquo;s thread selected in the panel; clicking the rest of the card opens the page. Agent replies carry the bot mark and the <code>Agent</code> byline.</span>
+      <span class="body">Hovering or focusing the count — not the card — reveals the newest reply: avatar, author, first 240 characters. Per <code>CommentPreviewCard.tsx</code>, hover waits 180ms and keyboard focus opens instantly; Escape closes. Hover-card grace: the pointer can travel from the count into the peek — a 300ms window keeps it open — and clicking the peek opens the thread too. Clicking the count opens the page with that comment&rsquo;s thread selected in the panel; clicking the rest of the card opens the page. Agent replies carry the bot mark and the <code>Agent</code> byline.</span>
     </div>
     <div class="row">
       <span class="lead">The default</span>
@@ -894,8 +893,6 @@
     });
   });
 
-    });
-
   var hsButtons = document.querySelectorAll(".swatch.hs");
   hsButtons.forEach(function (b) {
     b.addEventListener("click", function () {
@@ -947,6 +944,29 @@
       else if (!visible && running) { running = false; reset(); }
     }, { threshold: 0.4 }).observe(demo);
   })();
+
+  document.querySelectorAll("#window .card, .bpane .bcard").forEach(function (card) {
+    if (card.closest("#hoverdemo")) return; // the demo tile is loop-driven
+    var chip = card.querySelector(".replies, .bcount");
+    var bubble = card.querySelector(".bubble:not(.shown)");
+    if (!chip || !bubble) return;
+    var openT = null, closeT = null;
+    function show() { bubble.classList.add("live"); }
+    function hide() { bubble.classList.remove("live"); }
+    chip.addEventListener("pointerenter", function () {
+      clearTimeout(closeT); clearTimeout(openT);
+      openT = setTimeout(show, 180);
+    });
+    chip.addEventListener("pointerleave", function () {
+      clearTimeout(openT); clearTimeout(closeT);
+      closeT = setTimeout(hide, 300);
+    });
+    bubble.addEventListener("pointerenter", function () { clearTimeout(closeT); });
+    bubble.addEventListener("pointerleave", function () {
+      clearTimeout(closeT);
+      closeT = setTimeout(hide, 300);
+    });
+  });
 </script>
 </body>
 </html>

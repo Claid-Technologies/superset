@@ -71,6 +71,8 @@ interface PageCardProps {
 }
 
 const PEEK_HOVER_DELAY_MS = 180;
+/** Grace period for travelling from the count into the peek, hover-card style. */
+const PEEK_CLOSE_DELAY_MS = 300;
 
 export function PageCard({
 	page,
@@ -86,6 +88,7 @@ export function PageCard({
 	const [deleteOpen, setDeleteOpen] = useState(false);
 	const [peekOpen, setPeekOpen] = useState(false);
 	const hoverTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+	const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 	const isShared = page.visibility === "org";
 	const isOwner =
 		currentUserId !== undefined && currentUserId === page.createdByUserId;
@@ -104,10 +107,33 @@ export function PageCard({
 		}
 	};
 
-	// Unmount-only: refs are stable, so no dependency on cancelHover's identity.
+	const cancelClose = () => {
+		if (closeTimer.current !== null) {
+			clearTimeout(closeTimer.current);
+			closeTimer.current = null;
+		}
+	};
+
+	const scheduleClose = () => {
+		cancelClose();
+		closeTimer.current = setTimeout(() => {
+			setPeekOpen(false);
+			closeTimer.current = null;
+		}, PEEK_CLOSE_DELAY_MS);
+	};
+
+	const openThread = (event: MouseEvent) => {
+		cancelHover();
+		cancelClose();
+		setPeekOpen(false);
+		onOpen(page, event, { threadId: page.lastComment?.threadId });
+	};
+
+	// Unmount-only: refs are stable, so no dependency on the helpers' identity.
 	useEffect(
 		() => () => {
 			if (hoverTimer.current !== null) clearTimeout(hoverTimer.current);
+			if (closeTimer.current !== null) clearTimeout(closeTimer.current);
 		},
 		[],
 	);
@@ -136,13 +162,20 @@ export function PageCard({
 				{page.lastComment && lastAuthor ? (
 					// The CommentPreviewCard peek. Opens only from the comment count:
 					// hovering it waits 180ms for intent, keyboard focus is instant.
-					<div
+					// Hover-card semantics: the pointer can travel into the peek and it
+					// stays open; clicking it goes to the thread like the count does.
+					<button
+						type="button"
+						tabIndex={-1}
+						onClick={openThread}
+						onPointerEnter={cancelClose}
+						onPointerLeave={scheduleClose}
 						className={cn(
-							"pointer-events-none absolute inset-x-3 bottom-3 translate-y-[5px] rounded-[10px] border border-border bg-popover px-3 pt-2.5 pb-3 opacity-0 shadow-lg transition-[opacity,transform] duration-150",
-							peekOpen && "translate-y-0 opacity-100",
+							"pointer-events-none absolute inset-x-3 bottom-3 z-10 translate-y-[5px] rounded-[10px] border border-border bg-popover px-3 pt-2.5 pb-3 text-left opacity-0 shadow-lg transition-[opacity,transform] duration-150",
+							peekOpen && "pointer-events-auto translate-y-0 opacity-100",
 						)}
 					>
-						<div className="flex items-center gap-2 text-[11px] text-muted-foreground">
+						<span className="flex items-center gap-2 text-[11px] text-muted-foreground">
 							<Avatar className="size-5 shrink-0">
 								<AvatarImage src={lastAuthor.image ?? undefined} alt="" />
 								<AvatarFallback className="text-[9px]">
@@ -159,11 +192,11 @@ export function PageCard({
 									new Date(page.lastComment.createdAt),
 								)}
 							</span>
-						</div>
-						<p className="mt-1.5 line-clamp-2 text-[13px] text-foreground leading-snug">
+						</span>
+						<span className="mt-1.5 block line-clamp-2 text-[13px] text-foreground leading-snug">
 							{page.lastComment.body}
-						</p>
-					</div>
+						</span>
+					</button>
 				) : null}
 			</div>
 
@@ -179,15 +212,10 @@ export function PageCard({
 					{page.commentCount > 0 ? (
 						<button
 							type="button"
-							onClick={(event) => {
-								cancelHover();
-								setPeekOpen(false);
-								onOpen(page, event, {
-									threadId: page.lastComment?.threadId,
-								});
-							}}
+							onClick={openThread}
 							onPointerEnter={(event) => {
 								if (event.pointerType === "touch" || !page.lastComment) return;
+								cancelClose();
 								cancelHover();
 								hoverTimer.current = setTimeout(() => {
 									setPeekOpen(true);
@@ -196,7 +224,7 @@ export function PageCard({
 							}}
 							onPointerLeave={() => {
 								cancelHover();
-								setPeekOpen(false);
+								scheduleClose();
 							}}
 							onFocus={(event) => {
 								if (event.target.matches(":focus-visible")) setPeekOpen(true);
