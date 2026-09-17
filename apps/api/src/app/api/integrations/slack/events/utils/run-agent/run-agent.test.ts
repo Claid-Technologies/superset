@@ -76,9 +76,12 @@ mock.module("@superset/trpc/plugins-proxy", () => ({
 			{ name: target.plugin, version: "1.0.0" },
 			{ capabilities: { tools: {} } },
 		);
-		server.setRequestHandler(ListToolsRequestSchema, async (_request, extra) => ({
-			tools: await pluginListTools(target.plugin, extra?.signal),
-		}));
+		server.setRequestHandler(
+			ListToolsRequestSchema,
+			async (_request, extra) => ({
+				tools: await pluginListTools(target.plugin, extra?.signal),
+			}),
+		);
 		server.setRequestHandler(CallToolRequestSchema, async (request) => ({
 			...(await pluginCallTool(
 				target.plugin,
