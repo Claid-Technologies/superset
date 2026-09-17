@@ -1,6 +1,7 @@
 import type { WorkspaceStore } from "@superset/panes";
 import type { StoreApi } from "zustand/vanilla";
 import type { PaneViewerData, TerminalPaneData } from "../../../../types";
+import { markTerminalReplacementCancelled } from "../../../../utils/cancelledTerminalReplacements";
 
 async function replace({
 	store,
@@ -27,16 +28,20 @@ async function replace({
 	if (!matches()) return;
 	const replacementId = await create();
 	if (!matches()) {
-		await dispose(replacementId);
-		for (const tab of store.getState().tabs) {
-			for (const pane of Object.values(tab.panes)) {
-				if (
-					pane.kind === "terminal" &&
-					(pane.data as TerminalPaneData).terminalId === replacementId
-				) {
-					store
-						.getState()
-						.closePane({ tabId: tab.id, paneId: pane.id, intent: "remove" });
+		markTerminalReplacementCancelled(replacementId);
+		try {
+			await dispose(replacementId).catch(() => dispose(replacementId));
+		} finally {
+			for (const tab of store.getState().tabs) {
+				for (const pane of Object.values(tab.panes)) {
+					if (
+						pane.kind === "terminal" &&
+						(pane.data as TerminalPaneData).terminalId === replacementId
+					) {
+						store
+							.getState()
+							.closePane({ tabId: tab.id, paneId: pane.id, intent: "remove" });
+					}
 				}
 			}
 		}

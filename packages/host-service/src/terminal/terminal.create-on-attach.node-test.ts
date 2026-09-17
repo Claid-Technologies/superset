@@ -24,8 +24,23 @@ import { Server } from "@superset/pty-daemon";
 import { eq } from "drizzle-orm";
 import { Hono } from "hono";
 import { createDb, type HostDb } from "../db/index.ts";
-import { projects, terminalSessions, workspaces } from "../db/schema.ts";
+import {
+	hostAgentConfigs,
+	projects,
+	terminalAgentBindings,
+	terminalSessions,
+	workspaces,
+} from "../db/schema.ts";
 import type { EventBus } from "../events/index.ts";
+import {
+	SqliteTerminalAgentBindingPersistence,
+	TerminalAgentStore,
+} from "../terminal-agents/index.ts";
+import { terminalRouter } from "../trpc/router/terminal/terminal.ts";
+import {
+	type ResumeSessionDeps,
+	restartAccountSessions,
+} from "../trpc/router/terminal-agents/terminal-agents.ts";
 import {
 	disposeDaemonClient,
 	getDaemonClient,
@@ -387,4 +402,217 @@ test("dispose during an in-flight create wins without leaving a live shell", asy
 		release();
 		daemon.open = originalOpen;
 	}
+});
+
+function terminalCaller() {
+	return terminalRouter.createCaller({
+		isAuthenticated: true,
+		organizationId: "test",
+		db,
+		terminalAgentStore: new TerminalAgentStore(
+			new SqliteTerminalAgentBindingPersistence(db),
+		),
+	} as unknown as Parameters<typeof terminalRouter.createCaller>[0]);
+}
+
+test("account restart with real disposal preserves the conversation and launches a successor", async () => {
+	const terminalId = randomUUID();
+	const created = await createTerminalSessionInternal({
+		terminalId,
+		workspaceId,
+		db,
+	});
+	assert.ok(!("error" in created));
+	db.insert(hostAgentConfigs)
+		.values({
+			id: randomUUID(),
+			presetId: "claude",
+			label: "Claude",
+			command: "claude",
+			promptTransport: "argv",
+			resumeArgsJson: '["--resume"]',
+			displayOrder: 0,
+		})
+		.run();
+	db.insert(terminalAgentBindings)
+		.values({
+			terminalId,
+			workspaceId,
+			agentId: "claude",
+			agentSessionId: "saved-conversation",
+			startedAt: Date.now(),
+			lastEventAt: Date.now(),
+			lastEventType: "Stop",
+		})
+		.run();
+	const launches: Parameters<ResumeSessionDeps["runAgent"]>[0][] = [];
+	const broadcasts: Parameters<
+		ResumeSessionDeps["eventBus"]["broadcastTerminalLifecycle"]
+	>[0][] = [];
+	const result = await restartAccountSessions(
+		{
+			db,
+			terminalAgentStore: new TerminalAgentStore(
+				new SqliteTerminalAgentBindingPersistence(db),
+			),
+			runAgent: async (input) => {
+				launches.push(input);
+				return { kind: "terminal", sessionId: "replacement", label: "Claude" };
+			},
+			disposeSession: (id) => disposeSessionAndWait(id, db),
+			hasSession: () => null,
+			eventBus: {
+				broadcastTerminalLifecycle: (message) => broadcasts.push(message),
+			},
+		},
+		"claude",
+	);
+	assert.deepEqual(result.restartedTerminalIds, [terminalId]);
+	assert.equal(launches.length, 1);
+	assert.equal(launches[0]?.resumeSessionId, "saved-conversation");
+	assert.equal(broadcasts.length, 1);
+	assert.equal(
+		db.query.terminalAgentBindings
+			.findFirst({ where: eq(terminalAgentBindings.terminalId, terminalId) })
+			.sync()?.endReason,
+		"resumed",
+	);
+	assert.ok(
+		!(await (await getDaemonClient()).list()).some(
+			(session) => session.id === terminalId && session.alive,
+		),
+	);
+});
+
+test("killSession cancels a pending create before its session row exists", async () => {
+	const terminalId = randomUUID();
+	const daemon = await getDaemonClient();
+	const originalOpen = daemon.open.bind(daemon);
+	let release!: () => void;
+	let entered!: () => void;
+	const barrier = new Promise<void>((resolve) => {
+		release = resolve;
+	});
+	const started = new Promise<void>((resolve) => {
+		entered = resolve;
+	});
+	daemon.open = async (...args: Parameters<typeof daemon.open>) => {
+		if (args[0] === terminalId) {
+			entered();
+			await barrier;
+		}
+		return originalOpen(...args);
+	};
+	try {
+		const creating = createTerminalSessionInternal({
+			terminalId,
+			workspaceId,
+			db,
+		});
+		await started;
+		const killing = terminalCaller().killSession({ terminalId, workspaceId });
+		const outcome = killing.then(
+			() => null,
+			(error) => error,
+		);
+		await new Promise((resolve) => setTimeout(resolve, 30));
+		release();
+		const created = await creating;
+		assert.equal(await outcome, null);
+		assert.ok("error" in created);
+		assert.equal(
+			db.query.terminalSessions
+				.findFirst({ where: eq(terminalSessions.id, terminalId) })
+				.sync()?.originWorkspaceId,
+			workspaceId,
+		);
+		assert.ok(
+			!(await daemon.list()).some(
+				(session) => session.id === terminalId && session.alive,
+			),
+		);
+		await terminalCaller().killSession({ terminalId, workspaceId });
+	} finally {
+		release();
+		daemon.open = originalOpen;
+		await disposeSessionAndWait(terminalId, db);
+	}
+});
+
+test("killSession rejects another workspace and prevents creating a pre-cancelled id", async () => {
+	const terminalId = randomUUID();
+	const caller = terminalCaller();
+	await assert.rejects(
+		caller.killSession({ terminalId, workspaceId: randomUUID() }),
+		{ code: "NOT_FOUND" },
+	);
+	assert.equal(
+		db.query.terminalSessions
+			.findFirst({ where: eq(terminalSessions.id, terminalId) })
+			.sync(),
+		undefined,
+	);
+	await caller.killSession({ terminalId, workspaceId });
+	const result = await createTerminalSessionInternal({
+		terminalId,
+		workspaceId,
+		db,
+	});
+	assert.ok("error" in result);
+	const otherTerminalId = randomUUID();
+	db.insert(terminalSessions)
+		.values({
+			id: otherTerminalId,
+			originWorkspaceId: null,
+			status: "active",
+			createdAt: Date.now(),
+		})
+		.run();
+	await assert.rejects(
+		caller.killSession({ terminalId: otherTerminalId, workspaceId }),
+		{ code: "FORBIDDEN" },
+	);
+	assert.equal(
+		db.query.terminalSessions
+			.findFirst({ where: eq(terminalSessions.id, otherTerminalId) })
+			.sync()?.disposeRequestedAt,
+		null,
+	);
+});
+
+test("explicit kill ends an agent binding as disposed and blocks reuse", async () => {
+	const terminalId = randomUUID();
+	const created = await createTerminalSessionInternal({
+		terminalId,
+		workspaceId,
+		db,
+	});
+	assert.ok(!("error" in created));
+	db.insert(terminalAgentBindings)
+		.values({
+			terminalId,
+			workspaceId,
+			agentId: "claude",
+			agentSessionId: "do-not-resume",
+			startedAt: Date.now(),
+			lastEventAt: Date.now(),
+			lastEventType: "Stop",
+		})
+		.run();
+	await terminalCaller().killSession({ terminalId, workspaceId });
+	assert.equal(
+		db.query.terminalAgentBindings
+			.findFirst({ where: eq(terminalAgentBindings.terminalId, terminalId) })
+			.sync()?.endReason,
+		"disposed",
+	);
+	assert.ok(
+		"error" in
+			(await createTerminalSessionInternal({ terminalId, workspaceId, db })),
+	);
+	assert.ok(
+		!(await (await getDaemonClient()).list()).some(
+			(session) => session.id === terminalId && session.alive,
+		),
+	);
 });

@@ -2610,6 +2610,7 @@ async function closeDaemonSessionById(
  * transient teardown session.
  */
 export function disposeSession(terminalId: string, db: HostDb) {
+	markTerminalAgentBindingEnded(db, terminalId, "disposed");
 	void disposeSessionAndWait(terminalId, db)
 		.then((result) => {
 			if (!result.daemonCloseSucceeded) {
@@ -2643,7 +2644,6 @@ export async function disposeSessionAndWait(
 			setWhere: isNull(terminalSessions.disposeRequestedAt),
 		})
 		.run();
-	markTerminalAgentBindingEnded(db, terminalId, "disposed");
 	return lifecycleOperations.run(terminalId, () =>
 		disposeSessionUnlocked(terminalId, db),
 	);

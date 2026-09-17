@@ -1,6 +1,7 @@
 import { describe, expect, it, mock } from "bun:test";
 import { createWorkspaceStore } from "@superset/panes";
 import type { PaneViewerData } from "../../../../types";
+import { isTerminalReplacementCancelled } from "../../../../utils/cancelledTerminalReplacements";
 import { replaceEndedTerminal } from "./replaceEndedTerminal";
 
 function setup() {
@@ -119,3 +120,31 @@ describe("ended terminal replacement", () => {
 		expect(input.create).not.toHaveBeenCalled();
 	});
 });
+
+for (const failTwice of [false, true]) {
+	it(`cleans adopted panes and suppresses late discovery when cancellation ${failTwice ? "stays offline" : "loses its first response"}`, async () => {
+		const { input, resolve } = setup();
+		const id = `cancelled-${failTwice}`;
+		const result = replaceEndedTerminal(input);
+		input.store.getState().removeTab("tab");
+		input.store.getState().addTab({
+			id: "adopted",
+			panes: [{ id: "adopted", kind: "terminal", data: { terminalId: id } }],
+		});
+		let attempts = 0;
+		input.dispose.mockImplementation(async () => {
+			expect(isTerminalReplacementCancelled(id)).toBe(true);
+			if (++attempts === 1 || failTwice) throw new Error("lost response");
+		});
+		resolve(id);
+		if (failTwice) await expect(result).rejects.toThrow("lost response");
+		else await result;
+		expect(input.dispose).toHaveBeenCalledTimes(2);
+		expect(input.store.getState().tabs).toHaveLength(0);
+		expect(
+			[id, "unrelated-session"].filter(
+				(id) => !isTerminalReplacementCancelled(id),
+			),
+		).toEqual(["unrelated-session"]);
+	});
+}

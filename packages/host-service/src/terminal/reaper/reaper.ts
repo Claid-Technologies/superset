@@ -292,33 +292,39 @@ async function reapOrphanedSessions(
 	db: HostDb,
 	rowlessPendingSecondPass: Set<string>,
 	missingObservations: MissingTerminalObservations,
+	observeMissing: boolean,
 ): Promise<ReapResult> {
 	// Sync the port scanner before the empty-list short-circuit below so an idle
 	// daemon still drops stale scans.
 	const { liveSessions, rowById } = await syncPortScans(db);
 
-	const plan = planMissingTerminalSessions({
-		aliveIds: new Set(liveSessions.map((session) => session.id)),
-		rowsById: rowById,
-		isLive: isLiveTerminalSession,
-		now: Date.now(),
-	});
-	const candidates = new Map(
-		plan.recoverable.flatMap((id) => {
-			const row = rowById.get(id);
-			return row ? [[id, row] as const] : [];
-		}),
-	);
-	try {
-		reconcileMissingTerminalSessions(
-			db,
-			liveSessions,
-			rowById,
-			missingObservations.confirm(candidates),
+	if (observeMissing) {
+		const plan = planMissingTerminalSessions({
+			aliveIds: new Set(liveSessions.map((session) => session.id)),
+			rowsById: rowById,
+			isLive: isLiveTerminalSession,
+			now: Date.now(),
+		});
+		const candidates = new Map(
+			plan.recoverable.flatMap((id) => {
+				const row = rowById.get(id);
+				return row ? [[id, row] as const] : [];
+			}),
 		);
-	} catch (err) {
-		missingObservations.reset();
-		console.warn("[host-service] missing-session reconciliation failed:", err);
+		try {
+			reconcileMissingTerminalSessions(
+				db,
+				liveSessions,
+				rowById,
+				missingObservations.confirm(candidates),
+			);
+		} catch (err) {
+			missingObservations.reset();
+			console.warn(
+				"[host-service] missing-session reconciliation failed:",
+				err,
+			);
+		}
 	}
 
 	if (liveSessions.length === 0) {
@@ -372,10 +378,15 @@ export function startTerminalReaper(db: HostDb): () => void {
 	const rowlessPendingSecondPass = new Set<string>();
 	const missingObservations = new MissingTerminalObservations();
 	let running = false;
-	const run = () => {
+	const run = (observeMissing = true) => {
 		if (running) return;
 		running = true;
-		void reapOrphanedSessions(db, rowlessPendingSecondPass, missingObservations)
+		void reapOrphanedSessions(
+			db,
+			rowlessPendingSecondPass,
+			missingObservations,
+			observeMissing,
+		)
 			.then((result) => {
 				if (result.reaped > 0 || result.failed > 0) {
 					console.log(
@@ -391,9 +402,7 @@ export function startTerminalReaper(db: HostDb): () => void {
 				running = false;
 			});
 	};
-	void syncPortScans(db).catch((err) =>
-		console.warn("[host-service] initial port-scan sync failed:", err),
-	);
+	run(false);
 	const interval = setInterval(run, REAP_INTERVAL_MS);
 	interval.unref();
 

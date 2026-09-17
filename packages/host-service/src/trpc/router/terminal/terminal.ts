@@ -312,6 +312,19 @@ export const terminalRouter = router({
 				});
 			}
 
+			const now = Date.now();
+			ctx.db
+				.insert(terminalSessions)
+				.values({
+					id: input.terminalId,
+					originWorkspaceId: input.workspaceId,
+					status: "disposed",
+					createdAt: now,
+					disposeRequestedAt: now,
+				})
+				.onConflictDoNothing()
+				.run();
+
 			const session = ctx.db.query.terminalSessions
 				.findFirst({ where: eq(terminalSessions.id, input.terminalId) })
 				.sync();
