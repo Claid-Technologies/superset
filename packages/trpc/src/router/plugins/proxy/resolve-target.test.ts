@@ -21,6 +21,16 @@ class StubUnrefreshable extends Error {
 	}
 }
 
+class StubUnavailable extends Error {
+	constructor(
+		readonly connector: string,
+		detail: string,
+	) {
+		super(`The ${connector} token endpoint is unavailable: ${detail}`);
+		this.name = "ConnectorUnavailableError";
+	}
+}
+
 mock.module("../../../env", () => ({
 	env: { NEXT_PUBLIC_API_URL: "https://api.superset.test" },
 }));
@@ -47,6 +57,7 @@ mock.module("../../../lib/connectors/lookup", () => ({
 	accountConnections: () => Promise.resolve([]),
 	connectorConnections: () => Promise.resolve([]),
 	connectionBotToken: () => Promise.resolve(null),
+	AmbiguousConnectionError: class extends Error {},
 }));
 
 mock.module("../../../lib/connectors/upsert", () => ({
@@ -65,6 +76,8 @@ mock.module("../../../lib/connectors/refresh", () => ({
 	ensureFreshConnection: (row: Record<string, unknown>) =>
 		refreshError ? Promise.reject(refreshError) : Promise.resolve(row),
 	connectionAccessToken: () => Promise.resolve("token"),
+	NEEDS_REAUTH: "needs_reauth",
+	ConnectorUnavailableError: StubUnavailable,
 	UnrefreshableConnectionError: StubUnrefreshable,
 }));
 
@@ -197,6 +210,17 @@ describe("resolveTarget", () => {
 		await expect(resolveTarget(request)).rejects.toThrow(
 			"token endpoint is down",
 		);
+	});
+
+	test("an unreachable token endpoint is a bad gateway, not a reconnect prompt", async () => {
+		install = installed("superset", { connector: "acme-crm" });
+		active = { id: "conn-1", authMethod: "oauth2" };
+		refreshError = new StubUnavailable("acme-crm", "503 Service Unavailable");
+
+		// needs-auth would tell the user to reconnect a connection that is fine.
+		const error = await resolveTarget(request).catch((e) => e);
+		expect(error).toBeInstanceOf(PluginTargetError);
+		expect(error.status).toBe(502);
 	});
 
 	test("binds the connection's credential into the remote server's headers", async () => {
