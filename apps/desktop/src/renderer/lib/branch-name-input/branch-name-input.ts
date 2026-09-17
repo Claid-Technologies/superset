@@ -1,9 +1,14 @@
 import { sanitizeBranchNameWithMaxLength } from "@superset/shared/workspace-launch";
 
 export function sanitizeCustomBranchName(value: string): string {
-	return sanitizeBranchNameWithMaxLength(value.trim(), undefined, {
+	const sanitized = sanitizeBranchNameWithMaxLength(value.trim(), undefined, {
 		preserveCase: true,
 	});
+	return sanitized
+		.split("/")
+		.map((segment) => segment.replace(/(?:\.lock|\.)+$/g, ""))
+		.filter(Boolean)
+		.join("/");
 }
 
 export function getBranchNameChange(value: string) {

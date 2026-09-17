@@ -8,7 +8,6 @@ import {
 	getEnabledAgentConfigs,
 	indexResolvedAgentConfigs,
 } from "@superset/shared/agent-settings";
-import { sanitizeBranchNameWithMaxLength } from "@superset/shared/workspace-launch";
 import {
 	PromptInput,
 	PromptInputAttachment,
@@ -50,6 +49,7 @@ import { PLATFORM } from "renderer/hotkeys";
 import {
 	getBranchNameBlur,
 	getBranchNameChange,
+	sanitizeCustomBranchName,
 } from "renderer/lib/branch-name-input";
 import { electronTrpc } from "renderer/lib/electron-trpc";
 import { resolveEffectiveWorkspaceBaseBranch } from "renderer/lib/workspaceBaseBranch";
@@ -760,13 +760,7 @@ ${sanitizeText(truncatedBody)}`;
 							prompt: trimmedPrompt || undefined,
 							branchName:
 								(branchNameEdited && branchName.trim()
-									? sanitizeBranchNameWithMaxLength(
-											branchName.trim(),
-											undefined,
-											{
-												preserveCase: true,
-											},
-										)
+									? sanitizeCustomBranchName(branchName)
 									: aiBranchName) || undefined,
 							compareBaseBranch: compareBaseBranch || undefined,
 						},

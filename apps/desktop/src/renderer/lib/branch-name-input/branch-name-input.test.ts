@@ -31,3 +31,20 @@ describe("branch name input", () => {
 		).toBe(`${"A".repeat(50)}/${"B".repeat(49)}`);
 	});
 });
+
+test("truncation never leaves a Git-invalid dot or lock suffix", () => {
+	for (const input of [
+		`${"a".repeat(49)}.extra`,
+		`${"a".repeat(45)}.lockextra`,
+		`Feature/${"a".repeat(49)}.extra/Next`,
+		`${"a".repeat(50)}/${"b".repeat(48)}.extra`,
+		"Feature/foo.lock.lock",
+	]) {
+		const result = sanitizeCustomBranchName(input);
+		for (const segment of result.split("/")) {
+			expect(segment.endsWith(".")).toBe(false);
+			expect(segment.endsWith(".lock")).toBe(false);
+		}
+		expect(sanitizeCustomBranchName(result)).toBe(result);
+	}
+});
