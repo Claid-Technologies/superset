@@ -66,6 +66,10 @@ export function useCreateCloudWorkspace() {
 				agent: launchAgent,
 				model: launchAgent ? (model ?? undefined) : undefined,
 				effort: launchAgent ? (effort ?? undefined) : undefined,
+				// Only with an agent to hand them to.
+				...(launchAgent && attachmentFileIds.length > 0
+					? { attachmentFileIds }
+					: {}),
 			});
 		},
 		onSuccess: (
