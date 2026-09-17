@@ -20,7 +20,7 @@ export function useGettingStartedCard(): SidebarCardEntry | null {
 		busy.current = true;
 		setPendingStep(index);
 		try {
-			if (await createSession(step.prompt)) markTried(index);
+			if (await createSession(step.prompt)) markTried(step.progressIndex);
 		} finally {
 			busy.current = false;
 			setPendingStep(null);

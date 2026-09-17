@@ -75,8 +75,8 @@ describe("Pro getting-started card", () => {
 	test("uses each Pro entitlement and records only successfully created sessions", async () => {
 		renderToStaticMarkup(<Probe />);
 		for (const [index, feature] of [
-			GATED_FEATURES.MOBILE_APP,
 			GATED_FEATURES.REMOTE_ACCESS,
+			GATED_FEATURES.MOBILE_APP,
 			GATED_FEATURES.AUTOMATIONS,
 		].entries()) {
 			await start(index);
@@ -84,12 +84,12 @@ describe("Pro getting-started card", () => {
 				feature,
 				expect.any(Function),
 			);
-			expect(markTried).toHaveBeenLastCalledWith(index);
+			expect(markTried).toHaveBeenLastCalledWith([1, 0, 2][index]);
 		}
-		expect(createSession.mock.calls[0]?.[0]).toContain(
+		expect(createSession.mock.calls[1]?.[0]).toContain(
 			"https://apps.apple.com/app/id6788926383",
 		);
-		expect(createSession.mock.calls[1]?.[0]).toContain("superset hosts --help");
+		expect(createSession.mock.calls[0]?.[0]).toContain("superset hosts --help");
 		expect(createSession.mock.calls[2]?.[0]).toContain("superset:automate");
 		markTried.mockClear();
 		createSession.mockResolvedValue(false);

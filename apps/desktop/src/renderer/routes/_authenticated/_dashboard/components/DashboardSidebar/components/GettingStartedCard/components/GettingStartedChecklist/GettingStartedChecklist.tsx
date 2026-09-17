@@ -18,7 +18,7 @@ export function GettingStartedChecklist({
 	const { t } = useLingui();
 	const format = useFormat();
 	const count = GETTING_STARTED_STEPS.filter(
-		(_, index) => tried & (1 << index),
+		(step) => tried & (1 << step.progressIndex),
 	).length;
 	const completed = format.formatNumber(count);
 	const total = format.formatNumber(GETTING_STARTED_STEPS.length);
@@ -44,7 +44,7 @@ export function GettingStartedChecklist({
 			</div>
 			<div className="-mx-1 flex flex-col gap-0.5">
 				{GETTING_STARTED_STEPS.map((step, index) => {
-					const isTried = Boolean(tried & (1 << index));
+					const isTried = Boolean(tried & (1 << step.progressIndex));
 					return (
 						<button
 							key={step.label.id}
