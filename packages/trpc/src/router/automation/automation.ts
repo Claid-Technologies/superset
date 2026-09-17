@@ -358,6 +358,14 @@ export const automationRouter = {
 				}
 				v2ProjectId = workspace.projectId;
 			}
+			if (input.continueAgentSession && !input.v2WorkspaceId) {
+				throw userError({
+					code: "BAD_REQUEST",
+					message: "Continuing an agent session requires a pinned workspace",
+					i18nKey: "serverError.automation.continueNeedsPinnedWorkspace",
+				});
+			}
+
 			// No project and no pin = session automation: each run creates a
 			// project-less session workspace on the host.
 
@@ -402,6 +410,7 @@ export const automationRouter = {
 						// Every automation groups its runs out of the box; explicit
 						// tags (including []) override the default.
 						tags: input.tags ?? ["automation"],
+						continueAgentSession: input.continueAgentSession ?? false,
 					})
 					.returning();
 
@@ -555,6 +564,22 @@ export const automationRouter = {
 				);
 			}
 
+			// Asking for it without a pin is a mistake worth reporting; losing the
+			// pin some other way (a host or project change nulls it above) just
+			// takes the flag with it, since the session it would continue lived
+			// in that workspace.
+			if (input.continueAgentSession === true && nextWorkspaceId === null) {
+				throw userError({
+					code: "BAD_REQUEST",
+					message: "Continuing an agent session requires a pinned workspace",
+					i18nKey: "serverError.automation.continueNeedsPinnedWorkspace",
+				});
+			}
+			const nextContinueAgentSession =
+				nextWorkspaceId === null
+					? false
+					: (input.continueAgentSession ?? existing.continueAgentSession);
+
 			const nextRrule = input.rrule ?? existing.rrule;
 			const nextDtstart = input.dtstart ?? existing.dtstart;
 			const nextTimezone = input.timezone ?? existing.timezone;
@@ -582,6 +607,7 @@ export const automationRouter = {
 						v2ProjectId: nextProjectId,
 						v2WorkspaceId: nextWorkspaceId,
 						tags: input.tags ?? existing.tags,
+						continueAgentSession: nextContinueAgentSession,
 						prompt: input.prompt ?? existing.prompt,
 					})
 					.where(eq(automations.id, input.id))
@@ -808,16 +834,21 @@ export const automationRouter = {
 					i18nKey: "serverError.automation.aRunForThisAutomation",
 				});
 			}
+			// The message is the host's own wording, so there is nothing to
+			// translate — but the code travels with it so the client picks its
+			// guidance without reading the prose.
 			if (outcome.status === "dispatch_failed") {
 				throw new TRPCError({
 					code: "INTERNAL_SERVER_ERROR",
 					message: outcome.error,
+					cause: { automationErrorCode: outcome.errorCode },
 				});
 			}
 			if (outcome.status === "skipped_offline") {
 				throw new TRPCError({
 					code: "PRECONDITION_FAILED",
 					message: outcome.error,
+					cause: { automationErrorCode: outcome.errorCode },
 				});
 			}
 			return { automationId: automation.id, runId: outcome.runId };

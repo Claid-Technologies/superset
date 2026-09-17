@@ -34,11 +34,15 @@ import { GATED_FEATURES, usePaywall } from "renderer/components/Paywall";
 import { SidebarKbdHint } from "renderer/components/SidebarKbdHint";
 import { ZoomStable } from "renderer/components/ZoomStable";
 import { env } from "renderer/env.renderer";
-import { useOpenNewWorkspace } from "renderer/hooks/useOpenNewWorkspace";
+import {
+	useOpenNewWorkspace,
+	useOpenNewWorkspaceForLocalProject,
+} from "renderer/hooks/useOpenNewWorkspace";
 import { useZoomFactor } from "renderer/hooks/useZoomFactor";
 import { useHotkeyDisplay } from "renderer/hotkeys";
 import { electronTrpc } from "renderer/lib/electron-trpc";
 import { useFolderFirstImport } from "renderer/routes/_authenticated/_dashboard/components/AddRepositoryModals/hooks/useFolderFirstImport";
+import { AppMenuButton } from "renderer/routes/_authenticated/_dashboard/components/AppMenuButton";
 import { NavigationControls } from "renderer/routes/_authenticated/_dashboard/components/NavigationControls";
 import { SidebarToggle } from "renderer/routes/_authenticated/_dashboard/components/SidebarToggle";
 import { TopBarPortsDropdown } from "renderer/routes/_authenticated/_dashboard/components/TopBar/components/TopBarPortsDropdown";
@@ -72,6 +76,7 @@ export function DashboardSidebarHeader({
 }: DashboardSidebarHeaderProps) {
 	const { t } = useLingui();
 	const openNewWorkspace = useOpenNewWorkspace();
+	const openProjectWorkspace = useOpenNewWorkspaceForLocalProject();
 	const openEmptyProject = useOpenEmptyProjectModal();
 	const openNewProject = useOpenNewProjectModal();
 	const openTemplateGallery = useOpenTemplateGalleryModal();
@@ -107,9 +112,10 @@ export function DashboardSidebarHeader({
 	const handleImportFolder = async () => {
 		const result = await folderImport.start();
 		if (result) {
+			openProjectWorkspace(result.projectId);
 			toast.success(
 				t({
-					message: "Project ready — open it from the sidebar.",
+					message: "Project imported and selected.",
 				}),
 			);
 		}
@@ -564,6 +570,7 @@ export function DashboardSidebarHeader({
 					style={{ width: isMac ? `${80 / zoomFactor}px` : "8px" }}
 				/>
 				<ZoomStable enabled={isMac} className="flex items-center gap-1">
+					{!isMac && <AppMenuButton />}
 					<SidebarToggle />
 					<NavigationControls />
 					{/* Lives here (persistent chrome) rather than the workspace tab

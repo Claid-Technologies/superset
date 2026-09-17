@@ -21,5 +21,5 @@ function PageDetailPage() {
 	if (isEnabled === undefined) return null;
 	if (!isEnabled) return <Redirect to="/v2-workspaces" />;
 
-	return <PageDetailView slug={slug} initialThreadId={thread} />;
+	return <PageDetailView key={slug} slug={slug} initialThreadId={thread} />;
 }

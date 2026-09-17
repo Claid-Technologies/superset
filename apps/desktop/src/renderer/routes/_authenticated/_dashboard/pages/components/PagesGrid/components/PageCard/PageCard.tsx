@@ -14,6 +14,7 @@ import { toast } from "@superset/ui/sonner";
 import { cn } from "@superset/ui/utils";
 import {
 	Bot,
+	Building2,
 	Globe,
 	Link2,
 	Lock,
@@ -89,11 +90,15 @@ export function PageCard({
 	const [peekOpen, setPeekOpen] = useState(false);
 	const hoverTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 	const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-	const isShared = page.visibility === "org";
 	const isOwner =
 		currentUserId !== undefined && currentUserId === page.createdByUserId;
 	const ownerName = isOwner ? null : page.ownerName;
-	const VisibilityIcon = isShared ? Globe : Lock;
+	const VisibilityIcon =
+		page.visibility === "everyone"
+			? Globe
+			: page.visibility === "org"
+				? Building2
+				: Lock;
 	const edited = new Date(page.updatedAt).getTime();
 	const created = new Date(page.createdAt).getTime();
 	const wasEdited = edited - created > 60_000;
