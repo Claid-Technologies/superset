@@ -50,6 +50,10 @@ import { useSelectedHostProjectIds } from "renderer/hooks/useSelectedHostProject
 import { useV2AgentChoices } from "renderer/hooks/useV2AgentChoices";
 import { CLOUD_AGENT_CHOICES } from "renderer/hooks/useV2AgentChoices/cloud-agent-choices";
 import { track } from "renderer/lib/analytics";
+import {
+	getBranchNameBlur,
+	getBranchNameChange,
+} from "renderer/lib/branch-name-input";
 import { cloudTrpc } from "renderer/lib/cloud-trpc";
 import { electronTrpc } from "renderer/lib/electron-trpc";
 import { showHostServiceUnavailableToast } from "renderer/lib/host-service-unavailable";
@@ -807,13 +811,17 @@ export function NewWorkspaceScreen({
 									className="min-w-0 flex-1 bg-transparent text-xs text-foreground outline-none placeholder:text-muted-foreground disabled:opacity-50"
 									placeholder={t({ message: "Custom branch name" })}
 									autoComplete="off"
+									onBlur={() => {
+										if (!draft.branchNameFromProvider) {
+											updateDraft(getBranchNameBlur(draft.branchName));
+										}
+									}}
 									spellCheck={false}
 									value={draft.branchName}
 									disabled={isCreating}
 									onChange={(event) =>
 										updateDraft({
-											branchName: event.target.value,
-											branchNameEdited: true,
+											...getBranchNameChange(event.target.value),
 											branchNameFromProvider: false,
 										})
 									}

@@ -47,6 +47,10 @@ import { AgentSelect } from "renderer/components/AgentSelect";
 import { LinkedIssuePill } from "renderer/components/LinkedIssuePill";
 import { useAgentLaunchPreferences } from "renderer/hooks/useAgentLaunchPreferences";
 import { PLATFORM } from "renderer/hotkeys";
+import {
+	getBranchNameBlur,
+	getBranchNameChange,
+} from "renderer/lib/branch-name-input";
 import { electronTrpc } from "renderer/lib/electron-trpc";
 import { resolveEffectiveWorkspaceBaseBranch } from "renderer/lib/workspaceBaseBranch";
 import { navigateToWorkspace } from "renderer/routes/_authenticated/_dashboard/utils/workspace-navigation";
@@ -992,24 +996,8 @@ ${sanitizeText(truncatedBody)}`;
 							message: "branch name",
 						})}
 						value={branchName}
-						onChange={(e) =>
-							updateDraft({
-								branchName: e.target.value.replace(/\s+/g, "-"),
-								branchNameEdited: true,
-							})
-						}
-						onBlur={() => {
-							const sanitized = sanitizeBranchNameWithMaxLength(
-								branchName.trim(),
-								undefined,
-								{ preserveCase: true },
-							);
-							if (!sanitized) {
-								updateDraft({ branchName: "", branchNameEdited: false });
-							} else {
-								updateDraft({ branchName: sanitized });
-							}
-						}}
+						onChange={(e) => updateDraft(getBranchNameChange(e.target.value))}
+						onBlur={() => updateDraft(getBranchNameBlur(branchName))}
 					/>
 				</div>
 			</div>
