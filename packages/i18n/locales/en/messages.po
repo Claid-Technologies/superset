@@ -563,8 +563,8 @@ msgstr "{closedCount} closed"
 msgid "{completed} of {0} checks complete"
 msgstr "{completed} of {0} checks complete"
 
-msgid "{completed} of {total} tried"
-msgstr "{completed} of {total} tried"
+msgid "{completed} of {total} completed"
+msgstr "{completed} of {total} completed"
 
 msgid "{configTitle} font size"
 msgstr "{configTitle} font size"
@@ -5602,6 +5602,9 @@ msgstr "Enable relay access…"
 msgid "Enable remote access"
 msgstr "Enable remote access"
 
+msgid "Enable remote access to reach this computer from your phone. Keep this computer awake and Superset running."
+msgstr "Enable remote access to reach this computer from your phone. Keep this computer awake and Superset running."
+
 msgid "Enable skill"
 msgstr "Enable skill"
 
@@ -7274,6 +7277,9 @@ msgstr "I already use an IDE like Cursor, is this for me?"
 msgid "I'm #{rank} on the {company} leaderboard with {tokens} tokens of agent usage."
 msgstr "I'm #{rank} on the {company} leaderboard with {tokens} tokens of agent usage."
 
+msgid "I've signed in on my phone"
+msgstr "I've signed in on my phone"
+
 msgid "Icon"
 msgstr "Icon"
 
@@ -8688,6 +8694,9 @@ msgstr "Mobile app"
 msgid "Mobile App"
 msgstr "Mobile App"
 
+msgid "Mobile setup confirmed"
+msgstr "Mobile setup confirmed"
+
 msgid "model"
 msgstr "model"
 
@@ -10010,6 +10019,9 @@ msgstr "Open Anyway"
 
 msgid "Open Anywhere"
 msgstr "Open Anywhere"
+
+msgid "Open App Store"
+msgstr "Open App Store"
 
 msgid "Open as comment pane"
 msgstr "Open as comment pane"
@@ -12516,6 +12528,15 @@ msgstr "Saw the paywall"
 msgid "Scale from two agents to 100+"
 msgstr "Scale from two agents to 100+"
 
+msgid "Scan to download Superset for iPhone"
+msgstr "Scan to download Superset for iPhone"
+
+msgid "Scan to get the app"
+msgstr "Scan to get the app"
+
+msgid "Scan with your iPhone camera, then sign in with the same Superset account and organization."
+msgstr "Scan with your iPhone camera, then sign in with the same Superset account and organization."
+
 msgid "Scanning transcript logs…"
 msgstr "Scanning transcript logs…"
 
@@ -14054,6 +14075,9 @@ msgstr "Superset Enterprise is Superset for teams. Reach out to learn more about
 
 msgid "Superset failed to start"
 msgstr "Superset failed to start"
+
+msgid "Superset for iPhone"
+msgstr "Superset for iPhone"
 
 msgid "Superset for your team"
 msgstr "Superset for your team"
@@ -15758,6 +15782,9 @@ msgstr "Upgrade a dependency and fix what breaks…"
 msgid "Upgrade to {0}"
 msgstr "Upgrade to {0}"
 
+msgid "Upgrade to Pro"
+msgstr "Upgrade to Pro"
+
 msgid "Upload files"
 msgstr "Upload files"
 
@@ -15824,6 +15851,9 @@ msgstr "Use global default"
 
 msgid "Use Superset on mobile"
 msgstr "Use Superset on mobile"
+
+msgid "Use Superset on your phone with Pro."
+msgstr "Use Superset on your phone with Pro."
 
 msgid "Use the desktop app to start running parallel coding agents."
 msgstr "Use the desktop app to start running parallel coding agents."
@@ -16645,6 +16675,9 @@ msgstr "Your account is deactivated and will be permanently deleted soon. Reacti
 
 msgid "Your account is managed by your organization. Contact your admin to create a new organization."
 msgstr "Your account is managed by your organization. Contact your admin to create a new organization."
+
+msgid "Your agents, wherever you are."
+msgstr "Your agents, wherever you are."
 
 msgid "Your Agents, Your Accounts"
 msgstr "Your Agents, Your Accounts"

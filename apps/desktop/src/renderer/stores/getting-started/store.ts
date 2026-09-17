@@ -23,6 +23,11 @@ export const useGettingStartedStore = create<GettingStartedState>()(
 		}),
 		{
 			name: "pro-getting-started-v1",
+			version: 1,
+			migrate: (state) => ({
+				dismissed: Boolean((state as { dismissed?: boolean })?.dismissed),
+				tried: 0,
+			}),
 			partialize: ({ tried, dismissed }) => ({ tried, dismissed }),
 		},
 	),

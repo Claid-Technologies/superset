@@ -1,6 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import {
 	getVisibleItemsForSection,
+	getVisibleMatchCountBySection,
 	SETTING_ITEM_ID,
 	type SettingsItem,
 	searchSettings,
@@ -110,5 +111,15 @@ describe("settings search - usage in sidebar", () => {
 			isV2: true,
 		});
 		expect(ids).toContain(SETTING_ITEM_ID.USAGE_IN_SIDEBAR);
+	});
+});
+
+describe("settings search - mobile rollout", () => {
+	it("excludes mobile matches until the feature flag is enabled", () => {
+		expect(
+			getVisibleMatchCountBySection("iPhone", true).mobile,
+		).toBeUndefined();
+		expect(getVisibleMatchCountBySection("iPhone", true, true).mobile).toBe(1);
+		expect(getVisibleMatchCountBySection("iPhone", false, true).mobile).toBe(1);
 	});
 });

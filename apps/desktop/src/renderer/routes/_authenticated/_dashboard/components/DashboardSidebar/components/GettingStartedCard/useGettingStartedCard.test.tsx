@@ -3,31 +3,46 @@ import type { ReactElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { GATED_FEATURES } from "renderer/components/Paywall/constants";
 
+const router = await import("@tanstack/react-router");
 let paid = true;
 let isReady = true;
 let dismissed = false;
 let allowed = true;
-let gateResult: Promise<void> | undefined;
-const createSession = mock(async (_prompt: string) => true);
-const markTried = mock((_step: number) => {});
+let mobileEnabled: boolean | undefined = true;
+let remoteEnabled: boolean | undefined = false;
+let automations: unknown[] | undefined = [];
+let tried = 0;
+const navigate = mock(async (_options: { to: string }) => {});
 const gateFeature = mock((_feature: string, start: () => Promise<void>) => {
-	if (allowed) gateResult = start();
+	if (allowed) return start();
 });
-
+mock.module("@tanstack/react-router", () => ({
+	...router,
+	useNavigate: () => navigate,
+}));
+mock.module("posthog-js/react", () => ({
+	useFeatureFlagEnabled: () => mobileEnabled,
+}));
 mock.module("renderer/components/Paywall", () => ({
 	GATED_FEATURES,
 	usePaywall: () => ({ hasAccess: () => paid, isReady, gateFeature }),
 }));
-mock.module("renderer/hooks/useCreateAgentSession", () => ({
-	useCreateAgentSession: () => ({ createSession }),
+mock.module("renderer/lib/electron-trpc", () => ({
+	electronTrpc: {
+		settings: {
+			getExposeHostServiceViaRelay: {
+				useQuery: () => ({ data: remoteEnabled }),
+			},
+		},
+	},
+}));
+mock.module("renderer/lib/cloud-trpc", () => ({
+	cloudTrpc: {
+		automation: { list: { useQuery: () => ({ data: automations }) } },
+	},
 }));
 mock.module("renderer/stores/getting-started", () => ({
-	useGettingStartedStore: () => ({
-		tried: 0,
-		dismissed,
-		markTried,
-		dismiss: () => {},
-	}),
+	useGettingStartedStore: () => ({ tried, dismissed, dismiss: () => {} }),
 }));
 
 const { useGettingStartedCard } = await import("./useGettingStartedCard");
@@ -36,23 +51,25 @@ function Probe() {
 	card = useGettingStartedCard();
 	return null;
 }
-function start(index: number) {
-	const child = card?.children as ReactElement<{
-		onStart: (step: number) => void;
-	}>;
-	child.props.onStart(index);
-	return gateResult;
+function props() {
+	return (
+		card?.children as ReactElement<{
+			onStart: (step: number) => void;
+			completed: number;
+			steps: { to: string }[];
+		}>
+	).props;
 }
-
 beforeEach(() => {
 	paid = true;
 	isReady = true;
 	dismissed = false;
 	allowed = true;
-	gateResult = undefined;
-	createSession.mockReset();
-	createSession.mockResolvedValue(true);
-	markTried.mockClear();
+	mobileEnabled = true;
+	remoteEnabled = false;
+	automations = [];
+	tried = 0;
+	navigate.mockClear();
 	gateFeature.mockClear();
 });
 
@@ -72,35 +89,62 @@ describe("Pro getting-started card", () => {
 		renderToStaticMarkup(<Probe />);
 		expect(card).toBeNull();
 	});
-	test("uses each Pro entitlement and records only successfully created sessions", async () => {
+	test("opens the setup destinations without completing them", () => {
 		renderToStaticMarkup(<Probe />);
 		for (const [index, feature] of [
 			GATED_FEATURES.REMOTE_ACCESS,
 			GATED_FEATURES.MOBILE_APP,
 			GATED_FEATURES.AUTOMATIONS,
 		].entries()) {
-			await start(index);
+			props().onStart(index);
 			expect(gateFeature).toHaveBeenLastCalledWith(
 				feature,
 				expect.any(Function),
 			);
-			expect(markTried).toHaveBeenLastCalledWith([1, 0, 2][index]);
+			expect(navigate).toHaveBeenLastCalledWith({
+				to: ["/settings/security", "/settings/mobile", "/automations"][index],
+			});
 		}
-		expect(createSession.mock.calls[1]?.[0]).toContain(
-			"https://apps.apple.com/app/id6788926383",
-		);
-		expect(createSession.mock.calls[0]?.[0]).toContain("superset hosts --help");
-		expect(createSession.mock.calls[2]?.[0]).toContain("superset:automate");
-		markTried.mockClear();
-		createSession.mockResolvedValue(false);
-		await start(0);
-		expect(markTried).not.toHaveBeenCalled();
+		expect(props().completed).toBe(0);
 	});
-	test("does not launch when entitlement is revoked before the click", async () => {
+	test("tracks live remote and automation state independently of old stored progress", () => {
+		tried = 6;
+		renderToStaticMarkup(<Probe />);
+		expect(props().completed).toBe(0);
+		remoteEnabled = true;
+		automations = [{ id: "automation" }];
+		renderToStaticMarkup(<Probe />);
+		expect(props().completed).toBe(6);
+		tried = 1;
+		renderToStaticMarkup(<Probe />);
+		expect(props().completed).toBe(7);
+		remoteEnabled = false;
+		automations = [];
+		renderToStaticMarkup(<Probe />);
+		expect(props().completed).toBe(1);
+	});
+	test("does not infer setup from missing query data", () => {
+		remoteEnabled = undefined;
+		automations = undefined;
+		renderToStaticMarkup(<Probe />);
+		expect(props().completed).toBe(0);
+	});
+	test("hides mobile until the flag is enabled and keeps automation navigation correct", () => {
+		for (const value of [false, undefined]) {
+			mobileEnabled = value;
+			renderToStaticMarkup(<Probe />);
+			expect(props().steps.map((step) => step.to)).toEqual([
+				"/settings/security",
+				"/automations",
+			]);
+			props().onStart(1);
+			expect(navigate).toHaveBeenLastCalledWith({ to: "/automations" });
+		}
+	});
+	test("does not navigate when entitlement is revoked before clicking", () => {
 		renderToStaticMarkup(<Probe />);
 		allowed = false;
-		await start(1);
-		expect(createSession).not.toHaveBeenCalled();
-		expect(markTried).not.toHaveBeenCalled();
+		props().onStart(1);
+		expect(navigate).not.toHaveBeenCalled();
 	});
 });

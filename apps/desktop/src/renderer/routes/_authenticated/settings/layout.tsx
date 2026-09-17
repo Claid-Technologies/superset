@@ -1,9 +1,11 @@
+import { FEATURE_FLAGS } from "@superset/shared/constants";
 import {
 	createFileRoute,
 	Outlet,
 	useLocation,
 	useNavigate,
 } from "@tanstack/react-router";
+import { useFeatureFlagEnabled } from "posthog-js/react";
 import { useEffect, useMemo } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { CheckResourcesHotkeyMount } from "renderer/commandPalette";
@@ -29,6 +31,7 @@ export const Route = createFileRoute("/_authenticated/settings")({
 });
 
 const SECTION_ORDER: SettingsSection[] = [
+	"mobile",
 	"account",
 	"appearance",
 	"ringtones",
@@ -58,6 +61,7 @@ const SECTION_ORDER: SettingsSection[] = [
  * hand-maintained lookups that can drift out of sync with each other.
  */
 const SECTION_PATHS: Partial<Record<SettingsSection, string>> = {
+	mobile: "/settings/mobile",
 	account: "/settings/account",
 	organization: "/settings/organization",
 	teams: "/settings/teams",
@@ -105,6 +109,8 @@ const NON_ROUTABLE_ESCAPE_PARENTS = new Set([
 function SettingsLayout() {
 	const { data: platform } = electronTrpc.window.getPlatform.useQuery();
 	const isV2CloudEnabled = useIsV2CloudEnabled();
+	const mobileEnabled =
+		useFeatureFlagEnabled(FEATURE_FLAGS.MOBILE_SETTINGS) === true;
 	const isMac = platform === undefined || platform === "darwin";
 	const searchQuery = useSettingsSearchQuery();
 	const setSearchQuery = useSetSettingsSearchQuery();
@@ -120,9 +126,13 @@ function SettingsLayout() {
 	const matchCounts = useMemo(
 		() =>
 			isSearchActive
-				? getVisibleMatchCountBySection(normalizedSearchQuery, isV2CloudEnabled)
+				? getVisibleMatchCountBySection(
+						normalizedSearchQuery,
+						isV2CloudEnabled,
+						mobileEnabled,
+					)
 				: {},
-		[isSearchActive, normalizedSearchQuery, isV2CloudEnabled],
+		[isSearchActive, normalizedSearchQuery, isV2CloudEnabled, mobileEnabled],
 	);
 	const totalMatches = Object.values(matchCounts).reduce(
 		(sum, count) => sum + count,

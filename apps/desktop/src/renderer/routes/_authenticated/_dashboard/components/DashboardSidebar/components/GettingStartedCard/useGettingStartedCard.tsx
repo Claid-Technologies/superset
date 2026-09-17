@@ -1,44 +1,49 @@
 import { useLingui } from "@lingui/react/macro";
-import { useRef, useState } from "react";
+import { FEATURE_FLAGS } from "@superset/shared/constants";
+import { useNavigate } from "@tanstack/react-router";
+import { useFeatureFlagEnabled } from "posthog-js/react";
 import { GATED_FEATURES, usePaywall } from "renderer/components/Paywall";
 import type { SidebarCardEntry } from "renderer/components/SidebarCardSlot/types";
-import { useCreateAgentSession } from "renderer/hooks/useCreateAgentSession";
+import { cloudTrpc } from "renderer/lib/cloud-trpc";
+import { electronTrpc } from "renderer/lib/electron-trpc";
 import { useGettingStartedStore } from "renderer/stores/getting-started";
 import { GettingStartedChecklist } from "./components/GettingStartedChecklist";
 import { GETTING_STARTED_STEPS } from "./constants";
 
 export function useGettingStartedCard(): SidebarCardEntry | null {
 	const { t } = useLingui();
-	const { tried, dismissed, markTried, dismiss } = useGettingStartedStore();
-	const { createSession } = useCreateAgentSession();
+	const { tried, dismissed, dismiss } = useGettingStartedStore();
+	const navigate = useNavigate();
 	const { gateFeature, hasAccess, isReady } = usePaywall();
-	const [pendingStep, setPendingStep] = useState<number | null>(null);
-	const busy = useRef(false);
-	const start = async (index: number) => {
-		const step = GETTING_STARTED_STEPS[index];
-		if (!step || busy.current) return;
-		busy.current = true;
-		setPendingStep(index);
-		try {
-			if (await createSession(step.prompt)) markTried(step.progressIndex);
-		} finally {
-			busy.current = false;
-			setPendingStep(null);
-		}
-	};
-	if (dismissed || !isReady || !hasAccess(GATED_FEATURES.REMOTE_ACCESS))
-		return null;
+	const mobileEnabled =
+		useFeatureFlagEnabled(FEATURE_FLAGS.MOBILE_SETTINGS) === true;
+	const visible =
+		!dismissed && isReady && hasAccess(GATED_FEATURES.REMOTE_ACCESS);
+	const { data: remoteEnabled } =
+		electronTrpc.settings.getExposeHostServiceViaRelay.useQuery(undefined, {
+			enabled: visible,
+		});
+	const { data: automations } = cloudTrpc.automation.list.useQuery(undefined, {
+		enabled: visible,
+		refetchInterval: 60_000,
+	});
+	const completed =
+		(tried & 1) | (remoteEnabled ? 2 : 0) | (automations?.length ? 4 : 0);
+	const steps = GETTING_STARTED_STEPS.filter(
+		(step) => step.feature !== GATED_FEATURES.MOBILE_APP || mobileEnabled,
+	);
+	if (!visible) return null;
 	return {
 		id: "pro-getting-started",
 		title: t({ message: "Get the best out of Pro" }),
 		onDismiss: dismiss,
 		children: (
 			<GettingStartedChecklist
-				tried={tried}
-				pendingStep={pendingStep}
+				completed={completed}
+				steps={steps}
 				onStart={(index) => {
-					const step = GETTING_STARTED_STEPS[index];
-					if (step) gateFeature(step.feature, () => start(index));
+					const step = steps[index];
+					if (step) gateFeature(step.feature, () => navigate({ to: step.to }));
 				}}
 			/>
 		),

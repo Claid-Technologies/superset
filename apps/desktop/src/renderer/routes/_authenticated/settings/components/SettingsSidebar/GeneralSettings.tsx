@@ -1,8 +1,10 @@
 import type { MessageDescriptor } from "@lingui/core";
 import { msg } from "@lingui/core/macro";
 import { i18n } from "@superset/i18n";
+import { FEATURE_FLAGS } from "@superset/shared/constants";
 import { cn } from "@superset/ui/utils";
 import { Link, useMatchRoute } from "@tanstack/react-router";
+import { useFeatureFlagEnabled } from "posthog-js/react";
 import { useMemo } from "react";
 import {
 	HiOutlineBeaker,
@@ -14,6 +16,7 @@ import {
 	HiOutlineCpuChip,
 	HiOutlineCreditCard,
 	HiOutlineCube,
+	HiOutlineDevicePhoneMobile,
 	HiOutlineFolder,
 	HiOutlineGlobeAlt,
 	HiOutlineKey,
@@ -39,6 +42,7 @@ interface GeneralSettingsProps {
 }
 
 type SettingsRoute =
+	| "/settings/mobile"
 	| "/settings/account"
 	| "/settings/organization"
 	| "/settings/teams"
@@ -84,6 +88,12 @@ const SECTION_GROUPS: SectionGroup[] = [
 			message: "Personal",
 		}),
 		items: [
+			{
+				id: "/settings/mobile",
+				section: "mobile",
+				label: msg({ message: "Mobile" }),
+				icon: <HiOutlineDevicePhoneMobile className="h-4 w-4" />,
+			},
 			{
 				id: "/settings/account",
 				section: "account",
@@ -317,6 +327,7 @@ export const FULL_WIDTH_SECTION_PATHS: readonly string[] =
 	);
 
 export function GeneralSettings({ matchCounts }: GeneralSettingsProps) {
+	const mobileEnabled = useFeatureFlagEnabled(FEATURE_FLAGS.MOBILE_SETTINGS);
 	const matchRoute = useMatchRoute();
 	const hostsNeedingUpdate = useHostsNeedingUpdateCount();
 	const { data: platform } = electronTrpc.window.getPlatform.useQuery();
@@ -332,7 +343,9 @@ export function GeneralSettings({ matchCounts }: GeneralSettingsProps) {
 			{SECTION_GROUPS.map((group, groupIndex) => {
 				const platformItems = group.items.filter(
 					(item) =>
-						(!item.macOnly || isMac) && allowedSections.has(item.section),
+						(!item.macOnly || isMac) &&
+						(item.section !== "mobile" || mobileEnabled === true) &&
+						allowedSections.has(item.section),
 				);
 				const filteredItems = matchCounts
 					? platformItems.filter((item) => (matchCounts[item.section] ?? 0) > 0)

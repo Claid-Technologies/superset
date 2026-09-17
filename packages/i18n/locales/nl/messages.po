@@ -563,8 +563,8 @@ msgstr "{closedCount} gesloten"
 msgid "{completed} of {0} checks complete"
 msgstr "{completed} van {0} checks afgerond"
 
-msgid "{completed} of {total} tried"
-msgstr "{completed} van {total} geprobeerd"
+msgid "{completed} of {total} completed"
+msgstr "{completed} van {total} voltooid"
 
 msgid "{configTitle} font size"
 msgstr "Tekengrootte van {configTitle}"
@@ -5602,6 +5602,9 @@ msgstr "Relaytoegang inschakelen…"
 msgid "Enable remote access"
 msgstr "Schakel externe toegang in"
 
+msgid "Enable remote access to reach this computer from your phone. Keep this computer awake and Superset running."
+msgstr "Schakel externe toegang in om deze computer vanaf je telefoon te bereiken. Houd deze computer wakker en laat Superset draaien."
+
 msgid "Enable skill"
 msgstr "Skill inschakelen"
 
@@ -7274,6 +7277,9 @@ msgstr "Ik gebruik al een IDE zoals Cursor, is dit iets voor mij?"
 msgid "I'm #{rank} on the {company} leaderboard with {tokens} tokens of agent usage."
 msgstr "Ik sta #{rank} op de ranglijst van {company} met {tokens} tokens aan agentgebruik."
 
+msgid "I've signed in on my phone"
+msgstr "Ik ben ingelogd op mijn telefoon"
+
 msgid "Icon"
 msgstr "Icoon"
 
@@ -8688,6 +8694,9 @@ msgstr "Mobiele app"
 msgid "Mobile App"
 msgstr "Mobiele app"
 
+msgid "Mobile setup confirmed"
+msgstr "Mobiele installatie bevestigd"
+
 msgid "model"
 msgstr "model"
 
@@ -10010,6 +10019,9 @@ msgstr "Toch openen"
 
 msgid "Open Anywhere"
 msgstr "Overal openen"
+
+msgid "Open App Store"
+msgstr "App Store openen"
 
 msgid "Open as comment pane"
 msgstr "Openen als opmerkingenpaneel"
@@ -12516,6 +12528,15 @@ msgstr "Zag de paywall"
 msgid "Scale from two agents to 100+"
 msgstr "Schaal van twee agents naar 100+"
 
+msgid "Scan to download Superset for iPhone"
+msgstr "Scan om Superset voor iPhone te downloaden"
+
+msgid "Scan to get the app"
+msgstr "Scan om de app te downloaden"
+
+msgid "Scan with your iPhone camera, then sign in with the same Superset account and organization."
+msgstr "Scan met de camera van je iPhone en log in met hetzelfde Superset-account en dezelfde organisatie."
+
 msgid "Scanning transcript logs…"
 msgstr "Transcriptlogs scannen…"
 
@@ -14054,6 +14075,9 @@ msgstr "Superset Enterprise is Superset voor teams. Neem contact op om te horen 
 
 msgid "Superset failed to start"
 msgstr "Superset kon niet starten"
+
+msgid "Superset for iPhone"
+msgstr "Superset voor iPhone"
 
 msgid "Superset for your team"
 msgstr "Superset voor je team"
@@ -15758,6 +15782,9 @@ msgstr "Werk een dependency bij en fix wat er stukgaat…"
 msgid "Upgrade to {0}"
 msgstr "Upgraden naar {0}"
 
+msgid "Upgrade to Pro"
+msgstr "Upgraden naar Pro"
+
 msgid "Upload files"
 msgstr "Bestanden uploaden"
 
@@ -15824,6 +15851,9 @@ msgstr "Globale standaard gebruiken"
 
 msgid "Use Superset on mobile"
 msgstr "Gebruik Superset op je mobiel"
+
+msgid "Use Superset on your phone with Pro."
+msgstr "Gebruik Superset op je telefoon met Pro."
 
 msgid "Use the desktop app to start running parallel coding agents."
 msgstr "Gebruik de desktop-app om parallelle coding agents te draaien."
@@ -16645,6 +16675,9 @@ msgstr "Je account is gedeactiveerd en wordt binnenkort definitief verwijderd. R
 
 msgid "Your account is managed by your organization. Contact your admin to create a new organization."
 msgstr "Je account wordt beheerd door je organisatie. Neem contact op met je beheerder om een nieuwe organisatie aan te maken."
+
+msgid "Your agents, wherever you are."
+msgstr "Je agents, waar je ook bent."
 
 msgid "Your Agents, Your Accounts"
 msgstr "Jouw agents, jouw accounts"
