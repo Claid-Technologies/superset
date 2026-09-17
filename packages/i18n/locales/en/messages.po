@@ -292,6 +292,7 @@ msgid "{0} · behind"
 msgstr "{0} · behind"
 
 #. placeholder {0}: creator.name
+#. placeholder {0}: option.name
 msgid "{0} (you)"
 msgstr "{0} (you)"
 
@@ -313,7 +314,7 @@ msgstr "{0} actions"
 msgid "{0} and {1} settle it as terminal dinosaurs. Stats decide the winner."
 msgstr "{0} and {1} settle it as terminal dinosaurs. Stats decide the winner."
 
-#. placeholder {0}: formatTokens(Math.max(0, me.tokens - below.tokens))
+#. placeholder {0}: formatTokens(belowGap > 0n ? belowGap : 0n)
 msgid "{0} behind you"
 msgstr "{0} behind you"
 
@@ -451,7 +452,7 @@ msgstr "{0} sessions terminated"
 msgid "{0} terminated, {1} remaining"
 msgstr "{0} terminated, {1} remaining"
 
-#. placeholder {0}: formatTokens(Math.max(0, above.tokens - me.tokens))
+#. placeholder {0}: formatTokens(aboveGap > 0n ? aboveGap : 0n)
 #. placeholder {1}: formatNumber(above.rank)
 msgid "{0} to pass #{1}"
 msgstr "{0} to pass #{1}"
@@ -659,6 +660,10 @@ msgstr "{distance} ago"
 msgid "{duration, plural, one {Thought for # second} other {Thought for # seconds}}"
 msgstr "{duration, plural, one {Thought for # second} other {Thought for # seconds}}"
 
+#. js-lingui-explicit-id
+msgid "serverError.page.entryPathHeldByAnotherOrganization"
+msgstr "{entryPath} in this workspace is already published as a page in another organization. Move the file, or publish with that page's id."
+
 msgid "{failed, plural, one {# failed} other {# failed}}"
 msgstr "{failed, plural, one {# failed} other {# failed}}"
 
@@ -816,8 +821,20 @@ msgstr "{pending} of {total} check running"
 msgid "{pending} of {total} checks running"
 msgstr "{pending} of {total} checks running"
 
+msgid "{percent} used"
+msgstr "{percent} used"
+
 msgid "{planLabel} · Joined {joined}"
 msgstr "{planLabel} · Joined {joined}"
+
+msgid "{planLabel} plan"
+msgstr "{planLabel} plan"
+
+msgid "{plugin} has no OAuth client configured on this deployment yet."
+msgstr "{plugin} has no OAuth client configured on this deployment yet."
+
+msgid "{plugin} is no longer installed."
+msgstr "{plugin} is no longer installed."
 
 msgid "{presetLabel} reset to defaults"
 msgstr "{presetLabel} reset to defaults"
@@ -926,6 +943,9 @@ msgstr "{uncommittedCount, plural, one {# file changed} other {# files changed}}
 msgid "{updatedLabel} restored to defaults"
 msgstr "{updatedLabel} restored to defaults"
 
+msgid "{used} used"
+msgstr "{used} used"
+
 msgid "{waiting} Waiting"
 msgstr "{waiting} Waiting"
 
@@ -940,6 +960,10 @@ msgstr "{worktreeCount, plural, one {This removes the project and its # workspac
 
 msgid "{years}y ago"
 msgstr "{years}y ago"
+
+#. placeholder {0}: connection.login
+msgid "@{0} · cloud workspaces commit, push and open pull requests as you"
+msgstr "@{0} · cloud workspaces commit, push and open pull requests as you"
 
 msgid "@superset"
 msgstr "@superset"
@@ -1033,9 +1057,6 @@ msgstr "~{stars} projected this week"
 
 msgid "~{totalSeconds}s typical"
 msgstr "~{totalSeconds}s typical"
-
-msgid "~{TYPICAL_SECONDS}s typical"
-msgstr "~{TYPICAL_SECONDS}s typical"
 
 msgid "~/agent $"
 msgstr "~/agent $"
@@ -1188,6 +1209,10 @@ msgstr "A better in-app browser: preview your changes and click any element to s
 msgid "A better Superset is ready"
 msgstr "A better Superset is ready"
 
+#. js-lingui-explicit-id
+msgid "serverError.common.cloudWorkspaceCannotCallThis"
+msgstr "A cloud workspace cannot call {path}. Run this from a client you are signed into."
+
 msgid "A delete is already in progress for {workspaceName}."
 msgstr "A delete is already in progress for {workspaceName}."
 
@@ -1233,8 +1258,14 @@ msgstr "A process is still running in this tab"
 msgid "A process is still running in this terminal"
 msgstr "A process is still running in this terminal"
 
+msgid "A pull request always gets its own worktree"
+msgstr "A pull request always gets its own worktree"
+
 msgid "A rebuilt chat surface for driving agents: richer tool output, smoother steering, faster everything."
 msgstr "A rebuilt chat surface for driving agents: richer tool output, smoother steering, faster everything."
+
+msgid "A repository is not connected to this organization, or the repositories come from different GitHub installations"
+msgstr "A repository is not connected to this organization, or the repositories come from different GitHub installations"
 
 msgid "A run for this automation is already in progress."
 msgstr "A run for this automation is already in progress."
@@ -1309,6 +1340,9 @@ msgstr "Account is pending deletion."
 
 msgid "Account pending deletion"
 msgstr "Account pending deletion"
+
+msgid "Account usage"
+msgstr "Account usage"
 
 msgid "Achievements"
 msgstr "Achievements"
@@ -1448,9 +1482,6 @@ msgstr "Add one from the menu in the sidebar to get started."
 
 msgid "Add photos or files"
 msgstr "Add photos or files"
-
-msgid "Add plugin"
-msgstr "Add plugin"
 
 msgid "Add project"
 msgstr "Add project"
@@ -1980,6 +2011,9 @@ msgstr "Anyone"
 msgid "Anyone in your organization"
 msgstr "Anyone in your organization"
 
+msgid "Anyone with the link"
+msgstr "Anyone with the link"
+
 msgid "anything"
 msgstr "anything"
 
@@ -1991,6 +2025,9 @@ msgstr "Apache Superset"
 
 msgid "API"
 msgstr "API"
+
+msgid "API billing"
+msgstr "API billing"
 
 msgid "API key"
 msgstr "API key"
@@ -2070,6 +2107,9 @@ msgstr "apps/web/src/app/design/components/LayoutSection/LayoutSection.tsx"
 
 msgid "Archive"
 msgstr "Archive"
+
+msgid "Archive environment"
+msgstr "Archive environment"
 
 msgid "Archived"
 msgstr "Archived"
@@ -2212,9 +2252,6 @@ msgstr "Audit logs"
 msgid "Aug 2026"
 msgstr "Aug 2026"
 
-msgid "Authenticate your {displayName} account"
-msgstr "Authenticate your {displayName} account"
-
 msgid "Authentication"
 msgstr "Authentication"
 
@@ -2242,6 +2279,12 @@ msgstr "Authorize"
 msgid "Authorize {displayName}"
 msgstr "Authorize {displayName}"
 
+msgid "Authorize Superset so your plugins, automations and triggers can act on your behalf."
+msgstr "Authorize Superset so your plugins, automations and triggers can act on your behalf."
+
+msgid "Authorize Superset to act on your behalf."
+msgstr "Authorize Superset to act on your behalf."
+
 msgid "Authorizing..."
 msgstr "Authorizing..."
 
@@ -2268,6 +2311,9 @@ msgstr "Auto-run on new tab"
 
 msgid "Auto-run on workspace creation"
 msgstr "Auto-run on workspace creation"
+
+msgid "Auto-updates are disabled by the DISABLE_UPDATE_CHECK environment variable."
+msgstr "Auto-updates are disabled by the DISABLE_UPDATE_CHECK environment variable."
 
 msgid "Auto-updates are disabled in development mode."
 msgstr "Auto-updates are disabled in development mode."
@@ -2366,6 +2412,9 @@ msgstr "Back"
 msgid "Back to About"
 msgstr "Back to About"
 
+msgid "Back to billing"
+msgstr "Back to billing"
+
 msgid "Back to Blog"
 msgstr "Back to Blog"
 
@@ -2374,6 +2423,9 @@ msgstr "Back to Changelog"
 
 msgid "Back to checklist"
 msgstr "Back to checklist"
+
+msgid "Back to current"
+msgstr "Back to current"
 
 msgid "Back to GitHub issues"
 msgstr "Back to GitHub issues"
@@ -2820,6 +2872,7 @@ msgid "Cancelled"
 msgstr "Cancelled"
 
 #. placeholder {0}: format(new Date(cancelAt), "MMMM d, yyyy")
+#. placeholder {0}: formatDate(cancelAt)
 msgid "Cancels {0} — downgrades to Free at the end of the billing period."
 msgstr "Cancels {0} — downgrades to Free at the end of the billing period."
 
@@ -3018,6 +3071,9 @@ msgstr "Checking…"
 
 msgid "Checklist"
 msgstr "Checklist"
+
+msgid "Checkout: {label}"
+msgstr "Checkout: {label}"
 
 msgid "Checkpoint"
 msgstr "Checkpoint"
@@ -3618,6 +3674,9 @@ msgstr "Composable form layout — pairs with @superset/ui/form for react-hook-f
 msgid "Computing in Stripe — up to a minute on first load"
 msgstr "Computing in Stripe — up to a minute on first load"
 
+msgid "Config location"
+msgstr "Config location"
+
 msgid "Configure"
 msgstr "Configure"
 
@@ -3639,6 +3698,9 @@ msgstr "Configure how tasks sync between Superset and Linear."
 msgid "Configure terminal behavior and reusable terminal scripts"
 msgstr "Configure terminal behavior and reusable terminal scripts"
 
+msgid "Configure the automation yourself"
+msgstr "Configure the automation yourself"
+
 msgid "Configure the in-app browser"
 msgstr "Configure the in-app browser"
 
@@ -3653,6 +3715,12 @@ msgstr "Confirm before quitting"
 
 msgid "Connect"
 msgstr "Connect"
+
+msgid "Connect {displayName}"
+msgstr "Connect {displayName}"
+
+msgid "Connect {name}"
+msgstr "Connect {name}"
 
 msgid "Connect a device"
 msgstr "Connect a device"
@@ -3726,9 +3794,8 @@ msgstr "Connect your Slack workspace to manage tasks from conversations."
 msgid "Connected"
 msgstr "Connected"
 
-#. placeholder {0}: formatDate(new Date(connection.createdAt))
-msgid "connected {0}"
-msgstr "connected {0}"
+msgid "Connected {label}"
+msgstr "Connected {label}"
 
 msgid "Connected as"
 msgstr "Connected as"
@@ -3756,6 +3823,12 @@ msgstr "Connected. Sign-in was cancelled, so triggers by \"Me\" will not match y
 
 msgid "Connecting"
 msgstr "Connecting"
+
+msgid "Connecting GitHub is not configured on this server"
+msgstr "Connecting GitHub is not configured on this server"
+
+msgid "Connecting lets your agents read and act in {name} on your behalf. Review what you are granting before you continue."
+msgstr "Connecting lets your agents read and act in {name} on your behalf. Review what you are granting before you continue."
 
 msgid "Connecting to the desktop…"
 msgstr "Connecting to the desktop…"
@@ -3787,6 +3860,18 @@ msgstr "Connection Timed Out"
 
 msgid "Connections"
 msgstr "Connections"
+
+msgid "Connector"
+msgstr "Connector"
+
+msgid "Connectors carry risk"
+msgstr "Connectors carry risk"
+
+msgid "Connects for your whole team."
+msgstr "Connects for your whole team."
+
+msgid "Connects your account. Teammates connect their own."
+msgstr "Connects your account. Teammates connect their own."
 
 msgid "consecutive active days"
 msgstr "consecutive active days"
@@ -3844,6 +3929,10 @@ msgstr "Continue or fork session"
 
 msgid "Continue the session the last run left"
 msgstr "Continue the session the last run left"
+
+#. placeholder {0}: connector.displayName
+msgid "Continue to {0}"
+msgstr "Continue to {0}"
 
 msgid "Continue update"
 msgstr "Continue update"
@@ -4082,6 +4171,9 @@ msgstr "Could not change the shared version"
 msgid "Could not change who can see this page"
 msgstr "Could not change who can see this page"
 
+msgid "Could not check your plan. Check your connection and try again."
+msgstr "Could not check your plan. Check your connection and try again."
+
 msgid "Could not clear browsing data"
 msgstr "Could not clear browsing data"
 
@@ -4090,6 +4182,9 @@ msgstr "Could not close session"
 
 msgid "Could not close the session"
 msgstr "Could not close the session"
+
+msgid "Could not connect {plugin}. Try again."
+msgstr "Could not connect {plugin}. Try again."
 
 msgid "Could not copy the link"
 msgstr "Could not copy the link"
@@ -4155,6 +4250,9 @@ msgstr "Could not load your machines"
 msgid "Could not mark ready"
 msgstr "Could not mark ready"
 
+msgid "Could not open billing. Please try again."
+msgstr "Could not open billing. Please try again."
+
 msgid "Could not open Files"
 msgstr "Could not open Files"
 
@@ -4197,8 +4295,14 @@ msgstr "Could not read the Google account. Please try again."
 msgid "Could not record cloud workspace"
 msgstr "Could not record cloud workspace"
 
+msgid "Could not record environment"
+msgstr "Could not record environment"
+
 msgid "Could not rename the session"
 msgstr "Could not rename the session"
+
+msgid "Could not rename this page"
+msgstr "Could not rename this page"
 
 msgid "Could not reopen"
 msgstr "Could not reopen"
@@ -4223,6 +4327,9 @@ msgstr "Could not set icon"
 
 msgid "Could not start agent"
 msgstr "Could not start agent"
+
+msgid "Could not start checkout. Please try again."
+msgstr "Could not start checkout. Please try again."
 
 msgid "Could not start cloud workspace provisioning"
 msgstr "Could not start cloud workspace provisioning"
@@ -4327,6 +4434,9 @@ msgstr "Couldn't post reply"
 #. placeholder {1}: first.message
 msgid "Couldn't reach cloud for {0}: {1}"
 msgstr "Couldn't reach cloud for {0}: {1}"
+
+msgid "Couldn't reach workspace"
+msgstr "Couldn't reach workspace"
 
 msgid "Couldn't read this terminal's context."
 msgstr "Couldn't read this terminal's context."
@@ -4447,6 +4557,9 @@ msgstr "Create an account"
 
 msgid "Create failed: {message}"
 msgstr "Create failed: {message}"
+
+msgid "Create manually"
+msgstr "Create manually"
 
 msgid "Create merge commit"
 msgstr "Create merge commit"
@@ -4597,6 +4710,9 @@ msgstr "Creating worktree"
 
 msgid "Creating..."
 msgstr "Creating..."
+
+msgid "Credentials stay on the server"
+msgstr "Credentials stay on the server"
 
 msgid "Cross-feature components living outside packages/ui — check here before building a new one"
 msgstr "Cross-feature components living outside packages/ui — check here before building a new one"
@@ -5001,6 +5117,9 @@ msgstr "Describe the change…"
 msgid "Describe the task for the agent…"
 msgstr "Describe the task for the agent…"
 
+msgid "Describe the work to your agent"
+msgstr "Describe the work to your agent"
+
 msgid "Describe what you need. Superset creates an isolated workspace and clean branch for the task."
 msgstr "Describe what you need. Superset creates an isolated workspace and clean branch for the task."
 
@@ -5051,6 +5170,9 @@ msgstr "Dev sign in"
 
 msgid "Dev sign-in failed"
 msgstr "Dev sign-in failed"
+
+msgid "Developed by {author}"
+msgstr "Developed by {author}"
 
 msgid "Developer"
 msgstr "Developer"
@@ -5169,10 +5291,6 @@ msgstr "Discarded — won't ask again"
 
 msgid "Disconnect"
 msgstr "Disconnect"
-
-#. placeholder {0}: connection.account ?? displayName
-msgid "Disconnect {0}"
-msgstr "Disconnect {0}"
 
 msgid "Disconnect GitHub?"
 msgstr "Disconnect GitHub?"
@@ -5498,6 +5616,9 @@ msgstr "Edit comment"
 msgid "Edit description"
 msgstr "Edit description"
 
+msgid "Edit environment"
+msgstr "Edit environment"
+
 msgid "Edit name"
 msgstr "Edit name"
 
@@ -5646,6 +5767,9 @@ msgstr "Environment"
 
 msgid "Environment created"
 msgstr "Environment created"
+
+msgid "Environment saved"
+msgstr "Environment saved"
 
 msgid "Environment setup, flaky tests, and credential plumbing, the boring failure modes that killed unattended runs in 2025, are mostly engineered away rather than modeled away."
 msgstr "Environment setup, flaky tests, and credential plumbing, the boring failure modes that killed unattended runs in 2025, are mostly engineered away rather than modeled away."
@@ -6136,6 +6260,9 @@ msgstr "Failed to open worktree"
 msgid "Failed to open: {0}"
 msgstr "Failed to open: {0}"
 
+msgid "Failed to post reply"
+msgstr "Failed to post reply"
+
 msgid "Failed to prepare agent launch"
 msgstr "Failed to prepare agent launch"
 
@@ -6430,6 +6557,9 @@ msgstr "Filter agents..."
 
 msgid "Filter by @{normalizedSearch}"
 msgstr "Filter by @{normalizedSearch}"
+
+msgid "Filter by author: {label}"
+msgstr "Filter by author: {label}"
 
 msgid "Filter by device"
 msgstr "Filter by device"
@@ -6850,6 +6980,9 @@ msgstr "GitHub App installed successfully!"
 
 msgid "GitHub connected, but initial sync failed to start. Please try reconnecting."
 msgstr "GitHub connected, but initial sync failed to start. Please try reconnecting."
+
+msgid "GitHub disconnected"
+msgstr "GitHub disconnected"
 
 msgid "GitHub installation not found"
 msgstr "GitHub installation not found"
@@ -7501,6 +7634,9 @@ msgstr "Insights from the Superset team about parallel coding agents and develop
 msgid "Inspecting {0}"
 msgstr "Inspecting {0}"
 
+msgid "Install"
+msgstr "Install"
+
 msgid "Install & restart"
 msgstr "Install & restart"
 
@@ -7513,11 +7649,17 @@ msgstr "Install failed"
 msgid "Install GitHub App"
 msgstr "Install GitHub App"
 
+msgid "Install plugin"
+msgstr "Install plugin"
+
 msgid "Install Superset MCP in your client"
 msgstr "Install Superset MCP in your client"
 
 msgid "Install the desktop app"
 msgstr "Install the desktop app"
+
+msgid "Install the plugin to connect"
+msgstr "Install the plugin to connect"
 
 msgid "Install the Superset GitHub App to connect your repositories."
 msgstr "Install the Superset GitHub App to connect your repositories."
@@ -7631,6 +7773,9 @@ msgstr "Invite your team to shared workspaces. See real-time updates, sync confi
 msgid "Invited By"
 msgstr "Invited By"
 
+msgid "Invoices and payment method"
+msgstr "Invoices and payment method"
+
 msgid "iOS app"
 msgstr "iOS app"
 
@@ -7705,6 +7850,9 @@ msgstr "Italic"
 
 msgid "Item"
 msgstr "Item"
+
+msgid "Its own branch and copy of the files"
+msgstr "Its own branch and copy of the files"
 
 msgid "Its workspaces and terminals are unavailable until it restarts — use the Superset tray menu > Host Service > Restart."
 msgstr "Its workspaces and terminals are unavailable until it restarts — use the Superset tray menu > Host Service > Restart."
@@ -8286,6 +8434,9 @@ msgstr "Loading..."
 msgid "Loading…"
 msgstr "Loading…"
 
+msgid "Local"
+msgstr "Local"
+
 msgid "Local Device"
 msgstr "Local Device"
 
@@ -8312,6 +8463,9 @@ msgstr "Log out"
 
 msgid "Log out?"
 msgstr "Log out?"
+
+msgid "Login unverified"
+msgstr "Login unverified"
 
 msgid "Logins (cookies)"
 msgstr "Logins (cookies)"
@@ -8361,9 +8515,6 @@ msgstr "Magenta"
 msgid "Main"
 msgstr "Main"
 
-msgid "Main workspace"
-msgstr "Main workspace"
-
 msgid "Make all panes equal size"
 msgstr "Make all panes equal size"
 
@@ -8384,6 +8535,9 @@ msgstr "Makes the Run button launch this terminal script for matching projects."
 
 msgid "Manage"
 msgstr "Manage"
+
+msgid "Manage billing"
+msgstr "Manage billing"
 
 msgid "Manage integrations in the web app to connect and configure services."
 msgstr "Manage integrations in the web app to connect and configure services."
@@ -8421,9 +8575,6 @@ msgstr "Manage your account settings"
 
 msgid "Manage your organization's branding and members."
 msgstr "Manage your organization's branding and members."
-
-msgid "Manage your subscription and billing in the desktop app."
-msgstr "Manage your subscription and billing in the desktop app."
 
 msgid "Managed"
 msgstr "Managed"
@@ -8724,8 +8875,8 @@ msgstr "Monitor, steer, and unblock your agents from your phone."
 msgid "Monitoring"
 msgstr "Monitoring"
 
-msgid "monorepo-warm"
-msgstr "monorepo-warm"
+msgid "monorepo"
+msgstr "monorepo"
 
 msgid "Monospace"
 msgstr "Monospace"
@@ -8775,14 +8926,15 @@ msgstr "More {kindLower} themes"
 msgid "More actions"
 msgstr "More actions"
 
-msgid "More options"
-msgstr "More options"
-
 msgid "More pages"
 msgstr "More pages"
 
 msgid "More than half of merged changes are written by agents with zero human edits."
 msgstr "More than half of merged changes are written by agents with zero human edits."
+
+#. js-lingui-explicit-id
+msgid "serverError.plugins.ambiguousConnection"
+msgstr "More than one {connector} connection matches; disconnect the one you do not want."
 
 msgid "most developers"
 msgstr "most developers"
@@ -9487,6 +9639,9 @@ msgstr "No pull requests found."
 msgid "No repositories found. Make sure your GitHub App has access to repositories."
 msgstr "No repositories found. Make sure your GitHub App has access to repositories."
 
+msgid "No repositories. Connect GitHub in Integrations, then refresh."
+msgstr "No repositories. Connect GitHub in Integrations, then refresh."
+
 msgid "No results"
 msgstr "No results"
 
@@ -9652,6 +9807,9 @@ msgstr "non-brand"
 msgid "Non-brand clicks"
 msgstr "Non-brand clicks"
 
+msgid "None"
+msgstr "None"
+
 msgid "none (session)"
 msgstr "none (session)"
 
@@ -9670,6 +9828,9 @@ msgstr "Not authenticated. Please sign in."
 msgid "Not authenticated. Provide a bearer JWT, x-api-key, or session."
 msgstr "Not authenticated. Provide a bearer JWT, x-api-key, or session."
 
+msgid "Not available on this server"
+msgstr "Not available on this server"
+
 msgid "Not bound · configure in Settings → Links"
 msgstr "Not bound · configure in Settings → Links"
 
@@ -9681,6 +9842,9 @@ msgstr "Not connected"
 
 msgid "Not Connected"
 msgstr "Not Connected"
+
+msgid "Not connected · cloud workspaces push as your organization's GitHub App"
+msgstr "Not connected · cloud workspaces push as your organization's GitHub App"
 
 msgid "Not connected: {unavailableReason}. Add a Google service account to the Search Console property and set GOOGLE_SEARCH_CONSOLE_SERVICE_ACCOUNT."
 msgstr "Not connected: {unavailableReason}. Add a Google service account to the Search Console property and set GOOGLE_SEARCH_CONSOLE_SERVICE_ACCOUNT."
@@ -9903,6 +10067,9 @@ msgstr "Online now"
 msgid "Online Now"
 msgstr "Online Now"
 
+msgid "Only an organization owner can change the plan. Ask yours to upgrade."
+msgstr "Only an organization owner can change the plan. Ask yours to upgrade."
+
 msgid "Only available on macOS."
 msgstr "Only available on macOS."
 
@@ -10090,6 +10257,9 @@ msgstr "Open in any IDE"
 msgid "Open in Any IDE"
 msgstr "Open in Any IDE"
 
+msgid "Open in app"
+msgstr "Open in app"
+
 msgid "Open in App"
 msgstr "Open in App"
 
@@ -10119,9 +10289,6 @@ msgstr "Open in current tab"
 
 msgid "Open in Cursor"
 msgstr "Open in Cursor"
-
-msgid "Open in Desktop App"
-msgstr "Open in Desktop App"
 
 msgid "Open in diff"
 msgstr "Open in diff"
@@ -10377,6 +10544,9 @@ msgstr "Opening TestFlight…"
 msgid "Opening worktree..."
 msgstr "Opening worktree..."
 
+msgid "Opens a cloud workspace where an agent installs what the project needs and writes its .superset/config.json"
+msgstr "Opens a cloud workspace where an agent installs what the project needs and writes its .superset/config.json"
+
 msgid "Operator"
 msgstr "Operator"
 
@@ -10473,9 +10643,6 @@ msgstr "Organization URL updated!"
 #. placeholder {0}: selectedOrg.name
 msgid "Organization: <0>{0}</0>"
 msgstr "Organization: <0>{0}</0>"
-
-msgid "Organizations"
-msgstr "Organizations"
 
 msgid "Organizations with a second member vs single-member accounts; the line is teams per 1,000."
 msgstr "Organizations with a second member vs single-member accounts; the line is teams per 1,000."
@@ -10588,6 +10755,9 @@ msgstr "Page not found"
 
 msgid "Page Not Found"
 msgstr "Page Not Found"
+
+msgid "Page title"
+msgstr "Page title"
 
 msgid "Page views"
 msgstr "Page views"
@@ -11620,6 +11790,9 @@ msgstr "Refresh metrics"
 msgid "Refresh pull requests"
 msgstr "Refresh pull requests"
 
+msgid "Refresh repositories"
+msgstr "Refresh repositories"
+
 msgid "Refreshes when Claude Code next runs."
 msgstr "Refreshes when Claude Code next runs."
 
@@ -11808,6 +11981,9 @@ msgstr "Rename group"
 msgid "Rename host"
 msgstr "Rename host"
 
+msgid "Rename page"
+msgstr "Rename page"
+
 msgid "Rename session"
 msgstr "Rename session"
 
@@ -11842,6 +12018,7 @@ msgid "Renders a registered hotkey inside dropdown/menubar items"
 msgstr "Renders a registered hotkey inside dropdown/menubar items"
 
 #. placeholder {0}: format(new Date(periodEnd), "MMMM d, yyyy")
+#. placeholder {0}: formatDate(periodEnd)
 msgid "Renews {0}."
 msgstr "Renews {0}."
 
@@ -11901,6 +12078,9 @@ msgstr "Repositories"
 
 msgid "Repositories accessible through the GitHub App installation."
 msgstr "Repositories accessible through the GitHub App installation."
+
+msgid "Repositories refreshed"
+msgstr "Repositories refreshed"
 
 msgid "Repositories will be updated shortly."
 msgstr "Repositories will be updated shortly."
@@ -11964,6 +12144,9 @@ msgstr "Reset location"
 
 msgid "Reset terminal"
 msgstr "Reset terminal"
+
+msgid "Reset time unavailable"
+msgstr "Reset time unavailable"
 
 msgid "Reset to default"
 msgstr "Reset to default"
@@ -12677,6 +12860,9 @@ msgstr "Search pull requests..."
 msgid "Search pull requests…"
 msgstr "Search pull requests…"
 
+msgid "Search repositories..."
+msgstr "Search repositories..."
+
 msgid "Search sessions"
 msgstr "Search sessions"
 
@@ -12902,6 +13088,9 @@ msgstr "Select project worktree location"
 msgid "Select range..."
 msgstr "Select range..."
 
+msgid "Select repositories"
+msgstr "Select repositories"
+
 msgid "Select repository"
 msgstr "Select repository"
 
@@ -13072,6 +13261,10 @@ msgstr "Set Run"
 msgid "Set up"
 msgstr "Set up"
 
+#. placeholder {0}: name.trim()
+msgid "Set up {0}"
+msgstr "Set up {0}"
+
 msgid "Set up project on {hostName}"
 msgstr "Set up project on {hostName}"
 
@@ -13130,11 +13323,17 @@ msgstr "Share designs and reports. Let your agent handle the feedback."
 msgid "Share page"
 msgstr "Share page"
 
+msgid "Share settings"
+msgstr "Share settings"
+
 msgid "Share this page"
 msgstr "Share this page"
 
 msgid "Share via…"
 msgstr "Share via…"
+
+msgid "Shared across sessions using this login."
+msgstr "Shared across sessions using this login."
 
 msgid "Shared app components"
 msgstr "Shared app components"
@@ -13147,6 +13346,12 @@ msgstr "Shared theme JSON files you can import into Superset."
 
 msgid "Shared version"
 msgstr "Shared version"
+
+msgid "Shared with everyone"
+msgstr "Shared with everyone"
+
+msgid "Shares the project's checkout — files, git index and branch — with its other local workspaces"
+msgstr "Shares the project's checkout — files, git index and branch — with its other local workspaces"
 
 msgid "Sheet"
 msgstr "Sheet"
@@ -13353,6 +13558,9 @@ msgstr "Sign in to continue to Superset"
 msgid "Sign in to get started"
 msgstr "Sign in to get started"
 
+msgid "Sign in to view this page"
+msgstr "Sign in to view this page"
+
 msgid "Sign in with email"
 msgstr "Sign in with email"
 
@@ -13402,6 +13610,9 @@ msgstr "Sign-in expired — run"
 
 msgid "Sign-in failed"
 msgstr "Sign-in failed"
+
+msgid "Sign-in failed ({reason}). Please try again."
+msgstr "Sign-in failed ({reason}). Please try again."
 
 msgid "Signed in as {accountLabel}"
 msgstr "Signed in as {accountLabel}"
@@ -13493,6 +13704,9 @@ msgstr "Skills ship with the Superset plugin and are kept up to date automatical
 msgid "Skip"
 msgstr "Skip"
 
+msgid "Skip & save"
+msgstr "Skip & save"
+
 msgid "Skip All"
 msgstr "Skip All"
 
@@ -13574,6 +13788,10 @@ msgstr "Some themes were skipped"
 
 msgid "Some triggers need additional configuration"
 msgstr "Some triggers need additional configuration"
+
+#. js-lingui-explicit-id
+msgid "serverError.page.entryPathHeldByColleague"
+msgstr "Someone else has already published {entryPath} from this workspace. Publish with an explicit page id to add a version to their page, or move the file."
 
 msgid "someone external"
 msgstr "someone external"
@@ -13785,6 +14003,9 @@ msgstr "Start a session"
 msgid "Start a workspace straight from a Linear ticket. The agent picks it up and reports back with a PR."
 msgstr "Start a workspace straight from a Linear ticket. The agent picks it up and reports back with a PR."
 
+msgid "Start agent"
+msgstr "Start agent"
+
 msgid "Start an agent or a terminal to begin working in this workspace."
 msgstr "Start an agent or a terminal to begin working in this workspace."
 
@@ -13880,6 +14101,9 @@ msgstr "Step {step}: {name}"
 
 msgid "Still can't reach the host."
 msgstr "Still can't reach the host."
+
+msgid "Still trying. If it keeps failing, remove it and create a new one."
+msgstr "Still trying. If it keeps failing, remove it and create a new one."
 
 msgid "Still working — large repos can take a few minutes. You can leave; the workspace will appear on Home when it's ready."
 msgstr "Still working — large repos can take a few minutes. You can leave; the workspace will appear on Home when it's ready."
@@ -14073,8 +14297,8 @@ msgstr "Superset is building self-improving software. It starts with giving engi
 msgid "Superset is building self-improving software. It starts with giving engineers the best tools that adapt to their needs over time. We're 3 ex-YC CTOs building a tool that we love."
 msgstr "Superset is building self-improving software. It starts with giving engineers the best tools that adapt to their needs over time. We're 3 ex-YC CTOs building a tool that we love."
 
-msgid "Superset is built by a team based in San Francisco, California. For product support or account questions, email <0>{supportEmail}</0> and we'll get back to you within one business day. For partnerships, press, enterprise, or anything for the founding team, write to <1>{foundersEmail}</1>."
-msgstr "Superset is built by a team based in San Francisco, California. For product support or account questions, email <0>{supportEmail}</0> and we'll get back to you within one business day. For partnerships, press, enterprise, or anything for the founding team, write to <1>{foundersEmail}</1>."
+msgid "Superset is built by a team based in San Francisco, California. For product support or account questions, email <0>{supportEmail}</0> and we'll get back to you within one business day. For partnerships, press, enterprise, or anything else, write to <1>{teamEmail}</1>."
+msgstr "Superset is built by a team based in San Francisco, California. For product support or account questions, email <0>{supportEmail}</0> and we'll get back to you within one business day. For partnerships, press, enterprise, or anything else, write to <1>{teamEmail}</1>."
 
 msgid "Superset is built in Superset, so we're our own #1 users—you get paid to make your own life easier. If you've ever wanted to build a product you love to use, come build it with us."
 msgstr "Superset is built in Superset, so we're our own #1 users—you get paid to make your own life easier. If you've ever wanted to build a product you love to use, come build it with us."
@@ -14109,8 +14333,14 @@ msgstr "Superset Mobile is part of Pro"
 msgid "Superset Mobile runs agents on the computers you connect."
 msgstr "Superset Mobile runs agents on the computers you connect."
 
+msgid "Superset Mobile, cloud workspaces, automations, and priority support."
+msgstr "Superset Mobile, cloud workspaces, automations, and priority support."
+
 msgid "Superset needs Full Disk Access to read another browser's data. Grant it in System Settings, then check again."
 msgstr "Superset needs Full Disk Access to read another browser's data. Grant it in System Settings, then check again."
+
+msgid "Superset only receives the permissions this connector asks for. Disconnect at any time to revoke them."
+msgstr "Superset only receives the permissions this connector asks for. Disconnect at any time to revoke them."
 
 msgid "Superset originals"
 msgstr "Superset originals"
@@ -14518,6 +14748,9 @@ msgstr "Textarea"
 msgid "Thanks for reaching out"
 msgstr "Thanks for reaching out"
 
+msgid "That {plugin} sign-in link expired. Try connecting again."
+msgstr "That {plugin} sign-in link expired. Try connecting again."
+
 msgid "That endpoint could not be resolved."
 msgstr "That endpoint could not be resolved."
 
@@ -14562,6 +14795,9 @@ msgstr "The best agent will change.<0/>Your workflow shouldn't."
 
 msgid "The Codex sign-in"
 msgstr "The Codex sign-in"
+
+msgid "The config repository must be one of the environment's repositories"
+msgstr "The config repository must be one of the environment's repositories"
 
 msgid "The connection timed out"
 msgstr "The connection timed out"
@@ -14735,6 +14971,9 @@ msgstr "The page you're looking for doesn't exist."
 msgid "The people behind Superset."
 msgstr "The people behind Superset."
 
+msgid "The project's checkout as it is: files and branch are shared"
+msgstr "The project's checkout as it is: files and branch are shared"
+
 #. placeholder {0}: params?.status
 msgid "The provider answered {0}."
 msgstr "The provider answered {0}."
@@ -14750,6 +14989,9 @@ msgstr "The remote branch has diverged. Pull before continuing."
 
 msgid "The renderer crashed during startup. Please check logs for details."
 msgstr "The renderer crashed during startup. Please check logs for details."
+
+msgid "The repositories a cloud workspace checks out, and which one's .superset/config.json it acts on. The workspace opens on the config location, or on the first repository by name."
+msgstr "The repositories a cloud workspace checks out, and which one's .superset/config.json it acts on. The workspace opens on the config location, or on the first repository by name."
 
 msgid "The repository folder itself is kept."
 msgstr "The repository folder itself is kept."
@@ -14815,6 +15057,9 @@ msgstr "the target host"
 msgid "The team invitation has either expired or doesn't exist. Request a new link from the team owner or check the URL to make sure it is entered correctly."
 msgstr "The team invitation has either expired or doesn't exist. Request a new link from the team owner or check the URL to make sure it is entered correctly."
 
+msgid "The title shows everywhere this page is listed and in its link preview."
+msgstr "The title shows everywhere this page is listed and in its link preview."
+
 msgid "The web agents UI is a read-only preview for now."
 msgstr "The web agents UI is a read-only preview for now."
 
@@ -14866,6 +15111,12 @@ msgstr "Thinking..."
 msgid "Thirty"
 msgstr "Thirty"
 
+msgid "This {plugin} account is already connected by {owner}. Ask them to disconnect first."
+msgstr "This {plugin} account is already connected by {owner}. Ask them to disconnect first."
+
+msgid "This {plugin} account is already connected by another Superset organization."
+msgstr "This {plugin} account is already connected by another Superset organization."
+
 msgid "This action is irreversible."
 msgstr "This action is irreversible."
 
@@ -14897,6 +15148,12 @@ msgstr "This closes every terminal session — in this workspace and any others 
 msgid "This closes every terminal session for your organization{runningCountSuffix} and starts a fresh daemon."
 msgstr "This closes every terminal session for your organization{runningCountSuffix} and starts a fresh daemon."
 
+msgid "This closes the selected workspaces and their terminals. The project's files and branches stay as they are."
+msgstr "This closes the selected workspaces and their terminals. The project's files and branches stay as they are."
+
+msgid "This closes the workspace and its terminals. The project's files, branches and other workspaces stay as they are."
+msgstr "This closes the workspace and its terminals. The project's files, branches and other workspaces stay as they are."
+
 msgid "This comment is no longer here"
 msgstr "This comment is no longer here"
 
@@ -14920,6 +15177,18 @@ msgstr "This device isn't connected to the Superset relay, so automation runs wi
 
 msgid "This directory does not exist. The terminal script will fall back to the workspace root."
 msgstr "This directory does not exist. The terminal script will fall back to the workspace root."
+
+msgid "This email is already registered with another sign-in method, and the provider did not confirm it as verified. Sign in with the method you used before."
+msgstr "This email is already registered with another sign-in method, and the provider did not confirm it as verified. Sign in with the method you used before."
+
+msgid "This environment has no repositories. Create an environment with repositories in Settings, then start the workspace from it"
+msgstr "This environment has no repositories. Create an environment with repositories in Settings, then start the workspace from it"
+
+msgid "This environment was promoted from a workspace, so its repositories are fixed. Promote a workspace again to change them."
+msgstr "This environment was promoted from a workspace, so its repositories are fixed. Promote a workspace again to change them."
+
+msgid "This environment's repositories are fixed; promote a workspace again to change them"
+msgstr "This environment's repositories are fixed; promote a workspace again to change them"
 
 msgid "this file"
 msgstr "this file"
@@ -14996,6 +15265,10 @@ msgstr "This page is being published from somewhere else — retry"
 msgid "This page is in another organization"
 msgstr "This page is in another organization"
 
+#. placeholder {0}: url.replace(/^https?:\/\//, "")
+msgid "This page is live at <0>{0}</0>"
+msgstr "This page is live at <0>{0}</0>"
+
 msgid "This page isn't here"
 msgstr "This page isn't here"
 
@@ -15007,9 +15280,6 @@ msgstr "This path exists, but it is not a directory."
 
 msgid "This path is a directory"
 msgstr "This path is a directory"
-
-msgid "This plugin needs no account — its skills are ready to use."
-msgstr "This plugin needs no account — its skills are ready to use."
 
 msgid "This port is still in use"
 msgstr "This port is still in use"
@@ -15038,8 +15308,8 @@ msgstr "This removes the host, its access, and its workspaces. Files on the mach
 msgid "This removes the project from every reachable device."
 msgstr "This removes the project from every reachable device."
 
-msgid "This removes the worktree from disk. The cloud workspace record will also be removed."
-msgstr "This removes the worktree from disk. The cloud workspace record will also be removed."
+msgid "This removes the worktree from disk and closes the workspace."
+msgstr "This removes the worktree from disk and closes the workspace."
 
 msgid "This replaces its label, command, arguments, prompt and resume settings, environment variables, and icon with the current bundled configuration."
 msgstr "This replaces its label, command, arguments, prompt and resume settings, environment variables, and icon with the current bundled configuration."
@@ -15248,6 +15518,9 @@ msgstr "Token usage"
 
 msgid "Tokens"
 msgstr "Tokens"
+
+msgid "Tokens are held by Superset and attached to requests there. They are never written into your local agent config."
+msgstr "Tokens are held by Superset and attached to requests there. They are never written into your local agent config."
 
 msgid "Tokens per session"
 msgstr "Tokens per session"
@@ -15567,6 +15840,9 @@ msgctxt "person"
 msgid "Unknown"
 msgstr "Unknown"
 
+msgid "Unknown author"
+msgstr "Unknown author"
+
 msgid "Unknown device"
 msgstr "Unknown device"
 
@@ -15707,6 +15983,9 @@ msgstr "Update naming instructions"
 msgid "Update naming instructions for {0}"
 msgstr "Update naming instructions for {0}"
 
+msgid "Update payment method"
+msgstr "Update payment method"
+
 msgid "Update ready"
 msgstr "Update ready"
 
@@ -15751,9 +16030,16 @@ msgstr "Upgrade"
 msgid "Upgrade a dependency and fix what breaks…"
 msgstr "Upgrade a dependency and fix what breaks…"
 
+#. placeholder {0}: COMPANY.DOMAIN
+msgid "Upgrade on {0}"
+msgstr "Upgrade on {0}"
+
 #. placeholder {0}: i18n._(plan.name)
 msgid "Upgrade to {0}"
 msgstr "Upgrade to {0}"
+
+msgid "Upgrade to Pro"
+msgstr "Upgrade to Pro"
 
 msgid "Upload files"
 msgstr "Upload files"
@@ -15784,6 +16070,9 @@ msgstr "URL-friendly identifier, unique within your organization."
 
 msgid "Usage"
 msgstr "Usage"
+
+msgid "Usage is out of date"
+msgstr "Usage is out of date"
 
 msgid "Usage sections"
 msgstr "Usage sections"
@@ -16474,6 +16763,9 @@ msgstr "Worktree location updated"
 msgid "Worktree missing"
 msgstr "Worktree missing"
 
+msgid "Worktree on this device"
+msgstr "Worktree on this device"
+
 msgid "Worktree opened"
 msgstr "Worktree opened"
 
@@ -16482,6 +16774,9 @@ msgstr "Worktree out of sync"
 
 msgid "Worktrees"
 msgstr "Worktrees"
+
+msgid "Worktrees are removed from disk; workspaces on the project's checkout only close. Files in the checkout stay as they are."
+msgstr "Worktrees are removed from disk; workspaces on the project's checkout only close. Files in the checkout stay as they are."
 
 msgid "Worktrees with uncommitted changes are left on disk."
 msgstr "Worktrees with uncommitted changes are left on disk."
@@ -16555,6 +16850,9 @@ msgstr "YOU"
 msgid "You appear to be offline"
 msgstr "You appear to be offline"
 
+msgid "You are not a member of that organization."
+msgstr "You are not a member of that organization."
+
 msgid "You are not a member of this organization"
 msgstr "You are not a member of this organization"
 
@@ -16574,6 +16872,9 @@ msgstr "You are the only owner of an organization that has other members. Transf
 msgid "You are unranked until {0} days carry usage. Scoring starts once the board can see a full picture."
 msgstr "You are unranked until {0} days carry usage. Scoring starts once the board can see a full picture."
 
+msgid "You are viewing version {version}, read-only"
+msgstr "You are viewing version {version}, read-only"
+
 msgid "You can attach up to {MAX_ATTACHMENTS} files"
 msgstr "You can attach up to {MAX_ATTACHMENTS} files"
 
@@ -16584,6 +16885,12 @@ msgstr "You can't change this subscription in the app. Your organization's plan 
 msgid "You can't undo this action. Terminal panes will show \"Process exited\" and can be restarted."
 msgstr "You can't undo this action. Terminal panes will show \"Process exited\" and can be restarted."
 
+msgid "You control the access"
+msgstr "You control the access"
+
+msgid "You declined the {plugin} authorization request."
+msgstr "You declined the {plugin} authorization request."
+
 msgid "You don't have access to this host"
 msgstr "You don't have access to this host"
 
@@ -16592,6 +16899,9 @@ msgstr "You don't have access to this terminal."
 
 msgid "You don't have permission to remove this member"
 msgstr "You don't have permission to remove this member"
+
+msgid "You need to be part of an organization to connect accounts."
+msgstr "You need to be part of an organization to connect accounts."
 
 msgid "You need to be part of an organization to use integrations."
 msgstr "You need to be part of an organization to use integrations."
@@ -16655,14 +16965,23 @@ msgstr "Your code stays local by default, with explicit control over connected s
 msgid "Your download starts automatically. If it didn't, grab it here."
 msgstr "Your download starts automatically. If it didn't, grab it here."
 
+msgid "Your GitHub account cannot reach a repository in this environment"
+msgstr "Your GitHub account cannot reach a repository in this environment"
+
 msgid "Your GitHub link comes from the account you signed in with, so it shows as verified and cannot be edited here."
 msgstr "Your GitHub link comes from the account you signed in with, so it shows as verified and cannot be edited here."
+
+msgid "Your last payment failed. Update your payment method to keep Pro."
+msgstr "Your last payment failed. Update your payment method to keep Pro."
 
 msgid "Your name"
 msgstr "Your name"
 
 msgid "Your name <0>(if we use your prompt, we'll credit you in the changelog)</0>"
 msgstr "Your name <0>(if we use your prompt, we'll credit you in the changelog)</0>"
+
+msgid "Your own accounts. Your organization's integrations let Superset reach its tools; connecting yours makes the work Superset does for you show up as you."
+msgstr "Your own accounts. Your organization's integrations let Superset reach its tools; connecting yours makes the work Superset does for you show up as you."
 
 msgid "Your rank"
 msgstr "Your rank"

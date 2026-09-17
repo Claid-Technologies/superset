@@ -31,6 +31,14 @@ export interface LiveActivityWorkspace {
 	projectId?: string | null;
 }
 
+/** "12m", "1h", "3d" — the app's compact style without the "ago" suffix. */
+function elapsedLabel(since: number, now: number): string {
+	const minutes = Math.max(1, Math.round((now - since) / 60_000));
+	if (minutes < 60) return `${minutes}m`;
+	const hours = Math.round(minutes / 60);
+	return hours < 24 ? `${hours}h` : `${Math.round(hours / 24)}d`;
+}
+
 export function useAgentLiveActivity({
 	terminalsByWorkspace,
 	workspaces,
@@ -57,7 +65,20 @@ export function useAgentLiveActivity({
 	const cachedIcons = useRef<Map<string, string>>(new Map());
 
 	useEffect(() => {
-		if (!enabled) return;
+		if (!enabled) {
+			// A card started before the gate closed (an older build, or the flag
+			// flipping) would otherwise sit on the Lock Screen until it expired.
+			// Bumping the generation also drops a delivery already in flight, so
+			// it cannot start the card again right after this ends it.
+			runId.current += 1;
+			queued.current = null;
+			if (activityId.current || LiveActivity.activeIds().length > 0) {
+				void LiveActivity.endAll();
+				activityId.current = null;
+				lastPayload.current = null;
+			}
+			return;
+		}
 		if (!LiveActivity.areActivitiesEnabled()) return;
 		// A Live Activity can only be started from the foreground —
 		// `ActivityAuthorizationError.visibility` otherwise.
@@ -65,6 +86,7 @@ export function useAgentLiveActivity({
 
 		const projectById = new Map(projects.map((p) => [p.id, p]));
 		const workspaceById = new Map(workspaces.map((w) => [w.id, w]));
+		const now = Date.now();
 
 		const statusWord: Record<TerminalAttention, string> = {
 			permission: t({ message: "Needs you", context: "agent status" }),
@@ -89,7 +111,7 @@ export function useAgentLiveActivity({
 					project: project?.name ?? "",
 					status: statusWord[terminal.attention],
 					state: terminal.attention,
-					since: terminal.lastEventAt ?? terminal.ts,
+					elapsed: elapsedLabel(terminal.lastEventAt ?? terminal.ts, now),
 				});
 			}
 		}
@@ -115,10 +137,11 @@ export function useAgentLiveActivity({
 			topState: shown[0]?.state ?? "working",
 			machineName: "",
 			staleDetail: t({ message: "Not updating", context: "agent status" }),
-			// Once the app leaves the foreground the API keeps the card current
-			// over APNs, and every push clears this deadline. It only fires
-			// against an API with no APNs key, where nothing else ever would.
-			staleAfterSeconds: 30 * 60,
+			// Updates only arrive while the app is in the foreground, so the card
+			// has to admit when it has stopped hearing anything rather than leave
+			// a stale "Working" on the Lock Screen. Two minutes is well past the
+			// 5s poll that feeds it.
+			staleAfterSeconds: 120,
 			...(hidden > 0 ? { more: t`+${hidden} more` } : {}),
 		};
 

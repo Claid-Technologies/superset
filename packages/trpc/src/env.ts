@@ -57,9 +57,15 @@ export const env = createEnv({
 		VERCEL_SANDBOX_TEAM_ID: z.string().min(1),
 		VERCEL_SANDBOX_PROJECT_ID: z.string().min(1),
 		VERCEL_SANDBOX_REGION: z.string().min(1).default("iad1"),
-		// Ed25519 private key (base64url PKCS#8) that signs the tokens
-		// host-service in a sandbox checks; each sandbox gets the public half.
-		SANDBOX_ACCESS_SIGNING_KEY: z.string().min(1),
+		// Shared with the gate Worker: signs the tickets clients present
+		// there and derives the secret each sandbox's host-service is booted with.
+		SANDBOX_GATE_SECRET: z.string().min(32),
+		// The gate with `*` where a workspace's `<id>-<port>` label goes, e.g.
+		// https://*.sandbox.supersetusercontent.com; a local wrangler dev has no `*`.
+		SANDBOX_GATE_ORIGIN: z
+			.string()
+			.url()
+			.or(z.string().regex(/^https?:\/\/\*\./)),
 		SENTRY_DSN_SANDBOX: z.string().optional(),
 		NEXT_PUBLIC_SENTRY_ENVIRONMENT: z
 			.enum(["development", "preview", "production"])
@@ -69,18 +75,15 @@ export const env = createEnv({
 		GH_APP_ID: z.string().min(1),
 		GH_APP_PRIVATE_KEY: z.string().min(1),
 		GH_WEBHOOK_SECRET: z.string().min(1),
+		// The same App's OAuth client, for a person's own GitHub connection;
+		// without them nobody can connect and workspaces use the App's token.
+		GH_APP_CLIENT_ID: z.string().min(1).optional(),
+		GH_APP_CLIENT_SECRET: z.string().min(1).optional(),
 		ANTHROPIC_API_KEY: z.string(),
 		OPENAI_API_KEY: z.string().min(1),
 		RELAY_URL: z.string().url().default("https://relay.superset.sh"),
 		REALTIME_URL: z.string().url().default("https://realtime.superset.sh"),
 		REALTIME_NUDGE_SECRET: z.string().min(1),
-		// Optional: without an APNs key the Lock Screen card is only updated
-		// while the phone app is open, which is how it worked before pushes.
-		APNS_KEY_ID: z.string().min(1).optional(),
-		APNS_TEAM_ID: z.string().min(1).optional(),
-		APNS_PRIVATE_KEY: z.string().min(1).optional(),
-		APNS_BUNDLE_ID: z.string().min(1).default("sh.superset.mobile"),
-		APNS_HOST: z.string().min(1).default("api.push.apple.com"),
 		LINEAR_CLIENT_ID: z.string().min(1),
 		LINEAR_CLIENT_SECRET: z.string().min(1),
 		GOOGLE_CLIENT_ID: z.string().min(1),
@@ -106,6 +109,11 @@ export const env = createEnv({
 			.string()
 			.min(1)
 			.default("sc-domain:superset.sh"),
+		// Optional, falls back to NEXT_PUBLIC_API_URL: the origin an
+		// authorization server fetches a plugin's client id metadata document
+		// from. Only needs setting where NEXT_PUBLIC_API_URL is unreachable from
+		// the public internet, which in practice means local dev behind a tunnel.
+		PLUGIN_CLIENT_METADATA_BASE_URL: z.string().url().optional(),
 	},
 	clientPrefix: "PUBLIC_",
 	client: {},

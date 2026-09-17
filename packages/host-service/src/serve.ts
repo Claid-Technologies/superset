@@ -8,14 +8,12 @@ import {
 	JwtApiAuthProvider,
 } from "./providers/auth";
 import { LocalGitCredentialProvider } from "./providers/git";
-import {
-	type HostAuthProvider,
-	PskHostAuthProvider,
-	SandboxAccessHostAuthProvider,
-} from "./providers/host-auth";
+import { PskHostAuthProvider } from "./providers/host-auth";
 import { provisionAgentIntegrations } from "./runtime/agent-provisioning";
+import { processStartedAt, recordBootStamp } from "./runtime/boot-stamps";
 import { resolveBrowserBridgeFromEnv } from "./runtime/browser-bridge/env";
 import { applyLoginShellEnvToProcess } from "./runtime/login-shell-env";
+import { startSandboxCredentialRefresh } from "./runtime/sandbox-credential-refresh";
 import { detachFromLaunchDirectory } from "./runtime/working-directory";
 import { installProcessSafetyNet, installUpgradeSocketGuard } from "./safety";
 import { configureSelfUpdater } from "./self-update";
@@ -24,29 +22,9 @@ import { startTerminalBaseEnvResolution } from "./terminal/env";
 import { startTerminalReaper } from "./terminal/reaper";
 import { connectRelay, type TunnelClient } from "./tunnel";
 
-/**
- * A sandbox is reached at a public URL, so it checks a signed token itself.
- * Booting without the means to do that would serve everything to everyone;
- * refusing to boot is the only safe answer.
- */
-function sandboxHostAuth(): HostAuthProvider | null {
-	if (env.SUPERSET_HOST_RUN_MODE !== "sandbox") return null;
-	if (
-		!env.SUPERSET_SANDBOX_ACCESS_PUBLIC_KEY ||
-		!env.SUPERSET_SANDBOX_WORKSPACE_ID
-	) {
-		throw new Error(
-			"sandbox mode needs SUPERSET_SANDBOX_ACCESS_PUBLIC_KEY and SUPERSET_SANDBOX_WORKSPACE_ID",
-		);
-	}
-	return new SandboxAccessHostAuthProvider(
-		env.SUPERSET_SANDBOX_ACCESS_PUBLIC_KEY,
-		env.SUPERSET_SANDBOX_WORKSPACE_ID,
-	);
-}
-
 async function main(): Promise<void> {
 	installConsoleTimestamps();
+	recordBootStamp("host.process.start", processStartedAt());
 	initSentry({ organizationId: env.ORGANIZATION_ID });
 
 	// Before anything spawns a worker thread or a child process: a host
@@ -98,7 +76,14 @@ async function main(): Promise<void> {
 		apiUrl: env.SUPERSET_API_URL,
 	});
 
-	const { app, injectWebSocket, api, db, launchSandboxAgent } = createApp({
+	const {
+		app,
+		injectWebSocket,
+		api,
+		db,
+		launchSandboxAgent,
+		resumeCrashedAgents,
+	} = createApp({
 		config: {
 			organizationId: env.ORGANIZATION_ID,
 			dbPath: env.HOST_DB_PATH,
@@ -112,8 +97,7 @@ async function main(): Promise<void> {
 		},
 		providers: {
 			auth: authProvider,
-			hostAuth:
-				sandboxHostAuth() ?? new PskHostAuthProvider(env.HOST_SERVICE_SECRET),
+			hostAuth: new PskHostAuthProvider(env.HOST_SERVICE_SECRET),
 			credentials: new LocalGitCredentialProvider(),
 		},
 	});
@@ -159,12 +143,24 @@ async function main(): Promise<void> {
 			? `[${info.address}]`
 			: info.address;
 		console.log(`[host-service] listening on http://${address}:${info.port}`);
+		recordBootStamp("host.listening");
 
 		startTerminalReaper(db);
 		// A cloud workspace created with an agent starts it now: the pty daemon
 		// and event bus are up, and a person opening the workspace sees the
 		// agent's terminal the way they would on their own machine.
 		void launchSandboxAgent();
+		// A stop keeps the disk and drops every process, so nothing else on the
+		// box will notice that its agents are gone.
+		if (env.SUPERSET_HOST_RUN_MODE === "sandbox") void resumeCrashedAgents();
+		const sandboxWorkspaceId = process.env.SUPERSET_SANDBOX_WORKSPACE_ID;
+		if (env.SUPERSET_HOST_RUN_MODE === "sandbox" && sandboxWorkspaceId) {
+			startSandboxCredentialRefresh({
+				apiUrl: env.SUPERSET_API_URL,
+				workspaceId: sandboxWorkspaceId,
+				hostSecret: env.HOST_SERVICE_SECRET,
+			});
+		}
 
 		if (env.RELAY_URL && env.SUPERSET_HOST_RUN_MODE !== "sandbox") {
 			tunnelPromise = connectRelay({

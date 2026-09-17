@@ -44,22 +44,6 @@ export type V2ClientType = z.infer<typeof v2ClientTypeEnum>;
 
 export const v2UsersHostRoleValues = ["owner", "member"] as const;
 export const v2UsersHostRoleEnum = z.enum(v2UsersHostRoleValues);
-
-export const v2AgentStateValues = [
-	"working",
-	"review",
-	"permission",
-	"failed",
-] as const;
-export const v2AgentStateEnum = z.enum(v2AgentStateValues);
-
-export const v2LiveActivityTokenKindValues = [
-	"update",
-	"push_to_start",
-] as const;
-export const v2LiveActivityTokenKindEnum = z.enum(
-	v2LiveActivityTokenKindValues,
-);
 export type V2UsersHostRole = z.infer<typeof v2UsersHostRoleEnum>;
 
 export const commandStatusValues = [
@@ -84,6 +68,10 @@ export const cloudWorkspaceStatusValues = [
 ] as const;
 export const cloudWorkspaceStatusEnum = z.enum(cloudWorkspaceStatusValues);
 export type CloudWorkspaceStatus = z.infer<typeof cloudWorkspaceStatusEnum>;
+
+/** Who can see and use an environment: everyone in its organization, or its creator alone. */
+export const environmentScopeValues = ["organization", "personal"] as const;
+export type EnvironmentScope = (typeof environmentScopeValues)[number];
 
 export const environmentSourceKindValues = ["image", "fork"] as const;
 export const environmentSourceKindEnum = z.enum(environmentSourceKindValues);

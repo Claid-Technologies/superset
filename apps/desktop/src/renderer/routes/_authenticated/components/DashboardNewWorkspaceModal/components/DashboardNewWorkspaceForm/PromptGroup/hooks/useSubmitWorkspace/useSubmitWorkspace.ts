@@ -1,7 +1,8 @@
 import { useLingui } from "@lingui/react/macro";
+import { startableCloudEnvironments } from "@superset/shared/cloud-environments";
 import { toast } from "@superset/ui/sonner";
 import { useMatchRoute, useNavigate } from "@tanstack/react-router";
-import { useCallback } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useActiveOrganizationId } from "renderer/hooks/useActiveOrganizationId";
 import { cloudTrpc, cloudTrpcClient } from "renderer/lib/cloud-trpc";
 import { useLocalHostService } from "renderer/routes/_authenticated/providers/LocalHostServiceProvider";
@@ -41,7 +42,16 @@ export function useSubmitWorkspace(
 
 	const isSession = draft.isSession;
 
-	const submitWorkspace = useCallback(async () => {
+	// Submit is reachable from Cmd+Enter, the editor's Enter handler, and the
+	// create button, and it awaits uploads / environment lookup / prompt
+	// context before anything observable changes — `createCloudWorkspace.isPending`
+	// is still false in that window, so without this latch a quick second
+	// Cmd+Enter created a second workspace. Released in `finally` so a submit
+	// that failed validation or errored can be retried.
+	const inFlightRef = useRef(false);
+	const [isSubmitting, setIsSubmitting] = useState(false);
+
+	const submitWorkspaceInner = useCallback(async () => {
 		const hostId = draft.hostId ?? machineId;
 		const isCloud = hostId === CLOUD_HOST_ID;
 		// A cloud workspace clones the one cloud repo, so it has no use for a
@@ -105,9 +115,9 @@ export function useSubmitWorkspace(
 			const environments = await cloudTrpcClient.environment.list.query({
 				organizationId: activeOrganizationId,
 			});
+			const startable = startableCloudEnvironments(environments);
 			const environment =
-				environments.find((row) => row.id === draft.environmentId) ??
-				environments[0];
+				startable.find((row) => row.id === draft.environmentId) ?? startable[0];
 			if (!environment) {
 				toast.error(
 					t({
@@ -146,7 +156,7 @@ export function useSubmitWorkspace(
 					// 20,000-character cap.
 					prompt:
 						(cloudPrompt ?? draft.prompt).trim().slice(0, 20_000) || undefined,
-					branch: branchName ?? "main",
+					branch: draft.baseBranch ?? branchName ?? undefined,
 					...(wantCloudAgent
 						? {
 								agent: selectedAgent,
@@ -195,6 +205,8 @@ export function useSubmitWorkspace(
 		}
 
 		const isPrCheckout = draft.linkedPR !== null;
+		// A PR always needs its own worktree; otherwise the picker decides.
+		const isLocalCheckout = !isPrCheckout && draft.checkout === "local";
 
 		const linkedTaskId = draft.linkedIssues.find(
 			(issue) => issue.source === "internal" && issue.taskId,
@@ -248,24 +260,37 @@ export function useSubmitWorkspace(
 					agents,
 					namingPrompt: !wantAgent && trimmedPrompt ? trimmedPrompt : undefined,
 				}
-			: {
-					id: workspaceId,
-					projectId: projectId as string,
-					name: isPrCheckout ? prName : (workspaceName ?? undefined),
-					branch: isPrCheckout ? undefined : (branchName ?? undefined),
-					skipBranchPrefix:
-						!isPrCheckout && branchName !== null && draft.branchNameFromProvider
-							? true
-							: undefined,
-					pr: isPrCheckout ? draft.linkedPR?.prNumber : undefined,
-					baseBranch: draft.baseBranch ?? undefined,
-					taskId: linkedTaskId,
-					agents,
-					namingPrompt:
-						!isPrCheckout && !wantAgent && trimmedPrompt
-							? trimmedPrompt
-							: undefined,
-				};
+			: isLocalCheckout
+				? {
+						id: workspaceId,
+						projectId: projectId as string,
+						checkout: "local" as const,
+						name: workspaceName ?? undefined,
+						taskId: linkedTaskId,
+						agents,
+						namingPrompt:
+							!wantAgent && trimmedPrompt ? trimmedPrompt : undefined,
+					}
+				: {
+						id: workspaceId,
+						projectId: projectId as string,
+						name: isPrCheckout ? prName : (workspaceName ?? undefined),
+						branch: isPrCheckout ? undefined : (branchName ?? undefined),
+						skipBranchPrefix:
+							!isPrCheckout &&
+							branchName !== null &&
+							draft.branchNameFromProvider
+								? true
+								: undefined,
+						pr: isPrCheckout ? draft.linkedPR?.prNumber : undefined,
+						baseBranch: draft.baseBranch ?? undefined,
+						taskId: linkedTaskId,
+						agents,
+						namingPrompt:
+							!isPrCheckout && !wantAgent && trimmedPrompt
+								? trimmedPrompt
+								: undefined,
+					};
 
 		if (trimmedPrompt) {
 			usePromptHistoryStore.getState().recordPrompt(trimmedPrompt);
@@ -328,9 +353,20 @@ export function useSubmitWorkspace(
 		utils,
 	]);
 
-	// Cloud creation is the one path the user waits on, now only for as long as
-	// it takes to record the workspace — the sandbox comes up behind the
-	// workspace screen. Returned so the submit control can carry its own
-	// pending state for that moment rather than looking inert.
-	return { submitWorkspace, isCreating: createCloudWorkspace.isPending };
+	const submitWorkspace = useCallback(async () => {
+		if (inFlightRef.current) return;
+		inFlightRef.current = true;
+		setIsSubmitting(true);
+		try {
+			await submitWorkspaceInner();
+		} finally {
+			inFlightRef.current = false;
+			setIsSubmitting(false);
+		}
+	}, [submitWorkspaceInner]);
+
+	// Spans the whole submit — pending uploads, the cloud environment lookup,
+	// and the create itself — so the submit control reads busy for exactly the
+	// window in which a second activation would be dropped.
+	return { submitWorkspace, isCreating: isSubmitting };
 }
