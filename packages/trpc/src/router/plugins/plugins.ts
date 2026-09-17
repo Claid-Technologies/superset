@@ -12,6 +12,7 @@ import type { TRPCError, TRPCRouterRecord } from "@trpc/server";
 import { and, asc, eq, isNull } from "drizzle-orm";
 import { z } from "zod";
 import { userError } from "../../i18n-error";
+import { AmbiguousConnectionError } from "../../lib/connectors/lookup";
 import { createTRPCRouter, protectedProcedure } from "../../trpc";
 import {
 	AmbiguousPluginError,
@@ -35,6 +36,14 @@ function ambiguous(error: unknown): never {
 			message: error.message,
 			i18nKey: "serverError.plugins.ambiguousPlugin",
 			params: { reason: error.message },
+		});
+	}
+	if (error instanceof AmbiguousConnectionError) {
+		throw userError({
+			code: "CONFLICT",
+			message: error.message,
+			i18nKey: "serverError.plugins.ambiguousConnection",
+			params: { connector: error.connector },
 		});
 	}
 	throw error;

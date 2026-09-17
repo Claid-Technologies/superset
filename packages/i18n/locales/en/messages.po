@@ -8929,6 +8929,10 @@ msgstr "More pages"
 msgid "More than half of merged changes are written by agents with zero human edits."
 msgstr "More than half of merged changes are written by agents with zero human edits."
 
+#. js-lingui-explicit-id
+msgid "serverError.plugins.ambiguousConnection"
+msgstr "More than one {connector} connection matches; disconnect the one you do not want."
+
 msgid "most developers"
 msgstr "most developers"
 
@@ -15097,6 +15101,12 @@ msgstr "Thinking..."
 
 msgid "Thirty"
 msgstr "Thirty"
+
+msgid "This {plugin} account is already connected by {owner}. Ask them to disconnect first."
+msgstr "This {plugin} account is already connected by {owner}. Ask them to disconnect first."
+
+msgid "This {plugin} account is already connected by another Superset organization."
+msgstr "This {plugin} account is already connected by another Superset organization."
 
 msgid "This action is irreversible."
 msgstr "This action is irreversible."

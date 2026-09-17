@@ -12,6 +12,7 @@ import { forgetClient, redirectUriFor } from "./client-identity";
 import { connectorMethod, requireConnector, resolveEndpoints } from "./index";
 
 const DEFAULT_EXPIRY_BUFFER_SECONDS = 60;
+export const NEEDS_REAUTH = "needs_reauth";
 
 export class UnrefreshableConnectionError extends Error {
 	constructor(connector: string) {
@@ -19,6 +20,21 @@ export class UnrefreshableConnectionError extends Error {
 			`The ${connector} connection expired and carries no refresh token; reconnect it.`,
 		);
 		this.name = "UnrefreshableConnectionError";
+	}
+}
+
+/**
+ * The token endpoint was unreachable or answered 5xx. The connection is not
+ * known to be bad, so it must not be disconnected or reported as needing
+ * reauthorization — the caller is expected to surface this as a bad gateway.
+ */
+export class ConnectorUnavailableError extends Error {
+	constructor(
+		readonly connector: string,
+		detail: string,
+	) {
+		super(`The ${connector} token endpoint is unavailable: ${detail}`);
+		this.name = "ConnectorUnavailableError";
 	}
 }
 
@@ -34,6 +50,19 @@ function live(id: string) {
 async function readConnection(id: string): Promise<SelectConnection | null> {
 	const [row] = await db.select().from(connections).where(live(id)).limit(1);
 	return row ?? null;
+}
+
+/**
+ * A connection that cannot be refreshed stays a row: marking it here is what
+ * lets `connectors.status` say "Reconnect" rather than "Connect", instead of
+ * every caller rediscovering the failure. `upsertConnection` clears both
+ * fields when the user reconnects.
+ */
+async function markNeedsReauth(id: string): Promise<void> {
+	await db
+		.update(connections)
+		.set({ disconnectedAt: new Date(), disconnectReason: NEEDS_REAUTH })
+		.where(live(id));
 }
 
 const inFlight = new Map<string, Promise<SelectConnection>>();
@@ -82,7 +111,10 @@ async function refresh(
 	if (!expiringSoon(current.tokenExpiresAt, buffer)) return current;
 
 	const refreshToken = await decryptOptional(current.refreshToken);
-	if (!refreshToken) throw new UnrefreshableConnectionError(current.connector);
+	if (!refreshToken) {
+		await markNeedsReauth(current.id);
+		throw new UnrefreshableConnectionError(current.connector);
+	}
 
 	const connector = requireConnector(current.connector);
 	const method = connectorMethod(
@@ -111,11 +143,27 @@ async function refresh(
 		if (clientSecret) body.set("client_secret", clientSecret);
 	}
 
-	const response = await credentialFetch(
-		endpoints.tokenEndpoint,
-		{ method: "POST", headers, body },
-		`Connector "${current.connector}" refresh`,
-	);
+	let response: Response;
+	try {
+		response = await credentialFetch(
+			endpoints.tokenEndpoint,
+			{ method: "POST", headers, body },
+			`Connector "${current.connector}" refresh`,
+		);
+	} catch (error) {
+		throw new ConnectorUnavailableError(
+			current.connector,
+			error instanceof Error ? error.message : String(error),
+		);
+	}
+	// A server that is failing tells us nothing about the token; treating it as
+	// expired would disconnect a good connection over someone else's outage.
+	if (response.status >= 500) {
+		throw new ConnectorUnavailableError(
+			current.connector,
+			`${response.status} ${response.statusText}`,
+		);
+	}
 	const payload = (await response.json()) as Record<string, unknown>;
 	if (!response.ok || typeof payload.access_token !== "string") {
 		if (endpoints.issuer && payload.error === "invalid_client")
@@ -124,6 +172,7 @@ async function refresh(
 				redirectUriFor(current.connector),
 				clientId,
 			);
+		await markNeedsReauth(current.id);
 		throw new UnrefreshableConnectionError(current.connector);
 	}
 

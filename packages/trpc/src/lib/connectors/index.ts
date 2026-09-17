@@ -460,6 +460,7 @@ export {
 } from "./client-identity";
 export { type DiscoveredServer, discoverServer } from "./discovery";
 export {
+	AmbiguousConnectionError,
 	accountConnection,
 	accountConnections,
 	type ConnectionLookupOptions,
@@ -470,8 +471,10 @@ export {
 	userConnection,
 } from "./lookup";
 export {
+	ConnectorUnavailableError,
 	connectionAccessToken,
 	ensureFreshConnection,
+	NEEDS_REAUTH,
 	UnrefreshableConnectionError,
 } from "./refresh";
 export {

@@ -8,6 +8,38 @@ export type ConnectionLookupOptions = { includeDisconnected?: boolean };
 
 const NEWEST_FIRST = [desc(connections.updatedAt), desc(connections.id)];
 
+/**
+ * Two live connections match one lookup, so there is no single account to run
+ * under. Picking the newest would silently bind tool calls to whichever was
+ * touched last — behaviour people would come to rely on before anyone noticed
+ * it was arbitrary. Callers surface this as a conflict the user resolves by
+ * disconnecting one.
+ */
+export class AmbiguousConnectionError extends Error {
+	constructor(
+		readonly connector: string,
+		readonly connectionIds: string[],
+	) {
+		super(
+			`More than one ${connector} connection matches; disconnect the one you do not want.`,
+		);
+		this.name = "AmbiguousConnectionError";
+	}
+}
+
+/** Two rows are read so a second one can be detected, never to choose between them. */
+function single(
+	rows: SelectConnection[],
+	connector: string,
+): SelectConnection | null {
+	if (rows.length > 1)
+		throw new AmbiguousConnectionError(
+			connector,
+			rows.map((row) => row.id),
+		);
+	return rows[0] ?? null;
+}
+
 function live(
 	options: ConnectionLookupOptions,
 	clauses: (SQL | undefined)[],
@@ -25,7 +57,7 @@ export async function orgConnection(
 	connector: string,
 	options: ConnectionLookupOptions = {},
 ): Promise<SelectConnection | null> {
-	const [row] = await db
+	const rows = await db
 		.select()
 		.from(connections)
 		.where(
@@ -35,8 +67,8 @@ export async function orgConnection(
 			]),
 		)
 		.orderBy(...NEWEST_FIRST)
-		.limit(1);
-	return row ?? null;
+		.limit(2);
+	return single(rows, connector);
 }
 
 export async function userConnection(
@@ -45,7 +77,7 @@ export async function userConnection(
 	userId: string,
 	options: ConnectionLookupOptions = {},
 ): Promise<SelectConnection | null> {
-	const [row] = await db
+	const rows = await db
 		.select()
 		.from(connections)
 		.where(
@@ -56,8 +88,8 @@ export async function userConnection(
 			]),
 		)
 		.orderBy(...NEWEST_FIRST)
-		.limit(1);
-	return row ?? null;
+		.limit(2);
+	return single(rows, connector);
 }
 
 export async function accountConnection(

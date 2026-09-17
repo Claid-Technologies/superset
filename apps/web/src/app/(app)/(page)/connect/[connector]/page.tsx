@@ -9,6 +9,7 @@ import {
 import { notFound } from "next/navigation";
 import { initServerI18n } from "@/lib/i18n-server";
 import { api } from "@/trpc/server";
+import { ConnectorCallbackToast } from "./components/ConnectorCallbackToast";
 import { ConnectorConnect } from "./components/ConnectorConnect";
 
 export default async function ConnectorPage({
@@ -46,6 +47,7 @@ export default async function ConnectorPage({
 
 	return (
 		<div className="mx-auto max-w-xl space-y-8 py-8">
+			<ConnectorCallbackToast slug={slug} plugin={connector.displayName} />
 			<div>
 				<h1 className="text-2xl font-semibold">{connector.displayName}</h1>
 				<p className="mt-1 text-muted-foreground">

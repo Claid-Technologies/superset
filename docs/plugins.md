@@ -54,12 +54,11 @@ that must not change under them.
 
 - `interface` — `displayName`, `category` (one of `PLUGIN_CATEGORIES` in
   `packages/shared/src/plugins/index.ts`), and `icon`.
-- `connectors` — the connections this plugin needs, as a list of `{ "slug", "required" }`. A slug
-  names a connector in `packages/shared/src/connectors/connectors.json`; the manifest carries no
-  OAuth configuration of its own — no scopes, no client mode, no `requires_env`. A connection is
-  account state, and the connections system already owns obtaining, refreshing and disconnecting
-  it, so naming one is all a plugin does. Dispatch runs under the first `required` connector,
-  falling back to declaration order.
+- `connector` — the one connection this plugin needs, as `{ "slug" }`. A slug names a connector in
+  `packages/shared/src/connectors/connectors.json`; the manifest carries no OAuth configuration of
+  its own — no scopes, no client mode, no `requires_env`. A connection is account state, and the
+  connections system already owns obtaining, refreshing and disconnecting it, so naming one is all
+  a plugin does. Omit it for a plugin whose tools need no connection.
 - `bind` — how the connection's credential is attached to outbound calls.
   `${config.access_token}` and `${inputs.<name>}` placeholders are resolved server-side by
   `packages/trpc/src/router/plugins/manifest.ts`.

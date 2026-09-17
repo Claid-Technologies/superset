@@ -25,7 +25,9 @@ export async function GET(
 	const member = await requireOrgMember(request);
 	if (member instanceof Response) return member;
 
-	const settingsUrl = `${env.NEXT_PUBLIC_WEB_URL}/integrations/${slug}`;
+	// Same reason as the callback: the generic connect page covers every
+	// connector, `/integrations/<slug>` only the seven older ones.
+	const connectUrl = `${env.NEXT_PUBLIC_WEB_URL}/connect/${slug}`;
 	const requested = new URL(request.url).searchParams.get("method");
 
 	let method: ConnectorMethod;
@@ -73,7 +75,7 @@ export async function GET(
 	} catch (error) {
 		if (error instanceof MissingConnectorEnvError) {
 			console.error(`[connectors/${slug}] ${error.message}`);
-			return Response.redirect(`${settingsUrl}?error=not_configured`);
+			return Response.redirect(`${connectUrl}?error=not_configured`);
 		}
 		throw error;
 	}

@@ -8929,6 +8929,10 @@ msgstr "Halaman lainnya"
 msgid "More than half of merged changes are written by agents with zero human edits."
 msgstr "Lebih dari separuh perubahan yang di-merge ditulis agen tanpa suntingan manusia."
 
+#. js-lingui-explicit-id
+msgid "serverError.plugins.ambiguousConnection"
+msgstr "Lebih dari satu koneksi {connector} cocok; putuskan yang tidak Anda inginkan."
+
 msgid "most developers"
 msgstr "sebagian besar developer"
 
@@ -15097,6 +15101,12 @@ msgstr "Berpikir..."
 
 msgid "Thirty"
 msgstr "Tiga puluh"
+
+msgid "This {plugin} account is already connected by {owner}. Ask them to disconnect first."
+msgstr "Akun {plugin} ini sudah dihubungkan oleh {owner}. Minta dia memutuskannya terlebih dahulu."
+
+msgid "This {plugin} account is already connected by another Superset organization."
+msgstr "Akun {plugin} ini sudah dihubungkan oleh organisasi Superset lain."
 
 msgid "This action is irreversible."
 msgstr "Tindakan ini tidak bisa dibatalkan."

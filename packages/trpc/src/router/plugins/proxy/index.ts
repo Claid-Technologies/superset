@@ -1,3 +1,4 @@
+export { AmbiguousConnectionError } from "../../../lib/connectors/lookup";
 export { AmbiguousPluginError } from "../connections";
 export { buildPluginServer } from "./plugin-server";
 export {

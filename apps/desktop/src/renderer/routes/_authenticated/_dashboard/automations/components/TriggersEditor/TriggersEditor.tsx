@@ -65,8 +65,11 @@ export function TriggersEditor({
 		onEdit([...drafts, { config }]);
 
 	const { plan } = useCurrentPlan();
-	const { connected, isPending: connectionsPending } =
-		useProviderConnections(organizationId);
+	const {
+		connected,
+		needsReauth,
+		isPending: connectionsPending,
+	} = useProviderConnections(organizationId);
 	const [connecting, setConnecting] = useState<string | null>(null);
 	const utils = cloudTrpc.useUtils();
 	const queryClient = useQueryClient();
@@ -75,6 +78,11 @@ export function TriggersEditor({
 		if (connectionsPending) return false;
 		const required = connectorFor(providerFor(config));
 		return required !== null && !connected[required];
+	};
+
+	const expiredConnection = (config: DraftTrigger["config"]) => {
+		const required = connectorFor(providerFor(config));
+		return required !== null && Boolean(needsReauth[required]);
 	};
 
 	const runtimeWarnings = useMemo(
@@ -130,6 +138,7 @@ export function TriggersEditor({
 								: undefined
 						}
 						requiresConnection={missingConnection(trigger.config)}
+						needsReauth={expiredConnection(trigger.config)}
 						disabled={readOnly}
 					/>
 				))}

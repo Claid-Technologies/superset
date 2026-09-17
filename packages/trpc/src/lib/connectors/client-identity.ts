@@ -24,11 +24,27 @@ export function redirectUriFor(connectorSlug: string): string {
 
 function pickAuthMethod(
 	supported: string[] | undefined,
+	issuer: string,
 ): "client_secret_post" | "client_secret_basic" | "none" {
 	const methods = supported ?? ["client_secret_basic"];
 	if (methods.includes("client_secret_post")) return "client_secret_post";
 	if (methods.includes("client_secret_basic")) return "client_secret_basic";
+	// Registering as `none` against a server that never offered it yields a
+	// public client whose token requests it will reject, far from here.
+	if (!methods.includes("none")) {
+		throw new Error(
+			`${issuer} supports none of the client authentication methods Superset can use (it advertises ${methods.join(", ")}).`,
+		);
+	}
 	return "none";
+}
+
+/** Only ask for what the server grants; requesting refresh_token blindly can fail registration. */
+function pickGrantTypes(supported: string[] | undefined): string[] {
+	if (!supported) return ["authorization_code", "refresh_token"];
+	return ["authorization_code", "refresh_token"].filter((grant) =>
+		supported.includes(grant),
+	);
 }
 
 function authenticationFor(
@@ -83,6 +99,7 @@ async function register(
 
 	const tokenEndpointAuthMethod = pickAuthMethod(
 		server.metadata.token_endpoint_auth_methods_supported,
+		server.issuer,
 	);
 	const response = await credentialFetch(
 		endpoint,
@@ -96,7 +113,7 @@ async function register(
 				client_name: "Superset",
 				client_uri: "https://superset.sh",
 				redirect_uris: [redirectUri],
-				grant_types: ["authorization_code", "refresh_token"],
+				grant_types: pickGrantTypes(server.metadata.grant_types_supported),
 				response_types: ["code"],
 				application_type: "web",
 				token_endpoint_auth_method: tokenEndpointAuthMethod,

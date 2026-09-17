@@ -8929,6 +8929,10 @@ msgstr "Daha fazla sayfa"
 msgid "More than half of merged changes are written by agents with zero human edits."
 msgstr "Birleştirilen değişikliklerin yarısından fazlası, hiç insan düzenlemesi olmadan ajanlar tarafından yazılır."
 
+#. js-lingui-explicit-id
+msgid "serverError.plugins.ambiguousConnection"
+msgstr "Birden fazla {connector} bağlantısı eşleşiyor; istemediğinizi kaldırın."
+
 msgid "most developers"
 msgstr "çoğu geliştirici"
 
@@ -15097,6 +15101,12 @@ msgstr "Düşünülüyor..."
 
 msgid "Thirty"
 msgstr "Otuz"
+
+msgid "This {plugin} account is already connected by {owner}. Ask them to disconnect first."
+msgstr "Bu {plugin} hesabını zaten {owner} bağlamış. Önce bağlantıyı kesmesini isteyin."
+
+msgid "This {plugin} account is already connected by another Superset organization."
+msgstr "Bu {plugin} hesabı zaten başka bir Superset kuruluşuna bağlı."
 
 msgid "This action is irreversible."
 msgstr "Bu işlem geri alınamaz."

@@ -6,7 +6,7 @@ import {
 	users,
 } from "@superset/db/schema";
 import type { Connector } from "@superset/shared/connectors";
-import { and, desc, eq, isNull, ne, type SQL, sql } from "drizzle-orm";
+import { and, eq, isNull, ne, type SQL, sql } from "drizzle-orm";
 import {
 	decryptOptional,
 	decryptSecret,
@@ -14,6 +14,7 @@ import {
 	encryptSecret,
 } from "../../router/plugins/crypto";
 import type { ConnectorIdentity, ConnectorTokens } from "./index";
+import { userConnection } from "./lookup";
 
 export type ConnectionConflict = { ownerEmail: string | null };
 
@@ -181,18 +182,7 @@ export async function activeConnection(
 	organizationId: string | null,
 ): Promise<SelectConnection | null> {
 	if (!organizationId) return null;
-	const [row] = await db
-		.select()
-		.from(connections)
-		.where(
-			and(
-				eq(connections.organizationId, organizationId),
-				eq(connections.connector, connector),
-				eq(connections.connectedByUserId, userId),
-				isNull(connections.disconnectedAt),
-			),
-		)
-		.orderBy(desc(connections.updatedAt))
-		.limit(1);
-	return row ?? null;
+	// Same lookup as `userConnection`, and it must stay the same: two live rows
+	// for one account is a conflict wherever it is found, not a pick.
+	return userConnection(organizationId, connector, userId);
 }

@@ -5,6 +5,7 @@ import {
 	resolveMcpContext,
 } from "@superset/mcp";
 import {
+	AmbiguousConnectionError,
 	AmbiguousPluginError,
 	buildPluginServer,
 	PluginTargetError,
@@ -106,6 +107,12 @@ async function handle(
 		if (error instanceof PluginTargetError) {
 			return withRateLimitHeaders(
 				errorResponse("PLUGIN_UNAVAILABLE", error.message, error.status),
+				rateLimitState,
+			);
+		}
+		if (error instanceof AmbiguousConnectionError) {
+			return withRateLimitHeaders(
+				errorResponse("AMBIGUOUS_CONNECTION", error.message, 409),
 				rateLimitState,
 			);
 		}

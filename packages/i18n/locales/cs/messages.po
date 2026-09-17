@@ -8929,6 +8929,10 @@ msgstr "Další stránky"
 msgid "More than half of merged changes are written by agents with zero human edits."
 msgstr "Víc než polovinu sloučených změn napíší agenti bez jediné lidské úpravy."
 
+#. js-lingui-explicit-id
+msgid "serverError.plugins.ambiguousConnection"
+msgstr "Odpovídá více připojení {connector}; odpojte to, které nechcete."
+
 msgid "most developers"
 msgstr "většina vývojářů"
 
@@ -15097,6 +15101,12 @@ msgstr "Přemýšlím..."
 
 msgid "Thirty"
 msgstr "Třicet"
+
+msgid "This {plugin} account is already connected by {owner}. Ask them to disconnect first."
+msgstr "Účet {plugin} už připojil(a) {owner}. Požádejte ho/ji, aby ho nejprve odpojil(a)."
+
+msgid "This {plugin} account is already connected by another Superset organization."
+msgstr "Tento účet {plugin} už je připojený k jiné organizaci Supersetu."
 
 msgid "This action is irreversible."
 msgstr "Tuto akci nelze vrátit zpět."

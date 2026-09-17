@@ -8929,6 +8929,10 @@ msgstr "Thêm trang"
 msgid "More than half of merged changes are written by agents with zero human edits."
 msgstr "Hơn một nửa thay đổi được merge do agent viết mà không có chỉnh sửa của con người."
 
+#. js-lingui-explicit-id
+msgid "serverError.plugins.ambiguousConnection"
+msgstr "Có nhiều hơn một kết nối {connector} khớp; hãy ngắt kết nối cái bạn không muốn."
+
 msgid "most developers"
 msgstr "phần lớn lập trình viên"
 
@@ -15097,6 +15101,12 @@ msgstr "Đang suy nghĩ..."
 
 msgid "Thirty"
 msgstr "Ba mươi"
+
+msgid "This {plugin} account is already connected by {owner}. Ask them to disconnect first."
+msgstr "Tài khoản {plugin} này đã được {owner} kết nối. Hãy đề nghị họ ngắt kết nối trước."
+
+msgid "This {plugin} account is already connected by another Superset organization."
+msgstr "Tài khoản {plugin} này đã được một tổ chức Superset khác kết nối."
 
 msgid "This action is irreversible."
 msgstr "Không thể hoàn tác thao tác này."

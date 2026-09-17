@@ -8929,6 +8929,10 @@ msgstr "更多頁面"
 msgid "More than half of merged changes are written by agents with zero human edits."
 msgstr "超過一半的合併變更由代理程式撰寫，且無任何人工修改。"
 
+#. js-lingui-explicit-id
+msgid "serverError.plugins.ambiguousConnection"
+msgstr "符合多個 {connector} 連接；請中斷你不需要的那個。"
+
 msgid "most developers"
 msgstr "多數開發者"
 
@@ -15097,6 +15101,12 @@ msgstr "正在思考..."
 
 msgid "Thirty"
 msgstr "三十天"
+
+msgid "This {plugin} account is already connected by {owner}. Ask them to disconnect first."
+msgstr "這個 {plugin} 帳戶已由 {owner} 連接。請先請對方中斷連接。"
+
+msgid "This {plugin} account is already connected by another Superset organization."
+msgstr "這個 {plugin} 帳戶已由另一個 Superset 組織連接。"
 
 msgid "This action is irreversible."
 msgstr "此操作不可逆。"

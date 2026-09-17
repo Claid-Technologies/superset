@@ -31,6 +31,8 @@ interface TriggerSentenceProps {
 	 * of empty ones would only ask for choices that cannot be made.
 	 */
 	requiresConnection?: boolean;
+	/** The connector was connected and its refresh failed; offer Reconnect. */
+	needsReauth?: boolean;
 	disabled?: boolean;
 }
 
@@ -51,6 +53,7 @@ export function TriggerSentence({
 	problems,
 	nextRun,
 	requiresConnection,
+	needsReauth,
 	disabled,
 	onConnect,
 }: TriggerSentenceProps) {
@@ -98,7 +101,7 @@ export function TriggerSentence({
 						{triggerEventLabel(provider, config)}
 					</span>
 					<span className="text-[13px] text-amber-500">
-						Requires connection
+						{needsReauth ? "Connection expired" : "Requires connection"}
 					</span>
 					{removeButton}
 					{connector && onConnect && (
@@ -109,7 +112,7 @@ export function TriggerSentence({
 							onClick={() => onConnect(connector)}
 							className="h-7 shrink-0 gap-1 border-amber-500/40 bg-amber-500/10 px-2.5 text-amber-700 text-xs hover:bg-amber-500/20 dark:text-amber-400"
 						>
-							Connect
+							{needsReauth ? "Reconnect" : "Connect"}
 						</Button>
 					)}
 				</>

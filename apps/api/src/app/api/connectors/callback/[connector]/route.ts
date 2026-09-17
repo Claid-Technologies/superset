@@ -32,8 +32,11 @@ export async function GET(
 	{ params }: { params: Promise<{ connector: string }> },
 ) {
 	const { connector: slug } = await params;
-	const settingsUrl = `${env.NEXT_PUBLIC_WEB_URL}/integrations/${slug}`;
-	const web = (query: string) => Response.redirect(`${settingsUrl}${query}`);
+	// The generic connect page exists for every connector; `/integrations/<slug>`
+	// only exists for the seven that predate the registry, so a new connector
+	// would 404 the moment someone finished authorizing it.
+	const connectUrl = `${env.NEXT_PUBLIC_WEB_URL}/connect/${slug}`;
+	const web = (query: string) => Response.redirect(`${connectUrl}${query}`);
 
 	let connector: ReturnType<typeof requireConnector>;
 	let method: ConnectorMethod;
@@ -110,5 +113,5 @@ export async function GET(
 		return web("?error=token_exchange_failed");
 	}
 
-	return web("");
+	return web("?connected=1");
 }

@@ -7,10 +7,11 @@ import {
 } from "@superset/shared/connectors";
 import type { TRPCRouterRecord } from "@trpc/server";
 import { TRPCError } from "@trpc/server";
-import { and, eq, isNull } from "drizzle-orm";
+import { and, eq, isNull, or } from "drizzle-orm";
 import { z } from "zod";
 import {
 	connectorMethod,
+	NEEDS_REAUTH,
 	probeIdentity,
 	requireConnector,
 	upsertConnection,
@@ -66,10 +67,16 @@ export const connectorsRouter = {
 		.query(async ({ ctx, input }) => {
 			await verifyOrgMembership(ctx.session.user.id, input.organizationId);
 
+			// A connection whose refresh failed is still the user's connection:
+			// dropping it here would offer "Connect" for an account they already
+			// linked, losing the distinction between never-connected and expired.
 			const rows = await db.query.connections.findMany({
 				where: and(
 					eq(connections.organizationId, input.organizationId),
-					isNull(connections.disconnectedAt),
+					or(
+						isNull(connections.disconnectedAt),
+						eq(connections.disconnectReason, NEEDS_REAUTH),
+					),
 				),
 				columns: {
 					id: true,
@@ -80,14 +87,21 @@ export const connectorsRouter = {
 					externalAccountLabel: true,
 					externalUserId: true,
 					externalUserLabel: true,
+					disconnectedAt: true,
+					disconnectReason: true,
 				},
 			});
 
-			return rows.filter(
-				(row) =>
-					row.ownerKind === "org" ||
-					row.connectedByUserId === ctx.session.user.id,
-			);
+			return rows
+				.filter(
+					(row) =>
+						row.ownerKind === "org" ||
+						row.connectedByUserId === ctx.session.user.id,
+				)
+				.map(({ disconnectedAt, disconnectReason, ...row }) => ({
+					...row,
+					needsReauth: disconnectedAt !== null,
+				}));
 		}),
 
 	connectApiKey: protectedProcedure
@@ -158,6 +172,13 @@ export const connectorsRouter = {
 		.mutation(async ({ ctx, input }) => {
 			await verifyOrgMembership(ctx.session.user.id, input.organizationId);
 
+			// `status` still lists a needs-reauth row, so discarding one has to be
+			// reachable from the same screen that offers to reconnect it.
+			const reachable = or(
+				isNull(connections.disconnectedAt),
+				eq(connections.disconnectReason, NEEDS_REAUTH),
+			);
+
 			const [existing] = await db
 				.select({
 					ownerKind: connections.ownerKind,
@@ -168,7 +189,7 @@ export const connectorsRouter = {
 					and(
 						eq(connections.id, input.connectionId),
 						eq(connections.organizationId, input.organizationId),
-						isNull(connections.disconnectedAt),
+						reachable,
 					),
 				)
 				.limit(1);
@@ -188,7 +209,7 @@ export const connectorsRouter = {
 					and(
 						eq(connections.id, input.connectionId),
 						eq(connections.organizationId, input.organizationId),
-						isNull(connections.disconnectedAt),
+						reachable,
 					),
 				)
 				.returning({ id: connections.id });

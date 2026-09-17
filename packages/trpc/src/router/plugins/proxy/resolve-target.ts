@@ -3,6 +3,7 @@ import { getConnector, secretInputNames } from "@superset/shared/connectors";
 import { env } from "../../../env";
 import { connectionById } from "../../../lib/connectors/lookup";
 import {
+	ConnectorUnavailableError,
 	ensureFreshConnection,
 	UnrefreshableConnectionError,
 } from "../../../lib/connectors/refresh";
@@ -186,6 +187,11 @@ export async function resolveTarget(
 				connectUrl: connectUrl(slug, request.organizationId),
 				reason: error.message,
 			};
+		}
+		// The provider is down, not the connection: sending the user to
+		// reconnect would be a lie they cannot act on.
+		if (error instanceof ConnectorUnavailableError) {
+			throw new PluginTargetError(error.message, 502);
 		}
 		throw error;
 	}
