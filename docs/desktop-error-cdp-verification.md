@@ -159,3 +159,30 @@ all three cases. Screenshots were captured; the small-window screenshot was
 visually inspected. Results: `/tmp/ripple-cdp-audit/second-pass-faults.json`.
 Sibling-route reset timing is additionally covered by the automated integration
 test using the production boundary; the CDP checks here exercised Go home.
+
+## Issue #7648: Machine resources tooltip crash
+
+Followed Settings → Usage → Machine resources using real CDP input on this
+worktree (renderer 4845, CDP 9457, signed-in session). At 1100×760, allowed 15
+seconds of live sampling, then attempted 20 cursor moves across the charts and
+20 manual refresh clicks over 20 seconds.
+
+Both the pre-PR renderer source (`29ed948df3`) and initial PR (`31440ef780`)
+crashed after the first refresh/cursor sequence. The captured stack identifies
+`RangeError: Invalid time value` in `ResourceSparkline`'s tooltip label formatter.
+`ChartTooltipContent` passes the configured series text as its first formatter
+argument, not the timestamp; converting it with `Number` produces `NaN`.
+
+The fix reads `payload[0].payload.at`, validates the timestamp, and omits the time
+label for absent/invalid samples. The identical CDP sequence then completed all
+20 refresh clicks and 20 cursor moves with no captured console errors, no error
+screen, and live metrics still visible. Regression tests cover configured text
+labels, missing payloads, and invalid/out-of-range dates. Before and after
+screenshots were captured and visually inspected:
+`/tmp/ripple-cdp-audit/issue7648-before.png` and
+`/tmp/ripple-cdp-audit/issue7648-fixed.png`; matching JSON files contain results.
+
+This reproduces a real whole-window crash in the reported view without fault
+injection. It does not reproduce the secondary `useLingui` exception, establish
+that all reported occurrences have this cause, or verify the released 1.29.0
+binary. The initial boundary refactor alone did not fix this tooltip bug.
