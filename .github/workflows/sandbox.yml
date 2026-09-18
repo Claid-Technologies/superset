@@ -12,8 +12,6 @@ on:
     branches: [main]
     paths:
       - "packages/sandbox/**"
-      - "packages/host-service/**"
-      - "packages/pty-daemon/**"
       - "packages/shared/src/sandbox-contract.ts"
   workflow_dispatch:
     inputs:
@@ -143,7 +141,9 @@ jobs:
     # A merge that touches the image or the bundle releases it. Without this the
     # bundle moved on every merge while the image and the goldens only moved when
     # someone remembered, so every new box booted an image older than the bundle
-    # it then fetched.
+    # it then fetched. host-service is deliberately not here: a box picks one up
+    # by hash from `bundle/assets.json`, so what reaches a box is the version
+    # bump in that file, which is already a `packages/sandbox/**` change.
     if: |
       github.ref == 'refs/heads/main' && (
         github.event_name == 'push' ||
