@@ -6645,6 +6645,9 @@ msgstr "hotovo · pracoval 7 s"
 msgid "First sign-in view → auth → onboarding → real workspace (last 7d, 2d window)"
 msgstr "První zobrazení přihlášení → ověření → onboarding → skutečný pracovní prostor (posledních 7 d, okno 2 d)"
 
+msgid "First time using the app? A device stays offline here until Remote Access is turned on in the Superset desktop app under Settings → Remote Access."
+msgstr "Používáte aplikaci poprvé? Zařízení se zde zobrazuje jako offline, dokud v desktopové aplikaci Superset nezapnete Vzdálený přístup v Nastavení → Vzdálený přístup."
+
 msgid "First-ever pageview on superset.sh, daily"
 msgstr "První zobrazení stránky na superset.sh vůbec, denně"
 
@@ -13261,6 +13264,9 @@ msgstr "Nastavit projekt na {hostName}"
 
 msgid "Set up project…"
 msgstr "Nastavit projekt…"
+
+msgid "Set up remote access"
+msgstr "Nastavit vzdálený přístup"
 
 msgid "Set up this project for Superset"
 msgstr "Připravit tento projekt pro Superset"

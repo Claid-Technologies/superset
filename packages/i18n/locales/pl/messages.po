@@ -6645,6 +6645,9 @@ msgstr "zakończono · pracował 7 s"
 msgid "First sign-in view → auth → onboarding → real workspace (last 7d, 2d window)"
 msgstr "Pierwsze wyświetlenie logowania → uwierzytelnienie → onboarding → prawdziwy obszar roboczy (ostatnie 7 dni, okno 2 dni)"
 
+msgid "First time using the app? A device stays offline here until Remote Access is turned on in the Superset desktop app under Settings → Remote Access."
+msgstr "Pierwszy raz korzystasz z aplikacji? Urządzenie pozostaje tu offline, dopóki nie włączysz dostępu zdalnego w aplikacji Superset na komputerze w Ustawienia → Dostęp zdalny."
+
 msgid "First-ever pageview on superset.sh, daily"
 msgstr "Pierwsza w historii odsłona na superset.sh, dziennie"
 
@@ -13261,6 +13264,9 @@ msgstr "Skonfiguruj projekt na {hostName}"
 
 msgid "Set up project…"
 msgstr "Skonfiguruj projekt…"
+
+msgid "Set up remote access"
+msgstr "Skonfiguruj dostęp zdalny"
 
 msgid "Set up this project for Superset"
 msgstr "Skonfiguruj ten projekt pod Superset"
