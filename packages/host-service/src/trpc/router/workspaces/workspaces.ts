@@ -34,6 +34,7 @@ import {
 } from "../../index";
 import {
 	buildTerminalAgentLaunch,
+	seedAgentLaunchTrust,
 	validateAgentLaunchOptions,
 } from "../agents";
 import {
@@ -1288,6 +1289,12 @@ export const workspacesRouter = router({
 						effort: soleLaunch.effort,
 						mode: soleLaunch.mode,
 					});
+					const localRow = ctx.db.query.workspaces
+						.findFirst({ where: eq(workspaces.id, workspaceRow.id) })
+						.sync();
+					if (localRow) {
+						await seedAgentLaunchTrust(ctx.db, localRow, soleLaunch.agent);
+					}
 				} catch (err) {
 					console.warn(
 						"[workspaces.create] wait-for-setup chain unavailable, dispatching agent in parallel:",

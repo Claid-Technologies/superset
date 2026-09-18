@@ -1,27 +1,38 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import {
 	chmodSync,
+	mkdirSync,
 	mkdtempSync,
 	readFileSync,
+	realpathSync,
 	rmSync,
 	statSync,
 	writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import type { HostDb } from "../../../../db";
 import {
+	carryFolderTrust,
+	isCodexFolderTrusted,
 	resolveTrustFamily,
+	seedAgentWorkspaceTrust,
 	seedClaudeFolderTrust,
 	seedCodexFolderTrust,
 } from "./seed-agent-trust";
 
 let dir: string;
+let previousSupersetHome: string | undefined;
 
 beforeEach(() => {
-	dir = mkdtempSync(join(tmpdir(), "seed-agent-trust-"));
+	dir = realpathSync(mkdtempSync(join(tmpdir(), "seed-agent-trust-")));
+	previousSupersetHome = process.env.SUPERSET_HOME_DIR;
+	process.env.SUPERSET_HOME_DIR = join(dir, "superset-home");
 });
 
 afterEach(() => {
+	if (previousSupersetHome === undefined) delete process.env.SUPERSET_HOME_DIR;
+	else process.env.SUPERSET_HOME_DIR = previousSupersetHome;
 	rmSync(dir, { recursive: true, force: true });
 });
 
@@ -214,6 +225,239 @@ describe("seedCodexFolderTrust", () => {
 		await seedCodexFolderTrust(file, "/tmp/session-h");
 		expect(readFileSync(file, "utf-8")).toContain(
 			'[projects."/tmp/session-h"]\ntrust_level = "trusted"\n',
+		);
+	});
+});
+
+function mockDb(options: {
+	defaultClaudeConfigDir?: string;
+	defaultCodexHome?: string;
+	repoPath?: string;
+}): HostDb {
+	return {
+		select: () => ({
+			from: () => ({
+				get: () => ({
+					defaultClaudeConfigDir: options.defaultClaudeConfigDir ?? null,
+					defaultCodexHome: options.defaultCodexHome ?? null,
+				}),
+				where: () => ({
+					get: () =>
+						options.repoPath ? { repoPath: options.repoPath } : undefined,
+				}),
+			}),
+		}),
+	} as unknown as HostDb;
+}
+
+function trustedState(...folders: string[]): string {
+	return JSON.stringify({
+		oauthAccount: { emailAddress: "someone@example.com" },
+		projects: Object.fromEntries(
+			folders.map((folder) => [folder, { hasTrustDialogAccepted: true }]),
+		),
+	});
+}
+
+function readProjects(file: string): Record<string, unknown> {
+	return JSON.parse(readFileSync(file, "utf-8")).projects ?? {};
+}
+
+const claude = { presetId: "claude", command: "claude", env: {} };
+
+describe("seedAgentWorkspaceTrust", () => {
+	let personalStore: string;
+	let workDir: string;
+	let workStore: string;
+	let repo: string;
+	let worktree: string;
+	const stores = async () => [personalStore, workStore];
+
+	beforeEach(() => {
+		personalStore = join(dir, "personal.claude.json");
+		workDir = join(dir, "claude-work");
+		workStore = join(workDir, ".claude.json");
+		repo = join(dir, "email-triage");
+		worktree = join(dir, "worktrees", "email-triage-feature");
+		for (const folder of [workDir, repo, worktree]) {
+			mkdirSync(folder, { recursive: true });
+		}
+		writeFileSync(workStore, trustedState());
+	});
+
+	test("project workspace on the project's own checkout inherits trust accepted under another account", async () => {
+		writeFileSync(personalStore, trustedState(repo));
+		await seedAgentWorkspaceTrust(
+			mockDb({ repoPath: repo }),
+			{ worktreePath: repo, projectId: "project-1" },
+			{ ...claude, env: { CLAUDE_CONFIG_DIR: workDir } },
+			stores,
+		);
+		expect(readProjects(workStore)).toEqual({
+			[repo]: { hasTrustDialogAccepted: true },
+		});
+		expect(JSON.parse(readFileSync(workStore, "utf-8")).oauthAccount).toEqual({
+			emailAddress: "someone@example.com",
+		});
+	});
+
+	test("host-resumed launch, with no per-agent env, targets the selected default account", async () => {
+		writeFileSync(personalStore, trustedState(repo));
+		await seedAgentWorkspaceTrust(
+			mockDb({ defaultClaudeConfigDir: workDir, repoPath: repo }),
+			{ worktreePath: repo, projectId: "project-1" },
+			claude,
+			stores,
+		);
+		expect(readProjects(workStore)).toEqual({
+			[repo]: { hasTrustDialogAccepted: true },
+		});
+	});
+
+	test("worktree workspace inherits the main checkout's trust, keyed on the main checkout", async () => {
+		writeFileSync(personalStore, trustedState(repo));
+		await seedAgentWorkspaceTrust(
+			mockDb({ repoPath: repo }),
+			{ worktreePath: worktree, projectId: "project-1" },
+			{ ...claude, env: { CLAUDE_CONFIG_DIR: workDir } },
+			stores,
+		);
+		expect(readProjects(workStore)).toEqual({
+			[repo]: { hasTrustDialogAccepted: true },
+		});
+	});
+
+	test("project folder no account has accepted is left to the dialog", async () => {
+		writeFileSync(personalStore, trustedState(join(dir, "elsewhere")));
+		const before = readFileSync(workStore, "utf-8");
+		await seedAgentWorkspaceTrust(
+			mockDb({ repoPath: repo }),
+			{ worktreePath: repo, projectId: "project-1" },
+			{ ...claude, env: { CLAUDE_CONFIG_DIR: workDir } },
+			stores,
+		);
+		expect(readFileSync(workStore, "utf-8")).toBe(before);
+	});
+
+	test("already-trusted target is a no-op that never scans for other accounts", async () => {
+		writeFileSync(workStore, trustedState(repo));
+		const before = readFileSync(workStore, "utf-8");
+		let scanned = false;
+		await seedAgentWorkspaceTrust(
+			mockDb({ repoPath: repo }),
+			{ worktreePath: worktree, projectId: "project-1" },
+			{ ...claude, env: { CLAUDE_CONFIG_DIR: workDir } },
+			async () => {
+				scanned = true;
+				return [personalStore];
+			},
+		);
+		expect(scanned).toBe(false);
+		expect(readFileSync(workStore, "utf-8")).toBe(before);
+	});
+
+	test("corrupt target state file is left untouched", async () => {
+		writeFileSync(personalStore, trustedState(repo));
+		writeFileSync(workStore, "{not json");
+		await seedAgentWorkspaceTrust(
+			mockDb({ repoPath: repo }),
+			{ worktreePath: repo, projectId: "project-1" },
+			{ ...claude, env: { CLAUDE_CONFIG_DIR: workDir } },
+			stores,
+		);
+		expect(readFileSync(workStore, "utf-8")).toBe("{not json");
+	});
+
+	test("corrupt source state file is not evidence of trust", async () => {
+		writeFileSync(
+			personalStore,
+			`{"projects":{"${repo}":{"hasTrustDialogAccepted":true}`,
+		);
+		const before = readFileSync(workStore, "utf-8");
+		await seedAgentWorkspaceTrust(
+			mockDb({ repoPath: repo }),
+			{ worktreePath: repo, projectId: "project-1" },
+			{ ...claude, env: { CLAUDE_CONFIG_DIR: workDir } },
+			stores,
+		);
+		expect(readFileSync(workStore, "utf-8")).toBe(before);
+	});
+
+	test("session workspace is seeded outright without consulting other accounts", async () => {
+		const session = join(dir, "session");
+		mkdirSync(session);
+		let scanned = false;
+		await seedAgentWorkspaceTrust(
+			mockDb({}),
+			{ worktreePath: session, projectId: null },
+			{ ...claude, env: { CLAUDE_CONFIG_DIR: workDir } },
+			async () => {
+				scanned = true;
+				return [];
+			},
+		);
+		expect(scanned).toBe(false);
+		expect(readProjects(workStore)).toEqual({
+			[session]: { hasTrustDialogAccepted: true },
+		});
+	});
+
+	test("codex project workspace inherits trust from another CODEX_HOME", async () => {
+		const personalHome = join(dir, "codex");
+		const workHome = join(dir, "codex-work");
+		mkdirSync(personalHome);
+		mkdirSync(workHome);
+		writeFileSync(
+			join(personalHome, "config.toml"),
+			`model = "gpt-5"\n\n[projects."${repo}"]\ntrust_level = "trusted"\n`,
+		);
+		await seedAgentWorkspaceTrust(
+			mockDb({ repoPath: repo }),
+			{ worktreePath: repo, projectId: "project-1" },
+			{ presetId: "codex", command: "codex", env: { CODEX_HOME: workHome } },
+			async () => [
+				join(personalHome, "config.toml"),
+				join(workHome, "config.toml"),
+			],
+		);
+		expect(
+			await isCodexFolderTrusted(join(workHome, "config.toml"), repo),
+		).toBe(true);
+	});
+});
+
+describe("carryFolderTrust", () => {
+	test("never reads the target as its own evidence", async () => {
+		const target = join(dir, ".claude.json");
+		writeFileSync(target, trustedState());
+		const before = readFileSync(target, "utf-8");
+		await carryFolderTrust("claude", target, async () => [target], ["/repo"]);
+		expect(readFileSync(target, "utf-8")).toBe(before);
+	});
+
+	test("preserves an explicit codex untrusted entry in the target", async () => {
+		const source = join(dir, "source.toml");
+		const target = join(dir, "target.toml");
+		writeFileSync(source, '[projects."/repo"]\ntrust_level = "trusted"\n');
+		writeFileSync(target, '[projects."/repo"]\ntrust_level = "untrusted"\n');
+		await carryFolderTrust("codex", target, async () => [source], ["/repo"]);
+		expect(readFileSync(target, "utf-8")).toBe(
+			'[projects."/repo"]\ntrust_level = "untrusted"\n',
+		);
+	});
+});
+
+describe("isCodexFolderTrusted", () => {
+	test("reads trust_level only from the matching table", async () => {
+		const file = join(dir, "config.toml");
+		writeFileSync(
+			file,
+			'[projects."/other"]\ntrust_level = "trusted"\n\n[projects."/repo"]\ntrust_level = "untrusted"\n',
+		);
+		expect(await isCodexFolderTrusted(file, "/other")).toBe(true);
+		expect(await isCodexFolderTrusted(file, "/repo")).toBe(false);
+		expect(await isCodexFolderTrusted(join(dir, "missing.toml"), "/repo")).toBe(
+			false,
 		);
 	});
 });

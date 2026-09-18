@@ -4,5 +4,6 @@ export {
 	agentsRouter,
 	buildTerminalAgentLaunch,
 	runAgentInWorkspace,
+	seedAgentLaunchTrust,
 	validateAgentLaunchOptions,
 } from "./agents";

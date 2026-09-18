@@ -7,7 +7,17 @@
  * fresh standalone repo inherits nothing), so every new session would
  * otherwise prompt. Auto-trusting is sound only because the host itself just
  * created the folder as an empty scaffold — never seed a folder with
- * pre-existing user content.
+ * pre-existing user content on the host's own authority.
+ *
+ * Project folders hold content the host did not write (a clone, a teammate's
+ * branch), so adding one to Superset is not a trust decision and the host
+ * never makes one for it. Trust is stored per account file, though, so a
+ * folder the user accepted under one login prompts again under every other
+ * login, and again after switching the default account. For project
+ * workspaces the host therefore only carries the user's own recorded
+ * acceptance of that exact folder (or of the project's main checkout, which
+ * worktrees inherit from) into the launching account's store. A folder no
+ * account has accepted still shows the dialog.
  *
  * Each store is the CLI's own sanctioned escape hatch: Claude's untrusted-
  * folder error says to set `projects[<path>].hasTrustDialogAccepted: true`
@@ -28,8 +38,14 @@ import {
 } from "node:fs/promises";
 import { homedir } from "node:os";
 import { dirname, join, resolve } from "node:path";
+import { eq } from "drizzle-orm";
 import type { HostDb } from "../../../../db";
+import { projects } from "../../../../db/schema";
 import { resolveDefaultAccountEnv } from "../../usage/default-account";
+import {
+	discoverClaudeProfiles,
+	discoverCodexHomes,
+} from "../../usage/profiles";
 
 type TrustFamily = "claude" | "codex";
 
@@ -144,6 +160,33 @@ export async function seedClaudeFolderTrust(
 }
 
 /**
+ * True only for a readable store that records acceptance of `folderPath`. A
+ * missing or corrupt store is not evidence of anything.
+ */
+export async function isClaudeFolderTrusted(
+	stateFile: string,
+	folderPath: string,
+): Promise<boolean> {
+	try {
+		const state = JSON.parse(await readFile(stateFile, "utf-8"));
+		return state?.projects?.[folderPath]?.hasTrustDialogAccepted === true;
+	} catch {
+		return false;
+	}
+}
+
+const CODEX_PROJECT_ENTRY =
+	/^\s*\[?\s*projects\s*\.\s*(?:"((?:[^"\\]|\\.)*)"|'([^']*)')\s*[\].]/;
+
+function codexProjectEntryKey(line: string): string | undefined {
+	const match = CODEX_PROJECT_ENTRY.exec(line);
+	if (!match) return undefined;
+	return match[1] !== undefined
+		? match[1].replace(/\\(["\\])/g, "$1")
+		: match[2];
+}
+
+/**
  * True when the config already defines a `projects` entry for `folderPath`,
  * tolerating header spacing and both TOML string styles (plus top-level
  * dotted keys). Appending a duplicate table would make the whole file
@@ -151,14 +194,38 @@ export async function seedClaudeFolderTrust(
  * Codex itself writes.
  */
 function codexProjectEntryExists(content: string, folderPath: string): boolean {
-	const entry =
-		/^\s*\[?\s*projects\s*\.\s*(?:"((?:[^"\\]|\\.)*)"|'([^']*)')\s*[\].]/;
+	return content
+		.split(/\r?\n/)
+		.some((line) => codexProjectEntryKey(line) === folderPath);
+}
+
+/**
+ * True only for the `[projects."<path>"]` table form Codex itself writes,
+ * with `trust_level = "trusted"` inside it. Rarer spellings read as untrusted,
+ * which costs one dialog instead of a wrongly carried decision.
+ */
+export async function isCodexFolderTrusted(
+	configFile: string,
+	folderPath: string,
+): Promise<boolean> {
+	let content: string;
+	try {
+		content = await readFile(configFile, "utf-8");
+	} catch {
+		return false;
+	}
+	let inTable = false;
 	for (const line of content.split(/\r?\n/)) {
-		const match = entry.exec(line);
-		if (!match) continue;
-		const key =
-			match[1] !== undefined ? match[1].replace(/\\(["\\])/g, "$1") : match[2];
-		if (key === folderPath) return true;
+		if (/^\s*\[/.test(line)) {
+			inTable = codexProjectEntryKey(line) === folderPath;
+			continue;
+		}
+		if (
+			inTable &&
+			/^\s*trust_level\s*=\s*["']trusted["']\s*(#.*)?$/.test(line)
+		) {
+			return true;
+		}
 	}
 	return false;
 }
@@ -194,29 +261,102 @@ function normalizeFolderPath(path: string): string {
 	}
 }
 
+const FOLDER_TRUST: Record<
+	TrustFamily,
+	{
+		isTrusted: (file: string, folderPath: string) => Promise<boolean>;
+		seed: (file: string, folderPath: string) => Promise<void>;
+	}
+> = {
+	claude: { isTrusted: isClaudeFolderTrusted, seed: seedClaudeFolderTrust },
+	codex: { isTrusted: isCodexFolderTrusted, seed: seedCodexFolderTrust },
+};
+
 /**
- * Seed trust for `folderPath` in the launching agent's trust store, if it
- * has a known one. `config` is the already-resolved host agent config of the
- * agent about to launch. Best-effort: failures log and the dialog shows
- * once.
+ * Copy the user's acceptance of each of `folderPaths` from any of
+ * `sourceFiles` into `targetFile`. Nothing is written when the target already
+ * trusts one of them (a worktree inherits from its main checkout) or when no
+ * source has accepted any. Sources are listed lazily: finding them scans the
+ * home directory, which an already-trusted launch should not pay for.
  */
-export async function seedAgentFolderTrust(
+export async function carryFolderTrust(
+	family: TrustFamily,
+	targetFile: string,
+	listSourceFiles: () => Promise<string[]>,
+	folderPaths: string[],
+): Promise<void> {
+	const { isTrusted, seed } = FOLDER_TRUST[family];
+	for (const folderPath of folderPaths) {
+		if (await isTrusted(targetFile, folderPath)) return;
+	}
+	const sources = (await listSourceFiles()).filter(
+		(file) => file !== targetFile,
+	);
+	for (const folderPath of folderPaths) {
+		for (const source of sources) {
+			if (await isTrusted(source, folderPath)) {
+				await seed(targetFile, folderPath);
+				break;
+			}
+		}
+	}
+}
+
+async function discoverTrustStores(family: TrustFamily): Promise<string[]> {
+	if (family === "claude") {
+		const profiles = await discoverClaudeProfiles();
+		return [
+			join(homedir(), ".claude.json"),
+			...profiles.map((profile) => join(profile.configDir, ".claude.json")),
+		];
+	}
+	const homes = await discoverCodexHomes();
+	return homes.map(({ home }) => join(home, "config.toml"));
+}
+
+/**
+ * Keep the launching agent from stalling on the trust dialog in `workspace`,
+ * as far as the file header allows: a session folder is seeded outright, a
+ * project folder only inherits what the user already accepted under another
+ * account. `config` is the already-resolved host agent config of the agent
+ * about to launch. Best-effort: failures log and the dialog shows once.
+ */
+export async function seedAgentWorkspaceTrust(
 	db: HostDb,
-	folderPath: string,
+	workspace: { worktreePath: string; projectId: string | null },
 	config: { presetId: string; command: string; env: Record<string, string> },
+	listTrustStores: (
+		family: TrustFamily,
+	) => Promise<string[]> = discoverTrustStores,
 ): Promise<void> {
 	try {
 		const target = resolveTrustTarget(db, config);
 		if (target === null) return;
-		const normalized = normalizeFolderPath(folderPath);
-		if (target.family === "claude") {
-			await seedClaudeFolderTrust(target.file, normalized);
-		} else {
-			await seedCodexFolderTrust(target.file, normalized);
+		const folderPath = normalizeFolderPath(workspace.worktreePath);
+		if (workspace.projectId === null) {
+			await FOLDER_TRUST[target.family].seed(target.file, folderPath);
+			return;
 		}
+		const project = db
+			.select({ repoPath: projects.repoPath })
+			.from(projects)
+			.where(eq(projects.id, workspace.projectId))
+			.get();
+		const folderPaths = [
+			...new Set([
+				folderPath,
+				...(project ? [normalizeFolderPath(project.repoPath)] : []),
+			]),
+		];
+		await carryFolderTrust(
+			target.family,
+			target.file,
+			() => listTrustStores(target.family),
+			folderPaths,
+		);
 	} catch (err) {
 		console.warn(
-			`[agents.run] failed to pre-trust session folder '${folderPath}' for agent '${config.presetId}':`,
+			`[agents.run] failed to pre-trust workspace folder '${workspace.worktreePath}' for agent '${config.presetId}':`,
 			err,
 		);
 	}
