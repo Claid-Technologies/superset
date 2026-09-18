@@ -6645,8 +6645,8 @@ msgstr "bitti · 7 sn çalıştı"
 msgid "First sign-in view → auth → onboarding → real workspace (last 7d, 2d window)"
 msgstr "İlk oturum açma görünümü → kimlik doğrulama → ilk kurulum → gerçek çalışma alanı (son 7g, 2g pencere)"
 
-msgid "First time using the app? A device stays offline here until Remote Access is turned on in the Superset desktop app under Settings → Remote Access."
-msgstr "Uygulamayı ilk kez mi kullanıyorsunuz? Superset masaüstü uygulamasında Ayarlar → Uzaktan erişim bölümünden uzaktan erişim açılana kadar cihaz burada çevrimdışı görünür."
+msgid "First time here? Turn on Remote Access in the desktop app under Settings → Remote Access."
+msgstr "İlk kez mi buradasınız? Masaüstü uygulamasında Ayarlar → Uzaktan erişim bölümünden uzaktan erişimi açın."
 
 msgid "First-ever pageview on superset.sh, daily"
 msgstr "superset.sh üzerinde günlük ilk kez sayfa görüntüleme"

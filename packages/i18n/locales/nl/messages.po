@@ -6645,8 +6645,8 @@ msgstr "klaar · 7s gewerkt"
 msgid "First sign-in view → auth → onboarding → real workspace (last 7d, 2d window)"
 msgstr "Eerste weergave inlogscherm → auth → onboarding → echte werkruimte (laatste 7d, venster van 2d)"
 
-msgid "First time using the app? A device stays offline here until Remote Access is turned on in the Superset desktop app under Settings → Remote Access."
-msgstr "Gebruik je de app voor het eerst? Een apparaat blijft hier offline totdat externe toegang is ingeschakeld in de Superset-desktopapp onder Instellingen → Externe toegang."
+msgid "First time here? Turn on Remote Access in the desktop app under Settings → Remote Access."
+msgstr "Voor het eerst hier? Zet externe toegang aan in de desktopapp onder Instellingen → Externe toegang."
 
 msgid "First-ever pageview on superset.sh, daily"
 msgstr "Allereerste paginaweergave op superset.sh, dagelijks"

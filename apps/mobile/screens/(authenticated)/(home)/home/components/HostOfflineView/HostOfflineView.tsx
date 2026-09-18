@@ -29,11 +29,10 @@ export function HostOfflineView({ hostName }: { hostName: string }) {
 				<Text className="text-center text-muted-foreground">
 					<Trans>Its workspaces will appear when it reconnects.</Trans>
 				</Text>
-				<Text className="text-center text-sm text-muted-foreground">
+				<Text className="mt-2 text-center text-sm text-muted-foreground">
 					<Trans>
-						First time using the app? A device stays offline here until Remote
-						Access is turned on in the Superset desktop app under Settings →
-						Remote Access.
+						First time here? Turn on Remote Access in the desktop app under
+						Settings → Remote Access.
 					</Trans>
 				</Text>
 			</View>

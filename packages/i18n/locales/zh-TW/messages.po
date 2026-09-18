@@ -6645,8 +6645,8 @@ msgstr "已完成 · 用時7秒"
 msgid "First sign-in view → auth → onboarding → real workspace (last 7d, 2d window)"
 msgstr "首次登入頁 → 認證 → 引導 → 真實工作區（最近7天，2天視窗）"
 
-msgid "First time using the app? A device stays offline here until Remote Access is turned on in the Superset desktop app under Settings → Remote Access."
-msgstr "第一次使用這個應用程式？在Superset桌面應用程式的「設定 → 遠端存取」中開啟遠端存取之前，裝置在這裡會一直顯示為離線。"
+msgid "First time here? Turn on Remote Access in the desktop app under Settings → Remote Access."
+msgstr "第一次使用？請在桌面應用程式的「設定 → 遠端存取」中開啟遠端存取。"
 
 msgid "First-ever pageview on superset.sh, daily"
 msgstr "每日首次存取superset.sh的頁面瀏覽數"

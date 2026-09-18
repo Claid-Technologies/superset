@@ -6645,8 +6645,8 @@ msgstr "terminato · ha lavorato per 7s"
 msgid "First sign-in view → auth → onboarding → real workspace (last 7d, 2d window)"
 msgstr "Prima schermata di accesso → autenticazione → onboarding → workspace reale (ultimi 7g, finestra 2g)"
 
-msgid "First time using the app? A device stays offline here until Remote Access is turned on in the Superset desktop app under Settings → Remote Access."
-msgstr "Prima volta che usi l'app? Un dispositivo resta offline qui finché non attivi l'accesso remoto nell'app desktop di Superset, in Impostazioni → Accesso remoto."
+msgid "First time here? Turn on Remote Access in the desktop app under Settings → Remote Access."
+msgstr "Prima volta qui? Attiva l'accesso remoto nell'app desktop in Impostazioni → Accesso remoto."
 
 msgid "First-ever pageview on superset.sh, daily"
 msgstr "Prima visualizzazione in assoluto su superset.sh, giornaliero"

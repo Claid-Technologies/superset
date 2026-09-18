@@ -6645,8 +6645,8 @@ msgstr "완료 · 7초 작업"
 msgid "First sign-in view → auth → onboarding → real workspace (last 7d, 2d window)"
 msgstr "첫 로그인 화면 → 인증 → 온보딩 → 실제 워크스페이스 (최근 7일, 2일 윈도우)"
 
-msgid "First time using the app? A device stays offline here until Remote Access is turned on in the Superset desktop app under Settings → Remote Access."
-msgstr "앱을 처음 사용하시나요? Superset 데스크톱 앱의 설정 → 원격 액세스에서 원격 액세스를 켜기 전까지 기기는 여기에서 오프라인으로 표시됩니다."
+msgid "First time here? Turn on Remote Access in the desktop app under Settings → Remote Access."
+msgstr "처음이신가요? 데스크톱 앱의 설정 → 원격 액세스에서 원격 액세스를 켜세요."
 
 msgid "First-ever pageview on superset.sh, daily"
 msgstr "superset.sh 최초 페이지뷰, 일별"
