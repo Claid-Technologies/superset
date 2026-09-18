@@ -20,8 +20,16 @@ const renderBootError = (message: string, error?: unknown) => {
 	const titleBar = document.createElement("div");
 	titleBar.setAttribute("aria-hidden", "true");
 	Object.assign(titleBar.style, failureLayoutStyles.titleBar);
+	titleBar.style.setProperty(
+		"-webkit-app-region",
+		failureLayoutStyles.titleBar.WebkitAppRegion,
+	);
 	const content = document.createElement("main");
 	Object.assign(content.style, failureLayoutStyles.content);
+	content.style.setProperty(
+		"-webkit-app-region",
+		failureLayoutStyles.content.WebkitAppRegion,
+	);
 	wrapper.append(titleBar, content);
 
 	const inner = document.createElement("div");

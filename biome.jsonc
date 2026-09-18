@@ -109,8 +109,7 @@
 		{
 			"includes": [
 				"apps/desktop/src/renderer/**",
-				"!**/*.test.ts",
-				"!**/*.test.tsx"
+				"!apps/desktop/src/renderer/components/RendererLayout/renderer-safety.test.ts"
 			],
 			"linter": {
 				"rules": {

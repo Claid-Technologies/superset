@@ -368,6 +368,15 @@ try {
 		bootFrame.querySelector("button")?.textContent === "Recharger",
 		"Boot fallback recovery missing",
 	);
+	check(
+		(bootFrame.firstElementChild as HTMLElement).style.getPropertyValue(
+			"-webkit-app-region",
+		) === "drag" &&
+			bootFrame
+				.querySelector("main")
+				?.style.getPropertyValue("-webkit-app-region") === "no-drag",
+		"Boot fallback drag regions missing",
+	);
 	const contents = app.innerHTML;
 	boot.markBootMounted();
 	boot.reportBootError("Late error");

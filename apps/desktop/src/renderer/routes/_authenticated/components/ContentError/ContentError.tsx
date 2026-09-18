@@ -4,18 +4,12 @@ import type { ErrorComponentProps } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { HiExclamationTriangle } from "react-icons/hi2";
+import { failureDiagnostic } from "renderer/lib/failure-diagnostic/failure-diagnostic";
 
 export function ContentError({ error }: ErrorComponentProps) {
 	const { t } = useLingui();
 	const message =
-		error instanceof Error
-			? error.message
-			: String(
-					error ??
-						t({
-							message: "Unknown error",
-						}),
-				);
+		error == null ? t({ message: "Unknown error" }) : failureDiagnostic(error);
 
 	useEffect(() => {
 		console.error("[content] Content route error caught:", error);
