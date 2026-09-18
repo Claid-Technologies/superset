@@ -1047,6 +1047,9 @@ msgstr "<0>{primaryFont}</0> chưa được cài trên hệ thống này. Đang 
 msgid "<0>#{0}</0> <1>of {1} on the leaderboard</1>"
 msgstr "<0>#{0}</0> <1>trên {1} trong bảng xếp hạng</1>"
 
+msgid "<0>Coming soon to</0><1>App Store</1>"
+msgstr "<0>Sắp có trên</0><1>App Store</1>"
+
 msgid "<0>Coming soon to</0><1>Google Play</1>"
 msgstr "<0>Sắp có trên</0><1>Google Play</1>"
 
@@ -14327,6 +14330,9 @@ msgstr "Superset Enterprise là Superset dành cho đội nhóm. Hãy liên hệ
 
 msgid "Superset for iPhone"
 msgstr "Superset cho iPhone"
+
+msgid "Superset for iPhone is on the way. Be first to know when it ships."
+msgstr "Superset cho iPhone đang đến. Hãy là người đầu tiên biết khi nó ra mắt."
 
 msgid "Superset for your team"
 msgstr "Superset cho đội ngũ của bạn"

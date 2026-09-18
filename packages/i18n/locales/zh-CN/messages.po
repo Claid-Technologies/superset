@@ -1047,6 +1047,9 @@ msgstr "此系统未安装<0>{primaryFont}</0>。将回退到下一个可用字�
 msgid "<0>#{0}</0> <1>of {1} on the leaderboard</1>"
 msgstr "<0>#{0}</0> <1>／排行榜共 {1} 人</1>"
 
+msgid "<0>Coming soon to</0><1>App Store</1>"
+msgstr "<0>即将登陆</0><1>App Store</1>"
+
 msgid "<0>Coming soon to</0><1>Google Play</1>"
 msgstr "<0>即将登陆</0><1>Google Play</1>"
 
@@ -14327,6 +14330,9 @@ msgstr "Superset Enterprise是面向团队的Superset。联系我们，了解它
 
 msgid "Superset for iPhone"
 msgstr "Superset iPhone 版"
+
+msgid "Superset for iPhone is on the way. Be first to know when it ships."
+msgstr "Superset iPhone 版即将到来。发布时第一时间通知你。"
 
 msgid "Superset for your team"
 msgstr "为你的团队准备的Superset"

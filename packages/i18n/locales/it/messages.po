@@ -1047,6 +1047,9 @@ msgstr "<0>{primaryFont}</0> non è installato su questo sistema. Verrà usato i
 msgid "<0>#{0}</0> <1>of {1} on the leaderboard</1>"
 msgstr "<0>#{0}</0> <1>su {1} in classifica</1>"
 
+msgid "<0>Coming soon to</0><1>App Store</1>"
+msgstr "<0>Presto su</0><1>App Store</1>"
+
 msgid "<0>Coming soon to</0><1>Google Play</1>"
 msgstr "<0>Presto su</0><1>Google Play</1>"
 
@@ -14327,6 +14330,9 @@ msgstr "Superset Enterprise è Superset per i team. Contattaci per sapere cosa i
 
 msgid "Superset for iPhone"
 msgstr "Superset per iPhone"
+
+msgid "Superset for iPhone is on the way. Be first to know when it ships."
+msgstr "Superset per iPhone è in arrivo. Scoprilo per primo quando sarà disponibile."
 
 msgid "Superset for your team"
 msgstr "Superset per il tuo team"

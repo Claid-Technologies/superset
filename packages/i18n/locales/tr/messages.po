@@ -1047,6 +1047,9 @@ msgstr "<0>{primaryFont}</0> bu sistemde kurulu değil. Sıradaki kullanılabili
 msgid "<0>#{0}</0> <1>of {1} on the leaderboard</1>"
 msgstr "<0>#{0}</0> <1>— liderlik tablosundaki {1} kişi arasında</1>"
 
+msgid "<0>Coming soon to</0><1>App Store</1>"
+msgstr "<1>App Store</1><0>'da yakında</0>"
+
 msgid "<0>Coming soon to</0><1>Google Play</1>"
 msgstr "<1>Google Play</1><0>'de yakında</0>"
 
@@ -14327,6 +14330,9 @@ msgstr "Superset Enterprise, takımlar için Superset'tir. Nelerin dahil olduğu
 
 msgid "Superset for iPhone"
 msgstr "iPhone için Superset"
+
+msgid "Superset for iPhone is on the way. Be first to know when it ships."
+msgstr "iPhone için Superset yolda. Çıktığında ilk siz haberdar olun."
 
 msgid "Superset for your team"
 msgstr "Takımınız için Superset"

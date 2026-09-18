@@ -1047,6 +1047,9 @@ msgstr "<0>{primaryFont}</0>はこのシステムにインストールされて�
 msgid "<0>#{0}</0> <1>of {1} on the leaderboard</1>"
 msgstr "<0>#{0}</0> <1>リーダーボード{1}人中</1>"
 
+msgid "<0>Coming soon to</0><1>App Store</1>"
+msgstr "<1>App Store</1><0>で近日公開</0>"
+
 msgid "<0>Coming soon to</0><1>Google Play</1>"
 msgstr "<1>Google Play</1><0>で近日公開</0>"
 
@@ -14327,6 +14330,9 @@ msgstr "Superset Enterpriseは、チーム向けのSupersetです。含まれる
 
 msgid "Superset for iPhone"
 msgstr "iPhone 版 Superset"
+
+msgid "Superset for iPhone is on the way. Be first to know when it ships."
+msgstr "iPhone 版 Superset を準備中です。リリース時にいち早くお知らせします。"
 
 msgid "Superset for your team"
 msgstr "チームのためのSuperset"

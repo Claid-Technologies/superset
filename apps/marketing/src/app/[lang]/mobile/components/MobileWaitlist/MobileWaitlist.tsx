@@ -6,7 +6,11 @@ import { HiMiniArrowRight, HiMiniCheck } from "react-icons/hi2";
 import { track } from "@/lib/analytics";
 import { withPosthog } from "@/lib/analytics/lazy";
 
-export function AndroidWaitlist() {
+interface MobileWaitlistProps {
+	platform: "ios" | "android";
+}
+
+export function MobileWaitlist({ platform }: MobileWaitlistProps) {
 	const [email, setEmail] = useState("");
 	const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -17,7 +21,7 @@ export function AndroidWaitlist() {
 		withPosthog((posthog) => {
 			const wasOptedOut = posthog.has_opted_out_capturing();
 			if (wasOptedOut) posthog.opt_in_capturing();
-			track("waitlist_signup", { email, platform: "android" });
+			track("waitlist_signup", { email, platform });
 			if (wasOptedOut) posthog.opt_out_capturing();
 		});
 		setIsSubmitted(true);
@@ -30,9 +34,11 @@ export function AndroidWaitlist() {
 					<HiMiniCheck className="size-5 text-brand" />
 					<Trans>You're on the list!</Trans>
 				</p>
-				<p className="mt-1 text-muted-foreground text-sm">
-					<Trans>We'll email you when Superset for Android is ready.</Trans>
-				</p>
+				{platform === "android" ? (
+					<p className="mt-1 text-muted-foreground text-sm">
+						<Trans>We'll email you when Superset for Android is ready.</Trans>
+					</p>
+				) : null}
 			</div>
 		);
 	}
@@ -40,14 +46,14 @@ export function AndroidWaitlist() {
 	return (
 		<form onSubmit={handleSubmit} className="w-full max-w-md">
 			<label
-				htmlFor="android-waitlist-email"
+				htmlFor="mobile-waitlist-email"
 				className="mb-2 block font-mono text-muted-foreground text-xs uppercase tracking-wider"
 			>
 				<Trans>Email address</Trans>
 			</label>
 			<div className="flex flex-col gap-2 sm:flex-row sm:gap-0">
 				<input
-					id="android-waitlist-email"
+					id="mobile-waitlist-email"
 					type="email"
 					required
 					autoComplete="email"

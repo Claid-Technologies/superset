@@ -1047,6 +1047,9 @@ msgstr "이 시스템에 <0>{primaryFont}</0>이(가) 설치되어 있지 않습
 msgid "<0>#{0}</0> <1>of {1} on the leaderboard</1>"
 msgstr "<0>#{0}</0> <1>· 리더보드 {1}명 중</1>"
 
+msgid "<0>Coming soon to</0><1>App Store</1>"
+msgstr "<1>App Store</1><0>출시 예정</0>"
+
 msgid "<0>Coming soon to</0><1>Google Play</1>"
 msgstr "<1>Google Play</1><0>출시 예정</0>"
 
@@ -14327,6 +14330,9 @@ msgstr "Superset Enterprise는 팀을 위한 Superset입니다. 어떤 기능이
 
 msgid "Superset for iPhone"
 msgstr "iPhone용 Superset"
+
+msgid "Superset for iPhone is on the way. Be first to know when it ships."
+msgstr "iPhone용 Superset이 곧 나옵니다. 출시되면 가장 먼저 알려드릴게요."
 
 msgid "Superset for your team"
 msgstr "팀을 위한 Superset"

@@ -1,1 +1,0 @@
-export { AndroidWaitlist } from "./AndroidWaitlist";
