@@ -39,6 +39,15 @@ describe("replaceEditorDocument", () => {
 		expect(after.doc.toString()).toBe("short");
 	});
 
+	it("never leaves the cursor inside a grapheme cluster of the new content", () => {
+		const before = stateWith("a".repeat(100), EditorSelection.single(3));
+		const after = before.update(replaceEditorDocument(before, "ab😀cd")).state;
+
+		const { head } = after.selection.main;
+		expect(head).toBe(2);
+		expect(after.sliceDoc(head)).toBe("😀cd");
+	});
+
 	it("collapses multiple selections to one cursor", () => {
 		const before = stateWith(
 			"a".repeat(100),
