@@ -2,6 +2,7 @@ import * as p from "@clack/prompts";
 import { boolean, CLIError, number, string } from "@superset/cli-framework";
 import { command } from "../../lib/command";
 import { SUPERSET_CONFIG_PATH } from "../../lib/config";
+import { waitForUnresponsiveHost } from "../../lib/host/liveness";
 import {
 	isProcessAlive,
 	readManifest,
@@ -79,19 +80,32 @@ export default command({
 			);
 		}
 
-		const unexpectedExit = await Promise.race([
-			running.exited,
-			new Promise<null>((resolve) => {
-				signal.addEventListener("abort", () => resolve(null), { once: true });
-			}),
+		const stopWatching = new AbortController();
+		signal.addEventListener("abort", () => stopWatching.abort(), {
+			once: true,
+		});
+		const failure = await Promise.race([
+			running.exited.then(
+				(exit) => `exited unexpectedly (${describeHostExit(exit)})`,
+			),
+			waitForUnresponsiveHost({
+				endpoint: `http://127.0.0.1:${running.port}`,
+				authToken: running.secret,
+				signal: stopWatching.signal,
+			}).then((unresponsive) =>
+				unresponsive ? "stopped answering health checks" : null,
+			),
 		]);
+		stopWatching.abort();
 
-		if (unexpectedExit && !signal.aborted) {
+		if (failure && !signal.aborted) {
+			// A wedged event loop never runs a SIGTERM handler.
+			if (isProcessAlive(running.pid)) process.kill(running.pid, "SIGKILL");
 			if (readManifest(organization.id)?.pid === running.pid) {
 				removeManifest(organization.id);
 			}
 			throw new CLIError(
-				`Host service exited unexpectedly (${describeHostExit(unexpectedExit)})`,
+				`Host service ${failure}`,
 				"Run it under a supervisor that restarts on failure, e.g. systemd with Restart=on-failure.",
 			);
 		}
