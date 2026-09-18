@@ -572,9 +572,6 @@ describe("rethrowEnvironmentalGitError", () => {
 	});
 
 	test("does not claim other index mapping failures or network timeouts", () => {
-		// Only the file's storage failing to deliver it is environmental. Running
-		// out of memory mapping the index, and a remote timing out, are other
-		// conditions that share half of the wording.
 		expect(
 			capture(
 				new Error(
