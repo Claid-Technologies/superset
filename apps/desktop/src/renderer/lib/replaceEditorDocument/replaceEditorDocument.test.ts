@@ -48,6 +48,16 @@ describe("replaceEditorDocument", () => {
 		expect(after.sliceDoc(head)).toBe("😀cd");
 	});
 
+	it("measures the cursor against the normalized document, not the raw string", () => {
+		const before = stateWith("a".repeat(100), EditorSelection.single(100));
+		const after = before.update(
+			replaceEditorDocument(before, "ab\r\ncd\r\n"),
+		).state;
+
+		expect(after.doc.toString()).toBe("ab\ncd\n");
+		expect(after.selection.main.head).toBe(after.doc.length);
+	});
+
 	it("collapses multiple selections to one cursor", () => {
 		const before = stateWith(
 			"a".repeat(100),

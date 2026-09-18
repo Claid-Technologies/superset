@@ -14,9 +14,18 @@ export function replaceEditorDocument(
 	state: EditorState,
 	value: string,
 ): TransactionSpec {
-	const head = Math.min(state.selection.main.head, value.length);
+	const changes = state.changes({
+		from: 0,
+		to: state.doc.length,
+		insert: value,
+	});
+	const doc = changes.apply(state.doc);
+	const head = Math.min(state.selection.main.head, doc.length);
+	const line = doc.lineAt(head);
 	return {
-		changes: { from: 0, to: state.doc.length, insert: value },
-		selection: EditorSelection.cursor(clusterBoundaryAtOrBefore(value, head)),
+		changes,
+		selection: EditorSelection.cursor(
+			line.from + clusterBoundaryAtOrBefore(line.text, head - line.from),
+		),
 	};
 }
