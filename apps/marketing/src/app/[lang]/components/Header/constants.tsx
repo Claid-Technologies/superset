@@ -16,6 +16,11 @@ export const PRODUCT_LINKS: NavLink[] = [
 		description: <Trans>Orchestrate any coding agent.</Trans>,
 	},
 	{
+		href: "/mobile",
+		label: <Trans>Mobile</Trans>,
+		description: <Trans>Run your agents from your phone.</Trans>,
+	},
+	{
 		href: "/changelog",
 		label: <Trans>Changelog</Trans>,
 		description: <Trans>New releases and product updates.</Trans>,

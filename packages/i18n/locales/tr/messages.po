@@ -1047,6 +1047,9 @@ msgstr "<0>{primaryFont}</0> bu sistemde kurulu değil. Sıradaki kullanılabili
 msgid "<0>#{0}</0> <1>of {1} on the leaderboard</1>"
 msgstr "<0>#{0}</0> <1>— liderlik tablosundaki {1} kişi arasında</1>"
 
+msgid "<0>Coming soon to</0><1>Google Play</1>"
+msgstr "<1>Google Play</1><0>'de yakında</0>"
+
 msgid "<0>F3</0> · you are here"
 msgstr "<0>F3</0> · buradasınız"
 
@@ -1918,6 +1921,9 @@ msgstr "Yüklenmeye hazır bir güncelleme var."
 
 msgid "Analytics, Ops, and more"
 msgstr "Analiz, operasyonlar ve daha fazlası"
+
+msgid "Android is on the way. Be first to know when it ships."
+msgstr "Android yolda. Çıktığında ilk siz haberdar olun."
 
 msgid "Animate the active terminal cursor."
 msgstr "Etkin terminal imlecini canlandır."
@@ -5448,6 +5454,9 @@ msgstr "Görseli indir"
 msgid "Download Manually"
 msgstr "Elle indir"
 
+msgid "Download on the App Store"
+msgstr "App Store'dan indirin"
+
 msgid "Download starter"
 msgstr "Başlangıç dosyasını indir"
 
@@ -6739,6 +6748,9 @@ msgstr "Klasör görünümü"
 msgid "Folders to check out into new worktrees, one per line, relative to the repo root. Files at the root are always included. Empty checks out everything."
 msgstr "Yeni worktree'lere checkout edilecek klasörler; her satıra bir tane, depo köküne göre. Kökteki dosyalar her zaman dahildir. Boş bırakılırsa her şey checkout edilir."
 
+msgid "Follow every session"
+msgstr "Her oturumu takip edin"
+
 msgid "FOLLOW ON X"
 msgstr "X'TE TAKİP EDİN"
 
@@ -6960,6 +6972,9 @@ msgstr "Superset'i Mac'inize alın"
 
 msgid "Get Superset Pro"
 msgstr "Superset Pro'yu edinin"
+
+msgid "Get the iPhone app"
+msgstr "iPhone uygulamasını edinin"
 
 msgid "Ghost"
 msgstr "Hayalet"
@@ -8099,6 +8114,9 @@ msgstr "Başlatma"
 msgid "Launch agents across features, bug fixes, and refactors, all in parallel. Status at a glance shows which agents are working, which are blocked, and which are waiting on you."
 msgstr "Özellikler, hata düzeltmeleri ve yeniden düzenlemeler için ajanları paralel başlatın. Tek bakışta durum, hangi ajanların çalıştığını, hangilerinin engellendiğini ve hangilerinin sizi beklediğini gösterir."
 
+msgid "Launch an agent on any connected machine the moment an idea lands. Every session gets its own isolated workspace."
+msgstr "Aklınıza bir fikir geldiği anda bağlı herhangi bir makinede bir ajan başlatın. Her oturumun kendi izole çalışma alanı olur."
+
 msgid "Launch mode"
 msgstr "Başlatma modu"
 
@@ -8158,6 +8176,9 @@ msgstr "Takımdan ayrıl"
 
 msgid "Leave the leaderboard?"
 msgstr "Lider tablosundan ayrılınsın mı?"
+
+msgid "Leave your desk.<0/>Keep building."
+msgstr "Masanızdan kalkın.<0/>Geliştirmeye devam edin."
 
 msgid "Leaving organization..."
 msgstr "Kuruluştan ayrılınıyor..."
@@ -11667,6 +11688,9 @@ msgstr "Değişiklik günlüğünü oku"
 msgid "Read the changelog →"
 msgstr "Değişiklik günlüğünü oku →"
 
+msgid "Read the full diff file by file, check the PR status, and open a terminal when you need the raw output."
+msgstr "Tüm diff'i dosya dosya okuyun, PR durumunu kontrol edin ve ham çıktıya ihtiyaç duyduğunuzda bir terminal açın."
+
 msgid "Read the guide to parallel coding agents"
 msgstr "Paralel kodlama ajanları rehberini okuyun"
 
@@ -12128,6 +12152,9 @@ msgstr "Gerekli"
 msgid "Required version: {minimumVersion}+"
 msgstr "Gerekli sürüm: {minimumVersion}+"
 
+msgid "Requires iOS 26 or later. Included with Superset Pro."
+msgstr "iOS 26 veya sonrası gerekir. Superset Pro'ya dahildir."
+
 msgid "Reserved by OS"
 msgstr "İşletim sistemi tarafından ayrılmış"
 
@@ -12407,6 +12434,9 @@ msgstr "İnceleme ve CI kuyrukları, ajanların yarattığı kazancı yiyor."
 msgid "Review becomes the bottleneck"
 msgstr "İnceleme darboğaz hâline gelir"
 
+msgid "Review before you merge"
+msgstr "Birleştirmeden önce inceleyin"
+
 msgid "Review Dismissed"
 msgstr "İnceleme yok sayıldı"
 
@@ -12590,6 +12620,9 @@ msgstr "Çalışma alanlarını her yerde çalıştırın"
 
 msgid "Run your agents from the desktop, any terminal, or your phone."
 msgstr "Ajanlarınızı masaüstünden, herhangi bir terminalden veya telefonunuzdan çalıştırın."
+
+msgid "Run your agents from your phone."
+msgstr "Ajanlarınızı telefonunuzdan çalıştırın."
 
 msgid "running"
 msgstr "çalışıyor"
@@ -14016,11 +14049,17 @@ msgstr "Doğrudan bir Linear biletinden çalışma alanı başlatın. Ajan işi 
 msgid "Start agent"
 msgstr "Ajanı başlat"
 
+msgid "Start agents, follow them live, and review the diff from your phone. Your code stays on your machines."
+msgstr "Telefonunuzdan ajanları başlatın, canlı takip edin ve diff'i inceleyin. Kodunuz makinelerinizde kalır."
+
 msgid "Start an agent or a terminal to begin working in this workspace."
 msgstr "Bu çalışma alanında çalışmaya başlamak için bir ajan veya terminal başlatın."
 
 msgid "Start browsing"
 msgstr "Taramaya başlayın"
+
+msgid "Start coding agents, follow them live, and review the diff from your phone. Available on the App Store; Android is coming soon."
+msgstr "Telefonunuzdan kodlama ajanlarını başlatın, canlı takip edin ve diff'i inceleyin. App Store'da mevcut; Android yakında geliyor."
 
 msgid "Start free. Upgrade when your team outgrows it. Enterprise plans for organizations with advanced security and compliance needs."
 msgstr "Ücretsiz başlayın. Takımınız büyüdüğünde yükseltin. Gelişmiş güvenlik ve uyumluluk ihtiyaçları olan kuruluşlar için Enterprise planları."
@@ -14043,6 +14082,9 @@ msgstr "Çalışma alanı çalıştırma komutunu başlat veya durdur"
 
 msgid "Start with the work."
 msgstr "İşle başlayın."
+
+msgid "Start work from anywhere"
+msgstr "Her yerden işe başlayın"
 
 msgid "Start Workspace"
 msgstr "Çalışma alanı başlat"
@@ -14282,6 +14324,9 @@ msgstr "Superset Tasarım Sistemi"
 
 msgid "Superset Enterprise is Superset for teams. Reach out to learn more about what's included and how it can work for your organization."
 msgstr "Superset Enterprise, takımlar için Superset'tir. Nelerin dahil olduğunu ve kuruluşunuzda nasıl işleyebileceğini öğrenmek için bize ulaşın."
+
+msgid "Superset for iPhone"
+msgstr "iPhone için Superset"
 
 msgid "Superset for your team"
 msgstr "Takımınız için Superset"
@@ -16345,6 +16390,9 @@ msgstr "Uyarı"
 msgid "Warning occurred."
 msgstr "Bir uyarı oluştu."
 
+msgid "Watch agents work in real time and step in with a follow-up, a photo, or a dictated message when they need direction."
+msgstr "Ajanların çalışmasını gerçek zamanlı izleyin ve yönlendirmeye ihtiyaç duyduklarında bir takip mesajı, fotoğraf veya dikte edilmiş bir mesajla devreye girin."
+
 msgid "Watchers"
 msgstr "İzleyenler"
 
@@ -16383,6 +16431,9 @@ msgstr "Kısa süre içinde sizinle iletişime geçeceğiz."
 
 msgid "We'll bring you back as soon as we reconnect."
 msgstr "Bağlantı yeniden kurulur kurulmaz kaldığınız yere döneceksiniz."
+
+msgid "We'll email you when Superset for Android is ready."
+msgstr "Android için Superset hazır olduğunda size e-posta göndereceğiz."
 
 msgid "We'll get back to you shortly."
 msgstr "Kısa süre içinde size döneceğiz."

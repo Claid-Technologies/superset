@@ -1047,6 +1047,9 @@ msgstr "<0>{primaryFont}</0>はこのシステムにインストールされて�
 msgid "<0>#{0}</0> <1>of {1} on the leaderboard</1>"
 msgstr "<0>#{0}</0> <1>リーダーボード{1}人中</1>"
 
+msgid "<0>Coming soon to</0><1>Google Play</1>"
+msgstr "<1>Google Play</1><0>で近日公開</0>"
+
 msgid "<0>F3</0> · you are here"
 msgstr "<0>F3</0> · 現在地"
 
@@ -1918,6 +1921,9 @@ msgstr "アップデートをインストールする準備ができました。
 
 msgid "Analytics, Ops, and more"
 msgstr "分析、運用など"
+
+msgid "Android is on the way. Be first to know when it ships."
+msgstr "Android 版を準備中です。リリース時にいち早くお知らせします。"
 
 msgid "Animate the active terminal cursor."
 msgstr "アクティブなターミナルカーソルをアニメーションします。"
@@ -5448,6 +5454,9 @@ msgstr "画像をダウンロード"
 msgid "Download Manually"
 msgstr "手動でダウンロード"
 
+msgid "Download on the App Store"
+msgstr "App Store からダウンロード"
+
 msgid "Download starter"
 msgstr "スターターをダウンロード"
 
@@ -6739,6 +6748,9 @@ msgstr "フォルダ表示"
 msgid "Folders to check out into new worktrees, one per line, relative to the repo root. Files at the root are always included. Empty checks out everything."
 msgstr "新しいワークツリーにチェックアウトするフォルダを、リポジトリルートからの相対パスで1行に1つずつ。ルートのファイルは常に含まれます。空欄ですべてをチェックアウトします。"
 
+msgid "Follow every session"
+msgstr "すべてのセッションを追跡"
+
 msgid "FOLLOW ON X"
 msgstr "Xでフォロー"
 
@@ -6960,6 +6972,9 @@ msgstr "MacでSupersetを使う"
 
 msgid "Get Superset Pro"
 msgstr "Superset Proを入手"
+
+msgid "Get the iPhone app"
+msgstr "iPhone アプリを入手"
 
 msgid "Ghost"
 msgstr "Ghost"
@@ -8099,6 +8114,9 @@ msgstr "起動"
 msgid "Launch agents across features, bug fixes, and refactors, all in parallel. Status at a glance shows which agents are working, which are blocked, and which are waiting on you."
 msgstr "機能開発、バグ修正、リファクタリングにまたがってエージェントを並列に起動できます。どのエージェントが作業中で、どれがブロックされ、どれがあなたの返事を待っているかが一目で分かります。"
 
+msgid "Launch an agent on any connected machine the moment an idea lands. Every session gets its own isolated workspace."
+msgstr "アイデアが浮かんだその瞬間に、接続済みのどのマシンでもエージェントを起動。セッションごとに独立したワークスペースが用意されます。"
+
 msgid "Launch mode"
 msgstr "起動モード"
 
@@ -8158,6 +8176,9 @@ msgstr "チームから退出"
 
 msgid "Leave the leaderboard?"
 msgstr "リーダーボードから退出しますか?"
+
+msgid "Leave your desk.<0/>Keep building."
+msgstr "デスクを離れても、<0/>開発は止まらない。"
 
 msgid "Leaving organization..."
 msgstr "組織から退出中..."
@@ -11667,6 +11688,9 @@ msgstr "Changelogを読む"
 msgid "Read the changelog →"
 msgstr "Changelogを読む →"
 
+msgid "Read the full diff file by file, check the PR status, and open a terminal when you need the raw output."
+msgstr "差分全体をファイルごとに読み、PR のステータスを確認し、生の出力が必要なときはターミナルを開けます。"
+
 msgid "Read the guide to parallel coding agents"
 msgstr "並列コーディングエージェントのガイドを読む"
 
@@ -12128,6 +12152,9 @@ msgstr "必須"
 msgid "Required version: {minimumVersion}+"
 msgstr "必要バージョン: {minimumVersion}+"
 
+msgid "Requires iOS 26 or later. Included with Superset Pro."
+msgstr "iOS 26 以降が必要です。Superset Pro に含まれています。"
+
 msgid "Reserved by OS"
 msgstr "OSが予約済み"
 
@@ -12407,6 +12434,9 @@ msgstr "レビューとCIの待ち行列が、エージェントの生んだ余�
 msgid "Review becomes the bottleneck"
 msgstr "レビューがボトルネックになる"
 
+msgid "Review before you merge"
+msgstr "マージ前にレビュー"
+
 msgid "Review Dismissed"
 msgstr "レビューが却下されました"
 
@@ -12590,6 +12620,9 @@ msgstr "ワークスペースをどこでも動かす"
 
 msgid "Run your agents from the desktop, any terminal, or your phone."
 msgstr "デスクトップ、任意のターミナル、スマートフォンからエージェントを実行。"
+
+msgid "Run your agents from your phone."
+msgstr "スマートフォンからエージェントを実行。"
 
 msgid "running"
 msgstr "実行中"
@@ -14016,11 +14049,17 @@ msgstr "Linearのチケットからそのままワークスペースを作れま
 msgid "Start agent"
 msgstr "エージェントを開始"
 
+msgid "Start agents, follow them live, and review the diff from your phone. Your code stays on your machines."
+msgstr "スマートフォンからエージェントを起動し、ライブで見守り、差分をレビュー。コードはあなたのマシンに残ります。"
+
 msgid "Start an agent or a terminal to begin working in this workspace."
 msgstr "エージェントかターミナルを開始して、このワークスペースでの作業を始めましょう。"
 
 msgid "Start browsing"
 msgstr "ブラウジングを開始"
+
+msgid "Start coding agents, follow them live, and review the diff from your phone. Available on the App Store; Android is coming soon."
+msgstr "スマートフォンからコーディングエージェントを起動し、ライブで見守り、差分をレビュー。App Store で配信中。Android 版は近日公開。"
 
 msgid "Start free. Upgrade when your team outgrows it. Enterprise plans for organizations with advanced security and compliance needs."
 msgstr "無料で始められます。チームの規模に合わなくなったらアップグレードを。高度なセキュリティとコンプライアンスが必要な組織にはEnterpriseプランがあります。"
@@ -14043,6 +14082,9 @@ msgstr "ワークスペースの実行コマンドを開始または停止する
 
 msgid "Start with the work."
 msgstr "仕事から始める。"
+
+msgid "Start work from anywhere"
+msgstr "どこからでも作業を開始"
 
 msgid "Start Workspace"
 msgstr "ワークスペースを開始"
@@ -14282,6 +14324,9 @@ msgstr "Supersetデザインシステム"
 
 msgid "Superset Enterprise is Superset for teams. Reach out to learn more about what's included and how it can work for your organization."
 msgstr "Superset Enterpriseは、チーム向けのSupersetです。含まれる内容や組織での活用方法については、お問い合わせください。"
+
+msgid "Superset for iPhone"
+msgstr "iPhone 版 Superset"
 
 msgid "Superset for your team"
 msgstr "チームのためのSuperset"
@@ -16345,6 +16390,9 @@ msgstr "警告"
 msgid "Warning occurred."
 msgstr "警告が発生しました。"
 
+msgid "Watch agents work in real time and step in with a follow-up, a photo, or a dictated message when they need direction."
+msgstr "エージェントの作業をリアルタイムで見守り、指示が必要なときはフォローアップ、写真、音声入力のメッセージで介入できます。"
+
 msgid "Watchers"
 msgstr "ウォッチャー"
 
@@ -16383,6 +16431,9 @@ msgstr "折り返しご連絡します。"
 
 msgid "We'll bring you back as soon as we reconnect."
 msgstr "再接続でき次第、元の画面に戻ります。"
+
+msgid "We'll email you when Superset for Android is ready."
+msgstr "Android 版 Superset の準備ができたらメールでお知らせします。"
 
 msgid "We'll get back to you shortly."
 msgstr "折り返しご連絡します。"

@@ -1047,6 +1047,9 @@ msgstr "<0>{primaryFont}</0> není v tomto systému nainstalovaný. Použije se 
 msgid "<0>#{0}</0> <1>of {1} on the leaderboard</1>"
 msgstr "<0>#{0}</0> <1>z {1} v žebříčku</1>"
 
+msgid "<0>Coming soon to</0><1>Google Play</1>"
+msgstr "<0>Již brzy na</0><1>Google Play</1>"
+
 msgid "<0>F3</0> · you are here"
 msgstr "<0>F3</0> · jste tady"
 
@@ -1918,6 +1921,9 @@ msgstr "Aktualizace je připravena k instalaci."
 
 msgid "Analytics, Ops, and more"
 msgstr "Analytika, provoz a další"
+
+msgid "Android is on the way. Be first to know when it ships."
+msgstr "Android je na cestě. Dozvíte se jako první, až vyjde."
 
 msgid "Animate the active terminal cursor."
 msgstr "Animovat kurzor v aktivním terminálu."
@@ -5448,6 +5454,9 @@ msgstr "Stáhnout obrázek"
 msgid "Download Manually"
 msgstr "Stáhnout ručně"
 
+msgid "Download on the App Store"
+msgstr "Stáhnout v App Store"
+
 msgid "Download starter"
 msgstr "Stáhnout základ"
 
@@ -6739,6 +6748,9 @@ msgstr "Zobrazení složek"
 msgid "Folders to check out into new worktrees, one per line, relative to the repo root. Files at the root are always included. Empty checks out everything."
 msgstr "Složky, které se mají vytáhnout do nových worktree, jedna na řádek, relativně ke kořeni repozitáře. Soubory v kořeni jsou vždy zahrnuty. Prázdné vytáhne vše."
 
+msgid "Follow every session"
+msgstr "Sledujte každou relaci"
+
 msgid "FOLLOW ON X"
 msgstr "SLEDOVAT NA X"
 
@@ -6960,6 +6972,9 @@ msgstr "Získejte Superset na svůj Mac"
 
 msgid "Get Superset Pro"
 msgstr "Pořídit Superset Pro"
+
+msgid "Get the iPhone app"
+msgstr "Získat aplikaci pro iPhone"
 
 msgid "Ghost"
 msgstr "Ghost"
@@ -8099,6 +8114,9 @@ msgstr "Spuštění"
 msgid "Launch agents across features, bug fixes, and refactors, all in parallel. Status at a glance shows which agents are working, which are blocked, and which are waiting on you."
 msgstr "Spouštějte agenty na funkce, opravy chyb i refaktory, všechno paralelně. Stav na první pohled ukáže, kteří agenti pracují, kteří jsou zablokovaní a kteří čekají na vás."
 
+msgid "Launch an agent on any connected machine the moment an idea lands. Every session gets its own isolated workspace."
+msgstr "Spusťte agenta na kterémkoli připojeném počítači ve chvíli, kdy vás něco napadne. Každá relace má vlastní izolovaný pracovní prostor."
+
 msgid "Launch mode"
 msgstr "Režim spuštění"
 
@@ -8158,6 +8176,9 @@ msgstr "Opustit tým"
 
 msgid "Leave the leaderboard?"
 msgstr "Odejít z žebříčku?"
+
+msgid "Leave your desk.<0/>Keep building."
+msgstr "Odejděte od stolu.<0/>Tvořte dál."
 
 msgid "Leaving organization..."
 msgstr "Opouštím organizaci..."
@@ -11667,6 +11688,9 @@ msgstr "Přečíst changelog"
 msgid "Read the changelog →"
 msgstr "Přečíst changelog →"
 
+msgid "Read the full diff file by file, check the PR status, and open a terminal when you need the raw output."
+msgstr "Čtěte celý diff soubor po souboru, kontrolujte stav PR a otevřete terminál, když potřebujete surový výstup."
+
 msgid "Read the guide to parallel coding agents"
 msgstr "Přečíst průvodce paralelními kódovacími agenty"
 
@@ -12128,6 +12152,9 @@ msgstr "Povinné"
 msgid "Required version: {minimumVersion}+"
 msgstr "Vyžadovaná verze: {minimumVersion}+"
 
+msgid "Requires iOS 26 or later. Included with Superset Pro."
+msgstr "Vyžaduje iOS 26 nebo novější. Součást Superset Pro."
+
 msgid "Reserved by OS"
 msgstr "Vyhrazeno systémem"
 
@@ -12407,6 +12434,9 @@ msgstr "Fronty revizí a CI spolykají zisky, které agenti vytvoří."
 msgid "Review becomes the bottleneck"
 msgstr "Úzkým hrdlem se stává revize"
 
+msgid "Review before you merge"
+msgstr "Zkontrolujte před sloučením"
+
 msgid "Review Dismissed"
 msgstr "Revize zamítnuta"
 
@@ -12590,6 +12620,9 @@ msgstr "Spouštějte pracovní prostory kdekoli"
 
 msgid "Run your agents from the desktop, any terminal, or your phone."
 msgstr "Spouštějte své agenty z desktopu, libovolného terminálu nebo telefonu."
+
+msgid "Run your agents from your phone."
+msgstr "Spouštějte své agenty z telefonu."
 
 msgid "running"
 msgstr "běží"
@@ -14016,11 +14049,17 @@ msgstr "Založte pracovní prostor rovnou z ticketu v Linearu. Agent ho převezm
 msgid "Start agent"
 msgstr "Spustit agenta"
 
+msgid "Start agents, follow them live, and review the diff from your phone. Your code stays on your machines."
+msgstr "Spouštějte agenty, sledujte je živě a kontrolujte diff z telefonu. Váš kód zůstává na vašich počítačích."
+
 msgid "Start an agent or a terminal to begin working in this workspace."
 msgstr "Spusťte agenta nebo terminál a začněte v tomto pracovním prostoru pracovat."
 
 msgid "Start browsing"
 msgstr "Začněte prohlížet"
+
+msgid "Start coding agents, follow them live, and review the diff from your phone. Available on the App Store; Android is coming soon."
+msgstr "Spouštějte programovací agenty, sledujte je živě a kontrolujte diff z telefonu. K dispozici v App Store; Android již brzy."
 
 msgid "Start free. Upgrade when your team outgrows it. Enterprise plans for organizations with advanced security and compliance needs."
 msgstr "Začněte zdarma. Až vám to jako týmu přestane stačit, přejděte výš. Pro organizace s náročnými požadavky na bezpečnost a compliance máme tarify Enterprise."
@@ -14043,6 +14082,9 @@ msgstr "Spustit nebo zastavit spouštěcí příkaz pracovního prostoru"
 
 msgid "Start with the work."
 msgstr "Začněte prací."
+
+msgid "Start work from anywhere"
+msgstr "Začněte pracovat odkudkoli"
 
 msgid "Start Workspace"
 msgstr "Spustit pracovní prostor"
@@ -14282,6 +14324,9 @@ msgstr "Design systém Superset"
 
 msgid "Superset Enterprise is Superset for teams. Reach out to learn more about what's included and how it can work for your organization."
 msgstr "Superset Enterprise je Superset pro týmy. Ozvěte se a řekneme vám, co obsahuje a jak může fungovat ve vaší organizaci."
+
+msgid "Superset for iPhone"
+msgstr "Superset pro iPhone"
 
 msgid "Superset for your team"
 msgstr "Superset pro váš tým"
@@ -16345,6 +16390,9 @@ msgstr "Varování"
 msgid "Warning occurred."
 msgstr "Došlo k varování."
 
+msgid "Watch agents work in real time and step in with a follow-up, a photo, or a dictated message when they need direction."
+msgstr "Sledujte agenty při práci v reálném čase a zasáhněte doplňující zprávou, fotkou nebo nadiktovanou zprávou, když potřebují nasměrovat."
+
 msgid "Watchers"
 msgstr "Sledující"
 
@@ -16383,6 +16431,9 @@ msgstr "Brzy se vám ozveme."
 
 msgid "We'll bring you back as soon as we reconnect."
 msgstr "Jakmile se spojení obnoví, vrátíme vás zpět."
+
+msgid "We'll email you when Superset for Android is ready."
+msgstr "Pošleme vám e-mail, až bude Superset pro Android připraven."
 
 msgid "We'll get back to you shortly."
 msgstr "Brzy se vám ozveme."

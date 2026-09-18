@@ -55,6 +55,10 @@ const PRODUCT_LINKS: FooterLink[] = [
 		label: <Trans>Download</Trans>,
 	},
 	{
+		href: "/mobile",
+		label: <Trans>Mobile</Trans>,
+	},
+	{
 		href: "/#how-it-works",
 		label: <Trans>How it works</Trans>,
 	},

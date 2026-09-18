@@ -1047,6 +1047,9 @@ msgstr "<0>{primaryFont}</0> no está instalada en este sistema. Se usará la si
 msgid "<0>#{0}</0> <1>of {1} on the leaderboard</1>"
 msgstr "<0>#{0}</0> <1>de {1} en la clasificación</1>"
 
+msgid "<0>Coming soon to</0><1>Google Play</1>"
+msgstr "<0>Próximamente en</0><1>Google Play</1>"
+
 msgid "<0>F3</0> · you are here"
 msgstr "<0>F3</0> · estás aquí"
 
@@ -1918,6 +1921,9 @@ msgstr "Hay una actualización lista para instalar."
 
 msgid "Analytics, Ops, and more"
 msgstr "Analítica, operaciones y más"
+
+msgid "Android is on the way. Be first to know when it ships."
+msgstr "Android está en camino. Sé el primero en enterarte cuando salga."
 
 msgid "Animate the active terminal cursor."
 msgstr "Anima el cursor del terminal activo."
@@ -5448,6 +5454,9 @@ msgstr "Descargar la imagen"
 msgid "Download Manually"
 msgstr "Descargar manualmente"
 
+msgid "Download on the App Store"
+msgstr "Descárgalo en el App Store"
+
 msgid "Download starter"
 msgstr "Descargar plantilla inicial"
 
@@ -6739,6 +6748,9 @@ msgstr "Vista de carpetas"
 msgid "Folders to check out into new worktrees, one per line, relative to the repo root. Files at the root are always included. Empty checks out everything."
 msgstr "Carpetas que se extraen en los worktrees nuevos, una por línea, relativas a la raíz del repo. Los archivos de la raíz se incluyen siempre. Si se deja vacío, se extrae todo."
 
+msgid "Follow every session"
+msgstr "Sigue cada sesión"
+
 msgid "FOLLOW ON X"
 msgstr "SEGUIR EN X"
 
@@ -6960,6 +6972,9 @@ msgstr "Consigue Superset en tu Mac"
 
 msgid "Get Superset Pro"
 msgstr "Obtener Superset Pro"
+
+msgid "Get the iPhone app"
+msgstr "Obtener la app para iPhone"
 
 msgid "Ghost"
 msgstr "Fantasma"
@@ -8099,6 +8114,9 @@ msgstr "Lanzamiento"
 msgid "Launch agents across features, bug fixes, and refactors, all in parallel. Status at a glance shows which agents are working, which are blocked, and which are waiting on you."
 msgstr "Lanza agentes en funciones, correcciones de errores y refactorizaciones, todo en paralelo. El estado de un vistazo muestra qué agentes están trabajando, cuáles están bloqueados y cuáles te esperan."
 
+msgid "Launch an agent on any connected machine the moment an idea lands. Every session gets its own isolated workspace."
+msgstr "Lanza un agente en cualquier máquina conectada en cuanto surja una idea. Cada sesión tiene su propio espacio de trabajo aislado."
+
 msgid "Launch mode"
 msgstr "Modo de apertura"
 
@@ -8158,6 +8176,9 @@ msgstr "Salir del equipo"
 
 msgid "Leave the leaderboard?"
 msgstr "¿Salir de la clasificación?"
+
+msgid "Leave your desk.<0/>Keep building."
+msgstr "Deja tu escritorio.<0/>Sigue construyendo."
 
 msgid "Leaving organization..."
 msgstr "Saliendo de la organización..."
@@ -11667,6 +11688,9 @@ msgstr "Leer el registro de cambios"
 msgid "Read the changelog →"
 msgstr "Leer el registro de cambios →"
 
+msgid "Read the full diff file by file, check the PR status, and open a terminal when you need the raw output."
+msgstr "Lee el diff completo archivo por archivo, consulta el estado de la PR y abre un terminal cuando necesites la salida sin procesar."
+
 msgid "Read the guide to parallel coding agents"
 msgstr "Leer la guía sobre agentes de código en paralelo"
 
@@ -12128,6 +12152,9 @@ msgstr "Obligatorio"
 msgid "Required version: {minimumVersion}+"
 msgstr "Versión necesaria: {minimumVersion}+"
 
+msgid "Requires iOS 26 or later. Included with Superset Pro."
+msgstr "Requiere iOS 26 o posterior. Incluido con Superset Pro."
+
 msgid "Reserved by OS"
 msgstr "Reservado por el sistema operativo"
 
@@ -12407,6 +12434,9 @@ msgstr "Las colas de revisión y de CI se comen las ganancias que crean los agen
 msgid "Review becomes the bottleneck"
 msgstr "La revisión se convierte en el cuello de botella"
 
+msgid "Review before you merge"
+msgstr "Revisa antes de fusionar"
+
 msgid "Review Dismissed"
 msgstr "Revisión descartada"
 
@@ -12590,6 +12620,9 @@ msgstr "Ejecuta espacios de trabajo en cualquier sitio"
 
 msgid "Run your agents from the desktop, any terminal, or your phone."
 msgstr "Ejecuta tus agentes desde el escritorio, cualquier terminal o tu móvil."
+
+msgid "Run your agents from your phone."
+msgstr "Ejecuta tus agentes desde tu móvil."
 
 msgid "running"
 msgstr "en ejecución"
@@ -14016,11 +14049,17 @@ msgstr "Crea un espacio de trabajo directamente desde un ticket de Linear. El ag
 msgid "Start agent"
 msgstr "Iniciar agente"
 
+msgid "Start agents, follow them live, and review the diff from your phone. Your code stays on your machines."
+msgstr "Inicia agentes, síguelos en directo y revisa el diff desde tu móvil. Tu código se queda en tus máquinas."
+
 msgid "Start an agent or a terminal to begin working in this workspace."
 msgstr "Inicia un agente o un terminal para empezar a trabajar en este espacio de trabajo."
 
 msgid "Start browsing"
 msgstr "Empezar a navegar"
+
+msgid "Start coding agents, follow them live, and review the diff from your phone. Available on the App Store; Android is coming soon."
+msgstr "Inicia agentes de programación, síguelos en directo y revisa el diff desde tu móvil. Disponible en el App Store; Android llegará próximamente."
 
 msgid "Start free. Upgrade when your team outgrows it. Enterprise plans for organizations with advanced security and compliance needs."
 msgstr "Empieza gratis. Sube de plan cuando tu equipo se quede corto. Planes Enterprise para organizaciones con necesidades avanzadas de seguridad y cumplimiento."
@@ -14043,6 +14082,9 @@ msgstr "Iniciar o detener el comando de ejecución del espacio de trabajo"
 
 msgid "Start with the work."
 msgstr "Empieza por el trabajo."
+
+msgid "Start work from anywhere"
+msgstr "Empieza a trabajar desde cualquier lugar"
 
 msgid "Start Workspace"
 msgstr "Iniciar espacio de trabajo"
@@ -14282,6 +14324,9 @@ msgstr "Sistema de diseño de Superset"
 
 msgid "Superset Enterprise is Superset for teams. Reach out to learn more about what's included and how it can work for your organization."
 msgstr "Superset Enterprise es Superset para equipos. Escríbenos para saber más sobre lo que incluye y cómo puede funcionar en tu organización."
+
+msgid "Superset for iPhone"
+msgstr "Superset para iPhone"
 
 msgid "Superset for your team"
 msgstr "Superset para tu equipo"
@@ -16345,6 +16390,9 @@ msgstr "Advertencia"
 msgid "Warning occurred."
 msgstr "Se produjo una advertencia."
 
+msgid "Watch agents work in real time and step in with a follow-up, a photo, or a dictated message when they need direction."
+msgstr "Observa a los agentes trabajar en tiempo real e intervén con un mensaje de seguimiento, una foto o un mensaje dictado cuando necesiten orientación."
+
 msgid "Watchers"
 msgstr "Observadores"
 
@@ -16383,6 +16431,9 @@ msgstr "Nos pondremos en contacto en breve."
 
 msgid "We'll bring you back as soon as we reconnect."
 msgstr "Volverás a tu espacio en cuanto se restablezca la conexión."
+
+msgid "We'll email you when Superset for Android is ready."
+msgstr "Te enviaremos un correo cuando Superset para Android esté listo."
 
 msgid "We'll get back to you shortly."
 msgstr "Te responderemos en breve."
