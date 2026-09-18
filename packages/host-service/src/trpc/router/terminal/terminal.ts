@@ -10,6 +10,7 @@ import {
 	disposeSessionAndWait,
 	disposeSessionsByWorkspaceId,
 	disposeSessionsByWorktreePath,
+	getPendingTerminalWorkspaceId,
 	listLiveTerminalSessions,
 	parseThemeType,
 	renameTerminalSession,
@@ -309,6 +310,16 @@ export const terminalRouter = router({
 				throw new TRPCError({
 					code: "NOT_FOUND",
 					message: "Workspace not found",
+				});
+			}
+
+			const pendingWorkspaceId = getPendingTerminalWorkspaceId(
+				input.terminalId,
+			);
+			if (pendingWorkspaceId && pendingWorkspaceId !== input.workspaceId) {
+				throw new TRPCError({
+					code: "FORBIDDEN",
+					message: "Terminal session does not belong to this workspace",
 				});
 			}
 

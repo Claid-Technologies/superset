@@ -363,6 +363,7 @@ export class SqliteTerminalAgentBindingPersistence
 			.where(
 				and(
 					ne(terminalSessions.status, "disposed"),
+					isNull(terminalSessions.disposeRequestedAt),
 					isNull(terminalAgentBindings.endedAt),
 				),
 			)

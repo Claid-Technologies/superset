@@ -2866,11 +2866,34 @@ function getTerminalWorkspaceMismatchError({
 
 type CreateSessionError = TerminalSessionError;
 
+export function getPendingTerminalWorkspaceId(
+	terminalId: string,
+): string | undefined {
+	return lifecycleOperations.getWorkspaceId(terminalId);
+}
+
 export function createTerminalSessionInternal(
 	options: CreateTerminalSessionOptions,
 ): Promise<TerminalSession | CreateSessionError> {
-	return lifecycleOperations.run(options.terminalId, () =>
-		createTerminalSessionUnlocked(options),
+	const record = options.db.query.terminalSessions
+		.findFirst({ where: eq(terminalSessions.id, options.terminalId) })
+		.sync();
+	const mismatchError = getTerminalWorkspaceMismatchError({
+		terminalId: options.terminalId,
+		ownerWorkspaceId:
+			record?.originWorkspaceId ??
+			getPendingTerminalWorkspaceId(options.terminalId),
+		requestedWorkspaceId: options.workspaceId,
+	});
+	if (mismatchError)
+		return Promise.resolve({
+			kind: "SESSION_WRONG_WORKSPACE",
+			error: mismatchError,
+		});
+	return lifecycleOperations.run(
+		options.terminalId,
+		() => createTerminalSessionUnlocked(options),
+		record ? undefined : options.workspaceId,
 	);
 }
 

@@ -22,13 +22,15 @@ function setup() {
 		resolve = res;
 		reject = rej;
 	});
+	const apply = mock((_id: string) => {});
 	const input = {
 		store,
 		paneId: "pane",
 		terminalId: "old",
 		create: mock(() => created),
 		dispose: mock(async (_id: string) => {}),
-		prepare: mock((_id: string) => {}),
+		prepare: mock(() => apply),
+		apply,
 	};
 	return { input, resolve, reject };
 }
@@ -37,6 +39,8 @@ describe("ended terminal replacement", () => {
 	it("waits for success before changing the pane and drops createOnAttach", async () => {
 		const { input, resolve } = setup();
 		const result = replaceEndedTerminal(input);
+		expect(input.prepare).toHaveBeenCalledTimes(1);
+		expect(input.apply).not.toHaveBeenCalled();
 		expect(input.store.getState().getPane("pane")?.pane.data).toEqual({
 			terminalId: "old",
 			createOnAttach: true,
@@ -46,7 +50,7 @@ describe("ended terminal replacement", () => {
 		expect(input.store.getState().getPane("pane")?.pane.data).toEqual({
 			terminalId: "new",
 		});
-		expect(input.prepare).toHaveBeenCalledWith("new");
+		expect(input.apply).toHaveBeenCalledWith("new");
 		expect(input.dispose).not.toHaveBeenCalled();
 	});
 	it("coalesces rapid repeat clicks", async () => {
@@ -89,7 +93,7 @@ describe("ended terminal replacement", () => {
 			resolve("unused");
 			await result;
 			expect(input.dispose).toHaveBeenCalledWith("unused");
-			expect(input.prepare).not.toHaveBeenCalled();
+			expect(input.apply).not.toHaveBeenCalled();
 		});
 	}
 	it("removes a cancelled replacement adopted while creation or disposal was pending", async () => {

@@ -616,3 +616,188 @@ test("explicit kill ends an agent binding as disposed and blocks reuse", async (
 		),
 	);
 });
+
+for (const queued of [false, true]) {
+	test(`pending creation rejects a foreign workspace kill${queued ? " with another create queued" : ""}`, async () => {
+		const terminalId = randomUUID();
+		const foreignWorkspaceId = randomUUID();
+		const owner = db.query.workspaces
+			.findFirst({ where: eq(workspaces.id, workspaceId) })
+			.sync();
+		assert.ok(owner);
+		db.insert(workspaces)
+			.values({
+				id: foreignWorkspaceId,
+				projectId: owner.projectId,
+				worktreePath: owner.worktreePath,
+				branch: "foreign",
+			})
+			.run();
+		const daemon = await getDaemonClient();
+		const originalOpen = daemon.open.bind(daemon);
+		let release!: () => void;
+		let entered!: () => void;
+		const barrier = new Promise<void>((resolve) => {
+			release = resolve;
+		});
+		const started = new Promise<void>((resolve) => {
+			entered = resolve;
+		});
+		daemon.open = async (...args: Parameters<typeof daemon.open>) => {
+			if (args[0] === terminalId) {
+				entered();
+				await barrier;
+			}
+			return originalOpen(...args);
+		};
+		try {
+			const creating = createTerminalSessionInternal({
+				terminalId,
+				workspaceId,
+				db,
+			});
+			await started;
+			const queuedCreate = queued
+				? createTerminalSessionInternal({ terminalId, workspaceId, db })
+				: null;
+			const killing = terminalCaller()
+				.killSession({ terminalId, workspaceId: foreignWorkspaceId })
+				.then(
+					() => null,
+					(error) => error,
+				);
+			await new Promise((resolve) => setTimeout(resolve, 30));
+			release();
+			const results = await Promise.all([creating, queuedCreate]);
+			assert.equal((await killing)?.code, "FORBIDDEN");
+			assert.ok(results.every((result) => !result || !("error" in result)));
+			const row = db.query.terminalSessions
+				.findFirst({ where: eq(terminalSessions.id, terminalId) })
+				.sync();
+			assert.equal(row?.originWorkspaceId, workspaceId);
+			assert.equal(row?.disposeRequestedAt, null);
+			assert.ok(
+				(await daemon.list()).some(
+					(session) => session.id === terminalId && session.alive,
+				),
+			);
+		} finally {
+			release();
+			daemon.open = originalOpen;
+			await disposeSessionAndWait(terminalId, db);
+		}
+	});
+}
+
+test("same-owner cancellation covers a create queued behind a failed create", async () => {
+	const terminalId = randomUUID();
+	const daemon = await getDaemonClient();
+	const originalOpen = daemon.open.bind(daemon);
+	let release!: () => void;
+	let entered!: () => void;
+	const barrier = new Promise<void>((resolve) => {
+		release = resolve;
+	});
+	const started = new Promise<void>((resolve) => {
+		entered = resolve;
+	});
+	daemon.open = async (...args: Parameters<typeof daemon.open>) => {
+		if (args[0] === terminalId) {
+			entered();
+			await barrier;
+			throw new Error("injected create failure");
+		}
+		return originalOpen(...args);
+	};
+	try {
+		const creating = createTerminalSessionInternal({
+			terminalId,
+			workspaceId,
+			db,
+		});
+		await started;
+		const queuedCreate = createTerminalSessionInternal({
+			terminalId,
+			workspaceId,
+			db,
+		});
+		const killing = terminalCaller().killSession({ terminalId, workspaceId });
+		const outcome = killing.then(
+			() => null,
+			(error) => error,
+		);
+		await new Promise((resolve) => setTimeout(resolve, 30));
+		release();
+		assert.ok("error" in (await creating));
+		assert.ok("error" in (await queuedCreate));
+		assert.equal(await outcome, null);
+		assert.equal(
+			db.query.terminalSessions
+				.findFirst({ where: eq(terminalSessions.id, terminalId) })
+				.sync()?.status,
+			"disposed",
+		);
+		assert.ok(
+			!(await daemon.list()).some(
+				(session) => session.id === terminalId && session.alive,
+			),
+		);
+	} finally {
+		release();
+		daemon.open = originalOpen;
+		await disposeSessionAndWait(terminalId, db);
+	}
+});
+
+test("failed creation releases pending ownership for a different workspace", async () => {
+	const terminalId = randomUUID();
+	const nextWorkspaceId = randomUUID();
+	const owner = db.query.workspaces
+		.findFirst({ where: eq(workspaces.id, workspaceId) })
+		.sync();
+	assert.ok(owner);
+	db.insert(workspaces)
+		.values({
+			id: nextWorkspaceId,
+			projectId: owner.projectId,
+			worktreePath: owner.worktreePath,
+			branch: "next",
+		})
+		.run();
+	const daemon = await getDaemonClient();
+	const originalOpen = daemon.open.bind(daemon);
+	daemon.open = async (...args: Parameters<typeof daemon.open>) => {
+		if (args[0] === terminalId) throw new Error("injected create failure");
+		return originalOpen(...args);
+	};
+	try {
+		assert.ok(
+			"error" in
+				(await createTerminalSessionInternal({ terminalId, workspaceId, db })),
+		);
+		assert.equal(
+			db.query.terminalSessions
+				.findFirst({ where: eq(terminalSessions.id, terminalId) })
+				.sync(),
+			undefined,
+		);
+		daemon.open = originalOpen;
+		const created = await createTerminalSessionInternal({
+			terminalId,
+			workspaceId: nextWorkspaceId,
+			db,
+		});
+		assert.ok(!("error" in created));
+		await assert.rejects(
+			terminalCaller().killSession({ terminalId, workspaceId }),
+			{ code: "FORBIDDEN" },
+		);
+		await terminalCaller().killSession({
+			terminalId,
+			workspaceId: nextWorkspaceId,
+		});
+	} finally {
+		daemon.open = originalOpen;
+		await disposeSessionAndWait(terminalId, db);
+	}
+});

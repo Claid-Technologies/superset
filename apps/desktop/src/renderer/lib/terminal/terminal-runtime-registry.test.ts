@@ -506,19 +506,20 @@ describe("terminal replacement history", () => {
 			expect(terminalRuntimeRegistry.isSessionEnded("old", "pane")).toBe(false);
 			terminalRuntimeRegistry.prepareReplacement(
 				"old",
-				"new",
+				"pane",
+				"New shell",
+			)("new");
+			expect(getOrCreate).not.toHaveBeenCalled();
+			previous.transport.sessionEnded = true;
+			expect(terminalRuntimeRegistry.isSessionEnded("old", "pane")).toBe(true);
+			const apply = terminalRuntimeRegistry.prepareReplacement(
+				"old",
 				"pane",
 				"New shell",
 			);
 			expect(getOrCreate).not.toHaveBeenCalled();
-			previous.transport.sessionEnded = true;
-			expect(terminalRuntimeRegistry.isSessionEnded("old", "pane")).toBe(true);
-			terminalRuntimeRegistry.prepareReplacement(
-				"old",
-				"new",
-				"pane",
-				"New shell",
-			);
+			getEntry.mockReturnValue(undefined as unknown as typeof previous);
+			apply("new");
 			expect(serialize).toHaveBeenCalledWith({
 				scrollback: 1000,
 				excludeAltBuffer: true,

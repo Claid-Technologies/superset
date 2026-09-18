@@ -20,14 +20,31 @@ export function terminalLifecycleState(
 }
 
 export class TerminalLifecycleOperations {
-	private readonly pending = new Map<string, Promise<unknown>>();
+	private readonly pending = new Map<
+		string,
+		{ result: Promise<unknown>; workspaceId?: string }
+	>();
 
-	run<T>(terminalId: string, operation: () => Promise<T>): Promise<T> {
-		const previous = this.pending.get(terminalId) ?? Promise.resolve();
-		const result = previous.catch(() => {}).then(operation);
-		this.pending.set(terminalId, result);
+	getWorkspaceId(terminalId: string): string | undefined {
+		return this.pending.get(terminalId)?.workspaceId;
+	}
+
+	run<T>(
+		terminalId: string,
+		operation: () => Promise<T>,
+		workspaceId?: string,
+	): Promise<T> {
+		const previous = this.pending.get(terminalId);
+		const result = (previous?.result ?? Promise.resolve())
+			.catch(() => {})
+			.then(operation);
+		const entry = {
+			result,
+			workspaceId: previous?.workspaceId ?? workspaceId,
+		};
+		this.pending.set(terminalId, entry);
 		const cleanup = () => {
-			if (this.pending.get(terminalId) === result)
+			if (this.pending.get(terminalId) === entry)
 				this.pending.delete(terminalId);
 		};
 		void result.then(cleanup, cleanup);

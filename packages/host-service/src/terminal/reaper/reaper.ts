@@ -1,6 +1,6 @@
 import { and, eq, inArray, isNotNull } from "drizzle-orm";
 import type { HostDb } from "../../db/index.ts";
-import { terminalSessions } from "../../db/schema.ts";
+import { terminalAgentBindings, terminalSessions } from "../../db/schema.ts";
 import { portManager } from "../../ports/port-manager.ts";
 import { markTerminalAgentBindingEnded } from "../../terminal-agents/persistence.ts";
 import { getDaemonClient } from "../daemon-client-singleton.ts";
@@ -217,6 +217,13 @@ export function reconcileMissingTerminalSessions(
 						)
 						.returning({ id: terminalSessions.id })
 						.all();
+		for (const { id } of disposed) {
+			const binding = tx.query.terminalAgentBindings
+				.findFirst({ where: eq(terminalAgentBindings.terminalId, id) })
+				.sync();
+			if (binding && binding.endedAt == null)
+				markTerminalAgentBindingEnded(tx, id, "disposed", endedAt);
+		}
 		return { recoverable, disposed: disposed.length };
 	});
 

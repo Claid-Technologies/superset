@@ -514,7 +514,22 @@ describe("reconcileMissingTerminalSessions agent bindings", () => {
 		reconcileMissingTerminalSessions(db, [], new Map());
 
 		expect(statusOf(db, "t-killed")).toBe("disposed");
+		expect(bindingOf(db, "t-killed")?.endReason).toBe("disposed");
 		expect(findResumeCandidateBinding(db, "ws-1", "t-killed")).toBeUndefined();
+	});
+
+	it("preserves an internal restart candidate through pending-disposal reconciliation", () => {
+		const db = createTestDb();
+		seed(db, {
+			id: "restart",
+			disposeRequestedAt: OLD,
+			binding: { endedAt: OLD, endReason: "terminal-exited" },
+		});
+		reconcileMissingTerminalSessions(db, [], new Map());
+		expect(statusOf(db, "restart")).toBe("disposed");
+		expect(
+			findResumeCandidateBinding(db, "ws-1", "restart")?.agentSessionId,
+		).toBe("sess-1");
 	});
 
 	it("leaves bindings of rows it does not sweep untouched", () => {

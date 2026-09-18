@@ -8,6 +8,7 @@ import { Tab } from "./components/Tab";
 import { TabBar } from "./components/TabBar";
 import { TAB_DRAG_TYPE } from "./components/TabBar/components/TabItem";
 import { useWorkspaceInteractionState } from "./hooks/useWorkspaceInteractionState";
+import { notifyClosedPanes } from "./utils/notifyClosedPanes";
 
 export function Workspace<TData>({
 	store,
@@ -58,8 +59,7 @@ export function Workspace<TData>({
 	useEffect(
 		() =>
 			store.getState().subscribePaneClose((panes) => {
-				for (const pane of panes)
-					registry[pane.kind]?.onAfterClose?.(pane, panes);
+				notifyClosedPanes(panes, registry);
 			}),
 		[store, registry],
 	);

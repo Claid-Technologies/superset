@@ -50,6 +50,48 @@ describe("terminal lifecycle authority", () => {
 		).rejects.toThrow("failed");
 		expect(await operations.run("a", async () => 42)).toBe(42);
 	});
+
+	it("reserves ownership before execution and retains it through queued work", async () => {
+		const operations = new TerminalLifecycleOperations();
+		let release!: () => void;
+		const barrier = new Promise<void>((resolve) => {
+			release = resolve;
+		});
+		const first = operations.run(
+			"terminal",
+			async () => {
+				throw new Error("failed create");
+			},
+			"workspace",
+		);
+		expect(operations.getWorkspaceId("terminal")).toBe("workspace");
+		const queued = operations.run("terminal", () => barrier, "workspace");
+		await expect(first).rejects.toThrow("failed create");
+		expect(operations.getWorkspaceId("terminal")).toBe("workspace");
+		const disposing = operations.run("terminal", async () => {});
+		release();
+		await queued;
+		await disposing;
+		expect(operations.getWorkspaceId("terminal")).toBeUndefined();
+	});
+
+	it("releases ownership when the last create rejects", async () => {
+		const operations = new TerminalLifecycleOperations();
+		await expect(
+			operations.run(
+				"terminal",
+				async () => {
+					throw new Error("failed create");
+				},
+				"first",
+			),
+		).rejects.toThrow("failed create");
+		expect(operations.getWorkspaceId("terminal")).toBeUndefined();
+		const replacement = operations.run("terminal", async () => 42, "second");
+		expect(operations.getWorkspaceId("terminal")).toBe("second");
+		expect(await replacement).toBe(42);
+		expect(operations.getWorkspaceId("terminal")).toBeUndefined();
+	});
 });
 
 describe("missing terminal observations", () => {

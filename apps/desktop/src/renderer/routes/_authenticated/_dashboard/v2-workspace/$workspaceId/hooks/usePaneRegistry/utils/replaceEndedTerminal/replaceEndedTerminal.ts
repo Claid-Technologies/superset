@@ -16,7 +16,7 @@ async function replace({
 	terminalId: string;
 	create: () => Promise<string>;
 	dispose: (id: string) => Promise<unknown>;
-	prepare: (id: string) => void;
+	prepare: () => (id: string) => void;
 }): Promise<void> {
 	const matches = () => {
 		const pane = store.getState().getPane(paneId)?.pane;
@@ -26,6 +26,7 @@ async function replace({
 		);
 	};
 	if (!matches()) return;
+	const applyReplacement = prepare();
 	const replacementId = await create();
 	if (!matches()) {
 		markTerminalReplacementCancelled(replacementId);
@@ -47,7 +48,7 @@ async function replace({
 		}
 		return;
 	}
-	prepare(replacementId);
+	applyReplacement(replacementId);
 	store.getState().setPaneData({ paneId, data: { terminalId: replacementId } });
 }
 

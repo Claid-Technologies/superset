@@ -676,23 +676,31 @@ class TerminalRuntimeRegistryImpl {
 
 	prepareReplacement(
 		terminalId: string,
-		replacementId: string,
 		instanceId: string,
 		notice: string,
-	): void {
+	): (replacementId: string) => void {
 		const previous = this.getEntry(terminalId, instanceId);
-		if (!previous?.transport.sessionEnded || !previous.runtime) return;
-		try {
-			const history = previous.runtime.serializeAddon.serialize({
-				scrollback: 1000,
-				excludeAltBuffer: true,
-				excludeModes: true,
-			});
-			this.getOrCreateEntry(replacementId, instanceId).initialBuffer =
-				`${history}\r\n\x1b[0m${notice}\r\n`;
-		} catch (error) {
-			console.warn("Failed to retain terminal history for replacement", error);
+		let initialBuffer: string | undefined;
+		if (previous?.transport.sessionEnded && previous.runtime) {
+			try {
+				const history = previous.runtime.serializeAddon.serialize({
+					scrollback: 1000,
+					excludeAltBuffer: true,
+					excludeModes: true,
+				});
+				initialBuffer = `${history}\r\n\x1b[0m${notice}\r\n`;
+			} catch (error) {
+				console.warn(
+					"Failed to retain terminal history for replacement",
+					error,
+				);
+			}
 		}
+		return (replacementId) => {
+			if (initialBuffer !== undefined)
+				this.getOrCreateEntry(replacementId, instanceId).initialBuffer =
+					initialBuffer;
+		};
 	}
 
 	clearLogs(terminalId: string, instanceId?: string): void {

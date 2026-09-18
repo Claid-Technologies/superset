@@ -481,6 +481,7 @@ export function usePaneRegistry({
 				renderTitle: (ctx: RendererContext<PaneViewerData>) => (
 					<div className="flex min-w-0 flex-1 items-center gap-1.5">
 						<TerminalSessionDropdown
+							onSessionRemoved={clearWorkspaceRunTerminal}
 							context={ctx}
 							launcher={launcher}
 							workspaceId={workspaceId}
@@ -508,10 +509,9 @@ export function usePaneRegistry({
 											terminalId: id,
 											workspaceId,
 										}),
-									prepare: (id) =>
+									prepare: () =>
 										terminalRuntimeRegistry.prepareReplacement(
 											terminalId,
-											id,
 											ctx.pane.id,
 											t({ message: "New shell" }),
 										),
