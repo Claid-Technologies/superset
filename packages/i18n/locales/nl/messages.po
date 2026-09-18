@@ -1050,6 +1050,9 @@ msgstr "<0>#{0}</0> <1>van {1} op de ranglijst</1>"
 msgid "<0>Coming soon to</0><1>Google Play</1>"
 msgstr "<0>Binnenkort op</0><1>Google Play</1>"
 
+msgid "<0>Download on the</0><1>App Store</1>"
+msgstr "<0>Download in de</0><1>App Store</1>"
+
 msgid "<0>F3</0> · you are here"
 msgstr "<0>F3</0> · hier sta je nu"
 
@@ -5453,9 +5456,6 @@ msgstr "Afbeelding downloaden"
 
 msgid "Download Manually"
 msgstr "Handmatig downloaden"
-
-msgid "Download on the App Store"
-msgstr "Download in de App Store"
 
 msgid "Download starter"
 msgstr "Startbestand downloaden"

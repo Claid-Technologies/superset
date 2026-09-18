@@ -1,54 +1,42 @@
 "use client";
 
-import { Trans, useLingui } from "@lingui/react/macro";
+import { Trans } from "@lingui/react/macro";
 import { COMPANY } from "@superset/shared/constants";
-import Image from "next/image";
-import { FaGooglePlay } from "react-icons/fa";
+import { FaApple, FaGooglePlay } from "react-icons/fa";
 import { track } from "@/lib/analytics";
-import {
-	APP_STORE_BADGE_WIDTHS,
-	BADGE_HEIGHT,
-	ENGLISH_BADGE_WIDTH,
-} from "./constants";
+
+const BADGE_CLASS =
+	"flex h-14 w-full items-center gap-3 px-5 text-left transition-colors sm:w-auto sm:min-w-[11.5rem]";
+const BADGE_KICKER_CLASS = "block text-[11px] leading-tight";
+const BADGE_STORE_CLASS = "block font-medium text-lg leading-tight";
 
 export function StoreBadges() {
-	const { t, i18n } = useLingui();
-	const localizedWidth = APP_STORE_BADGE_WIDTHS[i18n.locale];
-	const badgeLocale = localizedWidth ? i18n.locale : "en";
-	const badgeWidth = Math.round(
-		((localizedWidth ?? ENGLISH_BADGE_WIDTH) / 40) * BADGE_HEIGHT,
-	);
-
 	return (
-		<div className="flex flex-col items-start gap-3 sm:flex-row">
+		<div className="flex flex-col gap-3 sm:flex-row">
 			<a
 				href={COMPANY.APP_STORE_URL}
 				target="_blank"
 				rel="noopener noreferrer"
 				onClick={() => track("mobile_store_clicked", { store: "app_store" })}
-				className="transition-opacity hover:opacity-80"
+				className={`${BADGE_CLASS} bg-foreground text-background hover:bg-brand hover:text-white`}
 			>
-				<Image
-					src={`/badges/app-store/${badgeLocale}.svg`}
-					alt={t({ message: "Download on the App Store" })}
-					width={badgeWidth}
-					height={BADGE_HEIGHT}
-					priority
-				/>
+				<FaApple className="size-7 shrink-0" />
+				<span>
+					<Trans>
+						<span className={BADGE_KICKER_CLASS}>Download on the</span>
+						<span className={BADGE_STORE_CLASS}>App Store</span>
+					</Trans>
+				</span>
 			</a>
 			<a
 				href="#android"
-				className="flex h-14 items-center gap-3 rounded-[10px] border border-border px-4 text-left text-muted-foreground transition-colors hover:border-foreground hover:text-foreground"
+				className={`${BADGE_CLASS} border border-border text-muted-foreground hover:border-foreground hover:text-foreground`}
 			>
 				<FaGooglePlay className="size-6 shrink-0" />
 				<span>
 					<Trans>
-						<span className="block text-[11px] leading-tight">
-							Coming soon to
-						</span>
-						<span className="block font-medium text-lg leading-tight">
-							Google Play
-						</span>
+						<span className={BADGE_KICKER_CLASS}>Coming soon to</span>
+						<span className={BADGE_STORE_CLASS}>Google Play</span>
 					</Trans>
 				</span>
 			</a>

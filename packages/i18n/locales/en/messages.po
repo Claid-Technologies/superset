@@ -1050,6 +1050,9 @@ msgstr "<0>#{0}</0> <1>of {1} on the leaderboard</1>"
 msgid "<0>Coming soon to</0><1>Google Play</1>"
 msgstr "<0>Coming soon to</0><1>Google Play</1>"
 
+msgid "<0>Download on the</0><1>App Store</1>"
+msgstr "<0>Download on the</0><1>App Store</1>"
+
 msgid "<0>F3</0> · you are here"
 msgstr "<0>F3</0> · you are here"
 
@@ -5453,9 +5456,6 @@ msgstr "Download image"
 
 msgid "Download Manually"
 msgstr "Download Manually"
-
-msgid "Download on the App Store"
-msgstr "Download on the App Store"
 
 msgid "Download starter"
 msgstr "Download starter"

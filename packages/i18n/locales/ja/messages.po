@@ -1050,6 +1050,9 @@ msgstr "<0>#{0}</0> <1>リーダーボード{1}人中</1>"
 msgid "<0>Coming soon to</0><1>Google Play</1>"
 msgstr "<1>Google Play</1><0>で近日公開</0>"
 
+msgid "<0>Download on the</0><1>App Store</1>"
+msgstr "<1>App Store</1><0>からダウンロード</0>"
+
 msgid "<0>F3</0> · you are here"
 msgstr "<0>F3</0> · 現在地"
 
@@ -5453,9 +5456,6 @@ msgstr "画像をダウンロード"
 
 msgid "Download Manually"
 msgstr "手動でダウンロード"
-
-msgid "Download on the App Store"
-msgstr "App Store からダウンロード"
 
 msgid "Download starter"
 msgstr "スターターをダウンロード"

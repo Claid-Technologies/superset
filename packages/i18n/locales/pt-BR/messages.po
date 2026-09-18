@@ -1050,6 +1050,9 @@ msgstr "<0>#{0}</0> <1>de {1} no ranking</1>"
 msgid "<0>Coming soon to</0><1>Google Play</1>"
 msgstr "<0>Em breve no</0><1>Google Play</1>"
 
+msgid "<0>Download on the</0><1>App Store</1>"
+msgstr "<0>Baixar na</0><1>App Store</1>"
+
 msgid "<0>F3</0> · you are here"
 msgstr "<0>F3</0> · você está aqui"
 
@@ -5453,9 +5456,6 @@ msgstr "Baixar imagem"
 
 msgid "Download Manually"
 msgstr "Baixar manualmente"
-
-msgid "Download on the App Store"
-msgstr "Baixar na App Store"
 
 msgid "Download starter"
 msgstr "Baixar modelo inicial"

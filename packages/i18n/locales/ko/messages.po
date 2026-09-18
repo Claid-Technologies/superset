@@ -1050,6 +1050,9 @@ msgstr "<0>#{0}</0> <1>· 리더보드 {1}명 중</1>"
 msgid "<0>Coming soon to</0><1>Google Play</1>"
 msgstr "<1>Google Play</1><0>출시 예정</0>"
 
+msgid "<0>Download on the</0><1>App Store</1>"
+msgstr "<1>App Store</1><0>에서 다운로드</0>"
+
 msgid "<0>F3</0> · you are here"
 msgstr "<0>F3</0> · 현재 위치"
 
@@ -5453,9 +5456,6 @@ msgstr "이미지 다운로드"
 
 msgid "Download Manually"
 msgstr "수동으로 다운로드"
-
-msgid "Download on the App Store"
-msgstr "App Store에서 다운로드"
 
 msgid "Download starter"
 msgstr "스타터 다운로드"

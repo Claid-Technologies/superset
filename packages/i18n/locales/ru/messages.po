@@ -1050,6 +1050,9 @@ msgstr "<0>#{0}</0> <1>из {1} в рейтинге</1>"
 msgid "<0>Coming soon to</0><1>Google Play</1>"
 msgstr "<0>Скоро в</0><1>Google Play</1>"
 
+msgid "<0>Download on the</0><1>App Store</1>"
+msgstr "<0>Загрузите в</0><1>App Store</1>"
+
 msgid "<0>F3</0> · you are here"
 msgstr "<0>F3</0> · вы здесь"
 
@@ -5453,9 +5456,6 @@ msgstr "Скачать изображение"
 
 msgid "Download Manually"
 msgstr "Скачать вручную"
-
-msgid "Download on the App Store"
-msgstr "Загрузите в App Store"
 
 msgid "Download starter"
 msgstr "Скачать заготовку"

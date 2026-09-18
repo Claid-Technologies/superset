@@ -1050,6 +1050,9 @@ msgstr "<0>#{0}</0> <1>de {1} en la clasificación</1>"
 msgid "<0>Coming soon to</0><1>Google Play</1>"
 msgstr "<0>Próximamente en</0><1>Google Play</1>"
 
+msgid "<0>Download on the</0><1>App Store</1>"
+msgstr "<0>Descárgalo en el</0><1>App Store</1>"
+
 msgid "<0>F3</0> · you are here"
 msgstr "<0>F3</0> · estás aquí"
 
@@ -5453,9 +5456,6 @@ msgstr "Descargar la imagen"
 
 msgid "Download Manually"
 msgstr "Descargar manualmente"
-
-msgid "Download on the App Store"
-msgstr "Descárgalo en el App Store"
 
 msgid "Download starter"
 msgstr "Descargar plantilla inicial"

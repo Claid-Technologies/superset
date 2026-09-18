@@ -1050,6 +1050,9 @@ msgstr "<0>#{0}</0> <1>trên {1} trong bảng xếp hạng</1>"
 msgid "<0>Coming soon to</0><1>Google Play</1>"
 msgstr "<0>Sắp có trên</0><1>Google Play</1>"
 
+msgid "<0>Download on the</0><1>App Store</1>"
+msgstr "<0>Tải về trên</0><1>App Store</1>"
+
 msgid "<0>F3</0> · you are here"
 msgstr "<0>F3</0> · bạn đang ở đây"
 
@@ -5453,9 +5456,6 @@ msgstr "Tải ảnh xuống"
 
 msgid "Download Manually"
 msgstr "Tải xuống thủ công"
-
-msgid "Download on the App Store"
-msgstr "Tải về trên App Store"
 
 msgid "Download starter"
 msgstr "Tải bản mẫu"

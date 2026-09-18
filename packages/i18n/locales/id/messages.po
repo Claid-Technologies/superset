@@ -1050,6 +1050,9 @@ msgstr "<0>#{0}</0> <1>dari {1} di papan peringkat</1>"
 msgid "<0>Coming soon to</0><1>Google Play</1>"
 msgstr "<0>Segera hadir di</0><1>Google Play</1>"
 
+msgid "<0>Download on the</0><1>App Store</1>"
+msgstr "<0>Unduh di</0><1>App Store</1>"
+
 msgid "<0>F3</0> · you are here"
 msgstr "<0>F3</0> · Anda di sini"
 
@@ -5453,9 +5456,6 @@ msgstr "Unduh gambar"
 
 msgid "Download Manually"
 msgstr "Unduh Manual"
-
-msgid "Download on the App Store"
-msgstr "Unduh di App Store"
 
 msgid "Download starter"
 msgstr "Unduh starter"
