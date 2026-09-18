@@ -1048,13 +1048,13 @@ msgid "<0>#{0}</0> <1>of {1} on the leaderboard</1>"
 msgstr "<0>#{0}</0> <1>／排行榜 {1} 人中</1>"
 
 msgid "<0>Coming soon to</0><1>App Store</1>"
-msgstr "<0>即將登陸</0><1>App Store</1>"
+msgstr "<0>即將上架</0><1>App Store</1>"
 
 msgid "<0>Coming soon to</0><1>Google Play</1>"
-msgstr "<0>即將登陸</0><1>Google Play</1>"
+msgstr "<0>即將上架</0><1>Google Play</1>"
 
 msgid "<0>Download on the</0><1>App Store</1>"
-msgstr "<0>下載自</0><1>App Store</1>"
+msgstr "<1>App Store</1><0>下載</0>"
 
 msgid "<0>F3</0> · you are here"
 msgstr "<0>F3</0> · 你在這裡"

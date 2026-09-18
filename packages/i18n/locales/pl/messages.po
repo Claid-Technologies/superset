@@ -12156,7 +12156,7 @@ msgid "Required version: {minimumVersion}+"
 msgstr "Wymagana wersja: {minimumVersion}+"
 
 msgid "Requires iOS 26 or later. Included with Superset Pro."
-msgstr "Wymaga iOS 26 lub nowszego. W ramach Superset Pro."
+msgstr "Wymaga iOS 26 lub nowszego. Dostępne w ramach Superset Pro."
 
 msgid "Reserved by OS"
 msgstr "Zarezerwowany przez system"

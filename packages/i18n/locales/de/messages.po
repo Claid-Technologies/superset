@@ -8118,7 +8118,7 @@ msgid "Launch agents across features, bug fixes, and refactors, all in parallel.
 msgstr "Starte Agenten für Features, Bugfixes und Refactorings, alle parallel. Der Status auf einen Blick zeigt, welche Agenten arbeiten, welche blockiert sind und welche auf dich warten."
 
 msgid "Launch an agent on any connected machine the moment an idea lands. Every session gets its own isolated workspace."
-msgstr "Starte einen Agent auf jedem verbundenen Rechner, sobald dir eine Idee kommt. Jede Sitzung erhält ihren eigenen isolierten Arbeitsbereich."
+msgstr "Starte einen Agenten auf jedem verbundenen Rechner, sobald dir eine Idee kommt. Jede Sitzung erhält ihren eigenen isolierten Arbeitsbereich."
 
 msgid "Launch mode"
 msgstr "Startmodus"
