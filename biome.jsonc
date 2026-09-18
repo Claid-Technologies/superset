@@ -107,7 +107,11 @@
 			}
 		},
 		{
-			"includes": ["apps/desktop/src/renderer/**"],
+			"includes": [
+				"apps/desktop/src/renderer/**",
+				"!**/*.test.ts",
+				"!**/*.test.tsx"
+			],
 			"linter": {
 				"rules": {
 					"style": {

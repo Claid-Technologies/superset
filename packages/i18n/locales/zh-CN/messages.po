@@ -14264,9 +14264,6 @@ msgstr "Superset设计系统"
 msgid "Superset Enterprise is Superset for teams. Reach out to learn more about what's included and how it can work for your organization."
 msgstr "Superset Enterprise是面向团队的Superset。联系我们，了解它包含什么，以及如何适配你的组织。"
 
-msgid "Superset failed to start"
-msgstr "Superset启动失败"
-
 msgid "Superset for your team"
 msgstr "为你的团队准备的Superset"
 
@@ -14977,9 +14974,6 @@ msgstr "恢复期已结束。请联系support@superset.sh。"
 
 msgid "The remote branch has diverged. Pull before continuing."
 msgstr "远程分支已分叉。请先拉取再继续。"
-
-msgid "The renderer crashed during startup. Please check logs for details."
-msgstr "渲染进程在启动时崩溃。请查看日志了解详情。"
 
 msgid "The repositories a cloud workspace checks out, and which one's .superset/config.json it acts on. The workspace opens on the config location, or on the first repository by name."
 msgstr "云端工作区检出的仓库，以及它使用哪个仓库的 .superset/config.json。工作区在配置位置打开，否则在按名称排序的第一个仓库打开。"

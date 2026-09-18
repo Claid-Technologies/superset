@@ -14264,9 +14264,6 @@ msgstr "Sistema de diseño de Superset"
 msgid "Superset Enterprise is Superset for teams. Reach out to learn more about what's included and how it can work for your organization."
 msgstr "Superset Enterprise es Superset para equipos. Escríbenos para saber más sobre lo que incluye y cómo puede funcionar en tu organización."
 
-msgid "Superset failed to start"
-msgstr "Superset no pudo iniciarse"
-
 msgid "Superset for your team"
 msgstr "Superset para tu equipo"
 
@@ -14977,9 +14974,6 @@ msgstr "El periodo de recuperación ha terminado. Escribe a support@superset.sh.
 
 msgid "The remote branch has diverged. Pull before continuing."
 msgstr "La rama remota ha divergido. Haz pull antes de continuar."
-
-msgid "The renderer crashed during startup. Please check logs for details."
-msgstr "El renderizador falló durante el arranque. Consultar los registros para más detalles."
 
 msgid "The repositories a cloud workspace checks out, and which one's .superset/config.json it acts on. The workspace opens on the config location, or on the first repository by name."
 msgstr "Los repositorios que un espacio de trabajo en la nube extrae, y de cuál aplica el .superset/config.json. El espacio de trabajo se abre en la ubicación de la configuración, o en el primer repositorio por nombre."

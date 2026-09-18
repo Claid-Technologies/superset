@@ -14264,9 +14264,6 @@ msgstr "Hệ thống thiết kế Superset"
 msgid "Superset Enterprise is Superset for teams. Reach out to learn more about what's included and how it can work for your organization."
 msgstr "Superset Enterprise là Superset dành cho đội nhóm. Hãy liên hệ để biết thêm về những gì được bao gồm và cách nó phù hợp với tổ chức của bạn."
 
-msgid "Superset failed to start"
-msgstr "Superset không khởi động được"
-
 msgid "Superset for your team"
 msgstr "Superset cho đội ngũ của bạn"
 
@@ -14977,9 +14974,6 @@ msgstr "Thời hạn khôi phục đã kết thúc. Hãy liên hệ support@supe
 
 msgid "The remote branch has diverged. Pull before continuing."
 msgstr "Nhánh remote đã rẽ nhánh khác. Hãy pull trước khi tiếp tục."
-
-msgid "The renderer crashed during startup. Please check logs for details."
-msgstr "Renderer đã crash khi khởi động. Vui lòng xem log để biết chi tiết."
 
 msgid "The repositories a cloud workspace checks out, and which one's .superset/config.json it acts on. The workspace opens on the config location, or on the first repository by name."
 msgstr "Các repository mà workspace cloud checkout, và .superset/config.json của repository nào được áp dụng. Workspace mở tại vị trí cấu hình, hoặc tại repository đầu tiên theo tên."

@@ -14264,9 +14264,6 @@ msgstr "Design systém Superset"
 msgid "Superset Enterprise is Superset for teams. Reach out to learn more about what's included and how it can work for your organization."
 msgstr "Superset Enterprise je Superset pro týmy. Ozvěte se a řekneme vám, co obsahuje a jak může fungovat ve vaší organizaci."
 
-msgid "Superset failed to start"
-msgstr "Superset se nepodařilo spustit"
-
 msgid "Superset for your team"
 msgstr "Superset pro váš tým"
 
@@ -14977,9 +14974,6 @@ msgstr "Lhůta pro obnovení skončila. Napište na support@superset.sh."
 
 msgid "The remote branch has diverged. Pull before continuing."
 msgstr "Vzdálená větev se rozešla. Před pokračováním udělejte pull."
-
-msgid "The renderer crashed during startup. Please check logs for details."
-msgstr "Renderer spadl při startu. Podrobnosti najdete v logu."
 
 msgid "The repositories a cloud workspace checks out, and which one's .superset/config.json it acts on. The workspace opens on the config location, or on the first repository by name."
 msgstr "Repozitáře, které cloudový pracovní prostor stáhne, a čí .superset/config.json použije. Pracovní prostor se otevře v umístění konfigurace, jinak v prvním repozitáři podle názvu."
