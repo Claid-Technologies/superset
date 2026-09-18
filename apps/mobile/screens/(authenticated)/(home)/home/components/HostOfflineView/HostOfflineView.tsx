@@ -14,29 +14,31 @@ export function HostOfflineView({ hostName }: { hostName: string }) {
 	const { t } = useLingui();
 	const router = useRouter();
 	return (
-		<View className="flex-1 items-center justify-center gap-4 px-8">
+		<View className="flex-1 items-center justify-center gap-6 px-8">
 			<Icon
 				as={CloudOff}
 				className="text-muted-foreground size-12"
 				strokeWidth={1.25}
 			/>
-			<View className="items-center gap-1">
-				<Text className="text-lg font-semibold">
+			<View className="items-center gap-2">
+				<Text className="text-center text-lg font-semibold">
 					{t({
 						message: `${hostName} is offline`,
 					})}
 				</Text>
-				<Text className="text-center text-muted-foreground">
-					<Trans>Its workspaces will appear when it reconnects.</Trans>
-				</Text>
-				<Text className="mt-2 text-center text-sm text-muted-foreground">
-					<Trans>
-						First time here? Turn on Remote Access in the desktop app under
-						Settings → Remote Access.
-					</Trans>
-				</Text>
+				<View className="items-center gap-3">
+					<Text className="text-center text-sm leading-5 text-muted-foreground">
+						<Trans>Its workspaces will appear when it reconnects.</Trans>
+					</Text>
+					<Text className="text-center text-sm leading-5 text-muted-foreground">
+						<Trans>
+							First time here? Turn on Remote Access in the desktop app under
+							Settings → Remote Access.
+						</Trans>
+					</Text>
+				</View>
 			</View>
-			<View className="items-center gap-2">
+			<View className="items-center gap-1">
 				<Button
 					variant="secondary"
 					onPress={() => router.push("/(authenticated)/(home)/filter/scope")}
