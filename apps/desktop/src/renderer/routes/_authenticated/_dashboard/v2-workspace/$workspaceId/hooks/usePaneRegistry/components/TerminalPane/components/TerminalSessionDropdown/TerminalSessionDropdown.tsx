@@ -248,8 +248,11 @@ export function TerminalSessionDropdown({
 				terminalId: session.terminalId,
 				workspaceId,
 			});
-			onSessionRemoved(session.terminalId);
-			closePanesForTerminal(session.terminalId);
+			try {
+				onSessionRemoved(session.terminalId);
+			} finally {
+				closePanesForTerminal(session.terminalId);
+			}
 		} finally {
 			await utils.terminal.list.invalidate({ workspaceId });
 		}
