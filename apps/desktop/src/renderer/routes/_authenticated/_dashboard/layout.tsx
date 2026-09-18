@@ -32,9 +32,9 @@ import {
 	MAX_WORKSPACE_SIDEBAR_WIDTH,
 	useWorkspaceSidebarStore,
 } from "renderer/stores/workspace-sidebar-state";
+import { ContentBoundary } from "../components/ContentBoundary";
 import { AddRepositoryModals } from "./components/AddRepositoryModals";
 import { CrossVersionMismatchState } from "./components/CrossVersionMismatchState";
-import { DashboardContentBoundary } from "./components/DashboardContentBoundary";
 import { RemotePortForwarder } from "./components/RemotePortForwarder";
 import { TopBar } from "./components/TopBar";
 
@@ -290,9 +290,9 @@ function DashboardLayout() {
 										<CrossVersionMismatchState />
 									)
 								) : (
-									<DashboardContentBoundary>
+									<ContentBoundary>
 										<Outlet />
-									</DashboardContentBoundary>
+									</ContentBoundary>
 								)}
 							</div>
 						</div>

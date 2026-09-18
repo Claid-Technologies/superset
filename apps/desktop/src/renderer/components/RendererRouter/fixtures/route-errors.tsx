@@ -11,7 +11,7 @@ plugin({
 		build.onLoad(
 			{
 				filter:
-					/\/(error|not-found|RendererErrorBoundary|DashboardContentError|boot-errors)\.tsx?$/,
+					/\/(error|not-found|RendererErrorBoundary|ContentError|boot-errors)\.tsx?$/,
 			},
 			async ({ path }) => {
 				if (path.includes("/node_modules/")) return;
@@ -63,23 +63,18 @@ const { RendererRouter } = await import("../RendererRouter");
 const { Route } = await import("../../../routes/__root");
 const { ErrorPage } = await import("../../../routes/error");
 const { RendererErrorBoundary } = await import("../../RendererErrorBoundary");
-const { DashboardContentError } = await import(
-	"../../../routes/_authenticated/_dashboard/components/DashboardContentError"
+const { ContentError } = await import(
+	"../../../routes/_authenticated/components/ContentError"
 );
 let failDashboardFallback = false;
-mock.module(
-	"../../../routes/_authenticated/_dashboard/components/DashboardContentError",
-	() => ({
-		DashboardContentError: (
-			props: Parameters<typeof DashboardContentError>[0],
-		) => {
-			if (failDashboardFallback) throw fallbackError;
-			return <DashboardContentError {...props} />;
-		},
-	}),
-);
-const { DashboardContentBoundary } = await import(
-	"../../../routes/_authenticated/_dashboard/components/DashboardContentBoundary"
+mock.module("../../../routes/_authenticated/components/ContentError", () => ({
+	ContentError: (props: Parameters<typeof ContentError>[0]) => {
+		if (failDashboardFallback) throw fallbackError;
+		return <ContentError {...props} />;
+	},
+}));
+const { ContentBoundary } = await import(
+	"../../../routes/_authenticated/components/ContentBoundary"
 );
 Route.options.errorComponent = (props) => {
 	if (failErrorPage) throw fallbackError;
@@ -105,9 +100,9 @@ const dashboard = createRoute({
 	component: () => (
 		<div>
 			<aside data-testid="retained-sidebar" />
-			<DashboardContentBoundary>
+			<ContentBoundary>
 				<Outlet />
-			</DashboardContentBoundary>
+			</ContentBoundary>
 		</div>
 	),
 });

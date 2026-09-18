@@ -190,12 +190,44 @@ test("every production failure boundary is included in the renderer audit", asyn
 			"index.tsx: defaultNotFoundComponent",
 			"routes/__root.tsx: errorComponent",
 			"routes/__root.tsx: notFoundComponent",
-			"routes/_authenticated/_dashboard/components/DashboardContentBoundary/DashboardContentBoundary.tsx: CatchBoundary",
-			"routes/_authenticated/_dashboard/components/DashboardContentBoundary/DashboardContentBoundary.tsx: errorComponent",
+			"routes/_authenticated/components/ContentBoundary/ContentBoundary.tsx: CatchBoundary",
+			"routes/_authenticated/components/ContentBoundary/ContentBoundary.tsx: errorComponent",
 			"routes/_authenticated/_dashboard/project/$projectId/page.tsx: notFoundComponent",
 			"routes/_authenticated/_dashboard/workspace/$workspaceId/page.tsx: notFoundComponent",
 			"routes/_authenticated/settings/hosts/$hostId/page.tsx: notFoundComponent",
 			"routes/_authenticated/settings/projects/$projectId/page.tsx: notFoundComponent",
 		].sort(),
 	);
+});
+
+test("settings and dashboard outlets retain their surrounding layout on render errors", () => {
+	for (const relative of [
+		"routes/_authenticated/settings/layout.tsx",
+		"routes/_authenticated/_dashboard/layout.tsx",
+	]) {
+		const source = parse(resolve(renderer, relative));
+		let outlets = 0;
+		function visit(node: ts.Node, protectedByBoundary = false) {
+			if (
+				ts.isJsxElement(node) &&
+				node.openingElement.tagName.getText(source) === "ContentBoundary"
+			) {
+				protectedByBoundary = true;
+			}
+			if (ts.isJsxSelfClosingElement(node)) {
+				const tag = node.tagName.getText(source);
+				if (tag === "Outlet") {
+					outlets++;
+					expect(
+						protectedByBoundary,
+						`${relative}: Outlet must have a content boundary`,
+					).toBe(true);
+				}
+				if (tag === "SettingsSidebar") expect(protectedByBoundary).toBe(false);
+			}
+			ts.forEachChild(node, (child) => visit(child, protectedByBoundary));
+		}
+		visit(source);
+		expect(outlets).toBeGreaterThan(0);
+	}
 });

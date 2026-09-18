@@ -66,7 +66,7 @@ TanStack content boundaries, and React error lifecycle methods. A new registrati
 fails the audit until its fallback and recovery contract are reviewed. This is a
 review guard, not a proof that arbitrary third-party code cannot create a boundary.
 
-The integration fixture now mounts the same `DashboardContentBoundary` as the app.
+The integration fixture now mounts the same `ContentBoundary` as the app.
 It verifies retained chrome, recovery to a sibling route, and escalation when the
 content fallback itself throws. This exposed a navigation race: resetting on the
 new URL can retry the old outlet before the new matches commit. Resetting on the
@@ -78,3 +78,11 @@ Boot and emergency diagnostics share a nonthrowing formatter. Unit tests include
 null, primitives, circular objects, throwing message getters, and revoked proxies.
 These guards and integration cases run through `bun test`; no separate CDP suite
 or production fault-injection mechanism is added.
+
+Settings and dashboard layouts now share `ContentBoundary` and `ContentError`
+under their authenticated parent. Both Settings outlet variants sit inside the
+boundary; the sidebar, search banner, and native title-bar region remain outside.
+Render errors therefore replace only page content, and committed navigation to
+another Settings section resets the boundary. The architecture test verifies the
+outlet placement in both layouts alongside the shared boundary's integration
+coverage for navigation recovery and fallback escalation.

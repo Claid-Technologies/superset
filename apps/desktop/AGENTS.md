@@ -36,6 +36,6 @@ fixture uses real compiled Lingui macros; mocked translation hooks cannot verify
 this provider contract.
 
 The same architecture test inventories fallback registrations; new boundaries
-must be added to the audit and covered for recovery. Dashboard content uses
-`DashboardContentBoundary`, which resets when navigation commits (`loadedAt`),
+must be added to the audit and covered for recovery. Dashboard and Settings content use
+`ContentBoundary`, which resets when navigation commits (`loadedAt`),
 so it does not retry the stale outlet during a pending URL change.

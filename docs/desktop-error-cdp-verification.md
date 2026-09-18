@@ -226,3 +226,19 @@ captured console errors and no fallback. Screenshot:
 `/tmp/ripple-cdp-audit/issue7648-release-lingui-production-fixed.png`.
 Both screenshots were inspected. Matching result JSON files use the
 `issue7648-release-lingui-production` and `-fixed` names in the same directory.
+
+## Settings content containment
+
+Temporarily restored only the old resource sparkline to reproduce the known
+chart crash through real cursor/refresh input, then restored its fixed source.
+Before adding the Settings content boundary, the crash replaced the whole window.
+Afterwards, the same crash displayed `This view hit an error` in the content pane;
+the Settings sidebar and native title-bar region remained visible. Clicking
+Appearance in the retained sidebar recovered without a reload. The shared
+boundary integration tests cover navigation reset and fallback escalation, and
+an AST test ensures both Settings outlet variants stay inside the boundary.
+
+Captured and inspected `/tmp/ripple-cdp-audit/issue7648-settings-contained.png`;
+its matching JSON records `sidebarRetained: true` and `navigationRecovered: true`.
+The before screenshot is `issue7648-settings-uncontained.png`, and the recovered
+Appearance screenshot is `settings-navigation-recovered.png` in the same folder.
