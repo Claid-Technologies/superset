@@ -1,6 +1,8 @@
 import type { BundledLanguage } from "shiki";
 import { slugify } from "@/lib/blog-utils";
 import { BlogCodeBlock } from "./BlogCodeBlock";
+import { Testimonial } from "./Testimonial";
+import { TestimonialGrid } from "./TestimonialGrid";
 
 function extractCodeFromChildren(children: React.ReactNode): {
 	code: string;
@@ -105,4 +107,6 @@ export const mdxComponents = {
 		</span>
 	),
 	Video,
+	Testimonial,
+	TestimonialGrid,
 };
