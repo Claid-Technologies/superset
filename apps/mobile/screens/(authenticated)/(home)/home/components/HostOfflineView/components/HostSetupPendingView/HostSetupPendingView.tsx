@@ -63,7 +63,7 @@ export function HostSetupPendingView({ hostName }: { hostName: string }) {
 				<View className="flex-row items-center gap-2">
 					<Spinner />
 					<Text className="text-sm text-muted-foreground">
-						{t({ message: `Waiting for ${hostName}…` })}
+						<Trans>Waiting for it to connect…</Trans>
 					</Text>
 				</View>
 				<Button variant="link" onPress={() => openUrl(REMOTE_ACCESS_DOCS_URL)}>

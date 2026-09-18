@@ -2848,6 +2848,9 @@ msgstr "Kendi API anahtarlarımı kullanabilir miyim?"
 msgid "Can you standardize the tooltips across the app?"
 msgstr "Uygulama genelindeki tooltip'leri standartlaştırabilir misin?"
 
+msgid "Can’t check {hostName}"
+msgstr "{hostName} kontrol edilemiyor"
+
 msgid "Can't connect right now"
 msgstr "Şu anda bağlanamıyoruz"
 
@@ -16342,11 +16345,11 @@ msgstr "Ajanları başlatmadan önce çalışma alanı kurulumunu bekle"
 msgid "waiting for {0} and {1}…"
 msgstr "{0} ve {1} bekleniyor…"
 
-msgid "Waiting for {hostName}…"
-msgstr "{hostName} bekleniyor…"
-
 msgid "Waiting for Checks"
 msgstr "Kontroller bekleniyor"
+
+msgid "Waiting for it to connect…"
+msgstr "Bağlanması bekleniyor…"
 
 msgid "Waiting for Review"
 msgstr "İnceleme bekleniyor"
@@ -16389,6 +16392,9 @@ msgstr "Ödeme yönteminizden tahsilat yapamadık. Bu planı sürdürmek için g
 
 msgid "We couldn't detect a package manager or environment config."
 msgstr "Bir paket yöneticisi veya ortam yapılandırması bulamadık."
+
+msgid "We couldn’t reach Superset to see if it’s online. Check your connection and try again."
+msgstr "Çevrimiçi olup olmadığını görmek için Superset'e ulaşamadık. Bağlantınızı kontrol edip tekrar deneyin."
 
 msgid "We couldn't reach the device. Please try again in a moment."
 msgstr "Cihaza ulaşamadık. Lütfen birazdan tekrar deneyin."

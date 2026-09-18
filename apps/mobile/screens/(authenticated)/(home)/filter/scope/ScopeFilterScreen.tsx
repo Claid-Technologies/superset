@@ -36,7 +36,7 @@ export function ScopeFilterScreen() {
 		(store) => store.setScopeCloud,
 	);
 
-	const presence = useHostsPresence(hosts);
+	const { presence } = useHostsPresence(hosts);
 
 	const sortedHosts = useMemo(
 		() =>

@@ -2848,6 +2848,9 @@ msgstr "Kann ich meine eigenen API-Schlüssel nutzen?"
 msgid "Can you standardize the tooltips across the app?"
 msgstr "Kannst du die Tooltips in der ganzen App vereinheitlichen?"
 
+msgid "Can’t check {hostName}"
+msgstr "{hostName} kann nicht geprüft werden"
+
 msgid "Can't connect right now"
 msgstr "Verbindung gerade nicht möglich"
 
@@ -16342,11 +16345,11 @@ msgstr "Auf das Arbeitsbereich-Setup warten, bevor Agenten starten"
 msgid "waiting for {0} and {1}…"
 msgstr "warten auf {0} und {1}…"
 
-msgid "Waiting for {hostName}…"
-msgstr "Warten auf {hostName}…"
-
 msgid "Waiting for Checks"
 msgstr "Wartet auf Prüfungen"
+
+msgid "Waiting for it to connect…"
+msgstr "Warten auf die Verbindung…"
 
 msgid "Waiting for Review"
 msgstr "Wartet auf Review"
@@ -16389,6 +16392,9 @@ msgstr "Wir konnten deine Zahlungsmethode nicht belasten. Aktualisiere sie, um d
 
 msgid "We couldn't detect a package manager or environment config."
 msgstr "Wir konnten keinen Paketmanager und keine Umgebungskonfiguration erkennen."
+
+msgid "We couldn’t reach Superset to see if it’s online. Check your connection and try again."
+msgstr "Wir konnten Superset nicht erreichen, um zu prüfen, ob er online ist. Prüfe deine Verbindung und versuche es erneut."
 
 msgid "We couldn't reach the device. Please try again in a moment."
 msgstr "Wir konnten das Gerät nicht erreichen. Bitte versuche es gleich noch einmal."

@@ -1,7 +1,10 @@
 import type { RouterOutputs } from "@superset/trpc";
 import { type UseQueryResult, useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
-import { useHostsPresence } from "@/hooks/useHostsPresence";
+import {
+	type HostPresenceStatus,
+	useHostsPresence,
+} from "@/hooks/useHostsPresence";
 import { useSession } from "@/lib/auth/client";
 import { apiClient } from "@/lib/trpc/client";
 
@@ -36,10 +39,11 @@ function useOrgHostsQuery(): UseQueryResult<OrgHostRow[]> {
 export function useOrgHosts(): {
 	hosts: OrgHost[];
 	query: UseQueryResult<OrgHostRow[]>;
+	presenceStatus: HostPresenceStatus;
 } {
 	const query = useOrgHostsQuery();
 	const rows = query.data ?? NO_ROWS;
-	const presence = useHostsPresence(rows);
+	const { presence, status: presenceStatus } = useHostsPresence(rows);
 	const hosts = useMemo(
 		() =>
 			rows.length === 0
@@ -54,5 +58,5 @@ export function useOrgHosts(): {
 					}),
 		[rows, presence],
 	);
-	return { hosts, query };
+	return { hosts, query, presenceStatus };
 }

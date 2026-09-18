@@ -9,8 +9,10 @@ import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { useOrgHosts } from "@/hooks/useOrgHosts";
 import { HintRow } from "./components/HintRow";
+import { HostPresenceUnknownView } from "./components/HostPresenceUnknownView";
 import { HostSetupPendingView } from "./components/HostSetupPendingView";
 import { useRefreshHostsPresence } from "./hooks/useRefreshHostsPresence";
+import { getLastSeenTime } from "./utils/getLastSeenTime";
 
 export function HostOfflineView({
 	hostName,
@@ -25,12 +27,15 @@ export function HostOfflineView({
 	const refreshPresence = useRefreshHostsPresence();
 	const [checking, setChecking] = useState(false);
 
-	const lastSeen =
-		typeof lastSeenAt === "number" ? formatRelativeTime(lastSeenAt) : null;
-
 	if (lastSeenAt === null) {
 		return <HostSetupPendingView hostName={hostName} />;
 	}
+	if (lastSeenAt === undefined) {
+		return <HostPresenceUnknownView hostName={hostName} />;
+	}
+
+	const now = Date.now();
+	const lastSeen = formatRelativeTime(getLastSeenTime(lastSeenAt, now), now);
 
 	return (
 		<View className="flex-1 items-center justify-center gap-6 px-8">
@@ -47,11 +52,9 @@ export function HostOfflineView({
 						message: `${hostName} is offline`,
 					})}
 				</Text>
-				{lastSeen ? (
-					<Text className="text-center text-sm leading-5 text-muted-foreground">
-						{t({ message: `Last seen ${lastSeen}` })}
-					</Text>
-				) : null}
+				<Text className="text-center text-sm leading-5 text-muted-foreground">
+					{t({ message: `Last seen ${lastSeen}` })}
+				</Text>
 			</View>
 			<View className="border-border bg-card w-full rounded-2xl border px-4">
 				<HintRow

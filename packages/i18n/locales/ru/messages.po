@@ -2848,6 +2848,9 @@ msgstr "Можно использовать свои ключи API?"
 msgid "Can you standardize the tooltips across the app?"
 msgstr "Можешь стандартизировать подсказки во всём приложении?"
 
+msgid "Can’t check {hostName}"
+msgstr "Не удаётся проверить {hostName}"
+
 msgid "Can't connect right now"
 msgstr "Сейчас не удаётся подключиться"
 
@@ -16342,11 +16345,11 @@ msgstr "Ждать настройки рабочей области перед �
 msgid "waiting for {0} and {1}…"
 msgstr "ожидание {0} и {1}…"
 
-msgid "Waiting for {hostName}…"
-msgstr "Ожидание {hostName}…"
-
 msgid "Waiting for Checks"
 msgstr "Ожидание проверок"
+
+msgid "Waiting for it to connect…"
+msgstr "Ожидание подключения…"
 
 msgid "Waiting for Review"
 msgstr "Ожидание ревью"
@@ -16389,6 +16392,9 @@ msgstr "Не удалось списать средства с вашего сп
 
 msgid "We couldn't detect a package manager or environment config."
 msgstr "Не удалось определить пакетный менеджер или конфигурацию окружения."
+
+msgid "We couldn’t reach Superset to see if it’s online. Check your connection and try again."
+msgstr "Не удалось связаться с Superset, чтобы узнать, в сети ли он. Проверьте подключение и попробуйте снова."
 
 msgid "We couldn't reach the device. Please try again in a moment."
 msgstr "Не удалось связаться с устройством. Попробуйте ещё раз через минуту."

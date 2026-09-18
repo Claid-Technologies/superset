@@ -2848,6 +2848,9 @@ msgstr "Tôi có thể dùng khóa API của mình không?"
 msgid "Can you standardize the tooltips across the app?"
 msgstr "Bạn chuẩn hóa tooltip trên toàn ứng dụng được không?"
 
+msgid "Can’t check {hostName}"
+msgstr "Không thể kiểm tra {hostName}"
+
 msgid "Can't connect right now"
 msgstr "Chưa thể kết nối lúc này"
 
@@ -16342,11 +16345,11 @@ msgstr "Chờ setup workspace xong rồi mới khởi động agent"
 msgid "waiting for {0} and {1}…"
 msgstr "đang chờ {0} và {1}…"
 
-msgid "Waiting for {hostName}…"
-msgstr "Đang chờ {hostName}…"
-
 msgid "Waiting for Checks"
 msgstr "Đang chờ check"
+
+msgid "Waiting for it to connect…"
+msgstr "Đang chờ kết nối…"
 
 msgid "Waiting for Review"
 msgstr "Đang chờ review"
@@ -16389,6 +16392,9 @@ msgstr "Chúng tôi không thể trừ tiền từ phương thức thanh toán c
 
 msgid "We couldn't detect a package manager or environment config."
 msgstr "Chúng tôi không phát hiện được trình quản lý gói hay cấu hình môi trường."
+
+msgid "We couldn’t reach Superset to see if it’s online. Check your connection and try again."
+msgstr "Chúng tôi không thể kết nối tới Superset để xem máy có trực tuyến không. Hãy kiểm tra kết nối và thử lại."
 
 msgid "We couldn't reach the device. Please try again in a moment."
 msgstr "Không thể kết nối với thiết bị. Vui lòng thử lại sau giây lát."
