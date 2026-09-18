@@ -43,7 +43,7 @@ export function ScopeFilterScreen() {
 			hosts
 				.map((host) => ({
 					...host,
-					isOnline: presence?.get(host.machineId) ?? host.isOnline,
+					isOnline: presence?.get(host.machineId)?.online ?? host.isOnline,
 				}))
 				.sort((a, b) => a.name.localeCompare(b.name)),
 		[hosts, presence],

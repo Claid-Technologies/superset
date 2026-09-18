@@ -99,7 +99,11 @@ type HomeListItem =
 			workspace: HostWorkspaceItem;
 			cloudStatus?: CloudWorkspaceStatus;
 	  }
-	| { kind: "hostOffline"; hostName: string };
+	| {
+			kind: "hostOffline";
+			hostName: string;
+			lastSeenAt: number | null | undefined;
+	  };
 
 function homeListItemKey(item: HomeListItem): string {
 	switch (item.kind) {
@@ -265,7 +269,11 @@ export function HomeScreen() {
 		// A machine's rows. When it is offline the whole scope gives way to the
 		// placeholder — Cloud is a chip away rather than stranded above it.
 		if (selectedHost && !selectedHost.isOnline) {
-			items.push({ kind: "hostOffline", hostName: selectedHost.name });
+			items.push({
+				kind: "hostOffline",
+				hostName: selectedHost.name,
+				lastSeenAt: selectedHost.lastSeenAt,
+			});
 			return items;
 		}
 
@@ -487,7 +495,10 @@ export function HomeScreen() {
 			if (item.kind === "hostOffline") {
 				return (
 					<View className="py-16">
-						<HostOfflineView hostName={item.hostName} />
+						<HostOfflineView
+							hostName={item.hostName}
+							lastSeenAt={item.lastSeenAt}
+						/>
 					</View>
 				);
 			}
@@ -647,7 +658,10 @@ export function HomeScreen() {
 					}}
 				>
 					{scopeBar}
-					<HostOfflineView hostName={selectedHost.name} />
+					<HostOfflineView
+						hostName={selectedHost.name}
+						lastSeenAt={selectedHost.lastSeenAt}
+					/>
 				</View>
 			) : (
 				<LegendList

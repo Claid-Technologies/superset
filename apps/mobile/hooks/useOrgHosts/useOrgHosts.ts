@@ -6,7 +6,11 @@ import { useSession } from "@/lib/auth/client";
 import { apiClient } from "@/lib/trpc/client";
 
 export type OrgHostRow = RouterOutputs["host"]["roster"][number];
-export type OrgHost = OrgHostRow & { isOnline: boolean };
+export type OrgHost = OrgHostRow & {
+	isOnline: boolean;
+	/** Null = never reached the relay; absent = presence unavailable. */
+	lastSeenAt?: number | null;
+};
 
 export const NO_HOSTS: OrgHost[] = [];
 const NO_ROWS: OrgHostRow[] = [];
@@ -40,10 +44,14 @@ export function useOrgHosts(): {
 		() =>
 			rows.length === 0
 				? NO_HOSTS
-				: rows.map((row) => ({
-						...row,
-						isOnline: presence?.get(row.machineId) ?? false,
-					})),
+				: rows.map((row) => {
+						const info = presence?.get(row.machineId);
+						return {
+							...row,
+							isOnline: info?.online ?? false,
+							lastSeenAt: info?.lastSeenAt,
+						};
+					}),
 		[rows, presence],
 	);
 	return { hosts, query };
