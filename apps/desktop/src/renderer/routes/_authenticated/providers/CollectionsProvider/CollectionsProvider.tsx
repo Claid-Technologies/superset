@@ -25,6 +25,7 @@ import {
 	getCollections,
 	preloadCollections,
 } from "./collections";
+import { resolveInitialWindowOrganization } from "./utils/resolveInitialWindowOrganization";
 
 // Cloud query procedures take no organizationId input (the server scopes by
 // active org), so their React Query keys don't encode the org — on org switch
@@ -48,6 +49,10 @@ function dropCloudQueriesForOrgSwitch(): void {
 		},
 	});
 }
+
+const ORGANIZATIONS_RETRY_ATTEMPTS = 5;
+const organizationsRetryDelayMs = (attempt: number) =>
+	Math.min(1_000 * 2 ** attempt, 30_000);
 
 type CollectionsContextType = ReturnType<typeof getCollections> & {
 	activeOrganizationId: string;
@@ -85,8 +90,11 @@ export function CollectionsProvider({ children }: { children: ReactNode }) {
 	// affects another. For a window that has no org yet (the first window of an
 	// existing user), seed from the shared login session's active org and persist
 	// that seed back into the registry.
-	const { data: windowOrgId, isPending: windowOrgPending } =
-		electronTrpc.window.getActiveOrg.useQuery();
+	const [mountedAt] = useState(() => Date.now());
+	const { data: windowOrgId, dataUpdatedAt: windowOrgUpdatedAt } =
+		electronTrpc.window.getActiveOrg.useQuery(undefined, {
+			refetchOnMount: "always",
+		});
 
 	const sessionOrgId = env.SKIP_ENV_VALIDATION
 		? MOCK_ORG_ID
@@ -98,8 +106,16 @@ export function CollectionsProvider({ children }: { children: ReactNode }) {
 
 	// Account-wide ("the orgs I belong to"), so it is not affected by — and does
 	// not depend on — the org header this provider sets.
-	const { data: organizations } =
-		cloudTrpc.organization.list.useQuery(undefined);
+	const { data: organizations, dataUpdatedAt: organizationsUpdatedAt } =
+		cloudTrpc.organization.list.useQuery(undefined, {
+			refetchOnMount: "always",
+			// The window shows nothing until this read lands, and a window that
+			// mounts the instant a sign-in arrives can ask before its credentials
+			// are in place. Bounded, because unbounded retries against the API
+			// have locked the whole fleet out before (#5518).
+			retry: ORGANIZATIONS_RETRY_ATTEMPTS,
+			retryDelay: organizationsRetryDelayMs,
+		});
 
 	// Initialize the window's org exactly once. After this, the window's org is
 	// owned by local state (and switchOrganization); later — possibly transient —
@@ -110,24 +126,34 @@ export function CollectionsProvider({ children }: { children: ReactNode }) {
 	const initializedRef = useRef(false);
 	useEffect(() => {
 		if (initializedRef.current) return;
-		if (windowOrgPending) return;
 		// The registry's org is only preferred while it is still one the user
 		// belongs to. Leaving an organization (or having membership revoked
 		// elsewhere) leaves a dead id in the registry, and adopting it would pin
 		// the window to an org whose every read now fails. Until the membership
 		// list has loaded we cannot tell stale from valid, so wait rather than
 		// guess — the window is showing nothing yet either way.
-		const registryOrgIsStillMine =
-			windowOrgId != null &&
-			organizations != null &&
-			organizations.some((organization) => organization.id === windowOrgId);
-		if (windowOrgId != null && organizations == null) return;
-		const resolved =
-			(registryOrgIsStillMine ? windowOrgId : sessionOrgId) ?? null;
-		if (!resolved) return;
+		const initial = resolveInitialWindowOrganization({
+			windowOrganization: {
+				value: windowOrgId,
+				isFresh: windowOrgUpdatedAt >= mountedAt,
+			},
+			memberOrganizationIds: {
+				value: organizations?.map((organization) => organization.id),
+				isFresh: organizationsUpdatedAt >= mountedAt,
+			},
+			sessionOrganizationId: sessionOrgId,
+		});
+		if (initial.status === "waiting") return;
 		initializedRef.current = true;
-		setActiveOrganizationId(resolved);
-	}, [windowOrgPending, windowOrgId, sessionOrgId, organizations]);
+		setActiveOrganizationId(initial.organizationId);
+	}, [
+		mountedAt,
+		windowOrgId,
+		windowOrgUpdatedAt,
+		sessionOrgId,
+		organizations,
+		organizationsUpdatedAt,
+	]);
 
 	// Scope this window's cloud reads to its own org, during render rather than
 	// in an effect: children below issue their first queries while this render
