@@ -186,3 +186,43 @@ This reproduces a real whole-window crash in the reported view without fault
 injection. It does not reproduce the secondary `useLingui` exception, establish
 that all reported occurrences have this cause, or verify the released 1.29.0
 binary. The initial boundary refactor alone did not fix this tooltip bug.
+
+## Exact Lingui failure: release-source reproduction
+
+The previous baseline was too recent: `29ed948df3` already contained #7603
+(`ee74a63b1c`), which moves Lingui above the router. The `desktop-v1.29.0` tag
+mounts RouterProvider directly, leaving the translated root error page outside
+the route-owned Lingui provider when the route fails.
+
+Temporarily restored the tag's renderer entry point, boot boundary/handler, root
+route/layout, error/not-found pages, and resource sparkline; all files were then
+restored to the PR version. The real Machine resources chart interaction now
+reproduced the provider failure without fault injection. Development mode reports
+`useLingui hook was used without I18nProvider` from `ErrorPage`.
+
+Repeated with a production-mode Vite renderer on port 4846 in the same Electron
+window (CDP 9457). A local same-origin API proxy forwarded to the existing dev
+API on 4841; the restored signed-in session and active organization were checked.
+Production React/Lingui omit the development context assertion. The identical
+chart interaction then produced:
+
+```text
+Cannot destructure property '_' of '_useLingui(...)' as it is null.
+```
+
+The generated `_useLingui` alias is the only wording difference from the report.
+Clicking Show Error exposed it beneath TanStack's “Something went wrong!” heading.
+Screenshot: `/tmp/ripple-cdp-audit/lingui-exact-before.png`.
+The chain is the tooltip's invalid date → root fallback outside its provider →
+Lingui null destructuring → TanStack's built-in global error UI.
+
+This is a reconstruction using the release's relevant source files and current
+installed dependencies, not a run of the distributed 1.29.0 binary. No synthetic
+throw, missing-provider patch, or mocked error response was used.
+
+With the PR source restored, the same production-mode sequence passed all 20
+refresh clicks and 20 cursor moves after 15 seconds of live sampling, with zero
+captured console errors and no fallback. Screenshot:
+`/tmp/ripple-cdp-audit/issue7648-release-lingui-production-fixed.png`.
+Both screenshots were inspected. Matching result JSON files use the
+`issue7648-release-lingui-production` and `-fixed` names in the same directory.
