@@ -3,7 +3,6 @@ import { mkdirSync } from "node:fs";
 import { dirname } from "node:path";
 import {
 	deriveWorkspaceBranchFromPrompt,
-	deriveWorkspaceTitleFromPrompt,
 	generateFriendlyBranchName,
 	sanitizeUserBranchName,
 } from "@superset/shared/workspace-launch";
@@ -626,6 +625,7 @@ export const workspacesRouter = router({
 			let worktreePath: string | undefined;
 			let alreadyExists = false;
 			let workspaceRow: CloudWorkspace;
+			let automaticBranch: { prefix?: string; suffix: string } | undefined;
 
 			if (input.pr !== undefined) {
 				const releaseCreateLock = await acquireWorkspaceCreateLock(
@@ -941,12 +941,10 @@ export const workspacesRouter = router({
 					const typedNameSlug = input.name
 						? sanitizeBranchCandidate(input.name)
 						: "";
-					const promptSlug = deriveWorkspaceBranchFromPrompt(composerPrompt);
+					const suffix = (input.id ?? randomUUID()).slice(0, 8);
 					const candidate =
-						typedNameSlug ||
-						(promptSlug
-							? `${promptSlug}-${(input.id ?? randomUUID()).slice(0, 8)}`
-							: generateFriendlyBranchName());
+						typedNameSlug || `${generateFriendlyBranchName()}-${suffix}`;
+					if (!input.name) automaticBranch = { prefix, suffix };
 					const prefixed = prefix ? `${prefix}/${candidate}` : candidate;
 					resolvedBranch = deduplicateBranchName(prefixed, existing);
 					plan = {
@@ -1099,12 +1097,7 @@ export const workspacesRouter = router({
 								ctx,
 								id: input.id,
 								projectId: input.projectId,
-								name:
-									input.name ??
-									((wantAi
-										? deriveWorkspaceTitleFromPrompt(composerPrompt)
-										: "") ||
-										resolvedBranch),
+								name: input.name ?? resolvedBranch,
 								branch: resolvedBranch,
 								worktreePath,
 								taskId: input.taskId,
@@ -1122,7 +1115,22 @@ export const workspacesRouter = router({
 					workspace: workspaceRow,
 					prompt: composerPrompt,
 					agent: namingAgent,
+					waitForStart: namingAgent
+						? (start) =>
+								ctx.terminalAgentStore.onWorkStarted(workspaceRow.id, start)
+						: undefined,
 					namingInstructions: localProject.namingInstructions,
+					branchRename:
+						automaticBranch && worktreePath
+							? {
+									ctx,
+									repoPath,
+									worktreePath,
+									oldBranchName: workspaceRow.branch,
+									branchPrefix: automaticBranch.prefix,
+									suffix: automaticBranch.suffix,
+								}
+							: undefined,
 				});
 			}
 

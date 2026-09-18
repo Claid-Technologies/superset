@@ -20,6 +20,7 @@ import {
 	trackWorkspaceDeleted,
 	unarchiveLocalWorkspace,
 } from "../../../workspaces/local-workspace-store";
+import { cancelAndWaitWorkspaceTitleCommit } from "../../../workspaces/workspace-title-jobs";
 import type {
 	DeleteInProgressCause,
 	TeardownFailureCause,
@@ -239,6 +240,7 @@ async function runDestroy(
 	ctx: HostServiceContext,
 	input: DestroyWorkspaceInput,
 ) {
+	await cancelAndWaitWorkspaceTitleCommit(ctx.db, input.workspaceId);
 	const warnings: string[] = [];
 
 	// `isMainWorkspace` already loads workspace + project rows from sqlite;
