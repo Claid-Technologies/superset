@@ -7,7 +7,7 @@ const INITIAL_BACKOFF_MS = 30_000;
 const MAX_BACKOFF_MS = 30 * 60_000;
 
 // FsWatcherManager rejects with this prefix when it refuses a path before
-// handing it to @parcel/watcher (missing root, not a directory, no inotify).
+// handing it to the native backend (missing root, not a directory, no inotify).
 const REJECTED_BEFORE_NATIVE_PREFIX = "Cannot watch path:";
 
 export class WatchAttachBackoffError extends Error {
@@ -35,17 +35,11 @@ export interface WatchAttachGuardOptions {
 }
 
 /**
- * A failed native subscribe is not free. @parcel/watcher 2.5.6 shares one
- * inotify backend across every subscription in the process; when its initial
- * crawl loses a race with a directory being deleted (`inotify_add_watch ...
- * No such file or directory`) the watches it had already added stay
- * registered against a destroyed watcher, and two attaches of one root
- * running at once share — and on failure destroy — the same native watcher.
- * A host that retried such a root every 30s died with SIGSEGV in
- * `InotifyBackend::~InotifyBackend`.
- *
- * So attaches for one root run one at a time, and a root whose native attach
- * failed is not handed to the native layer again until its backoff elapses.
+ * Two callers attaching one root at once each create a watcher for it and the
+ * loser's is never released, so attaches for a root run one at a time. And a
+ * root whose native attach failed is not handed to the native layer again
+ * until its backoff elapses: GitWatcher's rescan would otherwise retry it
+ * every 30s forever, each retry a full crawl of the worktree.
  */
 export class WatchAttachGuard implements WatchAttacher {
 	private readonly inner: WatchAttacher;
