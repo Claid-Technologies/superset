@@ -1787,6 +1787,9 @@ msgstr "Все ваши данные будут безвозвратно уда�
 msgid "All open terminal sessions will be killed and any running host-services will be stopped. Use “Close Superset” instead if you want services to keep running for the next launch."
 msgstr "Все открытые сессии терминала будут завершены, а работающие службы хоста остановлены. Если нужно, чтобы службы продолжили работу до следующего запуска, используйте «Закрыть Superset»."
 
+msgid "All pages"
+msgstr "Все страницы"
+
 msgid "All plans"
 msgstr "Все тарифы"
 
@@ -9093,6 +9096,10 @@ msgstr "Сеть изменилась"
 msgid "Never"
 msgstr "Никогда"
 
+msgctxt "badge on a page published since the menu was last opened"
+msgid "New"
+msgstr "Новая"
+
 msgid "New {providerLabel} agents will use {accountLabel}."
 msgstr "Новые агенты {providerLabel} будут использовать {accountLabel}."
 
@@ -9146,6 +9153,9 @@ msgstr "Новая группа из рабочей области"
 
 msgid "New issue"
 msgstr "Новая задача"
+
+msgid "New page"
+msgstr "Новая страница"
 
 msgid "New password (min 8 characters)"
 msgstr "Новый пароль (мин. 8 символов)"
@@ -10136,6 +10146,9 @@ msgstr "Удалить может только автор ветки или вл
 
 msgid "Only you"
 msgstr "Только вы"
+
+msgid "Only you can see this page"
+msgstr "Эту страницу видите только вы"
 
 msgid "open"
 msgstr "открыть"
@@ -14226,6 +14239,9 @@ msgstr "для интерфейсов агентов и общие компон�
 msgid "Sum of CPU used by Superset and monitored terminal process trees. Over 100% means multiple CPU cores are busy. Sustained high values usually cause UI sluggishness and higher battery drain."
 msgstr "Суммарная загрузка CPU от Superset и отслеживаемых деревьев процессов терминала. Больше 100% означает, что заняты несколько ядер. Долго держащиеся высокие значения обычно вызывают подтормаживание интерфейса и ускоренный разряд батареи."
 
+msgid "Summarize the changes in this workspace"
+msgstr "Кратко опиши изменения в этой рабочей области"
+
 msgid "Summary"
 msgstr "Сводка"
 
@@ -15403,6 +15419,9 @@ msgstr "Все индексированные изменения будут уд
 msgid "This will unstage and revert all staged changes. Staged new files will be deleted. This cannot be undone."
 msgstr "Это снимет индексацию и откатит все проиндексированные изменения. Проиндексированные новые файлы будут удалены. Отменить нельзя."
 
+msgid "This workspace"
+msgstr "Эта рабочая область"
+
 msgid "This workspace may have been removed, or you no longer have access to it."
 msgstr "Возможно, эта рабочая область удалена или у вас больше нет к ней доступа."
 
@@ -16516,6 +16535,9 @@ msgstr "Какую задачу вы решаете?"
 
 msgid "What should run on a schedule?"
 msgstr "Что запускать по расписанию?"
+
+msgid "What should the page show?"
+msgstr "Что должна показывать страница?"
 
 msgid "What should we build next?"
 msgstr "Что будем делать дальше?"

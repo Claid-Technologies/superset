@@ -1787,6 +1787,9 @@ msgstr "Toutes vos données seront définitivement supprimées après {ACCOUNT_D
 msgid "All open terminal sessions will be killed and any running host-services will be stopped. Use “Close Superset” instead if you want services to keep running for the next launch."
 msgstr "Toutes les sessions de terminal ouvertes seront interrompues et les services hôtes en cours seront arrêtés. Utilisez plutôt « Fermer Superset » si vous voulez que les services continuent de tourner pour le prochain lancement."
 
+msgid "All pages"
+msgstr "Toutes les pages"
+
 msgid "All plans"
 msgstr "Tous les forfaits"
 
@@ -9093,6 +9096,10 @@ msgstr "Réseau modifié"
 msgid "Never"
 msgstr "Jamais"
 
+msgctxt "badge on a page published since the menu was last opened"
+msgid "New"
+msgstr "Nouveau"
+
 msgid "New {providerLabel} agents will use {accountLabel}."
 msgstr "Les nouveaux agents {providerLabel} utiliseront {accountLabel}."
 
@@ -9146,6 +9153,9 @@ msgstr "Nouveau groupe à partir de l'espace de travail"
 
 msgid "New issue"
 msgstr "Nouvelle issue"
+
+msgid "New page"
+msgstr "Nouvelle page"
 
 msgid "New password (min 8 characters)"
 msgstr "Nouveau mot de passe (8 caractères min.)"
@@ -10136,6 +10146,9 @@ msgstr "Seul l'auteur du fil ou le propriétaire de la page peut le supprimer"
 
 msgid "Only you"
 msgstr "Vous seul"
+
+msgid "Only you can see this page"
+msgstr "Vous seul pouvez voir cette page"
 
 msgid "open"
 msgstr "ouvrir"
@@ -14226,6 +14239,9 @@ msgstr "suite pour les interfaces d'agent, et les composants d'application parta
 msgid "Sum of CPU used by Superset and monitored terminal process trees. Over 100% means multiple CPU cores are busy. Sustained high values usually cause UI sluggishness and higher battery drain."
 msgstr "Somme du CPU utilisé par Superset et par les arborescences de processus des terminaux surveillés. Au-delà de 100 %, plusieurs cœurs CPU sont occupés. Des valeurs élevées prolongées entraînent généralement une interface lente et une consommation de batterie accrue."
 
+msgid "Summarize the changes in this workspace"
+msgstr "Résume les changements de cet espace de travail"
+
 msgid "Summary"
 msgstr "Résumé"
 
@@ -15403,6 +15419,9 @@ msgstr "Toutes les modifications indexées seront désindexées et annulées. Le
 msgid "This will unstage and revert all staged changes. Staged new files will be deleted. This cannot be undone."
 msgstr "Cette action désindexera et annulera toutes les modifications indexées. Les nouveaux fichiers indexés seront supprimés. Cette action est irréversible."
 
+msgid "This workspace"
+msgstr "Cet espace de travail"
+
 msgid "This workspace may have been removed, or you no longer have access to it."
 msgstr "Cet espace de travail a peut-être été supprimé, ou vous n'y avez plus accès."
 
@@ -16516,6 +16535,9 @@ msgstr "Quel problème cherchez-vous à résoudre ?"
 
 msgid "What should run on a schedule?"
 msgstr "Qu'est-ce qui doit s'exécuter selon une planification ?"
+
+msgid "What should the page show?"
+msgstr "Que doit montrer la page ?"
 
 msgid "What should we build next?"
 msgstr "Que construisons-nous ensuite ?"

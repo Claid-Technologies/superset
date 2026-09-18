@@ -1787,6 +1787,9 @@ msgstr "你的所有資料將在{ACCOUNT_DELETION_GRACE_DAYS}天後被永久刪�
 msgid "All open terminal sessions will be killed and any running host-services will be stopped. Use “Close Superset” instead if you want services to keep running for the next launch."
 msgstr "所有開啟的終端會話都會被結束，正在執行的主機服務也會停止。如果希望服務繼續執行以便下次啟動，請改用「關閉Superset」。"
 
+msgid "All pages"
+msgstr "所有頁面"
+
 msgid "All plans"
 msgstr "全部方案"
 
@@ -9093,6 +9096,10 @@ msgstr "網路已變更"
 msgid "Never"
 msgstr "從未"
 
+msgctxt "badge on a page published since the menu was last opened"
+msgid "New"
+msgstr "新"
+
 msgid "New {providerLabel} agents will use {accountLabel}."
 msgstr "新的{providerLabel}代理程式將使用{accountLabel}。"
 
@@ -9146,6 +9153,9 @@ msgstr "以此工作區新建群組"
 
 msgid "New issue"
 msgstr "新建議題"
+
+msgid "New page"
+msgstr "新增頁面"
 
 msgid "New password (min 8 characters)"
 msgstr "新密碼（至少8個字元）"
@@ -10136,6 +10146,9 @@ msgstr "只有討論串的作者或頁面擁有者才能刪除它"
 
 msgid "Only you"
 msgstr "僅你自己"
+
+msgid "Only you can see this page"
+msgstr "僅你可見此頁面"
 
 msgid "open"
 msgstr "開啟"
@@ -14226,6 +14239,9 @@ msgstr "套件，以及共享應用元件。點選任意匯入路徑即可複製
 msgid "Sum of CPU used by Superset and monitored terminal process trees. Over 100% means multiple CPU cores are busy. Sustained high values usually cause UI sluggishness and higher battery drain."
 msgstr "Superset與受監控的終端處理程序樹佔用的CPU總和。超過100%表示有多個CPU核心處於繁忙狀態。持續偏高通常會導致介面卡頓和耗電增加。"
 
+msgid "Summarize the changes in this workspace"
+msgstr "總結此工作區中的變更"
+
 msgid "Summary"
 msgstr "摘要"
 
@@ -15403,6 +15419,9 @@ msgstr "這將取消暫存並還原所有已暫存的變更。已暫存的新檔
 msgid "This will unstage and revert all staged changes. Staged new files will be deleted. This cannot be undone."
 msgstr "這將取消暫存並還原所有已暫存的更改。已暫存的新檔案將被刪除。此操作無法復原。"
 
+msgid "This workspace"
+msgstr "此工作區"
+
 msgid "This workspace may have been removed, or you no longer have access to it."
 msgstr "此工作區可能已被移除，或者你不再擁有它的存取權限。"
 
@@ -16516,6 +16535,9 @@ msgstr "你想解決什麼問題？"
 
 msgid "What should run on a schedule?"
 msgstr "想讓什麼定時執行？"
+
+msgid "What should the page show?"
+msgstr "頁面應顯示什麼?"
 
 msgid "What should we build next?"
 msgstr "接下來做點什麼？"

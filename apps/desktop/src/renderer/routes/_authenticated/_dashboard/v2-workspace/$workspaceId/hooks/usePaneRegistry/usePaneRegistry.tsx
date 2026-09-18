@@ -21,7 +21,7 @@ import {
 	Monitor,
 } from "lucide-react";
 import { useFeatureFlagEnabled } from "posthog-js/react";
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 import {
 	LuArrowDownToLine,
 	LuBot,
@@ -69,6 +69,7 @@ import {
 	focusOrAddTerminalPane,
 } from "../../utils/focusTerminalPane";
 import { openSubagentPaneInStore } from "../../utils/openSubagentPaneInStore";
+import { useAgentSessionLauncher } from "../useAgentSessionLauncher";
 import type { OpenReviewDiff } from "../useReviewCommentNavigation";
 import type { TerminalLauncher } from "../useV2TerminalLauncher";
 import { BrowserPane, BrowserPaneToolbar } from "./components/BrowserPane";
@@ -163,7 +164,6 @@ export function usePaneRegistry({
 	const desktopUrl =
 		host.status === "ready" && host.kind === "sandbox" ? host.desktopUrl : null;
 	const isPagesEnabled = useFeatureFlagEnabled(FEATURE_FLAGS.PAGES) ?? false;
-	const runAgent = workspaceTrpc.agents.run.useMutation();
 	const collections = useCollections();
 	const clearShortcut = useHotkeyDisplay("CLEAR_TERMINAL").text;
 	const scrollToBottomShortcut = useHotkeyDisplay("SCROLL_TO_BOTTOM").text;
@@ -218,70 +218,8 @@ export function usePaneRegistry({
 		[collections.v2WorkspaceLocalState, workspaceId],
 	);
 
-	const createNewAgentSession = useCallback(
-		async (input: {
-			configId: string;
-			placement: "split-pane" | "new-tab";
-			prompt: string;
-			forkSessionId?: string;
-		}): Promise<{ terminalId: string } | null> => {
-			try {
-				// Host pipeline bakes the prompt into the initialCommand using the
-				// agent's argv/stdin transport — no follow-up writeInput needed,
-				// no bind-wait race vs. the launching shell.
-				const result = await runAgent.mutateAsync({
-					workspaceId,
-					agent: input.configId,
-					prompt: input.prompt,
-					...(input.forkSessionId
-						? { forkSessionId: input.forkSessionId }
-						: {}),
-				});
-				if (result.kind !== "terminal") {
-					toast.error(
-						t({
-							message: "Selected agent isn't a terminal agent",
-						}),
-					);
-					return null;
-				}
-				const terminalId = result.sessionId;
-				const state = store.getState();
-				const pane = {
-					kind: "terminal" as const,
-					titleOverride: result.label,
-					data: { terminalId } as TerminalPaneData,
-				};
-				if (input.placement === "split-pane" && state.activeTabId) {
-					state.addPane({ tabId: state.activeTabId, pane });
-				} else {
-					state.addTab({ panes: [pane] });
-				}
-				return { terminalId };
-			} catch (error) {
-				const description = errorMessage(
-					error,
-					t({
-						message: "Unknown error",
-					}),
-				);
-				toast.error(
-					t({
-						message: "Couldn't start agent session",
-					}),
-					{ description },
-				);
-				return null;
-			}
-		},
-		[runAgent, store, workspaceId, t],
-	);
-
-	const focusAgentTerminal = useCallback(
-		(terminalId: string) => {
-			focusOrAddTerminalPane(store, terminalId);
-		},
-		[store],
+	const { createNewAgentSession, focusAgentTerminal } = useAgentSessionLauncher(
+		{ workspaceId, store },
 	);
 
 	return useMemo<PaneRegistry<PaneViewerData>>(

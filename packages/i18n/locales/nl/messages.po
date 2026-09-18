@@ -1787,6 +1787,9 @@ msgstr "Al je gegevens worden na {ACCOUNT_DELETION_GRACE_DAYS} dagen definitief 
 msgid "All open terminal sessions will be killed and any running host-services will be stopped. Use “Close Superset” instead if you want services to keep running for the next launch."
 msgstr "Alle open terminalsessies worden beëindigd en draaiende hostservices worden gestopt. Gebruik “Superset sluiten” als je wilt dat de services blijven draaien voor de volgende keer."
 
+msgid "All pages"
+msgstr "Alle pagina's"
+
 msgid "All plans"
 msgstr "Alle plannen"
 
@@ -9093,6 +9096,10 @@ msgstr "Netwerk gewijzigd"
 msgid "Never"
 msgstr "Nooit"
 
+msgctxt "badge on a page published since the menu was last opened"
+msgid "New"
+msgstr "Nieuw"
+
 msgid "New {providerLabel} agents will use {accountLabel}."
 msgstr "Nieuwe {providerLabel}-agents gebruiken {accountLabel}."
 
@@ -9146,6 +9153,9 @@ msgstr "Nieuwe groep van werkruimte"
 
 msgid "New issue"
 msgstr "Nieuwe issue"
+
+msgid "New page"
+msgstr "Nieuwe pagina"
 
 msgid "New password (min 8 characters)"
 msgstr "Nieuw wachtwoord (min. 8 tekens)"
@@ -10136,6 +10146,9 @@ msgstr "Alleen de auteur van de thread of de eigenaar van de pagina kan hem verw
 
 msgid "Only you"
 msgstr "Alleen jij"
+
+msgid "Only you can see this page"
+msgstr "Alleen jij kunt deze pagina zien"
 
 msgid "open"
 msgstr "openen"
@@ -14226,6 +14239,9 @@ msgstr "-suite voor agent-UI's en gedeelde app-componenten. Klik op een importpa
 msgid "Sum of CPU used by Superset and monitored terminal process trees. Over 100% means multiple CPU cores are busy. Sustained high values usually cause UI sluggishness and higher battery drain."
 msgstr "Som van het CPU-gebruik van Superset en de gemonitorde terminalprocesbomen. Boven 100% betekent dat meerdere CPU-cores bezig zijn. Langdurig hoge waarden zorgen meestal voor een trage UI en meer batterijverbruik."
 
+msgid "Summarize the changes in this workspace"
+msgstr "Vat de wijzigingen in deze werkruimte samen"
+
 msgid "Summary"
 msgstr "Samenvatting"
 
@@ -15403,6 +15419,9 @@ msgstr "Dit haalt alle gestagede wijzigingen uit staging en draait ze terug. Ges
 msgid "This will unstage and revert all staged changes. Staged new files will be deleted. This cannot be undone."
 msgstr "Hiermee worden alle gestagede wijzigingen ge-unstaged en teruggedraaid. Gestagede nieuwe bestanden worden verwijderd. Dit kan niet ongedaan worden gemaakt."
 
+msgid "This workspace"
+msgstr "Deze werkruimte"
+
 msgid "This workspace may have been removed, or you no longer have access to it."
 msgstr "Deze werkruimte is mogelijk verwijderd, of je hebt er geen toegang meer toe."
 
@@ -16516,6 +16535,9 @@ msgstr "Welk probleem wil je oplossen?"
 
 msgid "What should run on a schedule?"
 msgstr "Wat moet er volgens een schema draaien?"
+
+msgid "What should the page show?"
+msgstr "Wat moet de pagina laten zien?"
 
 msgid "What should we build next?"
 msgstr "Wat gaan we hierna bouwen?"

@@ -1787,6 +1787,9 @@ msgstr "Toàn bộ dữ liệu của bạn sẽ bị xóa vĩnh viễn sau {ACCO
 msgid "All open terminal sessions will be killed and any running host-services will be stopped. Use “Close Superset” instead if you want services to keep running for the next launch."
 msgstr "Mọi phiên terminal đang mở sẽ bị kết thúc và các host-service đang chạy sẽ bị dừng. Hãy dùng “Đóng Superset” nếu bạn muốn các dịch vụ tiếp tục chạy cho lần khởi động sau."
 
+msgid "All pages"
+msgstr "Tất cả trang"
+
 msgid "All plans"
 msgstr "Tất cả các gói"
 
@@ -9093,6 +9096,10 @@ msgstr "Mạng đã thay đổi"
 msgid "Never"
 msgstr "Chưa bao giờ"
 
+msgctxt "badge on a page published since the menu was last opened"
+msgid "New"
+msgstr "Mới"
+
 msgid "New {providerLabel} agents will use {accountLabel}."
 msgstr "Các agent {providerLabel} mới sẽ dùng {accountLabel}."
 
@@ -9146,6 +9153,9 @@ msgstr "Nhóm mới từ workspace"
 
 msgid "New issue"
 msgstr "Issue mới"
+
+msgid "New page"
+msgstr "Trang mới"
 
 msgid "New password (min 8 characters)"
 msgstr "Mật khẩu mới (tối thiểu 8 ký tự)"
@@ -10136,6 +10146,9 @@ msgstr "Chỉ tác giả của luồng hoặc chủ sở hữu trang mới xóa 
 
 msgid "Only you"
 msgstr "Chỉ mình bạn"
+
+msgid "Only you can see this page"
+msgstr "Chỉ bạn mới xem được trang này"
 
 msgid "open"
 msgstr "mở"
@@ -14226,6 +14239,9 @@ msgstr "cho giao diện agent, và các component dùng chung của ứng dụng
 msgid "Sum of CPU used by Superset and monitored terminal process trees. Over 100% means multiple CPU cores are busy. Sustained high values usually cause UI sluggishness and higher battery drain."
 msgstr "Tổng CPU mà Superset và các cây tiến trình terminal được theo dõi sử dụng. Trên 100% nghĩa là nhiều nhân CPU đang bận. Giá trị cao kéo dài thường làm giao diện chậm và hao pin hơn."
 
+msgid "Summarize the changes in this workspace"
+msgstr "Tóm tắt các thay đổi trong workspace này"
+
 msgid "Summary"
 msgstr "Tóm tắt"
 
@@ -15403,6 +15419,9 @@ msgstr "Thao tác này sẽ bỏ staging và hoàn tác mọi thay đổi đã �
 msgid "This will unstage and revert all staged changes. Staged new files will be deleted. This cannot be undone."
 msgstr "Thao tác này sẽ bỏ stage và hoàn nguyên toàn bộ thay đổi đã stage. Các tệp mới đã stage sẽ bị xóa. Không thể hoàn tác."
 
+msgid "This workspace"
+msgstr "Workspace này"
+
 msgid "This workspace may have been removed, or you no longer have access to it."
 msgstr "Workspace này có thể đã bị gỡ, hoặc bạn không còn quyền truy cập."
 
@@ -16516,6 +16535,9 @@ msgstr "Bạn đang muốn giải quyết vấn đề gì?"
 
 msgid "What should run on a schedule?"
 msgstr "Bạn muốn chạy gì theo lịch?"
+
+msgid "What should the page show?"
+msgstr "Trang nên hiển thị gì?"
 
 msgid "What should we build next?"
 msgstr "Chúng ta xây dựng gì tiếp theo?"

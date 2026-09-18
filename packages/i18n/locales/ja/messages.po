@@ -1787,6 +1787,9 @@ msgstr "すべてのデータは{ACCOUNT_DELETION_GRACE_DAYS}日後に完全に�
 msgid "All open terminal sessions will be killed and any running host-services will be stopped. Use “Close Superset” instead if you want services to keep running for the next launch."
 msgstr "開いているターミナルセッションはすべて終了し、実行中のhost-serviceも停止します。次回の起動までサービスを実行し続けたい場合は、「Supersetを閉じる」を使用してください。"
 
+msgid "All pages"
+msgstr "すべてのページ"
+
 msgid "All plans"
 msgstr "すべてのプラン"
 
@@ -9093,6 +9096,10 @@ msgstr "ネットワークが変更されました"
 msgid "Never"
 msgstr "未使用"
 
+msgctxt "badge on a page published since the menu was last opened"
+msgid "New"
+msgstr "新着"
+
 msgid "New {providerLabel} agents will use {accountLabel}."
 msgstr "新規の{providerLabel}エージェントは{accountLabel}を使用します。"
 
@@ -9146,6 +9153,9 @@ msgstr "ワークスペースから新規グループ"
 
 msgid "New issue"
 msgstr "新規issue"
+
+msgid "New page"
+msgstr "新しいページ"
 
 msgid "New password (min 8 characters)"
 msgstr "新しいパスワード(8文字以上)"
@@ -10136,6 +10146,9 @@ msgstr "スレッドを削除できるのはスレッドの投稿者かページ
 
 msgid "Only you"
 msgstr "自分のみ"
+
+msgid "Only you can see this page"
+msgstr "このページはあなただけが閲覧できます"
 
 msgid "open"
 msgstr "開く"
@@ -14226,6 +14239,9 @@ msgstr "スイート、そして共有アプリコンポーネントです。イ
 msgid "Sum of CPU used by Superset and monitored terminal process trees. Over 100% means multiple CPU cores are busy. Sustained high values usually cause UI sluggishness and higher battery drain."
 msgstr "Supersetと監視対象のターミナルプロセスツリーが使用するCPUの合計。100%を超える場合は複数のCPUコアが動作しています。高い値が続くと、通常はUIの動作が重くなり、バッテリー消費も増えます。"
 
+msgid "Summarize the changes in this workspace"
+msgstr "このワークスペースの変更を要約して"
+
 msgid "Summary"
 msgstr "概要"
 
@@ -15403,6 +15419,9 @@ msgstr "ステージされたすべての変更をステージから外して元
 msgid "This will unstage and revert all staged changes. Staged new files will be deleted. This cannot be undone."
 msgstr "ステージ済みの変更をすべてステージ解除して元に戻します。ステージ済みの新規ファイルは削除されます。元に戻せません。"
 
+msgid "This workspace"
+msgstr "このワークスペース"
+
 msgid "This workspace may have been removed, or you no longer have access to it."
 msgstr "このワークスペースは削除されたか、アクセス権がなくなった可能性があります。"
 
@@ -16516,6 +16535,9 @@ msgstr "解決したい課題は何ですか?"
 
 msgid "What should run on a schedule?"
 msgstr "スケジュールで何を実行しますか?"
+
+msgid "What should the page show?"
+msgstr "ページに何を表示しますか?"
 
 msgid "What should we build next?"
 msgstr "次は何を作りますか?"

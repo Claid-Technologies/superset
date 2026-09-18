@@ -1787,6 +1787,9 @@ msgstr "Todos tus datos se eliminarán de forma permanente después de {ACCOUNT_
 msgid "All open terminal sessions will be killed and any running host-services will be stopped. Use “Close Superset” instead if you want services to keep running for the next launch."
 msgstr "Se cerrarán todas las sesiones de terminal abiertas y se detendrán los host-services en ejecución. Usa “Cerrar Superset” si prefieres que los servicios sigan activos para el próximo inicio."
 
+msgid "All pages"
+msgstr "Todas las páginas"
+
 msgid "All plans"
 msgstr "Todos los planes"
 
@@ -9093,6 +9096,10 @@ msgstr "La red cambió"
 msgid "Never"
 msgstr "Nunca"
 
+msgctxt "badge on a page published since the menu was last opened"
+msgid "New"
+msgstr "Nueva"
+
 msgid "New {providerLabel} agents will use {accountLabel}."
 msgstr "Los agentes nuevos de {providerLabel} usarán {accountLabel}."
 
@@ -9146,6 +9153,9 @@ msgstr "Nuevo grupo desde el espacio de trabajo"
 
 msgid "New issue"
 msgstr "Nuevo issue"
+
+msgid "New page"
+msgstr "Nueva página"
 
 msgid "New password (min 8 characters)"
 msgstr "Contraseña nueva (mín. 8 caracteres)"
@@ -10136,6 +10146,9 @@ msgstr "Solo el autor del hilo o el propietario de la página pueden eliminarlo"
 
 msgid "Only you"
 msgstr "Solo tú"
+
+msgid "Only you can see this page"
+msgstr "Solo tú puedes ver esta página"
 
 msgid "open"
 msgstr "abrir"
@@ -14226,6 +14239,9 @@ msgstr "para interfaces de agentes y los componentes compartidos de la app. Haz 
 msgid "Sum of CPU used by Superset and monitored terminal process trees. Over 100% means multiple CPU cores are busy. Sustained high values usually cause UI sluggishness and higher battery drain."
 msgstr "Suma de la CPU que usan Superset y los árboles de procesos de terminal monitorizados. Más del 100 % significa que hay varios núcleos ocupados. Los valores altos sostenidos suelen provocar lentitud en la interfaz y más consumo de batería."
 
+msgid "Summarize the changes in this workspace"
+msgstr "Resume los cambios de este espacio de trabajo"
+
 msgid "Summary"
 msgstr "Resumen"
 
@@ -15403,6 +15419,9 @@ msgstr "Esto quitará de preparación y revertirá todos los cambios preparados.
 msgid "This will unstage and revert all staged changes. Staged new files will be deleted. This cannot be undone."
 msgstr "Esto quitará de preparados y revertirá todos los cambios preparados. Los archivos nuevos preparados se eliminarán. Esto no se puede deshacer."
 
+msgid "This workspace"
+msgstr "Este espacio de trabajo"
+
 msgid "This workspace may have been removed, or you no longer have access to it."
 msgstr "Puede que este espacio de trabajo se haya eliminado o que ya no tengas acceso a él."
 
@@ -16516,6 +16535,9 @@ msgstr "¿Qué problema quieres resolver?"
 
 msgid "What should run on a schedule?"
 msgstr "¿Qué debería ejecutarse de forma programada?"
+
+msgid "What should the page show?"
+msgstr "¿Qué debe mostrar la página?"
 
 msgid "What should we build next?"
 msgstr "¿Qué construimos ahora?"

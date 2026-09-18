@@ -1787,6 +1787,9 @@ msgstr "Tutti i tuoi dati verranno eliminati definitivamente dopo {ACCOUNT_DELET
 msgid "All open terminal sessions will be killed and any running host-services will be stopped. Use “Close Superset” instead if you want services to keep running for the next launch."
 msgstr "Tutte le sessioni del terminale aperte verranno terminate e i servizi host in esecuzione verranno arrestati. Usa invece “Chiudi Superset” se vuoi che i servizi restino attivi per il prossimo avvio."
 
+msgid "All pages"
+msgstr "Tutte le pagine"
+
 msgid "All plans"
 msgstr "Tutti i piani"
 
@@ -9093,6 +9096,10 @@ msgstr "Rete cambiata"
 msgid "Never"
 msgstr "Mai"
 
+msgctxt "badge on a page published since the menu was last opened"
+msgid "New"
+msgstr "Nuova"
+
 msgid "New {providerLabel} agents will use {accountLabel}."
 msgstr "I nuovi agenti {providerLabel} useranno {accountLabel}."
 
@@ -9146,6 +9153,9 @@ msgstr "Nuovo gruppo dal workspace"
 
 msgid "New issue"
 msgstr "Nuova issue"
+
+msgid "New page"
+msgstr "Nuova pagina"
 
 msgid "New password (min 8 characters)"
 msgstr "Nuova password (min 8 caratteri)"
@@ -10136,6 +10146,9 @@ msgstr "Solo l'autore del thread o il proprietario della pagina può eliminarlo"
 
 msgid "Only you"
 msgstr "Solo tu"
+
+msgid "Only you can see this page"
+msgstr "Solo tu puoi vedere questa pagina"
 
 msgid "open"
 msgstr "apri"
@@ -14226,6 +14239,9 @@ msgstr "per le interfacce degli agenti e i componenti condivisi dell'app. Clicca
 msgid "Sum of CPU used by Superset and monitored terminal process trees. Over 100% means multiple CPU cores are busy. Sustained high values usually cause UI sluggishness and higher battery drain."
 msgstr "Somma della CPU usata da Superset e dagli alberi di processi dei terminali monitorati. Oltre il 100% significa che più core della CPU sono occupati. Valori alti prolungati di solito causano lentezza dell'interfaccia e maggiore consumo della batteria."
 
+msgid "Summarize the changes in this workspace"
+msgstr "Riassumi le modifiche in questo workspace"
+
 msgid "Summary"
 msgstr "Riepilogo"
 
@@ -15403,6 +15419,9 @@ msgstr "Tutte le modifiche in staging verranno rimosse dallo staging e annullate
 msgid "This will unstage and revert all staged changes. Staged new files will be deleted. This cannot be undone."
 msgstr "Questo toglierà dallo stage e annullerà tutte le modifiche in stage. I nuovi file in stage verranno eliminati. L'operazione non può essere annullata."
 
+msgid "This workspace"
+msgstr "Questo workspace"
+
 msgid "This workspace may have been removed, or you no longer have access to it."
 msgstr "Questo workspace potrebbe essere stato rimosso oppure non hai più accesso."
 
@@ -16516,6 +16535,9 @@ msgstr "Quale problema stai cercando di risolvere?"
 
 msgid "What should run on a schedule?"
 msgstr "Cosa vuoi eseguire secondo una pianificazione?"
+
+msgid "What should the page show?"
+msgstr "Cosa deve mostrare la pagina?"
 
 msgid "What should we build next?"
 msgstr "Cosa costruiamo adesso?"

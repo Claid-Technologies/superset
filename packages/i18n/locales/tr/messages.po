@@ -1787,6 +1787,9 @@ msgstr "Tüm verileriniz {ACCOUNT_DELETION_GRACE_DAYS} gün sonra kalıcı olara
 msgid "All open terminal sessions will be killed and any running host-services will be stopped. Use “Close Superset” instead if you want services to keep running for the next launch."
 msgstr "Açık tüm terminal oturumları sonlandırılacak ve çalışan host hizmetleri durdurulacak. Hizmetlerin sonraki açılış için çalışmaya devam etmesini istiyorsanız “Superset'i kapat” seçeneğini kullanın."
 
+msgid "All pages"
+msgstr "Tüm sayfalar"
+
 msgid "All plans"
 msgstr "Tüm planlar"
 
@@ -9093,6 +9096,10 @@ msgstr "Ağ değişti"
 msgid "Never"
 msgstr "Hiç"
 
+msgctxt "badge on a page published since the menu was last opened"
+msgid "New"
+msgstr "Yeni"
+
 msgid "New {providerLabel} agents will use {accountLabel}."
 msgstr "Yeni {providerLabel} ajanları {accountLabel} hesabını kullanacak."
 
@@ -9146,6 +9153,9 @@ msgstr "Çalışma alanından yeni grup"
 
 msgid "New issue"
 msgstr "Yeni issue"
+
+msgid "New page"
+msgstr "Yeni sayfa"
 
 msgid "New password (min 8 characters)"
 msgstr "Yeni parola (en az 8 karakter)"
@@ -10136,6 +10146,9 @@ msgstr "Konuyu yalnızca yazarı veya sayfanın sahibi silebilir"
 
 msgid "Only you"
 msgstr "Yalnızca siz"
+
+msgid "Only you can see this page"
+msgstr "Bu sayfayı yalnızca siz görebilirsiniz"
 
 msgid "open"
 msgstr "aç"
@@ -14226,6 +14239,9 @@ msgstr "paketi ve paylaşılan uygulama bileşenleri. Kopyalamak için herhangi 
 msgid "Sum of CPU used by Superset and monitored terminal process trees. Over 100% means multiple CPU cores are busy. Sustained high values usually cause UI sluggishness and higher battery drain."
 msgstr "Superset ve izlenen terminal süreç ağaçlarının kullandığı CPU toplamı. %100'ün üzeri, birden fazla CPU çekirdeğinin meşgul olduğu anlamına gelir. Sürekli yüksek değerler genellikle arayüzde yavaşlığa ve daha hızlı pil tüketimine yol açar."
 
+msgid "Summarize the changes in this workspace"
+msgstr "Bu çalışma alanındaki değişiklikleri özetle"
+
 msgid "Summary"
 msgstr "Özet"
 
@@ -15403,6 +15419,9 @@ msgstr "Bu işlem, hazırlanmış tüm değişiklikleri hazırlıktan çıkarır
 msgid "This will unstage and revert all staged changes. Staged new files will be deleted. This cannot be undone."
 msgstr "Bu işlem, hazırlanmış tüm değişiklikleri hazırlıktan çıkarır ve geri alır. Hazırlanmış yeni dosyalar silinir. Bu geri alınamaz."
 
+msgid "This workspace"
+msgstr "Bu çalışma alanı"
+
 msgid "This workspace may have been removed, or you no longer have access to it."
 msgstr "Bu çalışma alanı kaldırılmış olabilir ya da artık erişiminiz olmayabilir."
 
@@ -16516,6 +16535,9 @@ msgstr "Hangi sorunu çözmeye çalışıyorsunuz?"
 
 msgid "What should run on a schedule?"
 msgstr "Zamanlanmış olarak ne çalışsın?"
+
+msgid "What should the page show?"
+msgstr "Sayfa ne göstermeli?"
 
 msgid "What should we build next?"
 msgstr "Sırada ne geliştirelim?"

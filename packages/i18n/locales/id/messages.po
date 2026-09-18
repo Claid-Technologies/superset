@@ -1787,6 +1787,9 @@ msgstr "Semua data Anda akan dihapus permanen setelah {ACCOUNT_DELETION_GRACE_DA
 msgid "All open terminal sessions will be killed and any running host-services will be stopped. Use “Close Superset” instead if you want services to keep running for the next launch."
 msgstr "Semua sesi terminal yang terbuka akan dimatikan dan host-service yang berjalan akan dihentikan. Pakai “Close Superset” kalau Anda ingin layanannya tetap berjalan untuk peluncuran berikutnya."
 
+msgid "All pages"
+msgstr "Semua halaman"
+
 msgid "All plans"
 msgstr "Semua paket"
 
@@ -9093,6 +9096,10 @@ msgstr "Jaringan Berubah"
 msgid "Never"
 msgstr "Tidak pernah"
 
+msgctxt "badge on a page published since the menu was last opened"
+msgid "New"
+msgstr "Baru"
+
 msgid "New {providerLabel} agents will use {accountLabel}."
 msgstr "Agen {providerLabel} yang baru akan memakai {accountLabel}."
 
@@ -9146,6 +9153,9 @@ msgstr "Grup baru dari workspace"
 
 msgid "New issue"
 msgstr "Issue baru"
+
+msgid "New page"
+msgstr "Halaman baru"
 
 msgid "New password (min 8 characters)"
 msgstr "Kata sandi baru (min. 8 karakter)"
@@ -10136,6 +10146,9 @@ msgstr "Hanya penulis thread atau pemilik halaman yang bisa menghapusnya"
 
 msgid "Only you"
 msgstr "Hanya Anda"
+
+msgid "Only you can see this page"
+msgstr "Hanya Anda yang dapat melihat halaman ini"
 
 msgid "open"
 msgstr "buka"
@@ -14226,6 +14239,9 @@ msgstr "untuk UI agen, dan komponen aplikasi bersama. Klik path impor mana pun u
 msgid "Sum of CPU used by Superset and monitored terminal process trees. Over 100% means multiple CPU cores are busy. Sustained high values usually cause UI sluggishness and higher battery drain."
 msgstr "Jumlah CPU yang dipakai Superset dan pohon proses terminal yang dipantau. Di atas 100% berarti beberapa inti CPU sedang sibuk. Nilai tinggi yang bertahan lama biasanya membuat UI terasa lambat dan baterai lebih boros."
 
+msgid "Summarize the changes in this workspace"
+msgstr "Rangkum perubahan di workspace ini"
+
 msgid "Summary"
 msgstr "Ringkasan"
 
@@ -15403,6 +15419,9 @@ msgstr "Ini akan mengeluarkan semua perubahan dari staging dan membatalkannya. F
 msgid "This will unstage and revert all staged changes. Staged new files will be deleted. This cannot be undone."
 msgstr "Ini akan meng-unstage dan mengembalikan semua perubahan yang di-stage. File baru yang di-stage akan dihapus. Ini tidak bisa dibatalkan."
 
+msgid "This workspace"
+msgstr "Workspace ini"
+
 msgid "This workspace may have been removed, or you no longer have access to it."
 msgstr "Workspace ini mungkin sudah dihapus, atau Anda sudah tidak punya akses ke sana."
 
@@ -16516,6 +16535,9 @@ msgstr "Masalah apa yang ingin Anda selesaikan?"
 
 msgid "What should run on a schedule?"
 msgstr "Apa yang harus dijalankan terjadwal?"
+
+msgid "What should the page show?"
+msgstr "Apa yang harus ditampilkan halaman ini?"
 
 msgid "What should we build next?"
 msgstr "Apa yang harus kita bangun berikutnya?"

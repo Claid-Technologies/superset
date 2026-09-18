@@ -1787,6 +1787,9 @@ msgstr "All of your data will be permanently deleted after {ACCOUNT_DELETION_GRA
 msgid "All open terminal sessions will be killed and any running host-services will be stopped. Use “Close Superset” instead if you want services to keep running for the next launch."
 msgstr "All open terminal sessions will be killed and any running host-services will be stopped. Use “Close Superset” instead if you want services to keep running for the next launch."
 
+msgid "All pages"
+msgstr "All pages"
+
 msgid "All plans"
 msgstr "All plans"
 
@@ -9093,6 +9096,10 @@ msgstr "Network Changed"
 msgid "Never"
 msgstr "Never"
 
+msgctxt "badge on a page published since the menu was last opened"
+msgid "New"
+msgstr "New"
+
 msgid "New {providerLabel} agents will use {accountLabel}."
 msgstr "New {providerLabel} agents will use {accountLabel}."
 
@@ -9146,6 +9153,9 @@ msgstr "New group from workspace"
 
 msgid "New issue"
 msgstr "New issue"
+
+msgid "New page"
+msgstr "New page"
 
 msgid "New password (min 8 characters)"
 msgstr "New password (min 8 characters)"
@@ -10136,6 +10146,9 @@ msgstr "Only the thread's author or the page's owner can delete it"
 
 msgid "Only you"
 msgstr "Only you"
+
+msgid "Only you can see this page"
+msgstr "Only you can see this page"
 
 msgid "open"
 msgstr "open"
@@ -14226,6 +14239,9 @@ msgstr "suite for agent UIs, and shared app components. Click any import path to
 msgid "Sum of CPU used by Superset and monitored terminal process trees. Over 100% means multiple CPU cores are busy. Sustained high values usually cause UI sluggishness and higher battery drain."
 msgstr "Sum of CPU used by Superset and monitored terminal process trees. Over 100% means multiple CPU cores are busy. Sustained high values usually cause UI sluggishness and higher battery drain."
 
+msgid "Summarize the changes in this workspace"
+msgstr "Summarize the changes in this workspace"
+
 msgid "Summary"
 msgstr "Summary"
 
@@ -15403,6 +15419,9 @@ msgstr "This will unstage and revert all staged changes. Staged new files will b
 msgid "This will unstage and revert all staged changes. Staged new files will be deleted. This cannot be undone."
 msgstr "This will unstage and revert all staged changes. Staged new files will be deleted. This cannot be undone."
 
+msgid "This workspace"
+msgstr "This workspace"
+
 msgid "This workspace may have been removed, or you no longer have access to it."
 msgstr "This workspace may have been removed, or you no longer have access to it."
 
@@ -16516,6 +16535,9 @@ msgstr "What problem are you trying to solve?"
 
 msgid "What should run on a schedule?"
 msgstr "What should run on a schedule?"
+
+msgid "What should the page show?"
+msgstr "What should the page show?"
 
 msgid "What should we build next?"
 msgstr "What should we build next?"

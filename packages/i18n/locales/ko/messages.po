@@ -1787,6 +1787,9 @@ msgstr "모든 데이터가 {ACCOUNT_DELETION_GRACE_DAYS}일 후에 영구적으
 msgid "All open terminal sessions will be killed and any running host-services will be stopped. Use “Close Superset” instead if you want services to keep running for the next launch."
 msgstr "열려 있는 모든 터미널 세션이 종료되고 실행 중인 호스트 서비스가 모두 중지됩니다. 다음 실행까지 서비스를 계속 실행하려면 “Superset 닫기”를 사용하세요."
 
+msgid "All pages"
+msgstr "모든 페이지"
+
 msgid "All plans"
 msgstr "전체 플랜"
 
@@ -9093,6 +9096,10 @@ msgstr "네트워크 변경됨"
 msgid "Never"
 msgstr "없음"
 
+msgctxt "badge on a page published since the menu was last opened"
+msgid "New"
+msgstr "새 항목"
+
 msgid "New {providerLabel} agents will use {accountLabel}."
 msgstr "새 {providerLabel} 에이전트는 {accountLabel}을(를) 사용합니다."
 
@@ -9146,6 +9153,9 @@ msgstr "워크스페이스로 새 그룹 만들기"
 
 msgid "New issue"
 msgstr "새 이슈"
+
+msgid "New page"
+msgstr "새 페이지"
 
 msgid "New password (min 8 characters)"
 msgstr "새 비밀번호 (최소 8자)"
@@ -10136,6 +10146,9 @@ msgstr "스레드 작성자 또는 페이지 소유자만 삭제할 수 있습�
 
 msgid "Only you"
 msgstr "나만"
+
+msgid "Only you can see this page"
+msgstr "이 페이지는 나만 볼 수 있습니다"
 
 msgid "open"
 msgstr "열기"
@@ -14226,6 +14239,9 @@ msgstr "스위트, 그리고 공용 앱 컴포넌트입니다. import 경로를 
 msgid "Sum of CPU used by Superset and monitored terminal process trees. Over 100% means multiple CPU cores are busy. Sustained high values usually cause UI sluggishness and higher battery drain."
 msgstr "Superset과 모니터링 중인 터미널 프로세스 트리가 사용하는 CPU의 합계입니다. 100%를 넘으면 여러 CPU 코어가 사용 중이라는 뜻입니다. 높은 값이 계속되면 보통 UI가 느려지고 배터리 소모가 커집니다."
 
+msgid "Summarize the changes in this workspace"
+msgstr "이 워크스페이스의 변경 사항을 요약해 줘"
+
 msgid "Summary"
 msgstr "요약"
 
@@ -15403,6 +15419,9 @@ msgstr "스테이징된 모든 변경을 스테이징 해제하고 되돌립니�
 msgid "This will unstage and revert all staged changes. Staged new files will be deleted. This cannot be undone."
 msgstr "스테이징된 변경 사항을 모두 스테이징 해제하고 되돌립니다. 스테이징된 새 파일은 삭제됩니다. 되돌릴 수 없습니다."
 
+msgid "This workspace"
+msgstr "이 워크스페이스"
+
 msgid "This workspace may have been removed, or you no longer have access to it."
 msgstr "이 워크스페이스가 제거되었거나 더 이상 접근 권한이 없을 수 있습니다."
 
@@ -16516,6 +16535,9 @@ msgstr "어떤 문제를 해결하려고 하시나요?"
 
 msgid "What should run on a schedule?"
 msgstr "어떤 작업을 일정에 따라 실행할까요?"
+
+msgid "What should the page show?"
+msgstr "페이지에 무엇을 표시할까요?"
 
 msgid "What should we build next?"
 msgstr "다음으로 무엇을 만들까요?"
