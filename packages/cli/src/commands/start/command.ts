@@ -2,8 +2,16 @@ import * as p from "@clack/prompts";
 import { boolean, CLIError, number, string } from "@superset/cli-framework";
 import { command } from "../../lib/command";
 import { SUPERSET_CONFIG_PATH } from "../../lib/config";
-import { isProcessAlive, readManifest } from "../../lib/host/manifest";
-import { spawnHostService } from "../../lib/host/spawn";
+import {
+	isProcessAlive,
+	readManifest,
+	removeManifest,
+} from "../../lib/host/manifest";
+import {
+	describeHostExit,
+	type SpawnHostResult,
+	spawnHostService,
+} from "../../lib/host/spawn";
 import { resolveOrganization } from "../../lib/resolve-org";
 
 export default command({
@@ -32,6 +40,7 @@ export default command({
 		const spinner = p.spinner();
 		spinner.start("Starting host service...");
 
+		let running: SpawnHostResult;
 		try {
 			const result = await spawnHostService({
 				organizationId: organization.id,
@@ -62,23 +71,38 @@ export default command({
 
 			p.outro("Press Ctrl+C to stop.");
 
-			await new Promise<void>((resolve) => {
-				signal.addEventListener("abort", () => resolve(), { once: true });
-			});
-
-			return {
-				data: {
-					pid: result.pid,
-					port: result.port,
-					organizationId: organization.id,
-				},
-				message: "Host service stopped",
-			};
+			running = result;
 		} catch (error) {
 			spinner.stop("Failed to start host service");
 			throw new CLIError(
 				error instanceof Error ? error.message : "Unknown error",
 			);
 		}
+
+		const unexpectedExit = await Promise.race([
+			running.exited,
+			new Promise<null>((resolve) => {
+				signal.addEventListener("abort", () => resolve(null), { once: true });
+			}),
+		]);
+
+		if (unexpectedExit && !signal.aborted) {
+			if (readManifest(organization.id)?.pid === running.pid) {
+				removeManifest(organization.id);
+			}
+			throw new CLIError(
+				`Host service exited unexpectedly (${describeHostExit(unexpectedExit)})`,
+				"Run it under a supervisor that restarts on failure, e.g. systemd with Restart=on-failure.",
+			);
+		}
+
+		return {
+			data: {
+				pid: running.pid,
+				port: running.port,
+				organizationId: organization.id,
+			},
+			message: "Host service stopped",
+		};
 	},
 });
