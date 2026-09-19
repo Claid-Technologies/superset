@@ -1,4 +1,5 @@
 import { Trans } from "@lingui/react/macro";
+import { isPaidPlanTier } from "@superset/shared/billing";
 import { COMPANY } from "@superset/shared/constants";
 import {
 	DropdownMenuItem,
@@ -17,7 +18,7 @@ import {
 } from "react-icons/hi2";
 import { IoBugOutline } from "react-icons/io5";
 import { LuKeyboard, LuMegaphone } from "react-icons/lu";
-import { isPaidPlanTier, useCurrentPlan } from "renderer/hooks/useCurrentPlan";
+import { useCurrentPlan } from "renderer/hooks/useCurrentPlan";
 import { useHotkeyDisplay } from "renderer/hotkeys";
 import { electronTrpc } from "renderer/lib/electron-trpc";
 

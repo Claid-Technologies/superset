@@ -117,9 +117,13 @@ describe("settings search - usage in sidebar", () => {
 describe("settings search - mobile rollout", () => {
 	it("excludes mobile matches until the feature flag is enabled", () => {
 		expect(
-			getVisibleMatchCountBySection("iPhone", true).mobile,
+			getVisibleMatchCountBySection("iPhone", true, false).mobile,
 		).toBeUndefined();
-		expect(getVisibleMatchCountBySection("iPhone", true, true).mobile).toBe(1);
-		expect(getVisibleMatchCountBySection("iPhone", false, true).mobile).toBe(1);
+		expect(
+			getVisibleMatchCountBySection("iPhone", true, false, true).mobile,
+		).toBe(1);
+		expect(
+			getVisibleMatchCountBySection("iPhone", false, false, true).mobile,
+		).toBe(1);
 	});
 });

@@ -26,7 +26,7 @@ let mockedHomeDir = path.join(TEST_ROOT, "home");
 
 mock.module("./notify-hook", () => ({
 	NOTIFY_SCRIPT_NAME: "notify.sh",
-	NOTIFY_SCRIPT_MARKER: "# Superset agent notification hook v15",
+	NOTIFY_SCRIPT_MARKER: "# Superset agent notification hook v19",
 	getNotifyScriptPath: () => path.join(TEST_HOOKS_DIR, "notify.sh"),
 	getNotifyScriptContent: () => "#!/bin/bash\nexit 0\n",
 	createNotifyScript: () => {},
@@ -92,8 +92,10 @@ const {
 	getPiExtensionContent,
 	getPiExtensionPath,
 	PI_EXTENSION_MARKER,
+	removeClaudeManagedHooks,
 } = await import("./agent-wrappers");
-const { getManagedNotifyHookCommand } = await import("./agent-wrappers-common");
+const { getManagedArtifactGuardHookCommand, getManagedNotifyHookCommand } =
+	await import("./agent-wrappers-common");
 
 function requireContent(content: string | null): string {
 	if (content === null) throw new Error("Expected merged hook content");
@@ -101,6 +103,7 @@ function requireContent(content: string | null): string {
 }
 
 const managedClaudeHookCommand = getClaudeManagedHookCommand();
+const managedArtifactGuardCommand = getManagedArtifactGuardHookCommand();
 const managedDroidHookCommand = getManagedNotifyHookCommand("droid");
 const managedCodexHookCommand = getManagedNotifyHookCommand("codex");
 const managedMastraHookCommand = getManagedNotifyHookCommand("mastracode");
@@ -135,9 +138,9 @@ describe("agent-wrappers opencode", () => {
 	beforeEach(() => {
 		delete (
 			globalThis as typeof globalThis & {
-				__supersetOpencodeNotifyPluginV10?: boolean;
+				__supersetOpencodeNotifyPluginV11?: boolean;
 			}
-		).__supersetOpencodeNotifyPluginV10;
+		).__supersetOpencodeNotifyPluginV11;
 	});
 
 	afterEach(() => {
@@ -146,6 +149,48 @@ describe("agent-wrappers opencode", () => {
 		} else {
 			process.env.SUPERSET_TERMINAL_ID = originalTerminalId;
 		}
+	});
+
+	it("reports a session error as Failed with its error message", async () => {
+		process.env.SUPERSET_TERMINAL_ID = "terminal-1";
+		const { SupersetNotifyPlugin } = await loadOpenCodePlugin();
+		const notifications: unknown[] = [];
+		const hooks = await SupersetNotifyPlugin({
+			$: (
+				_parts: TemplateStringsArray,
+				_notifyPath: string,
+				payload: string,
+			) => {
+				notifications.push(JSON.parse(payload));
+			},
+			client: { session: { list: async () => ({ data: [{ id: "root" }] }) } },
+		});
+		await hooks.event({
+			event: {
+				type: "session.status",
+				properties: { sessionID: "root", status: { type: "busy" } },
+			},
+		});
+		await hooks.event({
+			event: {
+				type: "session.error",
+				properties: {
+					sessionID: "root",
+					error: { data: { message: "Provider unavailable" } },
+				},
+			},
+		});
+		await hooks.event({
+			event: { type: "session.idle", properties: { sessionID: "root" } },
+		});
+		expect(notifications).toEqual([
+			{ hook_event_name: "Start", session_id: "root" },
+			{
+				hook_event_name: "Failed",
+				session_id: "root",
+				message: "Provider unavailable",
+			},
+		]);
 	});
 
 	it.each([
@@ -1531,6 +1576,105 @@ describe("agent-wrappers claude settings.json", () => {
 		);
 	});
 
+	it("registers the Artifact guard as a PreToolUse hook", () => {
+		const content = requireContent(
+			getClaudeGlobalSettingsJsonContent("/tmp/.superset/hooks/notify.sh"),
+		);
+		const parsed = JSON.parse(content) as {
+			hooks: Record<
+				string,
+				Array<{
+					matcher?: string;
+					hooks: Array<{ type: string; command: string }>;
+				}>
+			>;
+		};
+
+		const guards = parsed.hooks.PreToolUse.filter(
+			(def) => def.matcher === "Artifact",
+		);
+		expect(guards).toHaveLength(1);
+		expect(guards[0]?.hooks[0]?.command).toBe(managedArtifactGuardCommand);
+		expect(managedArtifactGuardCommand).toContain(
+			"$SUPERSET_HOME_DIR/hooks/artifact-guard.sh",
+		);
+		expect(managedArtifactGuardCommand).not.toContain("notify.sh");
+	});
+
+	it("does not duplicate the Artifact guard when merging over its own output", () => {
+		const claudeSettingsPath = path.join(
+			mockedHomeDir,
+			".claude",
+			"settings.json",
+		);
+		mkdirSync(path.dirname(claudeSettingsPath), { recursive: true });
+
+		const notifyPath = "/tmp/.superset/hooks/notify.sh";
+		const first = requireContent(
+			getClaudeGlobalSettingsJsonContent(notifyPath),
+		);
+		writeFileSync(claudeSettingsPath, first);
+		const second = requireContent(
+			getClaudeGlobalSettingsJsonContent(notifyPath),
+		);
+
+		expect(JSON.parse(second)).toEqual(JSON.parse(first));
+		const parsed = JSON.parse(second) as {
+			hooks: Record<string, Array<{ matcher?: string }>>;
+		};
+		expect(
+			parsed.hooks.PreToolUse.filter((def) => def.matcher === "Artifact"),
+		).toHaveLength(1);
+	});
+
+	it("removes the Artifact guard on teardown and keeps user PreToolUse hooks", () => {
+		const claudeSettingsPath = path.join(
+			mockedHomeDir,
+			".claude",
+			"settings.json",
+		);
+		mkdirSync(path.dirname(claudeSettingsPath), { recursive: true });
+		writeFileSync(
+			claudeSettingsPath,
+			requireContent(
+				getClaudeGlobalSettingsJsonContent("/tmp/.superset/hooks/notify.sh"),
+			),
+		);
+		const withUserHook = JSON.parse(
+			readFileSync(claudeSettingsPath, "utf-8"),
+		) as {
+			hooks: Record<
+				string,
+				Array<{
+					matcher?: string;
+					hooks: Array<{ type: string; command: string }>;
+				}>
+			>;
+		};
+		withUserHook.hooks.PreToolUse.push({
+			matcher: "Bash",
+			hooks: [{ type: "command", command: "/opt/my-pretooluse.sh" }],
+		});
+		writeFileSync(claudeSettingsPath, JSON.stringify(withUserHook, null, 2));
+
+		removeClaudeManagedHooks();
+
+		const parsed = JSON.parse(readFileSync(claudeSettingsPath, "utf-8")) as {
+			hooks?: Record<string, Array<{ hooks: Array<{ command: string }> }>>;
+		};
+		const remaining = parsed.hooks?.PreToolUse ?? [];
+		expect(
+			remaining.some((def) =>
+				def.hooks.some((hook) => hook.command.includes("artifact-guard.sh")),
+			),
+		).toBe(false);
+		expect(
+			remaining.some((def) =>
+				def.hooks.some((hook) => hook.command === "/opt/my-pretooluse.sh"),
+			),
+		).toBe(true);
+	});
+
 	it("preserves user hooks and non-hook settings when merging", () => {
 		const claudeSettingsPath = path.join(
 			mockedHomeDir,
@@ -1764,14 +1908,18 @@ describe("agent-wrappers codex hooks.json", () => {
 			).toBe(true);
 		}
 
-		for (const eventName of ["PreToolUse", "PostToolUse"]) {
-			expect(parsed.hooks[eventName]).toEqual([
-				{
-					matcher: "^request_user_input$",
-					hooks: [{ type: "command", command: expectedCommand }],
-				},
-			]);
-		}
+		expect(parsed.hooks.PreToolUse).toEqual([
+			{
+				matcher: "^request_user_input$",
+				hooks: [{ type: "command", command: expectedCommand }],
+			},
+		]);
+		expect(parsed.hooks.PostToolUse).toEqual([
+			{
+				matcher: "*",
+				hooks: [{ type: "command", command: expectedCommand }],
+			},
+		]);
 	});
 
 	it("preserves user hooks when merging", () => {
@@ -1890,10 +2038,13 @@ describe("agent-wrappers codex hooks.json", () => {
 			).toBe(true);
 		}
 
-		for (const eventName of ["PreToolUse", "PostToolUse"]) {
+		for (const [eventName, matcher] of [
+			["PreToolUse", "^request_user_input$"],
+			["PostToolUse", "*"],
+		] as const) {
 			expect(parsed.hooks[eventName]).toHaveLength(2);
 			expect(parsed.hooks[eventName]).toContainEqual({
-				matcher: "^request_user_input$",
+				matcher,
 				hooks: [{ type: "command", command: expectedManagedCommand }],
 			});
 		}

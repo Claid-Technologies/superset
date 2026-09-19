@@ -810,15 +810,36 @@
     {
       "idx": 115,
       "version": "7",
-      "when": 1789238654475,
-      "tag": "0115_agent_status_and_live_activity_tokens",
+      "when": 1789423806672,
+      "tag": "0115_cloud_environments_repositories",
       "breakpoints": true
     },
     {
       "idx": 116,
       "version": "7",
-      "when": 1789241008713,
-      "tag": "0116_live_activity_token_device",
+      "when": 1789426475004,
+      "tag": "0116_github_user_connections",
+      "breakpoints": true
+    },
+    {
+      "idx": 117,
+      "version": "7",
+      "when": 1789530172162,
+      "tag": "0117_slack_thread_sessions",
+      "breakpoints": true
+    },
+    {
+      "idx": 118,
+      "version": "7",
+      "when": 1789546826052,
+      "tag": "0118_slack_thread_stop_requested",
+      "breakpoints": true
+    },
+    {
+      "idx": 119,
+      "version": "7",
+      "when": 1789625882184,
+      "tag": "0119_plugin_oauth_clients_and_connectors",
       "breakpoints": true
     }
   ]

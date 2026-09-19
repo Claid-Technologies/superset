@@ -11,11 +11,12 @@ import { automationRouter } from "./router/automation";
 import { billingRouter } from "./router/billing";
 import { chatRouter } from "./router/chat";
 import { cloudWorkspaceRouter } from "./router/cloud-workspace";
+import { connectorsRouter } from "./router/connectors";
 import { environmentRouter } from "./router/environment";
+import { githubUserRouter } from "./router/github-user";
 import { hostManagementRouter, hostRouter } from "./router/host";
 import { integrationRouter } from "./router/integration";
 import { leaderboardRouter } from "./router/leaderboard";
-import { mobileRouter } from "./router/mobile";
 import { organizationRouter } from "./router/organization";
 import { pageRouter } from "./router/page";
 import { pageCommentRouter } from "./router/page-comment";
@@ -41,9 +42,9 @@ export const appRouter = createTRPCRouter({
 	environment: environmentRouter,
 	growth: growthRouter,
 	host: { ...hostRouter, ...hostManagementRouter },
+	connectors: connectorsRouter,
 	integration: integrationRouter,
 	leaderboard: leaderboardRouter,
-	mobile: mobileRouter,
 	organization: organizationRouter,
 	page: pageRouter,
 	pageComment: pageCommentRouter,
@@ -52,6 +53,7 @@ export const appRouter = createTRPCRouter({
 	task: taskRouter,
 	team: teamRouter,
 	agentCredential: agentCredentialRouter,
+	githubUser: githubUserRouter,
 	user: userRouter,
 	// TODO(2026-10-11): drop; desktops and phones before 1.29 call these names.
 	v2Host: {
