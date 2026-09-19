@@ -3,6 +3,7 @@
 import { Trans } from "@lingui/react/macro";
 import { COMPANY } from "@superset/shared/constants";
 import { FaApple, FaGooglePlay } from "react-icons/fa";
+import { useIsMobileLaunched } from "@/app/[lang]/providers/MobileLaunchProvider";
 import { track } from "@/lib/analytics";
 
 const BADGE_CLASS =
@@ -14,10 +15,16 @@ const BADGE_STORE_CLASS =
 const COMING_SOON_CLASS = `${BADGE_CLASS} border border-border text-muted-foreground hover:border-foreground hover:text-foreground`;
 
 interface StoreBadgesProps {
-	isLaunched: boolean;
+	source: string;
+	androidHref?: string;
 }
 
-export function StoreBadges({ isLaunched }: StoreBadgesProps) {
+export function StoreBadges({
+	source,
+	androidHref = "#android",
+}: StoreBadgesProps) {
+	const isLaunched = useIsMobileLaunched();
+
 	return (
 		<div className="flex flex-wrap gap-3">
 			{isLaunched ? (
@@ -25,7 +32,9 @@ export function StoreBadges({ isLaunched }: StoreBadgesProps) {
 					href={COMPANY.APP_STORE_URL}
 					target="_blank"
 					rel="noopener noreferrer"
-					onClick={() => track("mobile_store_clicked", { store: "app_store" })}
+					onClick={() =>
+						track("mobile_store_clicked", { store: "app_store", source })
+					}
 					className={`${BADGE_CLASS} bg-foreground text-background hover:bg-brand hover:text-white`}
 				>
 					<FaApple className="size-6 shrink-0" />
@@ -37,7 +46,7 @@ export function StoreBadges({ isLaunched }: StoreBadgesProps) {
 					</span>
 				</a>
 			) : (
-				<a href="#android" className={COMING_SOON_CLASS}>
+				<a href={androidHref} className={COMING_SOON_CLASS}>
 					<FaApple className="size-6 shrink-0" />
 					<span>
 						<Trans>
@@ -47,7 +56,7 @@ export function StoreBadges({ isLaunched }: StoreBadgesProps) {
 					</span>
 				</a>
 			)}
-			<a href="#android" className={COMING_SOON_CLASS}>
+			<a href={androidHref} className={COMING_SOON_CLASS}>
 				<FaGooglePlay className="size-5 shrink-0" />
 				<span>
 					<Trans>
