@@ -981,19 +981,21 @@ ${sanitizeText(truncatedBody)}`;
 						}
 					}}
 				/>
-				<div className="shrink min-w-0 ml-auto max-w-[50%]">
-					<Input
-						className={cn(
-							"border-none bg-transparent dark:bg-transparent shadow-none text-xs font-mono text-muted-foreground/60 px-0 h-auto focus-visible:ring-0 placeholder:text-muted-foreground/30 focus:text-muted-foreground text-right placeholder:text-right overflow-hidden text-ellipsis",
-						)}
-						placeholder={t({
-							message: "branch name",
-						})}
-						value={branchName}
-						onChange={(e) => updateDraft(getBranchNameChange(e.target.value))}
-						onBlur={() => updateDraft(getBranchNameBlur(branchName))}
-					/>
-				</div>
+				{!linkedPR && (
+					<div className="shrink min-w-0 ml-auto max-w-[50%]">
+						<Input
+							className={cn(
+								"border-none bg-transparent dark:bg-transparent shadow-none text-xs font-mono text-muted-foreground/60 px-0 h-auto focus-visible:ring-0 placeholder:text-muted-foreground/30 focus:text-muted-foreground text-right placeholder:text-right overflow-hidden text-ellipsis",
+							)}
+							placeholder={t({
+								message: "branch name",
+							})}
+							value={branchName}
+							onChange={(e) => updateDraft(getBranchNameChange(e.target.value))}
+							onBlur={() => updateDraft(getBranchNameBlur(branchName))}
+						/>
+					</div>
+				)}
 			</div>
 
 			<PromptInput

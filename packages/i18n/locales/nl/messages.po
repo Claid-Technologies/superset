@@ -2649,7 +2649,7 @@ msgid "Branch names cannot end with a space."
 msgstr "Branchnamen mogen niet op een spatie eindigen."
 
 msgid "Branch naming"
-msgstr "Branchnamen"
+msgstr "Naamgeving van branches"
 
 msgid "Branch prefix"
 msgstr "Branchprefix"

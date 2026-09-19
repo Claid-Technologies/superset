@@ -13461,7 +13461,7 @@ msgid "Show"
 msgstr "Показать"
 
 msgid "Show a branch name field above the workspace creation prompt"
-msgstr "Показывать поле имени ветки над запросом для создания рабочего пространства"
+msgstr "Показывать поле имени ветки над промптом для создания рабочего пространства"
 
 msgid "Show a confirmation dialog when quitting the app"
 msgstr "Показывать подтверждение при выходе из приложения"

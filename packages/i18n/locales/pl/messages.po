@@ -13461,7 +13461,7 @@ msgid "Show"
 msgstr "Pokaż"
 
 msgid "Show a branch name field above the workspace creation prompt"
-msgstr "Pokaż pole nazwy gałęzi nad poleceniem tworzenia obszaru roboczego"
+msgstr "Pokaż pole nazwy gałęzi nad promptem tworzenia obszaru roboczego"
 
 msgid "Show a confirmation dialog when quitting the app"
 msgstr "Pokaż okno potwierdzenia przy zamykaniu aplikacji"
