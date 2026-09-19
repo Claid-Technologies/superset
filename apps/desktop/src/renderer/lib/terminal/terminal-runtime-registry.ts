@@ -37,7 +37,6 @@ import {
 	park,
 	reconnect,
 	sendDispose,
-	sendInput,
 	sendResize,
 	setVisible,
 	type TerminalLogEntry,
@@ -563,13 +562,6 @@ class TerminalRuntimeRegistryImpl {
 	paste(terminalId: string, text: string, instanceId?: string): void {
 		const entry = this.getEntry(terminalId, instanceId);
 		entry?.runtime?.terminal.paste(text);
-	}
-
-	/** Send raw input to the terminal via the WebSocket transport (bypasses xterm). */
-	writeInput(terminalId: string, data: string, instanceId?: string): void {
-		const entry = this.getEntry(terminalId, instanceId);
-		if (!entry) return;
-		sendInput(entry.transport, data);
 	}
 
 	findNext(terminalId: string, query: string, instanceId?: string): boolean {
