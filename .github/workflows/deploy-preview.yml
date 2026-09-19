@@ -61,6 +61,7 @@ jobs:
         run: |
           bun drizzle-kit check
           bun drizzle-kit migrate
+          bun run src/verify-migrations-applied.ts
 
       - name: Save database success status
         run: |
