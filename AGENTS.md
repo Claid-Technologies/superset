@@ -83,7 +83,7 @@ The `src/components/ui/` and `src/components/ai-elements` directories contain sh
 ## Database
 
 Drizzle ORM, schema in `packages/db/src/`. Follow `.agents/skills/db-migrations/SKILL.md` to generate
-migrations. Never hand-edit `packages/db/drizzle/` (SQL, `meta/_journal.json`, snapshots) without
+migrations and to clear its production safety checklist before opening the PR. Never hand-edit `packages/db/drizzle/` (SQL, `meta/_journal.json`, snapshots) without
 explicit user confirmation, and never apply migrations against a shared or production database.
 
 ## Releases
@@ -198,6 +198,8 @@ in the commit message and the PR.
   contract, the credential proxy, and which files are generated.
 - `docs/environment-variables.md`: read before adding an environment variable. Five places,
   and missing one fails silently.
+- `docs/deploy-workflows.md`: read before writing or testing a deploy workflow step. `run:` has
+  no `pipefail` by default, and production secrets exist only in GitHub.
 - `apps/desktop/AGENTS.md`: desktop specifics (notices, persisted renderer state).
 - `apps/mobile/AGENTS.md`: mobile structure and iOS-only scope.
 - `docs/cloud-sandbox-mismatches.md`: where cloud workspace sandboxes don't fit assumptions the
