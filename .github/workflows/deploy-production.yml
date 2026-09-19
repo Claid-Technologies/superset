@@ -46,7 +46,7 @@ jobs:
           PGOPTIONS: -c lock_timeout=5s -c statement_timeout=60s
         # Losing a lock race rolls back cleanly, so only that is retried.
         run: |
-          for attempt in 1 2 3 4 5; do
+          for attempt in 1 2 3 4 5 6 7 8; do
             if bun drizzle-kit migrate 2>&1 | tee migrate.log; then exit 0; fi
             grep -qE "deadlock detected|lock timeout" migrate.log || exit 1
             echo "::warning::Migration lost a lock race (attempt $attempt), retrying"
