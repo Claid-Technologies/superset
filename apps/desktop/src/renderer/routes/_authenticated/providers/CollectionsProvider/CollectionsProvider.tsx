@@ -160,8 +160,10 @@ export function CollectionsProvider({ children }: { children: ReactNode }) {
 			sessionOrgId,
 		],
 	);
+	const [hasFailedToLoad, setHasFailedToLoad] = useState(false);
 	useEffect(() => {
 		if (initializedRef.current) return;
+		if (initialOrganization.status === "failed") setHasFailedToLoad(true);
 		if (initialOrganization.status !== "resolved") return;
 		initializedRef.current = true;
 		setActiveOrganizationId(initialOrganization.organizationId);
@@ -279,9 +281,11 @@ export function CollectionsProvider({ children }: { children: ReactNode }) {
 	// previous org until the switch resolves, so keeping it mounted shows the
 	// org you're leaving rather than a void.
 	if (!contextValue) {
-		if (initialOrganization.status !== "failed") return null;
+		if (initialOrganization.status !== "failed" && !hasFailedToLoad)
+			return null;
 		return (
 			<OrganizationLoadError
+				isRetrying={initialOrganization.status !== "failed"}
 				onRetry={() => {
 					if (windowOrgQuery.isError) void windowOrgQuery.refetch();
 					if (organizationsQuery.isError) void organizationsQuery.refetch();
