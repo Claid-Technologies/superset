@@ -32,12 +32,12 @@ nothing. A slow or offline read is not a sign-out (#5729 already covers that hal
 
 ### Fixed on this branch
 
-1. **Forced sign-out 30 days after sign-in.** The stored `expiresAt` is written once at sign-in.
+- **F1. Forced sign-out 30 days after sign-in.** The stored `expiresAt` is written once at sign-in.
    The server extends the session daily (`packages/auth/src/server.ts:165-166`), nothing rewrites
    the stored value, and `AuthProvider` dropped the token when that date passed without asking the
    server. Every desktop user hit `/sign-in` on the first renderer load after day 30. Fix:
    `resolveStoredToken` ignores the stored date; the session read decides.
-2. **The window trusts the previous account's cached data.** Sign-out never cleared the shared
+- **F2. The window trusts the previous account's cached data.** Sign-out never cleared the shared
    query cache, and `CollectionsProvider`'s run-once init read two stale values on the next
    sign-in: the previous account's `organization.list`, and a `window.getActiveOrg` that is always
    one mount behind the registry. One hop to another account and back passes by luck. Sign into
@@ -49,9 +49,10 @@ nothing. A slow or offline read is not a sign-out (#5729 already covers that hal
    - `AuthProvider` clears the query cache when the token is removed. Every window hears that
      event, so a sign-out in one window cleans all of them. After it, only machine-local settings
      keep data, and the on-disk cache is empty.
-3. **Blank window when the organization list fails at mount.** The read now retries five times
-   with backoff (1 to 16 s, capped per #5518). A window that mounted during a short API outage
-   fills in by itself; before, it stayed blank until it regained focus.
+- **F3. Blank window when the organization list fails at mount.** The read now retries five times
+  with backoff (1 to 16 s, capped per #5518), so a window that mounted during a short API outage
+  fills in by itself; before, it stayed blank until it regained focus. When the retries run out
+  the window shows an error with a Retry button instead of nothing.
 
 Both were reproduced in the dev app over CDP on 2026-09-18, before and after the fix:
 
@@ -79,10 +80,10 @@ Both were reproduced in the dev app over CDP on 2026-09-18, before and after the
 - **API unreachable, machine online, reload:** `/sign-in` within 2 s with every provider button
   live and a small "Restoring your session" line. It recovers by itself about 15 to 20 s after the
   API returns, but a click on the wrong provider in that window signs into another account. This
-  is a second way to reach the sign-in page with a valid session, independent of finding 1. The
+  is a second way to reach the sign-in page with a valid session, independent of F1. The
   buttons should be held back while a stored token is still being restored.
 - **Auth reachable, `/api/trpc` failing, reload:** a fully blank window that only recovered on a
-  window focus event. Fixed above (finding 3): it now recovers within 20 s of the API returning.
+  window focus event. Fixed above (F3): it now recovers within 20 s of the API returning.
 - **Slow link (4 s latency) at sign-in:** about 15 s blank, a few seconds of empty Projects, then a
   full sidebar. Slow, not stuck.
 
@@ -147,13 +148,14 @@ Read from the docs and the published build:
 
 ## Proposed order
 
-1. Ship the three fixes above.
+1. Ship F1 to F3.
 2. Fix the three bugs found while testing, re-run the window's organization check when the user
    changes without a sign-out (finding 10), and restart host-services from the main process after
    a token change (findings 8, 9).
 3. Show the remembered account on the sign-in page, and hold the provider buttons back while a
    stored token is being restored (finding 13 and the network findings).
 4. Replace the handoff with the plugin's code + PKCE exchange, keeping the renderer bearer for now
-   (findings 3, 4, 11). This removes the token from URLs without the large renderer change.
-5. Decide whether to move the token out of the renderer and into `safeStorage` (findings 5, 6),
+   (findings 3, 4, 6, 11). This removes the token from URLs without the large renderer change, and
+   a callback injected from a browser pane cannot complete without this app's code verifier.
+5. Decide whether to move the token out of the renderer and into `safeStorage` (finding 5),
    which needs the host-service change above.
