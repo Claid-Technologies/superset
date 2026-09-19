@@ -10,7 +10,8 @@ import {
 	useState,
 } from "react";
 import { env } from "renderer/env.renderer";
-import { authClient } from "renderer/lib/auth-client";
+import { useDelayElapsed } from "renderer/hooks/useDelayElapsed";
+import { authClient, useAuthToken } from "renderer/lib/auth-client";
 import {
 	CLOUD_TRPC_ROUTER_ROOTS,
 	cloudTrpc,
@@ -51,6 +52,7 @@ function dropCloudQueriesForOrgSwitch(): void {
 	});
 }
 
+const MEMBER_LIST_PATIENCE_MS = 4_000;
 const ORGANIZATIONS_RETRY_ATTEMPTS = 5;
 const organizationsRetryDelayMs = (attempt: number) =>
 	Math.min(1_000 * 2 ** attempt, 30_000);
@@ -118,6 +120,30 @@ export function CollectionsProvider({ children }: { children: ReactNode }) {
 	});
 	const organizations = organizationsQuery.data;
 
+	const authToken = useAuthToken();
+	const savedAuthQuery = electronTrpc.auth.getStoredToken.useQuery(undefined, {
+		refetchOnMount: "always",
+	});
+	const savedAuth = savedAuthQuery.data;
+	const savedMemberOrganizationIds =
+		savedAuth &&
+		savedAuthQuery.dataUpdatedAt >= mountedAt &&
+		savedAuth.token === authToken
+			? savedAuth.organizationIds
+			: null;
+	const isWaitingOnMemberList =
+		activeOrganizationId === null &&
+		organizationsQuery.dataUpdatedAt < mountedAt;
+	const isMemberListSlow = useDelayElapsed(
+		isWaitingOnMemberList,
+		MEMBER_LIST_PATIENCE_MS,
+	);
+	const isMemberListUnavailable =
+		isWaitingOnMemberList &&
+		(isMemberListSlow ||
+			organizationsQuery.isError ||
+			organizationsQuery.failureCount > 0);
+
 	// Initialize the window's org exactly once. After this, the window's org is
 	// owned by local state (and switchOrganization); later — possibly transient —
 	// reads of the registry never override it. This prevents an empty/transient
@@ -146,6 +172,8 @@ export function CollectionsProvider({ children }: { children: ReactNode }) {
 						organizationsQuery.isError && !organizationsQuery.isFetching,
 				},
 				sessionOrganizationId: sessionOrgId,
+				savedMemberOrganizationIds,
+				isMemberListUnavailable,
 			}),
 		[
 			mountedAt,
@@ -158,6 +186,8 @@ export function CollectionsProvider({ children }: { children: ReactNode }) {
 			organizationsQuery.isError,
 			organizationsQuery.isFetching,
 			sessionOrgId,
+			savedMemberOrganizationIds,
+			isMemberListUnavailable,
 		],
 	);
 	const [hasFailedToLoad, setHasFailedToLoad] = useState(false);
