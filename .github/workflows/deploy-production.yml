@@ -13,6 +13,9 @@ jobs:
     name: Deploy Database Migrations
     runs-on: ubuntu-latest
     environment: production
+    concurrency:
+      group: production-database-migrations
+      cancel-in-progress: false
 
     steps:
       - name: Checkout repository
@@ -38,6 +41,9 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL_UNPOOLED }}
           DATABASE_URL_UNPOOLED: ${{ secrets.DATABASE_URL_UNPOOLED }}
+          # drizzle applies every pending migration in one transaction, so a
+          # migration that queues for a lock blocks all traffic behind it.
+          PGOPTIONS: -c lock_timeout=5s -c statement_timeout=60s
         run: bun drizzle-kit migrate
 
   deploy-api:

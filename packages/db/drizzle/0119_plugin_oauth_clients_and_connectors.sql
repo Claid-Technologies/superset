@@ -42,7 +42,6 @@ ALTER TABLE "plugin_connections" DISABLE ROW LEVEL SECURITY;--> statement-breakp
 DROP TABLE "plugin_connections" CASCADE;--> statement-breakpoint
 ALTER TABLE "automation_events" DROP CONSTRAINT "automation_events_integration_connection_id_integration_connections_id_fk";
 --> statement-breakpoint
-ALTER TABLE "ingest"."webhook_events" ALTER COLUMN "provider" SET DATA TYPE text;--> statement-breakpoint
 ALTER TABLE "connections" ADD CONSTRAINT "connections_organization_id_organizations_id_fk" FOREIGN KEY ("organization_id") REFERENCES "auth"."organizations"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "connections" ADD CONSTRAINT "connections_connected_by_user_id_users_id_fk" FOREIGN KEY ("connected_by_user_id") REFERENCES "auth"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 CREATE UNIQUE INDEX "plugin_oauth_clients_issuer_redirect_unique" ON "plugin_oauth_clients" USING btree ("issuer","redirect_uri");--> statement-breakpoint
