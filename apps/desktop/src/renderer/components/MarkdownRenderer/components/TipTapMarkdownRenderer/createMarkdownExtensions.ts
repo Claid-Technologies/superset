@@ -95,6 +95,21 @@ const SafeImage = Image.extend({
 	},
 });
 
+const SafeLink = Link.extend({
+	// The link mark's title reaches the markdown serializer the same way the
+	// image attributes above do, and coerces the same way: a link titled "2024"
+	// loads title: 2024 and the serializer throws on .replace.
+	addAttributes() {
+		return {
+			...this.parent?.(),
+			title: {
+				default: null,
+				parseHTML: (element) => element.getAttribute("title"),
+			},
+		};
+	},
+});
+
 const ReadOnlyCodeBlock = CodeBlockLowlight.extend({
 	addNodeView() {
 		return ReactNodeViewRenderer(ReadOnlyCodeBlockView);
@@ -241,7 +256,7 @@ export function createMarkdownExtensions({
 		HorizontalRule,
 		HardBreak,
 		History,
-		Link.configure({
+		SafeLink.configure({
 			openOnClick: false,
 			HTMLAttributes: {
 				class:

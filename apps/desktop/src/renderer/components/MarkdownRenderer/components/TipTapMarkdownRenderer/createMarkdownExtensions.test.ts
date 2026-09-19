@@ -134,3 +134,29 @@ describe("table rendering", () => {
 		}
 	});
 });
+
+describe("link attribute parsing", () => {
+	// Same coercion as the image attributes above, on the link mark's title:
+	// pasting <a href="..." title="2024"> loaded title: 2024 (number) and
+	// prosemirror-markdown's link serializer threw on .replace (DESKTOP-1A6).
+	it("keeps a numeric link title as a string and serializes it", () => {
+		const editor = createEditor('[docs](https://example.com "2024")');
+		try {
+			expect(getMarkdown(editor)).toBe('[docs](https://example.com "2024")');
+		} finally {
+			editor.destroy();
+		}
+	});
+
+	it("keeps a boolean-looking link title as a string", () => {
+		expect(roundTrip('[docs](https://example.com "true")')).toBe(
+			'[docs](https://example.com "true")',
+		);
+	});
+
+	it("round-trips a link without a title unchanged", () => {
+		expect(roundTrip("[docs](https://example.com)")).toBe(
+			"[docs](https://example.com)",
+		);
+	});
+});

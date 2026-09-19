@@ -93,6 +93,22 @@ const LinearImage = Image.extend({
 	},
 });
 
+const SafeLink = Link.extend({
+	// @tiptap/core's default attribute parser coerces numeric/boolean-looking
+	// strings (fromString), so a link titled "2024" loads title: 2024 and
+	// prosemirror-markdown's link serializer throws on .replace, taking down
+	// every later serialization of the document. Read it verbatim instead.
+	addAttributes() {
+		return {
+			...this.parent?.(),
+			title: {
+				default: null,
+				parseHTML: (element) => element.getAttribute("title"),
+			},
+		};
+	},
+});
+
 const HEADING_CLASSES: Record<number, string> = {
 	1: "text-3xl font-bold leading-tight mt-0 mb-3",
 	2: "text-2xl font-semibold leading-snug mt-6 mb-2",
@@ -288,7 +304,7 @@ export function MarkdownEditor({
 			}),
 			HardBreak,
 			History,
-			Link.configure({
+			SafeLink.configure({
 				openOnClick: false,
 				HTMLAttributes: { class: "text-primary underline" },
 			}),
