@@ -3,7 +3,7 @@ export {
 	type AgentRunResult,
 	agentsRouter,
 	buildTerminalAgentLaunch,
+	prepareAgentLaunchTrust,
 	runAgentInWorkspace,
-	seedAgentLaunchTrust,
 	validateAgentLaunchOptions,
 } from "./agents";

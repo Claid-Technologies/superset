@@ -34,7 +34,7 @@ import { protectedProcedure, router } from "../../index";
 import { resolveAttachmentPath } from "../attachments/storage";
 import { toTerminalSessionError } from "../terminal/errors";
 import { resolveDefaultAccountEnv } from "../usage/default-account";
-import { seedAgentWorkspaceTrust } from "../workspace-creation/shared/seed-agent-trust";
+import { prepareFolderTrust } from "./folder-trust";
 
 interface ResolvedHostAgentConfig {
 	id: string;
@@ -465,6 +465,7 @@ export function validateAgentLaunchOptions(
 export function buildTerminalAgentLaunch(
 	db: HostDb,
 	input: AgentRunInput,
+	trustArgs: string[] = [],
 ): { fullCommand: string; label: string } {
 	const config = resolveHostAgentConfig(db, input.agent);
 	if (!config) {
@@ -527,7 +528,7 @@ export function buildTerminalAgentLaunch(
 	const command = buildAgentCommandString(
 		config,
 		prompt,
-		[...modelArgs, ...effortArgs, ...modeArgs],
+		[...trustArgs, ...modelArgs, ...effortArgs, ...modeArgs],
 		{
 			resumeSessionId: input.resumeSessionId,
 			forkSessionId: input.forkSessionId,
@@ -575,8 +576,13 @@ export function bindResumedSession(
 async function runTerminalAgent(
 	ctx: Pick<HostServiceContext, "db" | "eventBus" | "terminalAgentStore">,
 	input: AgentRunInput,
+	trustArgs: string[],
 ): Promise<AgentRunResult> {
-	const { fullCommand, label } = buildTerminalAgentLaunch(ctx.db, input);
+	const { fullCommand, label } = buildTerminalAgentLaunch(
+		ctx.db,
+		input,
+		trustArgs,
+	);
 
 	const terminalId = crypto.randomUUID();
 	const result = await createTerminalSessionInternal({
@@ -696,13 +702,17 @@ async function continueTerminalAgent(
 	};
 }
 
-export async function seedAgentLaunchTrust(
+/**
+ * Args a launch of `agent` in `workspace` needs so it does not stall on the
+ * CLI's folder-trust dialog. Pass them to {@link buildTerminalAgentLaunch}.
+ */
+export async function prepareAgentLaunchTrust(
 	db: HostDb,
 	workspace: { worktreePath: string; projectId: string | null },
 	agent: string,
-): Promise<void> {
+): Promise<string[]> {
 	const config = resolveHostAgentConfig(db, agent);
-	if (config) await seedAgentWorkspaceTrust(db, workspace, config);
+	return config ? prepareFolderTrust(db, workspace, config) : [];
 }
 
 export async function runAgentInWorkspace(
@@ -733,8 +743,12 @@ export async function runAgentInWorkspace(
 	const continued = await continueTerminalAgent(ctx, input);
 	if (continued) return continued;
 
-	await seedAgentLaunchTrust(ctx.db, workspace, input.agent);
-	return runTerminalAgent(ctx, input);
+	const trustArgs = await prepareAgentLaunchTrust(
+		ctx.db,
+		workspace,
+		input.agent,
+	);
+	return runTerminalAgent(ctx, input, trustArgs);
 }
 
 export const agentsRouter = router({
