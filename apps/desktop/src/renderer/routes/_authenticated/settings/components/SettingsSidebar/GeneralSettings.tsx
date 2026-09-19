@@ -90,12 +90,6 @@ const SECTION_GROUPS: SectionGroup[] = [
 		}),
 		items: [
 			{
-				id: "/settings/mobile",
-				section: "mobile",
-				label: msg({ message: "Mobile" }),
-				icon: <HiOutlineDevicePhoneMobile className="h-4 w-4" />,
-			},
-			{
 				id: "/settings/account",
 				section: "account",
 				label: msg({
@@ -135,6 +129,12 @@ const SECTION_GROUPS: SectionGroup[] = [
 				}),
 				icon: <HiOutlineChartBar className="h-4 w-4" />,
 				fullWidth: true,
+			},
+			{
+				id: "/settings/mobile",
+				section: "mobile",
+				label: msg({ message: "Mobile" }),
+				icon: <HiOutlineDevicePhoneMobile className="h-4 w-4" />,
 			},
 		],
 	},

@@ -44,25 +44,28 @@ export function GettingStartedChecklist({
 			</div>
 			<div className="-mx-1 flex flex-col gap-0.5">
 				{steps.map((step, index) => {
-					const isTried = Boolean(completionMask & (1 << step.progressIndex));
+					const isCompleted = Boolean(
+						completionMask & (1 << step.progressIndex),
+					);
 					return (
 						<button
 							key={step.label.id}
 							type="button"
 							onClick={() => onStart(index)}
 							className={cn(
-								"flex w-full items-center gap-2.5 rounded-md px-1 py-2 text-left text-xs hover:bg-fill-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50",
-								isTried && "text-muted-foreground",
+								"flex w-full items-center gap-2.5 rounded-md px-1 py-2 text-left text-xs hover:bg-fill-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+								isCompleted && "text-muted-foreground",
 							)}
 						>
 							<span
 								aria-hidden="true"
 								className={cn(
 									"flex size-4 shrink-0 items-center justify-center rounded-full border border-muted-foreground/60",
-									isTried && "border-foreground bg-foreground text-background",
+									isCompleted &&
+										"border-foreground bg-foreground text-background",
 								)}
 							>
-								{isTried ? <LuCheck className="size-3" /> : null}
+								{isCompleted ? <LuCheck className="size-3" /> : null}
 							</span>
 							<span>{t(step.label)}</span>
 						</button>

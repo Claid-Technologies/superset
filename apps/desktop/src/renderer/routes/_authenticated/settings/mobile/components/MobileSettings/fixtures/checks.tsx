@@ -1,5 +1,5 @@
 import { beforeEach, expect, mock, test } from "bun:test";
-import { createElement, type ReactNode } from "react";
+import { type ComponentType, createElement, type ReactNode } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { GATED_FEATURES } from "renderer/components/Paywall/constants";
 
@@ -7,6 +7,15 @@ const router = await import("@tanstack/react-router");
 let paid = true;
 let ready = true;
 let tried = 0;
+let flags: string[] | undefined = [];
+let enabled: boolean | undefined = true;
+mock.module("posthog-js/react", () => ({
+	useActiveFeatureFlags: () => flags,
+	useFeatureFlagEnabled: () => enabled,
+}));
+mock.module("renderer/components/Redirect", () => ({
+	Redirect: ({ to }: { to: string }) => createElement("span", null, to),
+}));
 mock.module("renderer/components/Paywall", () => ({
 	GATED_FEATURES,
 	usePaywall: () => ({
@@ -24,7 +33,11 @@ mock.module("@tanstack/react-router", () => ({
 		createElement("a", { href: to }, children),
 }));
 const { MobileSettings } = await import("../MobileSettings");
+const { Route } = await import("../../../page");
+const MobilePage = Route.options.component as ComponentType;
 beforeEach(() => {
+	flags = [];
+	enabled = true;
 	paid = true;
 	ready = true;
 	tried = 0;
@@ -53,4 +66,16 @@ test("shows confirmed setup only after explicit mobile confirmation", () => {
 	expect(renderToStaticMarkup(<MobileSettings />)).toContain(
 		"Mobile setup confirmed",
 	);
+});
+
+test("mobile route waits for flags, then redirects for disabled or omitted flags", () => {
+	flags = undefined;
+	enabled = undefined;
+	expect(renderToStaticMarkup(<MobilePage />)).toBe("");
+	flags = [];
+	expect(renderToStaticMarkup(<MobilePage />)).toContain("/settings/account");
+	enabled = false;
+	expect(renderToStaticMarkup(<MobilePage />)).toContain("/settings/account");
+	enabled = true;
+	expect(renderToStaticMarkup(<MobilePage />)).toContain("Scan to get the app");
 });

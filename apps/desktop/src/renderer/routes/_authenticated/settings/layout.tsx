@@ -32,12 +32,12 @@ export const Route = createFileRoute("/_authenticated/settings")({
 });
 
 const SECTION_ORDER: SettingsSection[] = [
-	"mobile",
 	"account",
 	"connections",
 	"appearance",
 	"ringtones",
 	"usage",
+	"mobile",
 	"keyboard",
 	"behavior",
 	"git",
