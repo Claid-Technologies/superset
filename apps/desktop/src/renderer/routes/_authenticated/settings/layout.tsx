@@ -110,7 +110,7 @@ function SettingsLayout() {
 	const { data: platform } = electronTrpc.window.getPlatform.useQuery();
 	const isV2CloudEnabled = useIsV2CloudEnabled();
 	const mobileEnabled =
-		useFeatureFlagEnabled(FEATURE_FLAGS.MOBILE_SETTINGS) === true;
+		useFeatureFlagEnabled(FEATURE_FLAGS.MOBILE_LAUNCH) === true;
 	const isMac = platform === undefined || platform === "darwin";
 	const searchQuery = useSettingsSearchQuery();
 	const setSearchQuery = useSetSettingsSearchQuery();

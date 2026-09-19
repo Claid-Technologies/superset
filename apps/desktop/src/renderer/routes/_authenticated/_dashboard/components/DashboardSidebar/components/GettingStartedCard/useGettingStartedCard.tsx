@@ -16,7 +16,7 @@ export function useGettingStartedCard(): SidebarCardEntry | null {
 	const navigate = useNavigate();
 	const { gateFeature, hasAccess, isReady } = usePaywall();
 	const mobileEnabled =
-		useFeatureFlagEnabled(FEATURE_FLAGS.MOBILE_SETTINGS) === true;
+		useFeatureFlagEnabled(FEATURE_FLAGS.MOBILE_LAUNCH) === true;
 	const visible =
 		!dismissed && isReady && hasAccess(GATED_FEATURES.REMOTE_ACCESS);
 	const { data: remoteEnabled } =

@@ -24,7 +24,7 @@ export function SettingsSidebar() {
 	const originRoute = useSettingsOriginRoute();
 	const isV2CloudEnabled = useIsV2CloudEnabled();
 	const mobileEnabled =
-		useFeatureFlagEnabled(FEATURE_FLAGS.MOBILE_SETTINGS) === true;
+		useFeatureFlagEnabled(FEATURE_FLAGS.MOBILE_LAUNCH) === true;
 	const normalizedSearchQuery = searchQuery.trim();
 	const matchCounts = normalizedSearchQuery
 		? getVisibleMatchCountBySection(

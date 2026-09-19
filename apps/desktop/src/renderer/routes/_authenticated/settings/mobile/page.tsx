@@ -9,7 +9,7 @@ export const Route = createFileRoute("/_authenticated/settings/mobile/")({
 });
 
 function MobileSettingsPage() {
-	const enabled = useFeatureFlagEnabled(FEATURE_FLAGS.MOBILE_SETTINGS);
+	const enabled = useFeatureFlagEnabled(FEATURE_FLAGS.MOBILE_LAUNCH);
 	if (enabled === undefined) return null;
 	if (!enabled) return <Redirect to="/settings/account" replace />;
 	return <MobileSettings />;
