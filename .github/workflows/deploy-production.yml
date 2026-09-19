@@ -44,7 +44,15 @@ jobs:
           # drizzle applies every pending migration in one transaction, so a
           # migration that queues for a lock blocks all traffic behind it.
           PGOPTIONS: -c lock_timeout=5s -c statement_timeout=60s
-        run: bun drizzle-kit migrate
+        # Losing a lock race rolls back cleanly, so only that is retried.
+        run: |
+          for attempt in 1 2 3 4 5; do
+            if bun drizzle-kit migrate 2>&1 | tee migrate.log; then exit 0; fi
+            grep -qE "deadlock detected|lock timeout" migrate.log || exit 1
+            echo "::warning::Migration lost a lock race (attempt $attempt), retrying"
+            sleep $((attempt * 5))
+          done
+          exit 1
 
   deploy-api:
     name: Deploy API to Vercel
