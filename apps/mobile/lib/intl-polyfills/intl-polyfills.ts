@@ -64,3 +64,4 @@ import "@formatjs/intl-relativetimeformat/locale-data/ru.js";
 import "@formatjs/intl-relativetimeformat/locale-data/tr.js";
 import "@formatjs/intl-relativetimeformat/locale-data/vi.js";
 import "@formatjs/intl-relativetimeformat/locale-data/zh.js";
+import "@formatjs/intl-relativetimeformat/locale-data/zh-Hant.js";

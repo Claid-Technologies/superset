@@ -1,6 +1,3 @@
-export type {
-	HostPresence,
-	HostPresenceStatus,
-	HostPresenceTarget,
-} from "./useHostsPresence";
+export type { HostPresence, HostPresenceTarget } from "./useHostsPresence";
 export { useHostsPresence } from "./useHostsPresence";
+export type { HostPresenceStatus } from "./utils/getPresenceStatus";

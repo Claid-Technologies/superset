@@ -1,7 +1,8 @@
 import { Trans, useLingui } from "@lingui/react/macro";
 import { COMPANY } from "@superset/shared/constants";
+import { useFocusEffect } from "expo-router";
 import { Laptop } from "lucide-react-native";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { View } from "react-native";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
@@ -24,10 +25,12 @@ export function HostSetupPendingView({ hostName }: { hostName: string }) {
 		posthog.capture("host_setup_pending_shown");
 	}, []);
 
-	useEffect(() => {
-		const timer = setInterval(() => void refreshPresence(), PRESENCE_POLL_MS);
-		return () => clearInterval(timer);
-	}, [refreshPresence]);
+	useFocusEffect(
+		useCallback(() => {
+			const timer = setInterval(() => void refreshPresence(), PRESENCE_POLL_MS);
+			return () => clearInterval(timer);
+		}, [refreshPresence]),
+	);
 
 	return (
 		<View className="flex-1 items-center justify-center gap-6 px-8">

@@ -104,6 +104,15 @@ describe("mobile Intl polyfills", () => {
 		expect(formatted).toContain("18");
 	});
 
+	// Plural categories do not vary by script, relative-time words do: with
+	// only `zh` loaded, zh-TW rendered Simplified "分钟" inside Traditional copy.
+	test("formats Traditional Chinese for zh-TW and Simplified for zh-CN", () => {
+		const format = (locale: string) =>
+			new Intl.RelativeTimeFormat(locale).format(-18, "minute");
+		expect(format("zh-TW")).toContain("分鐘");
+		expect(format("zh-CN")).toContain("分钟");
+	});
+
 	test("carries relative-time data for every supported locale's base language", () => {
 		const loaded = new Set(
 			[
