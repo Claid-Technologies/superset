@@ -142,6 +142,9 @@ describe("link attribute parsing", () => {
 	it("keeps a numeric link title as a string and serializes it", () => {
 		const editor = createEditor('[docs](https://example.com "2024")');
 		try {
+			const link = editor.state.doc.firstChild?.firstChild?.marks[0];
+			expect(link?.type.name).toBe("link");
+			expect(link?.attrs.title).toBe("2024");
 			expect(getMarkdown(editor)).toBe('[docs](https://example.com "2024")');
 		} finally {
 			editor.destroy();
