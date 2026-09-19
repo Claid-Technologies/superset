@@ -11,7 +11,8 @@ const KEYSTROKE_WRITERS = [
 	"routes/_authenticated/_dashboard/v2-workspace/$workspaceId/hooks/useV2WorkspaceRun/useV2WorkspaceRun.ts",
 ];
 
-const RAW_WRITE = /terminal\s*\.\s*writeInput\s*\.\s*(?:useMutation|mutate)\b/;
+const RAW_WRITE =
+	/terminal\s*\.\s*writeInput\s*\.\s*(?:useMutation|mutate(?:Async)?)\b/;
 
 describe("text never reaches a terminal through the raw keystroke channel", () => {
 	test("terminal.writeInput is only called for keystrokes", async () => {
