@@ -25,6 +25,7 @@ import {
 	getCollections,
 	preloadCollections,
 } from "./collections";
+import { OrganizationLoadError } from "./components/OrganizationLoadError";
 import { resolveInitialWindowOrganization } from "./utils/resolveInitialWindowOrganization";
 
 // Cloud query procedures take no organizationId input (the server scopes by
@@ -91,10 +92,10 @@ export function CollectionsProvider({ children }: { children: ReactNode }) {
 	// existing user), seed from the shared login session's active org and persist
 	// that seed back into the registry.
 	const [mountedAt] = useState(() => Date.now());
-	const { data: windowOrgId, dataUpdatedAt: windowOrgUpdatedAt } =
-		electronTrpc.window.getActiveOrg.useQuery(undefined, {
-			refetchOnMount: "always",
-		});
+	const windowOrgQuery = electronTrpc.window.getActiveOrg.useQuery(undefined, {
+		refetchOnMount: "always",
+	});
+	const windowOrgId = windowOrgQuery.data;
 
 	const sessionOrgId = env.SKIP_ENV_VALIDATION
 		? MOCK_ORG_ID
@@ -106,16 +107,16 @@ export function CollectionsProvider({ children }: { children: ReactNode }) {
 
 	// Account-wide ("the orgs I belong to"), so it is not affected by — and does
 	// not depend on — the org header this provider sets.
-	const { data: organizations, dataUpdatedAt: organizationsUpdatedAt } =
-		cloudTrpc.organization.list.useQuery(undefined, {
-			refetchOnMount: "always",
-			// The window shows nothing until this read lands, and a window that
-			// mounts the instant a sign-in arrives can ask before its credentials
-			// are in place. Bounded, because unbounded retries against the API
-			// have locked the whole fleet out before (#5518).
-			retry: ORGANIZATIONS_RETRY_ATTEMPTS,
-			retryDelay: organizationsRetryDelayMs,
-		});
+	const organizationsQuery = cloudTrpc.organization.list.useQuery(undefined, {
+		refetchOnMount: "always",
+		// The window shows nothing until this read lands, and a window that
+		// mounts the instant a sign-in arrives can ask before its credentials
+		// are in place. Bounded, because unbounded retries against the API
+		// have locked the whole fleet out before (#5518).
+		retry: ORGANIZATIONS_RETRY_ATTEMPTS,
+		retryDelay: organizationsRetryDelayMs,
+	});
+	const organizations = organizationsQuery.data;
 
 	// Initialize the window's org exactly once. After this, the window's org is
 	// owned by local state (and switchOrganization); later — possibly transient —
@@ -124,36 +125,47 @@ export function CollectionsProvider({ children }: { children: ReactNode }) {
 	// default org. Seed the registry from the session only when the window has no
 	// org yet (the first window of an existing user).
 	const initializedRef = useRef(false);
+	// The registry's org is only preferred while it is still one the user
+	// belongs to. Leaving an organization (or having membership revoked
+	// elsewhere) leaves a dead id in the registry, and adopting it would pin
+	// the window to an org whose every read now fails. Until the membership
+	// list has loaded we cannot tell stale from valid, so wait rather than
+	// guess — the window is showing nothing yet either way.
+	const initialOrganization = useMemo(
+		() =>
+			resolveInitialWindowOrganization({
+				windowOrganization: {
+					value: windowOrgId,
+					isFresh: windowOrgQuery.dataUpdatedAt >= mountedAt,
+					hasFailed: windowOrgQuery.isError && !windowOrgQuery.isFetching,
+				},
+				memberOrganizationIds: {
+					value: organizations?.map((organization) => organization.id),
+					isFresh: organizationsQuery.dataUpdatedAt >= mountedAt,
+					hasFailed:
+						organizationsQuery.isError && !organizationsQuery.isFetching,
+				},
+				sessionOrganizationId: sessionOrgId,
+			}),
+		[
+			mountedAt,
+			windowOrgId,
+			windowOrgQuery.dataUpdatedAt,
+			windowOrgQuery.isError,
+			windowOrgQuery.isFetching,
+			organizations,
+			organizationsQuery.dataUpdatedAt,
+			organizationsQuery.isError,
+			organizationsQuery.isFetching,
+			sessionOrgId,
+		],
+	);
 	useEffect(() => {
 		if (initializedRef.current) return;
-		// The registry's org is only preferred while it is still one the user
-		// belongs to. Leaving an organization (or having membership revoked
-		// elsewhere) leaves a dead id in the registry, and adopting it would pin
-		// the window to an org whose every read now fails. Until the membership
-		// list has loaded we cannot tell stale from valid, so wait rather than
-		// guess — the window is showing nothing yet either way.
-		const initial = resolveInitialWindowOrganization({
-			windowOrganization: {
-				value: windowOrgId,
-				isFresh: windowOrgUpdatedAt >= mountedAt,
-			},
-			memberOrganizationIds: {
-				value: organizations?.map((organization) => organization.id),
-				isFresh: organizationsUpdatedAt >= mountedAt,
-			},
-			sessionOrganizationId: sessionOrgId,
-		});
-		if (initial.status === "waiting") return;
+		if (initialOrganization.status !== "resolved") return;
 		initializedRef.current = true;
-		setActiveOrganizationId(initial.organizationId);
-	}, [
-		mountedAt,
-		windowOrgId,
-		windowOrgUpdatedAt,
-		sessionOrgId,
-		organizations,
-		organizationsUpdatedAt,
-	]);
+		setActiveOrganizationId(initialOrganization.organizationId);
+	}, [initialOrganization]);
 
 	// Scope this window's cloud reads to its own org, during render rather than
 	// in an effect: children below issue their first queries while this render
@@ -267,7 +279,15 @@ export function CollectionsProvider({ children }: { children: ReactNode }) {
 	// previous org until the switch resolves, so keeping it mounted shows the
 	// org you're leaving rather than a void.
 	if (!contextValue) {
-		return null;
+		if (initialOrganization.status !== "failed") return null;
+		return (
+			<OrganizationLoadError
+				onRetry={() => {
+					if (windowOrgQuery.isError) void windowOrgQuery.refetch();
+					if (organizationsQuery.isError) void organizationsQuery.refetch();
+				}}
+			/>
+		);
 	}
 
 	return (

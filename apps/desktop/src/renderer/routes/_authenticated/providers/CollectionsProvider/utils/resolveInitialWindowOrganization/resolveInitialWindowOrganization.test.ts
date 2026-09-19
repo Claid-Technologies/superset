@@ -1,8 +1,21 @@
 import { describe, expect, test } from "bun:test";
 import { resolveInitialWindowOrganization } from "./resolveInitialWindowOrganization";
 
-const fresh = <Value>(value: Value) => ({ value, isFresh: true });
-const stale = <Value>(value: Value) => ({ value, isFresh: false });
+const fresh = <Value>(value: Value) => ({
+	value,
+	isFresh: true,
+	hasFailed: false,
+});
+const stale = <Value>(value: Value) => ({
+	value,
+	isFresh: false,
+	hasFailed: false,
+});
+const failed = <Value>(value: Value) => ({
+	value,
+	isFresh: false,
+	hasFailed: true,
+});
 
 describe("resolveInitialWindowOrganization", () => {
 	test("keeps the window's organization while the account belongs to it", () => {
@@ -75,5 +88,35 @@ describe("resolveInitialWindowOrganization", () => {
 				sessionOrganizationId: null,
 			}),
 		).toEqual({ status: "waiting" });
+	});
+
+	test("fails when the window organization read gave up", () => {
+		expect(
+			resolveInitialWindowOrganization({
+				windowOrganization: failed(undefined),
+				memberOrganizationIds: fresh(["org-a"]),
+				sessionOrganizationId: "org-a",
+			}),
+		).toEqual({ status: "failed" });
+	});
+
+	test("fails when the member list gave up and the window organization needs it", () => {
+		expect(
+			resolveInitialWindowOrganization({
+				windowOrganization: fresh("org-a"),
+				memberOrganizationIds: failed(["org-a"]),
+				sessionOrganizationId: "org-a",
+			}),
+		).toEqual({ status: "failed" });
+	});
+
+	test("a failed member list does not matter to a window with nothing remembered", () => {
+		expect(
+			resolveInitialWindowOrganization({
+				windowOrganization: fresh(null),
+				memberOrganizationIds: failed(undefined),
+				sessionOrganizationId: "org-a",
+			}),
+		).toEqual({ status: "resolved", organizationId: "org-a" });
 	});
 });
