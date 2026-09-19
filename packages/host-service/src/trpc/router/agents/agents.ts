@@ -702,10 +702,6 @@ async function continueTerminalAgent(
 	};
 }
 
-/**
- * Args a launch of `agent` in `workspace` needs so it does not stall on the
- * CLI's folder-trust dialog. Pass them to {@link buildTerminalAgentLaunch}.
- */
 export async function prepareAgentLaunchTrust(
 	db: HostDb,
 	workspace: { worktreePath: string; projectId: string | null },

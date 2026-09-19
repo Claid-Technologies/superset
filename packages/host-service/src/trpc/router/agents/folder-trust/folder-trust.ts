@@ -104,11 +104,9 @@ export async function findCarriedFolderTrust(
 }
 
 /**
- * Settle folder trust for an agent about to launch in `workspace`, returning
- * any args the launch command needs for it. `config` is the already-resolved
- * host agent config. The target store mirrors launch-time account
- * resolution: per-agent env wins over the host-default account selection
- * (`{...accountEnv, ...config.env}` in buildTerminalAgentLaunch).
+ * Returns the args the launch command needs. The target store must mirror
+ * launch-time account resolution: per-agent env wins over the host-default
+ * selection (`{...accountEnv, ...config.env}` in buildTerminalAgentLaunch).
  */
 export async function prepareFolderTrust(
 	db: HostDb,
