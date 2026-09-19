@@ -8171,6 +8171,9 @@ msgstr "Feuille"
 msgid "Learn how to use scripts"
 msgstr "Découvrir comment utiliser les scripts"
 
+msgid "Learn more"
+msgstr "En savoir plus"
+
 msgid "Learn the workflow that fits this repo — parallel workspaces and agent setup."
 msgstr "Découvrir le flux de travail adapté à ce dépôt — espaces de travail parallèles et configuration des agents."
 

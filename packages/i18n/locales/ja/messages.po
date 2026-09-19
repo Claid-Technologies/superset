@@ -8171,6 +8171,9 @@ msgstr "葉"
 msgid "Learn how to use scripts"
 msgstr "スクリプトの使い方を見る"
 
+msgid "Learn more"
+msgstr "詳しく見る"
+
 msgid "Learn the workflow that fits this repo — parallel workspaces and agent setup."
 msgstr "このリポジトリに合うワークフロー — 並列ワークスペースとエージェント設定を学びます。"
 

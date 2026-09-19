@@ -8171,6 +8171,9 @@ msgstr "List"
 msgid "Learn how to use scripts"
 msgstr "Jak používat skripty"
 
+msgid "Learn more"
+msgstr "Další informace"
+
 msgid "Learn the workflow that fits this repo — parallel workspaces and agent setup."
 msgstr "Poznejte postup, který k tomuto repozitáři sedí — paralelní pracovní prostory a nastavení agentů."
 

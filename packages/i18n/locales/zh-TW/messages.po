@@ -8171,6 +8171,9 @@ msgstr "葉子"
 msgid "Learn how to use scripts"
 msgstr "瞭解如何使用指令碼"
 
+msgid "Learn more"
+msgstr "瞭解更多"
+
 msgid "Learn the workflow that fits this repo — parallel workspaces and agent setup."
 msgstr "瞭解適合這個儲存庫的工作流：並行工作區和代理程式配置。"
 

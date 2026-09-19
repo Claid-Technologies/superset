@@ -8171,6 +8171,9 @@ msgstr "잎"
 msgid "Learn how to use scripts"
 msgstr "스크립트 사용법 알아보기"
 
+msgid "Learn more"
+msgstr "자세히 알아보기"
+
 msgid "Learn the workflow that fits this repo — parallel workspaces and agent setup."
 msgstr "이 리포지토리에 맞는 워크플로 익히기 — 병렬 워크스페이스와 에이전트 설정."
 

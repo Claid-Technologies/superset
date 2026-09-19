@@ -8171,6 +8171,9 @@ msgstr "Folha"
 msgid "Learn how to use scripts"
 msgstr "Saiba como usar scripts"
 
+msgid "Learn more"
+msgstr "Saiba mais"
+
 msgid "Learn the workflow that fits this repo — parallel workspaces and agent setup."
 msgstr "Conheça o fluxo que combina com este repositório — áreas de trabalho em paralelo e configuração de agentes."
 

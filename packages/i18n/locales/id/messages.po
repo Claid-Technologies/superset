@@ -8171,6 +8171,9 @@ msgstr "Daun"
 msgid "Learn how to use scripts"
 msgstr "Pelajari cara memakai skrip"
 
+msgid "Learn more"
+msgstr "Pelajari lebih lanjut"
+
 msgid "Learn the workflow that fits this repo — parallel workspaces and agent setup."
 msgstr "Pelajari alur kerja yang cocok untuk repo ini — workspace paralel dan penyiapan agen."
 

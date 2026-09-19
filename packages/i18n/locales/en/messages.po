@@ -8171,6 +8171,9 @@ msgstr "Leaf"
 msgid "Learn how to use scripts"
 msgstr "Learn how to use scripts"
 
+msgid "Learn more"
+msgstr "Learn more"
+
 msgid "Learn the workflow that fits this repo — parallel workspaces and agent setup."
 msgstr "Learn the workflow that fits this repo — parallel workspaces and agent setup."
 

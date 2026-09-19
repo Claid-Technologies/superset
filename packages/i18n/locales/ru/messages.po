@@ -8171,6 +8171,9 @@ msgstr "Лист"
 msgid "Learn how to use scripts"
 msgstr "Как использовать скрипты"
 
+msgid "Learn more"
+msgstr "Подробнее"
+
 msgid "Learn the workflow that fits this repo — parallel workspaces and agent setup."
 msgstr "Изучить рабочий процесс, который подходит этому репозиторию: параллельные рабочие области и настройка агентов."
 

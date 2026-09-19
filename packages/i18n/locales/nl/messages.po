@@ -8171,6 +8171,9 @@ msgstr "Blad"
 msgid "Learn how to use scripts"
 msgstr "Leer hoe je scripts gebruikt"
 
+msgid "Learn more"
+msgstr "Meer informatie"
+
 msgid "Learn the workflow that fits this repo — parallel workspaces and agent setup."
 msgstr "Leer de workflow die bij deze repo past — parallelle werkruimtes en agentconfiguratie."
 

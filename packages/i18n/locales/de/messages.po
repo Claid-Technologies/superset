@@ -8171,6 +8171,9 @@ msgstr "Blatt"
 msgid "Learn how to use scripts"
 msgstr "So verwendest du Skripte"
 
+msgid "Learn more"
+msgstr "Mehr erfahren"
+
 msgid "Learn the workflow that fits this repo — parallel workspaces and agent setup."
 msgstr "Lerne den Workflow, der zu diesem Repo passt — parallele Arbeitsbereiche und Agenten-Setup."
 

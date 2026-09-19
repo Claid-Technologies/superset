@@ -8171,6 +8171,9 @@ msgstr "Yaprak"
 msgid "Learn how to use scripts"
 msgstr "Betiklerin nasıl kullanılacağını öğrenin"
 
+msgid "Learn more"
+msgstr "Daha fazla bilgi"
+
 msgid "Learn the workflow that fits this repo — parallel workspaces and agent setup."
 msgstr "Bu depoya uygun iş akışını öğren — paralel çalışma alanları ve ajan kurulumu."
 

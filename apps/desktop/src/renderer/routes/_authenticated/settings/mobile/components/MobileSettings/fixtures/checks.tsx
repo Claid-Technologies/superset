@@ -1,4 +1,5 @@
 import { beforeEach, expect, mock, test } from "bun:test";
+import { COMPANY } from "@superset/shared/constants";
 import { type ComponentType, createElement, type ReactNode } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { GATED_FEATURES } from "renderer/components/Paywall/constants";
@@ -47,6 +48,8 @@ test("shows the official download QR and setup confirmation for paid users", () 
 	expect(html).toContain("Scan to download Superset for iPhone");
 	expect(html).toContain("https://apps.apple.com/app/id6788926383");
 	expect(html).toContain("/settings/security");
+	expect(html).toContain(`${COMPANY.MARKETING_URL}/mobile`);
+	expect(html).toContain(`${COMPANY.DOCS_URL}/remote-access`);
 	expect(html).toContain("signed in on my phone");
 });
 test("withholds QR and confirmation from free and unresolved plans", () => {

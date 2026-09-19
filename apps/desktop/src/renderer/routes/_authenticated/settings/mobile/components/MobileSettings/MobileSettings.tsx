@@ -1,8 +1,8 @@
 import { Trans, useLingui } from "@lingui/react/macro";
 import { COMPANY } from "@superset/shared/constants";
+import { AppStoreQr } from "@superset/ui/app-store-qr";
 import { Button } from "@superset/ui/button";
 import { Link } from "@tanstack/react-router";
-import { QRCodeSVG } from "qrcode.react";
 import { LuArrowUpRight, LuCheck, LuSmartphone } from "react-icons/lu";
 import { GATED_FEATURES, usePaywall } from "renderer/components/Paywall";
 import { useGettingStartedStore } from "renderer/stores/getting-started";
@@ -37,11 +37,9 @@ export function MobileSettings() {
 				) : hasAccess(GATED_FEATURES.MOBILE_APP) ? (
 					<div className="flex flex-wrap items-center gap-8 p-6">
 						<div className="shrink-0 rounded-xl border border-border bg-white p-3">
-							<QRCodeSVG
-								value={COMPANY.APP_STORE_URL}
-								size={180}
-								marginSize={4}
-								title={t({ message: "Scan to download Superset for iPhone" })}
+							<AppStoreQr
+								className="size-[180px]"
+								label={t({ message: "Scan to download Superset for iPhone" })}
 							/>
 						</div>
 						<div className="min-w-56 flex-1 space-y-4">
@@ -114,6 +112,26 @@ export function MobileSettings() {
 					</div>
 				</div>
 			)}
+			<div className="mt-6 flex flex-wrap gap-4 text-sm text-muted-foreground">
+				<a
+					href={`${COMPANY.MARKETING_URL}/mobile`}
+					target="_blank"
+					rel="noopener noreferrer"
+					className="inline-flex items-center gap-1 hover:text-foreground hover:underline"
+				>
+					<Trans>Learn more</Trans>
+					<LuArrowUpRight className="size-3.5" />
+				</a>
+				<a
+					href={`${COMPANY.DOCS_URL}/remote-access`}
+					target="_blank"
+					rel="noopener noreferrer"
+					className="inline-flex items-center gap-1 hover:text-foreground hover:underline"
+				>
+					<Trans>Documentation</Trans>
+					<LuArrowUpRight className="size-3.5" />
+				</a>
+			</div>
 		</div>
 	);
 }

@@ -8171,6 +8171,9 @@ msgstr "Chiếc lá"
 msgid "Learn how to use scripts"
 msgstr "Tìm hiểu cách dùng script"
 
+msgid "Learn more"
+msgstr "Tìm hiểu thêm"
+
 msgid "Learn the workflow that fits this repo — parallel workspaces and agent setup."
 msgstr "Tìm hiểu quy trình phù hợp với repo này — workspace song song và thiết lập agent."
 
