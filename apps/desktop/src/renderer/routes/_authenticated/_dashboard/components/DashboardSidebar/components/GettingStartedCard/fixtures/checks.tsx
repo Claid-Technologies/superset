@@ -7,7 +7,9 @@ const router = await import("@tanstack/react-router");
 let paid = true;
 let isReady = true;
 let dismissed = false;
+let hasCompleted = false;
 let allowed = true;
+let flagsLoaded = true;
 let mobileEnabled: boolean | undefined = true;
 let remoteEnabled: boolean | undefined = false;
 let automations: unknown[] | undefined = [];
@@ -22,6 +24,7 @@ mock.module("@tanstack/react-router", () => ({
 }));
 mock.module("posthog-js/react", () => ({
 	useFeatureFlagEnabled: () => mobileEnabled,
+	useActiveFeatureFlags: () => (flagsLoaded ? [] : undefined),
 }));
 mock.module("renderer/components/Paywall", () => ({
 	GATED_FEATURES,
@@ -42,7 +45,13 @@ mock.module("renderer/lib/cloud-trpc", () => ({
 	},
 }));
 mock.module("renderer/stores/getting-started", () => ({
-	useGettingStartedStore: () => ({ tried, dismissed, dismiss: () => {} }),
+	useGettingStartedStore: () => ({
+		tried,
+		dismissed,
+		hasCompleted,
+		complete: () => {},
+		dismiss: () => {},
+	}),
 }));
 
 const { useGettingStartedCard } = await import("../useGettingStartedCard");
@@ -64,8 +73,10 @@ beforeEach(() => {
 	paid = true;
 	isReady = true;
 	dismissed = false;
+	hasCompleted = false;
 	allowed = true;
 	mobileEnabled = true;
+	flagsLoaded = true;
 	remoteEnabled = false;
 	automations = [];
 	tried = 0;
@@ -117,11 +128,44 @@ describe("Pro getting-started card", () => {
 		expect(props().completed).toBe(6);
 		tried = 1;
 		renderToStaticMarkup(<Probe />);
-		expect(props().completed).toBe(7);
+		expect(card).toBeNull();
 		remoteEnabled = false;
 		automations = [];
 		renderToStaticMarkup(<Probe />);
 		expect(props().completed).toBe(1);
+	});
+	test("hides on first completion of all available steps", () => {
+		remoteEnabled = true;
+		automations = [{ id: "automation" }];
+		mobileEnabled = false;
+		renderToStaticMarkup(<Probe />);
+		expect(card).toBeNull();
+		mobileEnabled = true;
+		renderToStaticMarkup(<Probe />);
+		expect(card).not.toBeNull();
+		tried = 1;
+		renderToStaticMarkup(<Probe />);
+		expect(card).toBeNull();
+	});
+	test("does not auto-complete before mobile availability resolves", () => {
+		flagsLoaded = false;
+		mobileEnabled = undefined;
+		remoteEnabled = true;
+		automations = [{ id: "automation" }];
+		renderToStaticMarkup(<Probe />);
+		expect(card).not.toBeNull();
+	});
+	test("keeps completed onboarding dismissed and allows explicitly reopening it", () => {
+		hasCompleted = true;
+		dismissed = true;
+		renderToStaticMarkup(<Probe />);
+		expect(card).toBeNull();
+		dismissed = false;
+		remoteEnabled = true;
+		automations = [{ id: "automation" }];
+		tried = 1;
+		renderToStaticMarkup(<Probe />);
+		expect(card).not.toBeNull();
 	});
 	test("does not infer setup from missing query data", () => {
 		remoteEnabled = undefined;
