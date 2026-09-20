@@ -14455,6 +14455,9 @@ msgstr "Superset belleği"
 msgid "Superset memory · last 5 min"
 msgstr "Superset belleği · son 5 dk"
 
+msgid "Superset Mobile is here. Read the announcement"
+msgstr "Mobil Superset burada. Duyuruyu okuyun"
+
 msgid "Superset Mobile is part of Pro"
 msgstr "Superset Mobile, Pro'nun bir parçasıdır"
 

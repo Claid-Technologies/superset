@@ -14455,6 +14455,9 @@ msgstr "Bộ nhớ của Superset"
 msgid "Superset memory · last 5 min"
 msgstr "Bộ nhớ của Superset · 5 phút gần nhất"
 
+msgid "Superset Mobile is here. Read the announcement"
+msgstr "Superset dành cho di động đã ra mắt. Đọc thông báo"
+
 msgid "Superset Mobile is part of Pro"
 msgstr "Superset Mobile thuộc gói Pro"
 

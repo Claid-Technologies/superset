@@ -14455,6 +14455,9 @@ msgstr "Memori Superset"
 msgid "Superset memory · last 5 min"
 msgstr "Memori Superset · 5 menit terakhir"
 
+msgid "Superset Mobile is here. Read the announcement"
+msgstr "Superset seluler telah hadir. Baca pengumumannya"
+
 msgid "Superset Mobile is part of Pro"
 msgstr "Superset Mobile termasuk dalam Pro"
 

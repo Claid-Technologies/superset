@@ -4,7 +4,7 @@ import { Trans, useLingui } from "@lingui/react/macro";
 import { COMPANY } from "@superset/shared/constants";
 import Link from "next/link";
 import { useState } from "react";
-import { FaCloud, FaGithub } from "react-icons/fa";
+import { FaGithub, FaMobileAlt } from "react-icons/fa";
 import { DownloadButton } from "../DownloadButton";
 import { WaitlistModal } from "../WaitlistModal";
 import { BoidsBackground } from "./components/BoidsBackground";
@@ -49,15 +49,19 @@ export function HeroSection() {
 				<div className="relative w-full max-w-7xl mx-auto px-6 sm:px-8">
 					<div className="flex flex-col items-center text-center">
 						<Link
-							href={i18n.locale === "en" ? "/cloud" : `/${i18n.locale}/cloud`}
+							href={
+								i18n.locale === "en"
+									? "/blog/superset-mobile"
+									: `/${i18n.locale}/blog/superset-mobile`
+							}
 							className="group mb-6 sm:mb-8 inline-flex max-w-full items-center gap-2 rounded-[2px] border border-border bg-background/80 px-3 py-1.5 text-xs font-mono text-muted-foreground transition-colors hover:text-foreground hover:border-foreground/[0.2]"
 						>
-							<FaCloud
+							<FaMobileAlt
 								aria-hidden="true"
 								className="size-3.5 text-foreground shrink-0"
 							/>
 							<span>
-								<Trans>Cloud is coming. Become a design partner</Trans>
+								<Trans>Superset Mobile is here. Read the announcement</Trans>
 							</span>
 							<span
 								aria-hidden="true"

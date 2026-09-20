@@ -14455,6 +14455,9 @@ msgstr "Память Superset"
 msgid "Superset memory · last 5 min"
 msgstr "Память Superset · последние 5 мин"
 
+msgid "Superset Mobile is here. Read the announcement"
+msgstr "Мобильный Superset уже здесь. Читайте анонс"
+
 msgid "Superset Mobile is part of Pro"
 msgstr "Superset Mobile входит в Pro"
 

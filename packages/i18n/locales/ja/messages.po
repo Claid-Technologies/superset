@@ -14455,6 +14455,9 @@ msgstr "Supersetメモリ"
 msgid "Superset memory · last 5 min"
 msgstr "Supersetメモリ · 直近5分"
 
+msgid "Superset Mobile is here. Read the announcement"
+msgstr "モバイル版Supersetが登場。お知らせを読む"
+
 msgid "Superset Mobile is part of Pro"
 msgstr "Superset MobileはProの一部です"
 

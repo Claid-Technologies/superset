@@ -14455,6 +14455,9 @@ msgstr "Geheugen van Superset"
 msgid "Superset memory · last 5 min"
 msgstr "Geheugen van Superset · laatste 5 min"
 
+msgid "Superset Mobile is here. Read the announcement"
+msgstr "Superset voor mobiel is er. Lees de aankondiging"
+
 msgid "Superset Mobile is part of Pro"
 msgstr "Superset Mobile hoort bij Pro"
 
