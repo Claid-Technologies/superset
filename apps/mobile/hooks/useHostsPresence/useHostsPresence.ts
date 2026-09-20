@@ -40,10 +40,11 @@ async function fetchPresenceBatch(
 	relayUrl: string,
 	routingKeys: string[],
 	token: string,
+	signal: AbortSignal,
 ): Promise<PresenceResponse> {
 	const response = await fetch(
 		`${relayUrl}/presence?hostIds=${encodeURIComponent(routingKeys.join(","))}`,
-		{ headers: { authorization: `Bearer ${token}` } },
+		{ headers: { authorization: `Bearer ${token}` }, signal },
 	);
 	if (!response.ok) throw new Error(`presence fetch: ${response.status}`);
 	return (await response.json()) as PresenceResponse;
@@ -87,8 +88,12 @@ export function useHostsPresence(targets: HostPresenceTarget[]): {
 		enabled,
 		refetchInterval: 30_000,
 		refetchOnWindowFocus: true,
-		queryFn: (): Promise<Map<string, HostPresence>> =>
-			withDeadline(loadPresence(relayUrl, routingKeys), PRESENCE_DEADLINE_MS),
+		queryFn: ({ signal }): Promise<Map<string, HostPresence>> =>
+			withDeadline(
+				(requestSignal) => loadPresence(relayUrl, routingKeys, requestSignal),
+				PRESENCE_DEADLINE_MS,
+				signal,
+			),
 	});
 
 	// react-query zeroes failureCount as each fetch starts, so reading it alone
@@ -123,9 +128,11 @@ function readRelayUrl(): string | undefined {
 async function loadPresence(
 	relayUrl: string | undefined,
 	routingKeys: string[],
+	signal: AbortSignal,
 ): Promise<Map<string, HostPresence>> {
 	if (relayUrl === undefined) throw new Error("relay URL unresolved");
-	const token = await getHostAuthToken();
+	const token = await getHostAuthToken({ signal });
+	if (signal.aborted) throw new Error("presence request cancelled");
 	const chunks: string[][] = [];
 	for (
 		let index = 0;
@@ -135,7 +142,7 @@ async function loadPresence(
 		chunks.push(routingKeys.slice(index, index + PRESENCE_BATCH_LIMIT));
 	}
 	const responses = await Promise.all(
-		chunks.map((chunk) => fetchPresenceBatch(relayUrl, chunk, token)),
+		chunks.map((chunk) => fetchPresenceBatch(relayUrl, chunk, token, signal)),
 	);
 	const presence = new Map<string, HostPresence>();
 	for (const response of responses) {
