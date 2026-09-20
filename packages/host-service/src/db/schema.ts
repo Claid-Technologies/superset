@@ -120,6 +120,44 @@ export const projects = sqliteTable(
 );
 
 /**
+ * The ordered list of repositories a project owns. Position 0 is the primary,
+ * mirrored onto `projects.repo_path` and the parsed remote columns so every
+ * single-repo surface keeps reading the row it always did.
+ */
+export const projectFolders = sqliteTable(
+	"project_folders",
+	{
+		id: text().primaryKey(),
+		projectId: text("project_id")
+			.notNull()
+			.references(() => projects.id, { onDelete: "cascade" }),
+		position: integer().notNull(),
+		folder: text().notNull(),
+		// Null until the folder is resolved to a checkout on this host.
+		repoPath: text("repo_path"),
+		// Where to clone from while `repo_path` is still null.
+		repoUrl: text("repo_url"),
+		baseBranch: text("base_branch"),
+		createdAt: integer("created_at")
+			.notNull()
+			.$defaultFn(() => Date.now()),
+		updatedAt: integer("updated_at")
+			.notNull()
+			.$defaultFn(() => Date.now()),
+	},
+	(table) => [
+		uniqueIndex("project_folders_project_position_unique").on(
+			table.projectId,
+			table.position,
+		),
+		uniqueIndex("project_folders_project_folder_unique").on(
+			table.projectId,
+			table.folder,
+		),
+	],
+);
+
+/**
  * Single-row host-wide settings (always `id = 1`). The host-service has no
  * generic settings store yet; this row holds host-wide knobs (worktree base
  * dir, branch-prefix default) that projects fall back to when they have no
@@ -229,6 +267,11 @@ export const workspaces = sqliteTable(
 			onDelete: "cascade",
 		}),
 		worktreePath: text("worktree_path").notNull(),
+		// The container directory holding one worktree per project folder, NULL
+		// for a single-repo workspace. Not a git checkout: never hand it to
+		// git, setup scripts, or worktree operations — `worktree_path` always
+		// names the primary worktree and is what those want.
+		rootPath: text("root_path"),
 		branch: text().notNull(),
 		headSha: text("head_sha"),
 		upstreamOwner: text("upstream_owner"),
@@ -284,6 +327,47 @@ export const workspaces = sqliteTable(
 			table.upstreamBranch,
 		),
 		index("workspaces_pull_request_id_idx").on(table.pullRequestId),
+	],
+);
+
+/**
+ * One checked-out repository per workspace, mirroring the project's folder
+ * list at creation time. Position 0 is the primary, and its `worktree_path`
+ * equals `workspaces.worktree_path`.
+ *
+ * `project_id` is the local project the folder resolved to — for a secondary
+ * that is a DIFFERENT project from `workspaces.project_id`, yet its worktree
+ * still lives under the primary project's managed root.
+ */
+export const workspaceRepos = sqliteTable(
+	"workspace_repos",
+	{
+		id: text().primaryKey(),
+		workspaceId: text("workspace_id")
+			.notNull()
+			.references(() => workspaces.id, { onDelete: "cascade" }),
+		position: integer().notNull(),
+		projectId: text("project_id")
+			.notNull()
+			.references(() => projects.id, { onDelete: "cascade" }),
+		folder: text().notNull(),
+		worktreePath: text("worktree_path").notNull(),
+		branch: text().notNull(),
+		baseBranch: text("base_branch"),
+		createdAt: integer("created_at")
+			.notNull()
+			.$defaultFn(() => Date.now()),
+	},
+	(table) => [
+		uniqueIndex("workspace_repos_workspace_position_unique").on(
+			table.workspaceId,
+			table.position,
+		),
+		uniqueIndex("workspace_repos_workspace_project_unique").on(
+			table.workspaceId,
+			table.projectId,
+		),
+		index("workspace_repos_project_id_idx").on(table.projectId),
 	],
 );
 

@@ -17,6 +17,11 @@ interface StartSetupTerminalArgs {
 	 * resolves — the caller must then dispatch it separately.
 	 */
 	chainCommand?: string;
+	/**
+	 * Lines echoed before the setup command runs. Dropped when no setup
+	 * command resolves — there is then no terminal to put them in.
+	 */
+	preamble?: string[];
 }
 
 interface StartSetupTerminalResult {
@@ -67,9 +72,17 @@ export async function startSetupTerminalIfPresent(
 		return { terminal: null, warning: null, chained: false };
 	}
 
-	const initialCommand = args.chainCommand
+	const setupCommand = args.chainCommand
 		? `${resolved.initialCommand} && ${args.chainCommand}`
 		: resolved.initialCommand;
+	// `\\n`, not `\n`: the initial command is typed into the PTY, so a real
+	// newline here would submit the line mid-quote instead of reaching printf.
+	const preamble = (args.preamble ?? [])
+		.map((line) => `printf '%s\\n' ${shellSingleQuote(line)}`)
+		.join("; ");
+	const initialCommand = preamble
+		? `${preamble}; ${setupCommand}`
+		: setupCommand;
 
 	const terminalId = crypto.randomUUID();
 	const result = await createTerminalSessionInternal({

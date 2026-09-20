@@ -1,7 +1,9 @@
 import { Trans, useLingui } from "@lingui/react/macro";
+import { FEATURE_FLAGS } from "@superset/shared/constants";
 import { Label } from "@superset/ui/label";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
+import { useFeatureFlagEnabled } from "posthog-js/react";
 import { useEffect, useMemo, useRef } from "react";
 import {
 	PROJECT_ICON_NONE,
@@ -26,6 +28,7 @@ import { NameSection } from "./components/NameSection";
 import { NamingInstructionsSection } from "./components/NamingInstructionsSection";
 import { ProjectLocationSection } from "./components/ProjectLocationSection";
 import { RepositorySection } from "./components/RepositorySection";
+import { SourceFoldersSection } from "./components/SourceFoldersSection";
 import { SparseCheckoutSection } from "./components/SparseCheckoutSection";
 import { V2ScriptsEditor } from "./components/V2ScriptsEditor";
 import { WorktreeLocationSection } from "./components/WorktreeLocationSection";
@@ -44,6 +47,12 @@ export function V2ProjectSettings({
 }: V2ProjectSettingsProps) {
 	const navigate = useNavigate();
 	const { t } = useLingui();
+	// TEMPORARY local-dev override — revert before committing.
+	// PostHog runs with a disabled key locally, so flags never resolve and every
+	// gated feature is invisible in dev.
+	const isMultiRepoEnabled =
+		useFeatureFlagEnabled(FEATURE_FLAGS.MULTI_REPO_PROJECTS) ??
+		import.meta.env.DEV;
 	const { machineId } = useLocalHostService();
 	const { currentDeviceName, localHostId, otherHosts } =
 		useWorkspaceHostOptions();
@@ -236,6 +245,16 @@ export function V2ProjectSettings({
 						/>
 					</SettingsRow>
 				</SettingsSection>
+
+				{isMultiRepoEnabled && (
+					<SourceFoldersSection
+						projectId={projectId}
+						hostUrl={targetHostUrl}
+						hostName={targetHostName}
+						isRemoteTarget={isRemoteTarget}
+						isProjectSetup={Boolean(hostProject)}
+					/>
+				)}
 
 				<SettingsSection
 					title={t({

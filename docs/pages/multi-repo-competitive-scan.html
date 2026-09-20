@@ -1,0 +1,945 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Multi-repo workspaces: the competitive scan</title>
+<style>
+  :root {
+    --bg: #171717; --bg-raise: #1e1e1e; --bg-card: #1b1b1b;
+    --line: #2e2e2e; --line-soft: #262626;
+    --ink: #ececec; --ink-mute: #a3a3a3; --ink-faint: #6f6f6f;
+    --accent: #9db4ff; --accent-dim: rgba(157, 180, 255, 0.12);
+    --yes: #34d399; --no: #f87171; --part: #fbbf24; --chip: #232323;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font: 16px/1.65 var(--sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px 100px; }
+
+  /* ---- masthead ---- */
+  header { border-bottom: 1px solid var(--line); margin-bottom: 44px; }
+  .masthead { max-width: 1180px; margin: 0 auto; padding: 44px 28px 30px; }
+  .kicker {
+    font: 600 11px/1 var(--mono); letter-spacing: .13em; text-transform: uppercase;
+    color: var(--ink-faint); margin-bottom: 18px;
+  }
+  h1 {
+    font-size: clamp(30px, 4.6vw, 46px); line-height: 1.08; letter-spacing: -.022em;
+    font-weight: 620; margin: 0 0 16px;
+  }
+  .standfirst {
+    font-size: 19px; line-height: 1.55; color: var(--ink-mute);
+    max-width: 68ch; margin: 0;
+  }
+  .meta {
+    display: flex; flex-wrap: wrap; gap: 8px 10px; margin-top: 24px;
+    font: 500 12px/1 var(--mono); color: var(--ink-faint);
+  }
+  .meta span {
+    background: var(--chip); border: 1px solid var(--line-soft);
+    padding: 6px 10px; border-radius: 4px;
+  }
+
+  /* ---- structure ---- */
+  section { margin: 0 0 56px; scroll-margin-top: 20px; }
+  h2 {
+    font-size: 13px; font-family: var(--mono); font-weight: 600;
+    letter-spacing: .12em; text-transform: uppercase; color: var(--accent);
+    margin: 0 0 6px; padding-top: 30px; border-top: 1px solid var(--line);
+  }
+  h2 + .lede {
+    font-size: 25px; line-height: 1.3; letter-spacing: -.015em; font-weight: 580;
+    margin: 0 0 20px; max-width: 34ch;
+  }
+  h3 {
+    font-size: 16px; font-weight: 620; margin: 30px 0 8px; letter-spacing: -.008em;
+  }
+  p { margin: 0 0 15px; max-width: 74ch; }
+  .prose-narrow p, .prose-narrow ul { max-width: 70ch; }
+  a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(157,180,255,.3); }
+  a:hover { border-bottom-color: var(--accent); }
+  code {
+    font: 13px/1.4 var(--mono); background: var(--chip);
+    border: 1px solid var(--line-soft); border-radius: 3px; padding: 1px 5px;
+    color: #cfd8ff;
+  }
+  strong { font-weight: 640; color: #fff; }
+  ul { margin: 0 0 15px; padding-left: 20px; }
+  li { margin-bottom: 7px; }
+
+  /* ---- the finding ---- */
+  .findings { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); }
+  .finding {
+    background: var(--bg-card); border: 1px solid var(--line);
+    border-radius: 7px; padding: 20px 20px 18px;
+  }
+  .finding .n {
+    font: 600 11px/1 var(--mono); color: var(--accent);
+    letter-spacing: .1em; display: block; margin-bottom: 11px;
+  }
+  .finding h4 { margin: 0 0 8px; font-size: 16px; font-weight: 620; letter-spacing: -.01em; }
+  .finding p { margin: 0; font-size: 14.5px; line-height: 1.55; color: var(--ink-mute); }
+
+  /* ---- matrix ---- */
+  .scroller { overflow-x: auto; margin: 0 0 14px; border-radius: 7px; border: 1px solid var(--line); }
+  table { border-collapse: collapse; width: 100%; min-width: 1520px; font-size: 14px; }
+  thead th:first-child, tbody td:first-child {
+    position: sticky; left: 0; z-index: 2; background: var(--bg-card);
+    box-shadow: 1px 0 0 var(--line);
+  }
+  thead th:first-child { background: var(--bg-raise); z-index: 3; }
+  .scroller { position: relative; }
+  .na { color: var(--ink-faint); }
+  thead th {
+    background: var(--bg-raise); text-align: left; font-weight: 600;
+    padding: 13px 12px; border-bottom: 1px solid var(--line);
+    font-size: 12.5px; white-space: nowrap; vertical-align: bottom;
+  }
+  thead th.us { color: var(--accent); background: #1c2033; }
+  tbody td {
+    padding: 12px; border-bottom: 1px solid var(--line-soft);
+    vertical-align: top; color: var(--ink-mute);
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody td:first-child { color: var(--ink); font-weight: 520; min-width: 210px; }
+  tbody td.us { background: rgba(157,180,255,.05); color: var(--ink); }
+  tbody tr:hover td { background: rgba(255,255,255,.018); }
+  tbody tr:hover td.us { background: rgba(157,180,255,.08); }
+  .mark { font-size: 15px; font-weight: 700; display: inline-block; width: 1.1em; }
+  .y { color: var(--yes); } .n { color: var(--no); } .p { color: var(--part); }
+  .note { display: block; font-size: 12.5px; line-height: 1.45; color: var(--ink-faint); margin-top: 3px; }
+  .legend {
+    display: flex; gap: 20px; flex-wrap: wrap; font-size: 13px;
+    color: var(--ink-faint); font-family: var(--mono);
+  }
+
+  /* ---- tool cards ---- */
+  .tools { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); }
+  .tool {
+    background: var(--bg-card); border: 1px solid var(--line);
+    border-radius: 7px; padding: 20px; display: flex; flex-direction: column;
+  }
+  .tool-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 4px; }
+  .tool h4 { margin: 0; font-size: 17px; font-weight: 640; letter-spacing: -.01em; }
+  .verdict {
+    font: 600 10.5px/1 var(--mono); letter-spacing: .07em; text-transform: uppercase;
+    padding: 4px 8px; border-radius: 4px; white-space: nowrap;
+  }
+  .v-link { background: rgba(248,113,113,.13); color: #fca5a5; }
+  .v-anchor { background: rgba(251,191,36,.13); color: #fcd34d; }
+  .v-full { background: rgba(52,211,153,.13); color: #6ee7b7; }
+  .tool .mech { font: 12px/1.4 var(--mono); color: var(--ink-faint); margin: 0 0 13px; }
+  .tool p { font-size: 14.5px; line-height: 1.55; margin: 0 0 11px; color: var(--ink-mute); max-width: none; }
+  blockquote {
+    margin: 0 0 11px; padding: 9px 0 9px 14px;
+    border-left: 2px solid var(--line); font-size: 13.5px; line-height: 1.5;
+    color: var(--ink-mute); font-style: italic;
+  }
+  .tool .gap {
+    margin-top: auto; padding-top: 12px; border-top: 1px solid var(--line-soft);
+    font-size: 13.5px; line-height: 1.5; color: var(--ink-mute);
+  }
+  .tool .gap b { color: var(--no); font-weight: 600; font-style: normal; }
+
+  /* ---- code / layout block ---- */
+  pre {
+    background: var(--bg-raise); border: 1px solid var(--line); border-radius: 7px;
+    padding: 18px 20px; overflow-x: auto; margin: 0 0 16px;
+    font: 13px/1.7 var(--mono); color: var(--ink-mute);
+  }
+  pre .c { color: var(--ink-faint); }
+  pre .hl { color: var(--accent); }
+  pre .g { color: var(--yes); }
+
+  /* ---- landmines ---- */
+  .mines { display: grid; gap: 12px; }
+  .mine {
+    display: grid; grid-template-columns: 34px 1fr; gap: 16px;
+    background: var(--bg-card); border: 1px solid var(--line);
+    border-left: 2px solid var(--part);
+    border-radius: 7px; padding: 17px 19px;
+  }
+  .mine .num {
+    font: 600 20px/1 var(--mono); color: var(--ink-faint); padding-top: 2px;
+  }
+  .mine h4 { margin: 0 0 6px; font-size: 15.5px; font-weight: 620; }
+  .mine p { margin: 0 0 7px; font-size: 14.5px; line-height: 1.55; color: var(--ink-mute); max-width: none; }
+  .mine p:last-child { margin-bottom: 0; }
+  .mine .loc { font: 12px/1.4 var(--mono); color: var(--ink-faint); }
+
+  /* ---- anchors / scope ---- */
+  .two { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+  .box {
+    background: var(--bg-card); border: 1px solid var(--line);
+    border-radius: 7px; padding: 19px;
+  }
+  .box.in { border-color: rgba(52,211,153,.32); }
+  .box.out { border-color: var(--line); }
+  .box h4 { margin: 0 0 4px; font-size: 15px; font-weight: 640; }
+  .box .sub { font: 11.5px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 13px; }
+  .box ul { margin: 0; padding-left: 17px; }
+  .box li { font-size: 14px; line-height: 1.5; color: var(--ink-mute); margin-bottom: 6px; }
+  .box.in li::marker { color: var(--yes); }
+  .box.out li::marker { color: var(--ink-faint); }
+
+  .callout {
+    background: var(--accent-dim); border: 1px solid rgba(157,180,255,.22);
+    border-radius: 7px; padding: 18px 20px; margin: 0 0 16px;
+  }
+  .callout p { margin: 0; max-width: none; font-size: 15px; line-height: 1.6; }
+  .callout p + p { margin-top: 10px; }
+
+  /* ---- sources ---- */
+  .sources { columns: 2; column-gap: 34px; font-size: 13.5px; line-height: 1.55; }
+  .sources p { break-inside: avoid; margin: 0 0 10px; color: var(--ink-faint); max-width: none; }
+  .sources a { border-bottom-color: rgba(157,180,255,.22); }
+  footer {
+    border-top: 1px solid var(--line); margin-top: 44px; padding-top: 22px;
+    font-size: 13px; color: var(--ink-faint); max-width: 74ch;
+  }
+  @media (max-width: 720px) {
+    .masthead { padding: 34px 20px 24px; }
+    .wrap { padding: 0 20px 70px; }
+    .sources { columns: 1; }
+    h2 + .lede { font-size: 21px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="masthead">
+    <div class="kicker">Competitive scan · companion to the multi-repo projects PRD</div>
+    <h1>Every piece of this exists.<br>Nobody has assembled it.</h1>
+    <p class="standfirst">
+      Ten tools were checked for how they handle work that spans several repositories. VS Code has
+      shown per-repo diffs since 2017. Capy and Factory isolate every task in its own VM. Codex has
+      a project-level folder list with a primary. DevSwarm has per-repo pull requests. Not one of
+      them has all four at once — and the tools closest to being an agent workspace are the ones
+      furthest from the git surfaces. That gap is the opening, and it decides what our v0 is.
+    </p>
+    <div class="meta">
+      <span>17 Sep 2026 · v2, claims verified</span>
+      <span>Conductor · Cursor · Codex · Kilo · Devin · DevSwarm</span>
+      <span>PRD: docs/prd/multi-repo-projects.md</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<section>
+  <h2>The finding</h2>
+  <p class="lede">Three things the scan settled.</p>
+  <div class="findings">
+    <div class="finding">
+      <span class="n">01</span>
+      <h4>The cheap version is now table stakes</h4>
+      <p>
+        "One agent sees N folders, git stays on one repo" is what Conductor, Cursor and Codex
+        all ship today. Building it is days of work and buys no differentiation — but not
+        having it is now a visible gap.
+      </p>
+    </div>
+    <div class="finding">
+      <span class="n">02</span>
+      <h4>Per-repo diffs aren't novel — the editors have had them for years</h4>
+      <p>
+        VS Code's Source Control view groups changes by repository in a multi-root workspace, with
+        independent commits per repo; Cursor and Kilo inherit it. DevSwarm goes further with per-repo
+        PRs, bought with a submodule bundle. What's missing everywhere is pairing that with a
+        project-owned repo list and real isolation.
+      </p>
+    </div>
+    <div class="finding">
+      <span class="n">03</span>
+      <h4>Their isolation is a half-truth</h4>
+      <p>
+        Codex worktrees cover the primary repo only; secondaries are shared directories that
+        parallel threads trample. Conductor links live worktrees another agent may be driving.
+        We already have the machinery to not do this.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Four things called "multi-repo"</h2>
+  <p class="lede">Most of the disagreement in this space is a vocabulary problem.</p>
+
+  <p class="prose-narrow">
+    Nine tools now claim multi-repo support and they mean four different things. Sorting them
+    first makes the rest of the page smaller, and it's why the matrix below only covers tiers 2
+    and 3 — comparing a tier-1 tool on "per-repo diff" scores it ○ for a capability it never
+    set out to have.
+  </p>
+
+  <div class="mines">
+    <div class="mine" style="border-left-color:var(--ink-faint)">
+      <span class="num">1</span>
+      <div>
+        <h4>Multi-repo <em>access</em> — one task, one repo</h4>
+        <p>
+          The agent is entitled to many repositories; any individual task still targets one.
+          <strong>Capy</strong>: you pick repos when installing the GitHub App, then each task gets
+          its own branch <code>capy/&lt;task-slug&gt;-&lt;id&gt;</code> and its own PR. <strong>Devin</strong>
+          bulk-indexes repos and groups sessions by target repository. Useful, and not the problem
+          this PRD is about.
+        </p>
+      </div>
+    </div>
+    <div class="mine" style="border-left-color:var(--part)">
+      <span class="num">2</span>
+      <div>
+        <h4>Multi-repo <em>context</em> — one agent sees N folders, git owns one</h4>
+        <p>
+          Where almost everyone is: <strong>VS Code</strong> multi-root (the original),
+          <strong>Cursor</strong> (inherits it), <strong>Codex</strong> (primary folder + secondaries),
+          <strong>Conductor</strong> (<code>/add-dir</code>), <strong>Kilo</strong> (projects in one panel).
+          The agent reads and writes across folders; every git surface stays anchored to one repo.
+        </p>
+      </div>
+    </div>
+    <div class="mine" style="border-left-color:var(--yes)">
+      <span class="num">3</span>
+      <div>
+        <h4>Multi-repo <em>workspace</em> — N checkouts, per-repo git surfaces</h4>
+        <p>
+          <strong>DevSwarm</strong>, alone, via a submodule bundle. This is the tier the PRD is
+          aiming at and where our cut 2 lands.
+        </p>
+      </div>
+    </div>
+    <div class="mine" style="border-left-color:var(--accent)">
+      <span class="num">4</span>
+      <div>
+        <h4>Coordinated fan-out — N agents, one per repo, N PRs</h4>
+        <p>
+          <strong>Factory Missions</strong>: <em>"run coordinated changes across dozens of
+          repositories… decompose large projects into independent subtasks and assign each to a
+          dedicated Droid."</em> Orthogonal to a shared workspace — it's the answer when the change
+          is mechanical and repeats across many repos, not when one feature threads through three.
+          Worth knowing we could reach it later by pointing automations at a project.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>The matrix</h2>
+  <p class="lede">Seven capabilities across tiers 2 and 3, and where our v0 lands.</p>
+  <div class="scroller">
+  <table>
+    <thead>
+      <tr>
+        <th>Capability</th>
+        <th>VS&nbsp;Code<span class="note" style="font-weight:400">tier 2</span></th>
+        <th>Cursor<span class="note" style="font-weight:400">tier 2</span></th>
+        <th>Codex<span class="note" style="font-weight:400">tier 2</span></th>
+        <th>Conductor<span class="note" style="font-weight:400">tier 2</span></th>
+        <th>Kilo<span class="note" style="font-weight:400">tier 2</span></th>
+        <th>Devin<span class="note" style="font-weight:400">tier 1</span></th>
+        <th>Capy<span class="note" style="font-weight:400">tier 1</span></th>
+        <th>Factory<span class="note" style="font-weight:400">tier 4</span></th>
+        <th>DevSwarm<span class="note" style="font-weight:400">tier 3</span></th>
+        <th class="us">Superset v0</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Project owns a repo list<span class="note">define once, inherit per workspace</span></td>
+        <td><span class="mark p">◐</span><span class="note">hand-kept <code>.code-workspace</code></span></td>
+        <td><span class="mark p">◐</span><span class="note">inherited</span></td>
+        <td><span class="mark y">●</span><span class="note">Source folders + Primary</span></td>
+        <td><span class="mark n">○</span></td>
+        <td><span class="mark p">◐</span><span class="note">projects in a panel</span></td>
+        <td><span class="mark n">○</span></td>
+        <td><span class="mark n">○</span><span class="note">App access scope, not a workspace</span></td>
+        <td><span class="mark n">○</span><span class="note">no public evidence</span></td>
+        <td><span class="mark y">●</span><span class="note">submodule bundle</span></td>
+        <td class="us"><span class="mark y">●</span><span class="note">over local projects</span></td>
+      </tr>
+      <tr>
+        <td>One workspace spans N repos</td>
+        <td><span class="mark y">●</span></td>
+        <td><span class="mark y">●</span></td>
+        <td><span class="mark y">●</span></td>
+        <td><span class="mark n">○</span><span class="note">N workspaces, then link</span></td>
+        <td><span class="mark n">○</span><span class="note">separate projects</span></td>
+        <td><span class="mark y">●</span><span class="note">multi-root virtual FS</span></td>
+        <td><span class="mark n">○</span><span class="note">one task, one repo</span></td>
+        <td><span class="mark p">◐</span><span class="note">"staged checkout" claimed by a review, not their docs</span></td>
+        <td><span class="mark y">●</span></td>
+        <td class="us"><span class="mark y">●</span></td>
+      </tr>
+      <tr>
+        <td>No two workspaces share a checkout<span class="note">outcome, not mechanism — worktree on a device, the sandbox itself in cloud</span></td>
+        <td><span class="mark n">○</span></td>
+        <td><span class="mark n">○</span></td>
+        <td><span class="mark n">○</span><span class="note">primary only; secondaries shared</span></td>
+        <td><span class="mark n">○</span><span class="note">links live worktrees</span></td>
+        <td><span class="mark p">◐</span><span class="note">per project, not per workspace</span></td>
+        <td><span class="mark y">●</span><span class="note">session VM</span></td>
+        <td><span class="mark y">●</span><span class="note">"its own VM… no shared filesystem"</span></td>
+        <td><span class="mark y">●</span><span class="note">sandboxed per droid</span></td>
+        <td><span class="mark y">●</span></td>
+        <td class="us"><span class="mark y">●</span></td>
+      </tr>
+      <tr>
+        <td>Same branch name where free<span class="note">convenience, not a constraint — see open questions</span></td>
+        <td><span class="mark na">—</span></td>
+        <td><span class="mark na">—</span></td>
+        <td><span class="mark n">○</span><span class="note">secondaries have no branch</span></td>
+        <td><span class="mark n">○</span></td>
+        <td><span class="mark n">○</span></td>
+        <td><span class="mark na">—</span></td>
+        <td><span class="mark na">—</span><span class="note">one repo per task</span></td>
+        <td><span class="mark n">○</span></td>
+        <td><span class="mark p">◐</span><span class="note">own branches, name never stated</span></td>
+        <td class="us"><span class="mark p">◐</span><span class="note">best effort, bump per repo</span></td>
+      </tr>
+      <tr>
+        <td>Agent reaches all repos with no per-folder permission setup</td>
+        <td><span class="mark y">●</span><span class="note">all roots open</span></td>
+        <td><span class="mark y">●</span></td>
+        <td><span class="mark p">◐</span><span class="note">sandbox roots; open bug #35260</span></td>
+        <td><span class="mark n">○</span><span class="note"><code>/add-dir</code> per session</span></td>
+        <td><span class="mark n">○</span></td>
+        <td><span class="mark y">●</span></td>
+        <td><span class="mark na">—</span></td>
+        <td><span class="mark na">—</span></td>
+        <td><span class="mark y">●</span></td>
+        <td class="us"><span class="mark y">●</span><span class="note">repos are children of cwd</span></td>
+      </tr>
+      <tr>
+        <td>Per-repo diff in the UI</td>
+        <td><span class="mark y">●</span><span class="note">SCM view groups changes by repository</span></td>
+        <td><span class="mark y">●</span><span class="note">inherited SCM view</span></td>
+        <td><span class="mark n">○</span><span class="note">primary cwd only</span></td>
+        <td><span class="mark n">○</span><span class="note">other repo's own workspace</span></td>
+        <td><span class="mark p">◐</span><span class="note">VS Code's SCM, not Agent Manager</span></td>
+        <td><span class="mark n">○</span><span class="note">no evidence</span></td>
+        <td><span class="mark na">—</span></td>
+        <td><span class="mark n">○</span><span class="note">no evidence</span></td>
+        <td><span class="mark y">●</span><span class="note">"unified file list… filter to a member"</span></td>
+        <td class="us"><span class="mark p">◐</span><span class="note">cut 2 — PR-1</span></td>
+      </tr>
+      <tr>
+        <td>Ship surface knows about N repos<span class="note">you pick which to open PRs for</span></td>
+        <td><span class="mark p">◐</span><span class="note">commit per repo; PRs need an extension</span></td>
+        <td><span class="mark p">◐</span><span class="note">inherited</span></td>
+        <td><span class="mark n">○</span><span class="note">"commit each independently"</span></td>
+        <td><span class="mark n">○</span></td>
+        <td><span class="mark n">○</span></td>
+        <td><span class="mark n">○</span><span class="note">no evidence</span></td>
+        <td><span class="mark na">—</span></td>
+        <td><span class="mark y">●</span><span class="note">Missions ship multiple PRs — by fan-out</span></td>
+        <td><span class="mark y">●</span><span class="note">own PRs, merge independently</span></td>
+        <td class="us"><span class="mark p">◐</span><span class="note">cut 2 — PR-2</span></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="legend">
+    <span><span class="mark y">●</span> ships it</span>
+    <span><span class="mark p">◐</span> partial / planned</span>
+    <span><span class="mark n">○</span> doesn't</span>
+    <span><span class="mark na">—</span> not applicable at that tier</span>
+    <span>scroll sideways →</span>
+  </div>
+  <p class="prose-narrow" style="margin-top:18px">
+    <strong>The row that changed the conclusion is VS Code's.</strong> Its Source Control view has
+    grouped changes by repository in a multi-root workspace for years, with independent commits per
+    repo — so "per-repo diff" is not novel, and Cursor and Kilo inherit it for free by being VS Code.
+    What none of the ten has is the <em>combination</em>: a project-owned repo list, isolation per
+    workspace, per-repo diffs and a per-repo ship surface in one product. Every individual capability
+    exists somewhere; the assembly doesn't.
+  </p>
+</section>
+
+<section>
+  <h2>Tool by tool</h2>
+  <p class="lede">What each one actually does, in their words.</p>
+  <div class="tools">
+
+    <div class="tool">
+      <div class="tool-head"><h4>Conductor</h4><span class="verdict v-link">links workspaces</span></div>
+      <p class="mech">one repo per workspace · <code>/add-dir</code></p>
+      <blockquote>"Add each directory to Conductor… Create a workspace for each directory… In one workspace, enter <code>/add-dir</code> and select the other workspaces you'd like to link together."</blockquote>
+      <p>
+        Workspaces live at <code>~/conductor/workspaces/&lt;repo name&gt;/&lt;workspace name&gt;</code>
+        — one worktree, one branch, one diff viewer. Multi-repo is Claude Code's own
+        <code>--add-dir</code> flag surfaced as a slash command. Their recommended answer to
+        multi-repo is actually "use a monorepo": <em>"Conductor supports monorepos out of the box."</em>
+      </p>
+      <p class="gap"><b>Gap:</b> N sidebar rows per task, uncoordinated branch names, edits to a linked
+      repo land in <em>that other workspace's</em> diff viewer — and per Anthropic's docs,
+      <code>--add-dir</code> loads <em>none</em> of the linked repo's CLAUDE.md by default.</p>
+    </div>
+
+    <div class="tool">
+      <div class="tool-head"><h4>Cursor</h4><span class="verdict v-link">multi-root editor</span></div>
+      <p class="mech">VS Code <code>.code-workspace</code> · Apr 2026</p>
+      <blockquote>"A single agent session can now target a reusable workspace made of multiple folders."</blockquote>
+      <p>
+        Inherited straight from VS Code: a workspace file lists folder roots, indexing runs
+        per root, <code>@Codebase</code> spans them. Genuinely good for context. Git stays
+        per-folder and the workspace file is yours to maintain by hand.
+      </p>
+      <p class="gap"><b>Gap:</b> no project-level definition, no isolation, no git story beyond
+      what VS Code already gave you.</p>
+    </div>
+
+    <div class="tool">
+      <div class="tool-head"><h4>Codex</h4><span class="verdict v-anchor">primary-folder anchor</span></div>
+      <p class="mech">multi-folder projects · 23 Jul 2026, build 26.715</p>
+      <blockquote>"New chats, Git operations, and discovery of AGENTS.md, skills and config.toml use the primary folder; secondary folders remain available for file search, reading, and editing."</blockquote>
+      <p>
+        The closest to our design: a project is an ordered folder list with one marked
+        <strong>Primary</strong>, and the primary owns every git surface. Secondaries are plain
+        existing directories — not worktrees — shared across every thread, with <code>.git/</code>
+        read-only and the diff panel scoped to the primary cwd.
+      </p>
+      <p class="gap"><b>Gap:</b> worktree mode forks the primary only, so two parallel threads edit
+      the same secondary directory. <a href="https://github.com/openai/codex/issues/35260">#35260</a>
+      — hand-made sibling worktrees don't even reach the sandbox's writable roots. Open, no reply.</p>
+    </div>
+
+    <div class="tool">
+      <div class="tool-head"><h4>Kilo</h4><span class="verdict v-link">projects in a panel</span></div>
+      <p class="mech">Multi-project Agent Manager · experimental, off by default</p>
+      <blockquote>"Each repository has its own worktrees, sessions, sections, selection and state… so sessions and worktrees are not mixed between repositories."</blockquote>
+      <p>
+        Explicitly <em>not</em> a unified workspace — several repos shown as separate projects in
+        one panel, each with state in its own <code>.kilo/agent-manager.json</code>. A maintainer
+        has filed to formally forbid pointing it at a non-git parent folder, because users keep
+        trying and Agent Manager mishandles it.
+      </p>
+      <p class="gap"><b>Gap:</b> grouping, not unification. One agent never spans two repos.</p>
+    </div>
+
+    <div class="tool">
+      <div class="tool-head"><h4>Devin</h4><span class="verdict v-link">indexing + grouping</span></div>
+      <p class="mech">multi-root virtual FS · thinnest evidence of the six</p>
+      <p>
+        Their changelog confirms "support for working on multi-root workspaces containing virtual
+        filesystem folders," plus bulk repo indexing and sessions groupable by target repository.
+        The visible investment is in <em>knowing about</em> many repos, not in checking several
+        out together.
+      </p>
+      <p class="gap"><b>Unknown:</b> no public documentation of a project repo list, shared branch or
+      per-repo ship flow — treat the empty cells as unevidenced, not as confirmed absences.</p>
+    </div>
+
+    <div class="tool">
+      <div class="tool-head"><h4>DevSwarm</h4><span class="verdict v-full">closest to the ambition</span></div>
+      <p class="mech">git submodules + worktrees</p>
+      <blockquote>"Every repository inside a Multi-Repo is backed by Git submodules… each member is checked out as a Git worktree that shares the underlying repo's object store instead of creating another full clone."</blockquote>
+      <p>
+        The only product with the full shape, and the mechanics are specific enough to believe:
+        <em>"each repository keeps its own history, its own remote, its own branches, its own pull
+        requests."</em> The review surface is real too — <em>"the unified file list shows every
+        repo's diff in one place. Filter to the <code>api</code> member to scrutinize the contract
+        change on its own."</em>
+      </p>
+      <p class="gap"><b>Caveat:</b> vendor documentation, not verified hands-on — and whether all members
+      share one branch <em>name</em> is never stated. Submodules impose a parent repo and ongoing SHA
+      maintenance, which is the tax we should be able to avoid.</p>
+    </div>
+
+  </div>
+</section>
+
+<section>
+  <h2>Why they all stop</h2>
+  <p class="lede">The hard part isn't the checkouts. It's everything keyed by one workspace.</p>
+
+  <p class="prose-narrow">
+    Cutting N worktrees is easy. What's expensive is that a single-repo product accumulates
+    state keyed by <em>workspace</em>, on the safe assumption that a workspace is one repo — and
+    that the <em>agent</em> quietly assumes it too. Five such places were found: three in our
+    code, two in Claude Code's documented behaviour. The last two are the ones the PRD doesn't
+    mention and are the reason the container folder isn't free.
+  </p>
+
+  <div class="mines">
+    <div class="mine">
+      <span class="num">1</span>
+      <div>
+        <h4>The host-service status cache would serve the wrong repo's diff</h4>
+        <p>
+          Keyed <code>Map&lt;workspaceId, Map&lt;baseBranch, Variant&gt;&gt;</code>. Three repos in
+          one workspace usually share a base branch name, so they collide on one key and the last
+          snapshot wins. Silent wrong data, not a slowdown.
+        </p>
+        <p>
+          <strong>Scope, now verified:</strong> this is the <em>host-service</em> git router, which
+          serves remote and cloud workspaces. The desktop's own Changes surface is a separate,
+          fully path-based router — <code>worktreePath: z.string()</code>, validated against a
+          registered-worktrees table, cached by <code>makeStatusCacheKey(worktreePath, branch)</code>.
+          For a local workspace the switcher never touches this cache at all.
+        </p>
+        <p class="loc">git-status-store.ts:31 · desktop changes/status.ts:25</p>
+      </div>
+    </div>
+    <div class="mine">
+      <span class="num">2</span>
+      <div>
+        <h4>The refresh queue would serialize the repos</h4>
+        <p>
+          <code>Map&lt;workspaceId, WorkspaceQueue&gt;</code> with one active slot and a FIFO
+          queue — three repos refresh one after another. Fixed by the same change as above:
+          key on <code>workspaceId + repoFolder</code>.
+        </p>
+        <p class="loc">git-status-refresh-limiter.ts:31</p>
+      </div>
+    </div>
+    <div class="mine">
+      <span class="num">3</span>
+      <div>
+        <h4>Only one checkout would be watched</h4>
+        <p>
+          One <code>{ workspaceId, worktreePath, watcher }</code> per workspace, attached from
+          the row's single path. Without N watcher pairs plus refcounting, edits in the other
+          repos never mark the workspace dirty. The fiddliest of the four.
+        </p>
+        <p class="loc">git-watcher.ts</p>
+      </div>
+    </div>
+    <div class="mine">
+      <span class="num">4</span>
+      <div>
+        <h4>Every repo's AGENTS.md would go lazy</h4>
+        <p>
+          Anthropic's docs, verbatim: <em>"Claude also discovers CLAUDE.md and CLAUDE.local.md files
+          in subdirectories under your current working directory. Instead of loading them at launch,
+          they are included when Claude reads files in those subdirectories."</em>
+        </p>
+        <p>
+          So opening the agent at a container folder demotes each repo's instructions from eager to
+          lazy — on this repo, that means starting without the i18n, comments and plugin rules until
+          something happens to touch a file. Codex has the identical problem and documents it.
+          Conductor's <code>/add-dir</code> route is worse still: those directories' CLAUDE.md files
+          are <em>not loaded at all</em> unless <code>CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD</code>
+          is set.
+        </p>
+        <p class="loc">mitigation: WS-6 root manifest, now mandatory rather than nice-to-have</p>
+      </div>
+    </div>
+    <div class="mine">
+      <span class="num">5</span>
+      <div>
+        <h4>Auto memory would fragment per workspace</h4>
+        <p>
+          Also from Anthropic's docs: the auto-memory directory <em>"is derived from the git
+          repository, so all worktrees and subdirectories within the same repo share one auto memory
+          directory. <strong>Outside a git repo, the project root is used instead.</strong>"</em>
+        </p>
+        <p>
+          A container folder is not a git repo, and its path is per-workspace. So every multi-repo
+          workspace would get its own empty memory directory instead of sharing the repo's — and
+          lose it on delete. Today every worktree of a repo shares one. This is a silent regression
+          in agent quality that no test would catch.
+        </p>
+        <p class="loc">mitigation: set <code>CLAUDE_CODE_PROJECT_DIR_NAME</code> at agent launch (needs Claude Code ≥ v2.1.234)</p>
+      </div>
+    </div>
+  </div>
+
+  <p class="prose-narrow" style="margin-top:20px">
+    The good news is the diff plumbing itself is contained. Every host-service git procedure
+    resolves its path through one 31-line function, called from <strong>24 sites</strong> — 21 of
+    them in a single file — all shaped identically. A repo switcher is an optional second argument,
+    not a rewrite. That matters because redefining the workspace path itself would touch
+    <strong>1,756 non-test references</strong>, and refusing that one change is what keeps
+    everything else cheap.
+  </p>
+</section>
+
+<section>
+  <h2>Where we land</h2>
+  <p class="lede">Two anchors instead of one is the whole trick.</p>
+
+  <p class="prose-narrow">
+    Codex anchors git at the primary <em>folder</em> because it has one anchor to spend. Kilo's
+    maintainer wants to forbid non-git parent folders for the same reason: their workspace root
+    doubles as the git root, so pointing it at a container breaks worktrees and setup scripts.
+    Splitting the two fields dissolves the tension.
+  </p>
+
+  <pre><span class="c">~/.superset/worktrees/&lt;primaryProjectId&gt;/avi/multi-repo/   </span><span class="hl">← rootPath</span><span class="c">: agent, terminal, file tree</span>
+  <span class="g">superset/</span>       <span class="c">.git → file into base repo   branch: avi/multi-repo   base: main</span>   <span class="hl">← worktreePath</span>
+  <span class="g">skills/</span>         <span class="c">.git → file into base repo   branch: avi/multi-repo   base: main</span>
+  <span class="g">homebrew-tap/</span>   <span class="c">.git → file into base repo   branch: avi/multi-repo   base: master</span></pre>
+
+  <div class="two" style="margin-bottom:16px">
+    <div class="box">
+      <h4>worktreePath</h4>
+      <div class="sub">git anchor</div>
+      <ul>
+        <li>Always a real repository checkout — Kilo's objection never applies</li>
+        <li>Stays the primary, so all 1,702 references keep working untouched</li>
+        <li>Changes, Ship, PR status, status refresh: unchanged in v0</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h4>rootPath</h4>
+      <div class="sub">human + agent anchor</div>
+      <ul>
+        <li>The container folder the person opens</li>
+        <li>Repos are <em>children of cwd</em>, so no <code>--add-dir</code>, no sandbox roots</li>
+        <li>Never passed to git, setup scripts or worktree operations — one-line invariant, cheap test</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout">
+    <p>
+      <strong>The resulting position:</strong> Codex's UX and its cheap git story, plus the
+      per-repo isolation Codex and Conductor both lack, plus a real branch in every repo — which
+      turns per-repo PRs from a redesign into an increment.
+    </p>
+    <p>
+      Individual developers keep hand-rolling this container as the "meta-repo" or
+      "repo-of-repos" pattern because it's the only way to get an agent that sees everything.
+      No product ships it. That gap is the opening.
+    </p>
+  </div>
+</section>
+
+<section>
+  <h2>What v0 is</h2>
+  <p class="lede">Host-side only. No cloud schema change at all.</p>
+
+  <p class="prose-narrow">
+    <code>superset ws create --project</code> already takes <em>local</em> project ids, and a local
+    project already means "one repo checked out at one path." So the Source-folders dialog is a
+    picker over things we already have — which deletes the most expensive requirements in the PRD
+    outright.
+  </p>
+
+  <div class="two">
+    <div class="box in">
+      <h4>In</h4>
+      <div class="sub">~8 of 62 requirements</div>
+      <ul>
+        <li>Source-folders list on the project, first is Primary <span style="color:var(--ink-faint)">(Codex's dialog, simplified)</span></li>
+        <li>One checkout per repo, isolated per workspace — worktrees on a device, the sandbox itself in cloud <span style="color:var(--ink-faint)">(WS-1)</span></li>
+        <li>Same branch name in each repo where it's free, bumped per repo where it isn't <span style="color:var(--ink-faint)">(WS-2, downgraded — see open questions)</span></li>
+        <li>Atomic create with rollback <span style="color:var(--ink-faint)">(WS-5)</span></li>
+        <li>Agent context kit: root manifest + <code>SUPERSET_WORKSPACE_REPOS</code> + <code>CLAUDE_CODE_PROJECT_DIR_NAME</code> <span style="color:var(--ink-faint)">(WS-6 — mandatory, see landmines 4 &amp; 5)</span></li>
+        <li>Delete removes every worktree, then the root <span style="color:var(--ink-faint)">(WS-9)</span></li>
+        <li>Missing repos cloned on first use <span style="color:var(--ink-faint)">(WS-4)</span></li>
+        <li>Repeatable <code>--project</code>, repos array in <code>ws get</code> <span style="color:var(--ink-faint)">(CLI-2, CLI-4)</span></li>
+      </ul>
+    </div>
+    <div class="box out">
+      <h4>Out</h4>
+      <div class="sub">deferred or deleted</div>
+      <ul>
+        <li>GitHub App Add-repositories dialog <span style="color:var(--ink-faint)">(PRJ-2 — deleted, not deferred)</span></li>
+        <li>Per-repository installation tokens <span style="color:var(--ink-faint)">(SEC-1 — folders are already cloned)</span></li>
+        <li><code>project_repositories</code> in Postgres + migration <span style="color:var(--ink-faint)">(MIG-1)</span></li>
+        <li>Cloud sandboxes, environments, warm snapshots <span style="color:var(--ink-faint)">(all of §8.3)</span></li>
+        <li>Sidebar grouping by project <span style="color:var(--ink-faint)">(WS-8 — falls back to primary)</span></li>
+        <li>Per-repo setup scripts <span style="color:var(--ink-faint)">(WS-7)</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Then, immediately: the part only DevSwarm has</h3>
+  <p class="prose-narrow">
+    <strong>PR-1</strong> (repo switcher on Changes) and <strong>PR-2</strong> (one PR per repo
+    against its own base). Both the Changes view and the file tree hang off a single variable each
+    — <code>ChangesContent.tsx:22</code> and <code>FilesView.tsx:149</code> — so the client side is
+    small.
+  </p>
+  <p class="prose-narrow">
+    The open question from v1 of this page is now answered, and it's good news: the desktop's
+    <code>changes</code> router <strong>is path-based end to end</strong>, keyed by
+    <code>worktreePath</code> and validated against a registered-worktrees table. So for local
+    workspaces, cut 2 is "register N worktree paths, pass the selected one" and landmines 1–2
+    never fire. They still have to be paid for remote and cloud workspaces served by the
+    host-service router, and landmine 3 (one watcher per workspace) is unavoidable either way.
+  </p>
+</section>
+
+<section>
+  <h2>The verdict</h2>
+  <p class="lede">Three cuts. The agent-context work is not optional in any of them.</p>
+
+  <div class="callout">
+    <p>
+      <strong>Build the host-side primitive first and the cloud project side last</strong> — the
+      inverse of the PRD's milestone order. The PRD builds the web project flow (M3) first, which
+      front-loads the GitHub App dialog, a Postgres table and a migration. None of that is needed
+      to make multiple repositories feel native, because <code>ws create --project</code> already
+      takes local project ids.
+    </p>
+  </div>
+
+  <h3>Cut 1 — v0, days not weeks</h3>
+  <p class="prose-narrow">
+    Source-folders list over local projects with a Primary. One isolated checkout per repo,
+    atomic create, delete-all. <code>rootPath</code> opens the agent and the file tree;
+    <code>worktreePath</code> stays the primary and owns every git surface, so all 1,756 references
+    keep working. Plus the agent context kit — root manifest, <code>SUPERSET_WORKSPACE_REPOS</code>,
+    <code>CLAUDE_CODE_PROJECT_DIR_NAME</code> — which landmines 4 and 5 promoted from polish to
+    prerequisite. Ships strictly ahead of Conductor and Codex on isolation, level on everything else.
+  </p>
+
+  <h3>Cut 2 — the differentiator</h3>
+  <p class="prose-narrow">
+    Repo switcher on Changes, then a Ship surface that lists each repo with commits ahead and opens
+    a PR for the ones you check — against that repo's own base. Not "one action fires N PRs":
+    you pick. Cheap for local workspaces now that the desktop router is confirmed path-based; the
+    host-service cache and limiter get keyed by <code>workspaceId + repoFolder</code> for remote,
+    and the watcher becomes N pairs. Note this is not novel UX — VS Code has grouped changes by
+    repository for years, so the pattern is well-trodden and the risk is low. What's novel is having
+    it <em>together with</em> a project-owned list and per-workspace isolation. Cross-linked PR bodies
+    and workspace-name titles (PR-3) are the opinionated part and stay out until someone asks.
+  </p>
+
+  <h3>Cut 3 — cloud</h3>
+  <p class="prose-narrow">
+    Exactly as the PRD stages it (§8.3, ENV-*). No competitive pressure here — not one of the six
+    ties multi-repo to a cloud environment model, so this is ours to schedule.
+  </p>
+
+  <h3>Four things to explicitly not do</h3>
+  <ul class="prose-narrow">
+    <li><strong>Don't redefine <code>worktreePath</code> as the container.</strong> 1,756 references, and it buys nothing cut 1 doesn't already give.</li>
+    <li><strong>Don't use submodules.</strong> DevSwarm's bundle works but imposes a parent repo and SHA maintenance; a project-owned repo list gets the same result with no git-level coupling.</li>
+    <li><strong>Don't build the GitHub App repo dialog for v0.</strong> PRJ-2 and SEC-1 are deleted by the local-projects picker, not deferred by it.</li>
+    <li><strong>Never pass <code>rootPath</code> to git, setup scripts or worktree operations.</strong> One-line invariant, one cheap test — and the exact conflation a Kilo maintainer has an open issue to prevent.</li>
+  </ul>
+
+  <h3>The one thing to check before committing</h3>
+  <p class="prose-narrow">
+    A DevSwarm trial. Everything above assumes we can reach their capability without their
+    submodule tax. That assumption is load-bearing for cut 2 and it has not been tested.
+  </p>
+
+  <h3>Open, from review</h3>
+  <p class="prose-narrow">
+    Three challenges from Avi on v2, two of which moved the plan:
+  </p>
+  <ul class="prose-narrow">
+    <li>
+      <strong>Worktrees shouldn't be enforced regardless of environment.</strong> Agreed, and the
+      matrix row is reworded to say so. The requirement is the <em>outcome</em> — no two workspaces
+      share a checkout — not the mechanism. On a device a worktree delivers it; in a cloud sandbox
+      the sandbox already is the boundary, so plain clones under <code>/workspace</code> are correct
+      and cheaper. The PRD already splits it this way (ENV-3); v1 of this page flattened it.
+    </li>
+    <li>
+      <strong>Is one branch name across repos necessary?</strong> No. Downgraded from a constraint
+      to a convenience. WS-2's "if the name is taken in <em>any</em> repo, bump it in <em>all</em>"
+      needs a probe of every member before create and produces a surprising rename; per-repo bumping
+      gives matching names almost always and breaks nothing when it doesn't. Cross-links live in PR
+      bodies, not in a branch-name search, so nothing downstream depends on it.
+    </li>
+    <li>
+      <strong>"One PR per repo from one action" feels opinionated.</strong> Fair, and it was my
+      phrasing overselling it — the PRD's PR-2 was already opt-in per repo. Reworded to "Ship
+      surface knows about N repos; you pick which to open." The genuinely opinionated pieces
+      (cross-linked bodies, workspace-name titles) are now explicitly out of scope.
+    </li>
+  </ul>
+</section>
+
+<section>
+  <h2>Evidence quality</h2>
+  <p class="prose-narrow">
+    Every quote on this page was re-checked against its primary source for v2. What changed:
+  </p>
+  <ul class="prose-narrow">
+    <li>
+      <strong>One quote was wrong and is gone.</strong> v1 attributed "A workspace is tied to
+      exactly one repository" to Conductor. That sentence does not appear in their documentation —
+      it was a summarisation artifact. The substance holds and is now carried by their actual
+      words ("create a workspace for each directory… then <code>/add-dir</code>") plus the
+      repo-keyed workspace path.
+    </li>
+    <li>
+      <strong>Two numbers were wrong and are corrected.</strong> 33 <code>resolveWorktreePath</code>
+      "call sites" was really 33 <em>references</em> including imports and type positions; there are
+      <strong>24 actual calls</strong>. And <code>worktreePath</code> non-test references are
+      <strong>1,756</strong>, not 1,702 — v1 used a filter that also dropped lines merely containing
+      the word "test".
+    </li>
+    <li>
+      <strong>DevSwarm was under-claimed.</strong> v1 marked their per-repo diff "claimed, not
+      verified". Their own documentation is specific and mechanical — submodules, worktrees sharing
+      an object store, a unified file list filterable per member — so the row is upgraded. Still
+      vendor documentation, still no hands-on trial.
+    </li>
+    <li>
+      <strong>Verified verbatim:</strong> the Cursor sentence, both Kilo sentences, the Codex
+      release note (build 26.715, 23 Jul 2026), and the Conductor three-step. Codex's read-only
+      <code>.git/</code> is corroborated by several independent openai/codex issues and is a
+      general sandbox behaviour, not specific to secondary folders.
+    </li>
+    <li>
+      <strong>Devin remains the thinnest row.</strong> Multi-root support is confirmed from their
+      changelog; everything else is absence of evidence, and the matrix now says so rather than
+      scoring it.
+    </li>
+  </ul>
+  <p class="prose-narrow">
+    Highest-value remaining check: <strong>30 minutes in a DevSwarm trial.</strong> They are the
+    only competitor with the capability this plan treats as the differentiator, and whether their
+    submodule bundle is load-bearing or incidental changes how confident we should be that we can
+    beat it without one.
+  </p>
+</section>
+
+<section>
+  <h2>Sources</h2>
+  <div class="sources">
+    <p><a href="https://www.conductor.build/docs/concepts/git-worktrees">Conductor — Git worktrees</a></p>
+    <p><a href="https://www.conductor.build/docs/tips/using-multiple-repos">Conductor — Using multiple repositories</a></p>
+    <p><a href="https://www.conductor.build/docs/tips/using-monorepos">Conductor — Using monorepos</a></p>
+    <p><a href="https://www.conductor.build/changelog/0.25.6-multiple-git-repos-fork-workspaces">Conductor — changelog 0.25.6</a></p>
+    <p><a href="https://cursor.com/changelog/04-24-26">Cursor — Multitask, Worktrees, Multi-root Workspaces</a></p>
+    <p><a href="https://codex.danielvaughan.com/2026/07/24/codex-multi-folder-projects-primary-folder-writable-roots-cross-repo-workspace-configuration/">Codex multi-folder projects: primary folders and writable roots</a></p>
+    <p><a href="https://github.com/openai/codex/issues/35260">openai/codex#35260 — secondary folder not in writable roots</a></p>
+    <p><a href="https://github.com/openai/codex/issues/15168">openai/codex#15168 — workspace-level multi-repo (closed as duplicate)</a></p>
+    <p><a href="https://github.com/openai/codex/issues/11956">openai/codex#11956 — multi-repo support</a></p>
+    <p><a href="https://kilo.ai/docs/automate/agent-manager-projects">Kilo — Multi-project Agent Manager</a></p>
+    <p><a href="https://github.com/Kilo-Org/kilocode/issues/13269">Kilo-Org/kilocode#13269 — non-Git parent folders</a></p>
+    <p><a href="https://releasebot.io/updates/devin">Devin — release notes, Sept 2026</a></p>
+    <p><a href="https://devswarm.ai/blog/multi-repo-workspaces/">DevSwarm — Multi-Repo Workspaces</a></p>
+    <p><a href="https://karun.me/blog/2026/03/26/structuring-claude-code-for-multi-repo-workspaces/">Structuring Claude Code for multi-repo workspaces</a></p>
+    <p><a href="https://raffertyuy.com/raztype/repo-of-repos-pattern/">The repo-of-repos pattern</a></p>
+    <p><a href="https://github.com/anthropics/claude-code/issues/36682">anthropics/claude-code#36682 — /add-dir permission inheritance</a></p>
+    <p><a href="https://code.claude.com/docs/en/memory">Claude Code — How Claude remembers your project</a> <span style="color:var(--ink-faint)">(subtree CLAUDE.md loading, auto-memory directory, <code>--add-dir</code> memory behaviour)</span></p>
+    <p><a href="https://github.com/openai/codex/issues/14338">openai/codex#14338 — writable gitdir in workspace-write mode</a></p>
+    <p><a href="https://github.com/openai/codex/issues/27418">openai/codex#27418 — worktree gitdir remounted read-only</a></p>
+    <p><a href="https://x.com/CodexReleases/status/2080374810895331450">Codex Releases — app update 26.715, 23 Jul 2026</a></p>
+    <p><a href="https://capy.ai/integrations/github">Capy — GitHub integration</a> <span style="color:var(--ink-faint)">(per-task branch and PR scoping)</span></p>
+    <p><a href="https://factory.com/product/missions">Factory — Missions</a> <span style="color:var(--ink-faint)">(coordinated fan-out across repositories)</span></p>
+    <p><a href="https://aixsoftware.substack.com/p/ai-research-multi-repo-agentic-harnesses">Multi-repo agentic harnesses — deep dive</a> <span style="color:var(--ink-faint)">(staged-checkout and multi-root patterns)</span></p>
+    <p><a href="https://code.visualstudio.com/docs/editing/workspaces/multi-root-workspaces">VS Code — Multi-root workspaces</a> <span style="color:var(--ink-faint)">(Source Control Providers view)</span></p>
+    <p><a href="https://github.com/microsoft/vscode/issues/251392">microsoft/vscode#251392 — flat SCM view for multi-root</a> <span style="color:var(--ink-faint)">(confirms changes are grouped per repository today)</span></p>
+  </div>
+</section>
+
+<footer>
+  Companion to <strong>Multi-repo projects PRD</strong> (docs/prd/multi-repo-projects.md). The PRD
+  defines the destination and a 33-requirement MVP; this page argues for a smaller first cut and a
+  different build order — host-side primitive first, cloud project side last. Pin a comment on any
+  element to push back.
+</footer>
+
+</div>
+</body>
+</html>

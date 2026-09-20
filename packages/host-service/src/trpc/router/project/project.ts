@@ -33,6 +33,7 @@ import {
 	serializeSparseCheckoutPaths,
 } from "../workspace-creation/shared/sparse-checkout";
 import { normalizeWorktreeBaseDir } from "../workspace-creation/shared/worktree-paths";
+import { projectFoldersRouter } from "./folders";
 import {
 	createFromClone,
 	createFromEmpty,
@@ -76,6 +77,7 @@ export const projectRouter = router({
 	listGitHubRepositories: machineOnlyProcedure.query(() =>
 		listGitHubRepositories(),
 	),
+	folders: projectFoldersRouter,
 
 	list: protectedProcedure.query(({ ctx }) => {
 		const tagSettingsByProject = new Map<string, TagSettingSnapshot[]>();

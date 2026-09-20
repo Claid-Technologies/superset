@@ -26,6 +26,7 @@ import { registerBrowserCdpRoute } from "./runtime/browser-bridge/browser-cdp-ro
 import { WorkspaceFilesystemManager } from "./runtime/filesystem";
 import type { GitCredentialProvider } from "./runtime/git";
 import { createGitEnvResolver, createGitFactory } from "./runtime/git";
+import { runMultiRepoBackfill } from "./runtime/multi-repo-backfill";
 import { runProjectBackfill } from "./runtime/project-backfill";
 import { PullRequestRuntimeManager } from "./runtime/pull-requests";
 import {
@@ -281,6 +282,18 @@ export function createApp(options: CreateAppOptions): CreateAppResult {
 		}).catch((err) => {
 			console.warn("[host-service] project backfill failed:", err);
 		});
+		// Runs after the project backfill so a freshly-named project still
+		// derives its folder name from the repo directory.
+		try {
+			const filled = runMultiRepoBackfill({ db });
+			if (filled.folders > 0 || filled.repos > 0) {
+				console.log(
+					`[multi-repo-backfill] backfilled ${filled.folders} folder(s) and ${filled.repos} repo row(s)`,
+				);
+			}
+		} catch (err) {
+			console.warn("[host-service] multi-repo backfill failed:", err);
+		}
 		// Finish any delete the previous process crashed out of (archived row
 		// whose worktree still exists).
 		await runArchivedWorkspaceReconcile({
