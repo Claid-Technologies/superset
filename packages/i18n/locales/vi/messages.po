@@ -1050,9 +1050,6 @@ msgstr "<0>{primaryFont}</0> chưa được cài trên hệ thống này. Đang 
 msgid "<0>#{0}</0> <1>of {1} on the leaderboard</1>"
 msgstr "<0>#{0}</0> <1>trên {1} trong bảng xếp hạng</1>"
 
-msgid "<0>Coming soon to</0><1>App Store</1>"
-msgstr "<0>Sắp có trên</0><1>App Store</1>"
-
 msgid "<0>Coming soon to</0><1>Google Play</1>"
 msgstr "<0>Sắp có trên</0><1>Google Play</1>"
 
@@ -8891,9 +8888,6 @@ msgstr "Thiếu dữ liệu bắt buộc {input}"
 msgid "Mobile"
 msgstr "Di động"
 
-msgid "Mobile (coming soon)"
-msgstr "Di động (sắp có)"
-
 msgid "Mobile app"
 msgstr "Ứng dụng di động"
 
@@ -14401,9 +14395,6 @@ msgstr "Superset Enterprise là Superset dành cho đội nhóm. Hãy liên hệ
 msgid "Superset for iPhone"
 msgstr "Superset cho iPhone"
 
-msgid "Superset for iPhone is on the way. Be first to know when it ships."
-msgstr "Superset cho iPhone đang đến. Hãy là người đầu tiên biết khi nó ra mắt."
-
 msgid "Superset for your team"
 msgstr "Superset cho đội ngũ của bạn"
 
@@ -14455,8 +14446,8 @@ msgstr "Bộ nhớ của Superset"
 msgid "Superset memory · last 5 min"
 msgstr "Bộ nhớ của Superset · 5 phút gần nhất"
 
-msgid "Superset Mobile is here. Read the announcement"
-msgstr "Superset dành cho di động đã ra mắt. Đọc thông báo"
+msgid "Superset Mobile is here. Learn more"
+msgstr "Superset dành cho di động đã ra mắt. Tìm hiểu thêm"
 
 msgid "Superset Mobile is part of Pro"
 msgstr "Superset Mobile thuộc gói Pro"

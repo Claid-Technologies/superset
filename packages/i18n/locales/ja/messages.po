@@ -1050,9 +1050,6 @@ msgstr "<0>{primaryFont}</0>はこのシステムにインストールされて�
 msgid "<0>#{0}</0> <1>of {1} on the leaderboard</1>"
 msgstr "<0>#{0}</0> <1>リーダーボード{1}人中</1>"
 
-msgid "<0>Coming soon to</0><1>App Store</1>"
-msgstr "<1>App Store</1><0>で近日公開</0>"
-
 msgid "<0>Coming soon to</0><1>Google Play</1>"
 msgstr "<1>Google Play</1><0>で近日公開</0>"
 
@@ -8891,9 +8888,6 @@ msgstr "必須の入力 {input} がありません"
 msgid "Mobile"
 msgstr "モバイル"
 
-msgid "Mobile (coming soon)"
-msgstr "モバイル(近日公開)"
-
 msgid "Mobile app"
 msgstr "モバイルアプリ"
 
@@ -14401,9 +14395,6 @@ msgstr "Superset Enterpriseは、チーム向けのSupersetです。含まれる
 msgid "Superset for iPhone"
 msgstr "iPhone 用 Superset"
 
-msgid "Superset for iPhone is on the way. Be first to know when it ships."
-msgstr "iPhone 版 Superset を準備中です。リリース時にいち早くお知らせします。"
-
 msgid "Superset for your team"
 msgstr "チームのためのSuperset"
 
@@ -14455,8 +14446,8 @@ msgstr "Supersetメモリ"
 msgid "Superset memory · last 5 min"
 msgstr "Supersetメモリ · 直近5分"
 
-msgid "Superset Mobile is here. Read the announcement"
-msgstr "モバイル版Supersetが登場。お知らせを読む"
+msgid "Superset Mobile is here. Learn more"
+msgstr "モバイル版Supersetが登場。詳しく見る"
 
 msgid "Superset Mobile is part of Pro"
 msgstr "Superset MobileはProの一部です"

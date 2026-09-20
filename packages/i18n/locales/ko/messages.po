@@ -1050,9 +1050,6 @@ msgstr "이 시스템에 <0>{primaryFont}</0>이(가) 설치되어 있지 않습
 msgid "<0>#{0}</0> <1>of {1} on the leaderboard</1>"
 msgstr "<0>#{0}</0> <1>· 리더보드 {1}명 중</1>"
 
-msgid "<0>Coming soon to</0><1>App Store</1>"
-msgstr "<1>App Store</1><0>출시 예정</0>"
-
 msgid "<0>Coming soon to</0><1>Google Play</1>"
 msgstr "<1>Google Play</1><0>출시 예정</0>"
 
@@ -8891,9 +8888,6 @@ msgstr "필수 입력 {input}이(가) 없습니다"
 msgid "Mobile"
 msgstr "모바일"
 
-msgid "Mobile (coming soon)"
-msgstr "모바일 (출시 예정)"
-
 msgid "Mobile app"
 msgstr "모바일 앱"
 
@@ -14401,9 +14395,6 @@ msgstr "Superset Enterprise는 팀을 위한 Superset입니다. 어떤 기능이
 msgid "Superset for iPhone"
 msgstr "iPhone용 Superset"
 
-msgid "Superset for iPhone is on the way. Be first to know when it ships."
-msgstr "iPhone용 Superset이 곧 나옵니다. 출시되면 가장 먼저 알려드릴게요."
-
 msgid "Superset for your team"
 msgstr "팀을 위한 Superset"
 
@@ -14455,8 +14446,8 @@ msgstr "Superset 메모리"
 msgid "Superset memory · last 5 min"
 msgstr "Superset 메모리 · 최근 5분"
 
-msgid "Superset Mobile is here. Read the announcement"
-msgstr "모바일 Superset이 출시되었습니다. 발표 내용 읽기"
+msgid "Superset Mobile is here. Learn more"
+msgstr "모바일 Superset이 출시되었습니다. 자세히 알아보기"
 
 msgid "Superset Mobile is part of Pro"
 msgstr "Superset Mobile은 Pro에 포함되어 있습니다"

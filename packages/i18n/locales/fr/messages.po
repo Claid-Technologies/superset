@@ -1050,9 +1050,6 @@ msgstr "<0>{primaryFont}</0> n'est pas installée sur ce système. Repli sur la 
 msgid "<0>#{0}</0> <1>of {1} on the leaderboard</1>"
 msgstr "<0>#{0}</0> <1>sur {1} au classement</1>"
 
-msgid "<0>Coming soon to</0><1>App Store</1>"
-msgstr "<0>Bientôt disponible dans l'</0><1>App Store</1>"
-
 msgid "<0>Coming soon to</0><1>Google Play</1>"
 msgstr "<0>Bientôt disponible sur</0><1>Google Play</1>"
 
@@ -8891,9 +8888,6 @@ msgstr "Entrée requise manquante {input}"
 msgid "Mobile"
 msgstr "Mobile"
 
-msgid "Mobile (coming soon)"
-msgstr "Mobile (bientôt disponible)"
-
 msgid "Mobile app"
 msgstr "Application mobile"
 
@@ -14401,9 +14395,6 @@ msgstr "Superset Enterprise, c'est Superset pour les équipes. Contactez-nous po
 msgid "Superset for iPhone"
 msgstr "Superset pour iPhone"
 
-msgid "Superset for iPhone is on the way. Be first to know when it ships."
-msgstr "Superset pour iPhone arrive. Soyez le premier informé de sa sortie."
-
 msgid "Superset for your team"
 msgstr "Superset pour votre équipe"
 
@@ -14455,8 +14446,8 @@ msgstr "Mémoire de Superset"
 msgid "Superset memory · last 5 min"
 msgstr "Mémoire de Superset · 5 dernières minutes"
 
-msgid "Superset Mobile is here. Read the announcement"
-msgstr "Superset sur mobile est arrivé. Lisez l’annonce"
+msgid "Superset Mobile is here. Learn more"
+msgstr "Superset sur mobile est arrivé. En savoir plus"
 
 msgid "Superset Mobile is part of Pro"
 msgstr "Superset Mobile fait partie de Pro"

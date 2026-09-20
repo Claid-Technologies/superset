@@ -1050,9 +1050,6 @@ msgstr "<0>{primaryFont}</0> не установлен в системе. Исп
 msgid "<0>#{0}</0> <1>of {1} on the leaderboard</1>"
 msgstr "<0>#{0}</0> <1>из {1} в рейтинге</1>"
 
-msgid "<0>Coming soon to</0><1>App Store</1>"
-msgstr "<0>Скоро в</0><1>App Store</1>"
-
 msgid "<0>Coming soon to</0><1>Google Play</1>"
 msgstr "<0>Скоро в</0><1>Google Play</1>"
 
@@ -8891,9 +8888,6 @@ msgstr "Отсутствует обязательное поле {input}"
 msgid "Mobile"
 msgstr "Мобильные"
 
-msgid "Mobile (coming soon)"
-msgstr "Мобильное приложение (скоро)"
-
 msgid "Mobile app"
 msgstr "Мобильное приложение"
 
@@ -14401,9 +14395,6 @@ msgstr "Superset Enterprise — это Superset для команд. Напиш�
 msgid "Superset for iPhone"
 msgstr "Superset для iPhone"
 
-msgid "Superset for iPhone is on the way. Be first to know when it ships."
-msgstr "Superset для iPhone уже в работе. Узнайте о выходе первыми."
-
 msgid "Superset for your team"
 msgstr "Superset для вашей команды"
 
@@ -14455,8 +14446,8 @@ msgstr "Память Superset"
 msgid "Superset memory · last 5 min"
 msgstr "Память Superset · последние 5 мин"
 
-msgid "Superset Mobile is here. Read the announcement"
-msgstr "Мобильный Superset уже здесь. Читайте анонс"
+msgid "Superset Mobile is here. Learn more"
+msgstr "Мобильный Superset уже здесь. Подробнее"
 
 msgid "Superset Mobile is part of Pro"
 msgstr "Superset Mobile входит в Pro"
