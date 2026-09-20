@@ -14,6 +14,7 @@ import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
+	DropdownMenuLabel,
 	DropdownMenuTrigger,
 } from "@superset/ui/dropdown-menu";
 import { Label } from "@superset/ui/label";
@@ -83,6 +84,14 @@ export function TerminalSessionHandoffMenu({
 	const canFork = Boolean(
 		binding?.agentSessionId && sourceConfig?.forkArgs?.length,
 	);
+	const forkUnavailableReason = !sourceConfig?.forkArgs?.length
+		? t({ message: "This agent configuration does not support forking." })
+		: !binding?.agentSessionId
+			? t({
+					message:
+						"Session ID unavailable. Send a message to the agent, then try again.",
+				})
+			: null;
 	const defaultTargetConfigId = resolveDefaultTargetConfigId(
 		configs.map((config) => config.id),
 		typeof window === "undefined"
@@ -207,6 +216,11 @@ export function TerminalSessionHandoffMenu({
 						<GitFork />
 						<Trans>Fork session…</Trans>
 					</DropdownMenuItem>
+					{forkUnavailableReason && (
+						<DropdownMenuLabel className="text-xs font-normal text-muted-foreground whitespace-normal">
+							{forkUnavailableReason}
+						</DropdownMenuLabel>
+					)}
 				</DropdownMenuContent>
 			</DropdownMenu>
 

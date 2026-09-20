@@ -13320,6 +13320,9 @@ msgstr "Sitzungsdetails"
 msgid "Session ended"
 msgstr "Sitzung beendet"
 
+msgid "Session ID unavailable. Send a message to the agent, then try again."
+msgstr "Sitzungs-ID nicht verfügbar. Sende dem Agenten eine Nachricht und versuche es erneut."
+
 msgid "Session name"
 msgstr "Sitzungsname"
 
@@ -15244,6 +15247,9 @@ msgstr "Dieses {plugin}-Konto ist bereits mit einer anderen Superset-Organisatio
 
 msgid "This action is irreversible."
 msgstr "Diese Aktion ist nicht umkehrbar."
+
+msgid "This agent configuration does not support forking."
+msgstr "Diese Agentenkonfiguration unterstützt keine Sitzungsabzweigungen."
 
 msgid "This agent no longer exists on the selected device (its agents may have been reset). Runs will fail until you pick a new one."
 msgstr "Diesen Agenten gibt es auf dem gewählten Gerät nicht mehr (seine Agenten wurden möglicherweise zurückgesetzt). Läufe schlagen fehl, bis du einen neuen auswählst."

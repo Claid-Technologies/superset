@@ -13320,6 +13320,9 @@ msgstr "Session details"
 msgid "Session ended"
 msgstr "Session ended"
 
+msgid "Session ID unavailable. Send a message to the agent, then try again."
+msgstr "Session ID unavailable. Send a message to the agent, then try again."
+
 msgid "Session name"
 msgstr "Session name"
 
@@ -15244,6 +15247,9 @@ msgstr "This {plugin} account is already connected by another Superset organizat
 
 msgid "This action is irreversible."
 msgstr "This action is irreversible."
+
+msgid "This agent configuration does not support forking."
+msgstr "This agent configuration does not support forking."
 
 msgid "This agent no longer exists on the selected device (its agents may have been reset). Runs will fail until you pick a new one."
 msgstr "This agent no longer exists on the selected device (its agents may have been reset). Runs will fail until you pick a new one."
