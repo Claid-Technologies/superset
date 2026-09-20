@@ -9,12 +9,14 @@ export interface AutoPublishState {
 	handle: string | null;
 	lastPublishedAt: number;
 	lastPayloadHash: string | null;
+	pendingBackfillDays: number | null;
 }
 
 export const INITIAL_AUTO_PUBLISH_STATE: AutoPublishState = {
 	handle: null,
 	lastPublishedAt: 0,
 	lastPayloadHash: null,
+	pendingBackfillDays: null,
 };
 
 export function isPublishDue(state: AutoPublishState, now: number): boolean {
@@ -26,6 +28,7 @@ export function publishWindowDays(
 	state: AutoPublishState,
 	now: number,
 ): number {
+	if (state.pendingBackfillDays !== null) return state.pendingBackfillDays;
 	if (state.lastPublishedAt <= 0) return MAX_WINDOW_DAYS;
 	const elapsedDays = Math.ceil(
 		Math.max(0, now - state.lastPublishedAt) / DAY_MS,

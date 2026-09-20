@@ -14804,7 +14804,7 @@ msgid "The best agent will change.<0/>Your workflow shouldn't."
 msgstr "Лучший агент будет меняться.<0/>Ваш процесс — нет."
 
 msgid "The board starts on {launchDate}. The wider range rebuilds everything from the transcripts still on this machine, so a rank you had before leaving comes back."
-msgstr "Рейтинг начинается {launchDate}. Более широкий диапазон восстановит всё из расшифровок, оставшихся на этом компьютере, так что место, которое у вас было до выхода, вернётся."
+msgstr "Рейтинг начинается с {launchDate}. Более широкий диапазон восстановит всё из расшифровок, оставшихся на этом компьютере, так что место, которое у вас было до выхода, вернётся."
 
 msgid "The Codex sign-in"
 msgstr "Вход в Codex"

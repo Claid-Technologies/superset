@@ -16085,7 +16085,7 @@ msgid "Usage sections"
 msgstr "Các mục mức sử dụng"
 
 msgid "Usage to publish"
-msgstr "Mức sử dụng sẽ công bố"
+msgstr "Mức sử dụng sẽ được công bố"
 
 msgid "Usage unavailable."
 msgstr "Không có dữ liệu sử dụng."

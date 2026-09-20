@@ -34,7 +34,11 @@ import {
 	longestStreak,
 } from "./awards";
 import { isInternalRead } from "./internal-read";
-import { type LeaderboardPeriod, resolveDayRange } from "./periods";
+import {
+	LEADERBOARD_LAUNCH_DAY,
+	type LeaderboardPeriod,
+	resolveDayRange,
+} from "./periods";
 import {
 	getParticipant,
 	getStandingFor,
@@ -51,7 +55,6 @@ import {
 	participantSchema,
 	previewRankSchema,
 	profileSchema,
-	publishableDayFloor,
 	publishSchema,
 	searchSchema,
 	standingForSchema,
@@ -165,16 +168,11 @@ function utcDayKey(ms: number): string {
  * dayRangeStart/End and all-time totals — and a future-dated row would
  * pre-load tomorrow's board. One day of forward slack absorbs host/server
  * clock skew across a UTC midnight.
- *
- * The floor is whichever is older: the rolling window, or launch day. Nothing
- * before launch belongs on the board, and nothing after it should be
- * unreachable — a rejoin backfills its whole participation, not the last 35
- * days of it.
  */
 function assertDaysInWindow(days: readonly { day: string }[]): void {
 	if (days.length === 0) return;
 	const now = Date.now();
-	const oldest = publishableDayFloor(now);
+	const oldest = LEADERBOARD_LAUNCH_DAY;
 	const newest = utcDayKey(now + DAY_MS);
 
 	for (const { day } of days) {

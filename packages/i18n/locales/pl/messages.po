@@ -5890,7 +5890,7 @@ msgid "Everything we built on top of the primitives — Superset originals, the"
 msgstr "Wszystko, co zbudowaliśmy na prymitywach — oryginały Superset, zestaw"
 
 msgid "Everything you've published is deleted, not hidden. You can rejoin later and rebuild your whole history from the transcripts still on this machine."
-msgstr "Wszystko, co opublikowałeś, zostaje usunięte, a nie ukryte. Możesz dołączyć ponownie później i odtworzyć całą historię z transkrypcji, które nadal są na tym komputerze."
+msgstr "Wszystko, co zostało opublikowane, zostaje usunięte, a nie ukryte. Możesz dołączyć ponownie później i odtworzyć całą historię z transkrypcji, które nadal są na tym komputerze."
 
 msgid "Existing repo path"
 msgstr "Ścieżka istniejącego repozytorium"
@@ -14804,7 +14804,7 @@ msgid "The best agent will change.<0/>Your workflow shouldn't."
 msgstr "Najlepszy agent się zmieni.<0/>Twój workflow nie musi."
 
 msgid "The board starts on {launchDate}. The wider range rebuilds everything from the transcripts still on this machine, so a rank you had before leaving comes back."
-msgstr "Ranking zaczyna się {launchDate}. Szerszy zakres odtwarza wszystko z transkrypcji, które nadal są na tym komputerze, więc wraca też miejsce, które miałeś przed odejściem."
+msgstr "Ranking zaczyna się {launchDate}. Szerszy zakres odtwarza wszystko z transkrypcji, które nadal są na tym komputerze, więc wraca też miejsce sprzed odejścia."
 
 msgid "The Codex sign-in"
 msgstr "Logowanie Codex"
@@ -16085,7 +16085,7 @@ msgid "Usage sections"
 msgstr "Sekcje zużycia"
 
 msgid "Usage to publish"
-msgstr "Użycie do opublikowania"
+msgstr "Zużycie do publikacji"
 
 msgid "Usage unavailable."
 msgstr "Zużycie niedostępne."

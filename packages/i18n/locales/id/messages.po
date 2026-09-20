@@ -16085,7 +16085,7 @@ msgid "Usage sections"
 msgstr "Bagian penggunaan"
 
 msgid "Usage to publish"
-msgstr "Penggunaan yang dipublikasikan"
+msgstr "Data penggunaan yang akan dipublikasikan"
 
 msgid "Usage unavailable."
 msgstr "Penggunaan tidak tersedia."

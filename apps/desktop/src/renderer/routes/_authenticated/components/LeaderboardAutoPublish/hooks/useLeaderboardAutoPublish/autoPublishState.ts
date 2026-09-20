@@ -1,7 +1,14 @@
+import { daysSinceLaunch } from "@superset/trpc/leaderboard-periods";
 import type { AutoPublishState } from "./autoPublishSchedule";
 import { INITIAL_AUTO_PUBLISH_STATE } from "./autoPublishSchedule";
 
 const STORAGE_KEY = "leaderboard-auto-publish-v2";
+
+function clampBackfillDays(value: unknown): number | null {
+	if (typeof value !== "number" || !Number.isFinite(value)) return null;
+	const days = Math.floor(value);
+	return days < 1 ? null : Math.min(days, daysSinceLaunch());
+}
 
 export function readAutoPublishState(handle: string): AutoPublishState {
 	try {
@@ -20,6 +27,7 @@ export function readAutoPublishState(handle: string): AutoPublishState {
 				typeof parsed.lastPayloadHash === "string"
 					? parsed.lastPayloadHash
 					: null,
+			pendingBackfillDays: clampBackfillDays(parsed.pendingBackfillDays),
 		};
 	} catch {
 		return INITIAL_AUTO_PUBLISH_STATE;

@@ -56,11 +56,6 @@ function groupConsecutiveDays<T extends { day: string }>(
 	return groups;
 }
 
-/**
- * Splits on day boundaries wherever it can, so the server's per-publish
- * distinct-day count stays a number the caller can sum. A single day wider
- * than the cap is still cut — it would be rejected whole otherwise.
- */
 export function chunkRows<T extends { day: string }>(
 	rows: readonly T[],
 	maxRows: number,

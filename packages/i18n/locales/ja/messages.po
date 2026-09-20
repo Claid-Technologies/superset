@@ -16085,7 +16085,7 @@ msgid "Usage sections"
 msgstr "使用量セクション"
 
 msgid "Usage to publish"
-msgstr "公開する使用状況"
+msgstr "公開する使用量"
 
 msgid "Usage unavailable."
 msgstr "使用量を取得できません。"

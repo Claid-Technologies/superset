@@ -54,14 +54,21 @@ export function useLeaderboardOptIn(period: LeaderboardPeriod = "all") {
 
 				let published: number | null = 0;
 				if (activeHostUrl && machineId) {
+					const days = backfillDays(range);
+					writeAutoPublishState({
+						handle,
+						lastPublishedAt: 0,
+						lastPayloadHash: null,
+						pendingBackfillDays: days,
+					});
 					try {
-						published = (
-							await publishUsage(activeHostUrl, machineId, backfillDays(range))
-						).days;
+						published = (await publishUsage(activeHostUrl, machineId, days))
+							.days;
 						writeAutoPublishState({
 							handle,
 							lastPublishedAt: Date.now(),
 							lastPayloadHash: null,
+							pendingBackfillDays: null,
 						});
 					} catch {
 						published = null;

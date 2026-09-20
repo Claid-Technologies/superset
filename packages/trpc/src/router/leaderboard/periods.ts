@@ -12,12 +12,6 @@ const DAY_KEY = /^\d{4}-\d{2}-\d{2}$/;
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
-/**
- * The board's all-time totals start here — the first day any participant could
- * publish. It bounds both the publishable window and the widest backfill a
- * client offers on join, so a rejoin can restore everything the board ever had
- * for that account rather than the trailing 30 days.
- */
 export const LEADERBOARD_LAUNCH_DAY = "2026-07-29";
 
 export function isDayKey(value: string): boolean {
@@ -58,11 +52,6 @@ function addDays(date: Date, days: number): Date {
 	return next;
 }
 
-/**
- * Inclusive day count from launch to today, the shape the usage collectors
- * take: `days` there counts back from today, so launch day itself needs the
- * +1. Never below 1, so a clock behind launch still asks for today.
- */
 export function daysSinceLaunch(now: Date = new Date()): number {
 	const today = Date.UTC(
 		now.getUTCFullYear(),

@@ -5890,7 +5890,7 @@ msgid "Everything we built on top of the primitives — Superset originals, the"
 msgstr "Vše, co jsme postavili nad primitivy — originály Superset, sada"
 
 msgid "Everything you've published is deleted, not hidden. You can rejoin later and rebuild your whole history from the transcripts still on this machine."
-msgstr "Vše, co jsi zveřejnil, se smaže, neskryje. Později se můžeš připojit znovu a obnovit celou historii z přepisů, které na tomto počítači zůstaly."
+msgstr "Vše zveřejněné se smaže, neskryje. Později se můžete znovu připojit a obnovit celou historii z přepisů, které na tomto počítači zůstaly."
 
 msgid "Existing repo path"
 msgstr "Cesta k existujícímu repozitáři"
@@ -14804,7 +14804,7 @@ msgid "The best agent will change.<0/>Your workflow shouldn't."
 msgstr "Nejlepší agent se změní.<0/>Vaše workflow ne."
 
 msgid "The board starts on {launchDate}. The wider range rebuilds everything from the transcripts still on this machine, so a rank you had before leaving comes back."
-msgstr "Žebříček začíná {launchDate}. Širší rozsah obnoví vše z přepisů, které na tomto počítači zůstaly, takže se vrátí i pozice, kterou jsi měl před odchodem."
+msgstr "Žebříček začíná {launchDate}. Širší rozsah obnoví vše z přepisů, které na tomto počítači zůstaly, takže se vrátí i vaše pozice před odchodem."
 
 msgid "The Codex sign-in"
 msgstr "Přihlášení do Codexu"
