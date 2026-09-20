@@ -1,26 +1,30 @@
 ---
 name: mobile-demo-film
-description: Turn mobile screen recordings into a framed portrait demo video with phone footage, title cards, cutaways, and an end card. Use when asked to edit a mobile feature demo or launch clip. Use mobile-demo-record to capture real app footage first.
+description: Turn mobile screen recordings into a configurable demo video with phone footage, title cards, cutaways, and an end card. Use when asked to edit a mobile feature demo or launch clip. Use mobile-demo-record to capture real app footage first.
 ---
 
 # Mobile demo film
 
 Use this skill to edit a new demo from real app recordings. The bundled renderer produces
-silent 1080x1920 video at 30fps, with a phone frame on a warm paper backdrop. A useful default
+silent video with configurable dimensions, frame rate, framing, and fades. Defaults are
+1080x1920 at 30fps, with a phone frame on a warm paper backdrop. A useful default
 is one feature in 20 to 40 seconds; adapt the story and pacing to the request.
 
 ## Prerequisites
 
-Run on macOS with Python 3, Pillow, and ffmpeg (including ffprobe). The default fonts come
-from macOS. Install Pillow into a scratch virtual environment if it is not available:
+Use Python 3.10+, Pillow 10.1+, and ffmpeg (including ffprobe and libx264). Recording with
+`mobile-demo-record` needs macOS; editing existing footage does not. Font discovery tries
+macOS system fonts, then Linux DejaVu fonts, then Pillow’s fallback. Specify font files for
+consistent typography across machines. Install Pillow in a scratch virtual environment:
 
 ```bash
 python3 -m venv <scratch>/film-venv
-<scratch>/film-venv/bin/pip install Pillow
+<scratch>/film-venv/bin/pip install "Pillow>=10.1"
 ```
 
 Use that environment's Python for the commands below. Commands assume the repo root as
-working directory. Create output directories first; the renderer overwrites output files.
+working directory. Output directories are created automatically. Existing outputs are
+overwritten; source assets and the composition spec cannot be used as the film output.
 
 ## Workflow
 
@@ -32,12 +36,14 @@ working directory. Create output directories first; the renderer overwrites outp
    Capture desktop cutaways with `cdp-verification` when needed.
 3. **Normalize before choosing cuts.** Simulator recordings have variable frame rates:
    `python3 .agents/skills/mobile-demo-film/scripts/film.py normalize raw/01.mov cfr/01.mp4`.
-   Choose start/end timestamps from this constant-rate copy.
+   Choose start/end timestamps from this constant-rate copy. Add `--fps 24` for a 24fps
+   project (the default is 30).
 4. **Compose** using a JSON spec beside the recordings:
    `python3 .agents/skills/mobile-demo-film/scripts/film.py compose <scratch>/film.json`.
 5. **Review** a contact sheet and play the entire film:
    `python3 .agents/skills/mobile-demo-film/scripts/film.py sheet <scratch>/film.mp4 <scratch>/sheet.jpg`.
-   The sheet samples eight frames; inspect transitions and typing in playback too. Check
+   Add `--frames 12 --height 480` to customize sampling and thumbnail height.
+   By default, the sheet samples eight frames; inspect transitions and typing in playback too. Check
    for clipped text, unreadable UI, private information, spinners, and unintended clock changes.
 6. **Deliver** the film and identify the build, environment, staged data, and omitted steps.
    Draft accompanying post copy only if requested; publishing needs user authorization.
@@ -66,19 +72,71 @@ its paths, cut points, and text for the feature being demonstrated.
 }
 ```
 
-Media and output paths resolve relative to the spec file. Use absolute paths for optional
-`titleFont` and `sansFont` overrides. Top-level `bezel`, `ink`, and `muted` customize colors.
+Media, output, and optional `titleFont`/`sansFont` paths resolve relative to the spec file;
+absolute paths also work. Top-level `backdrop`, `bezel`, `ink`, and `muted` accept `#RRGGBB`.
+
+### Output and framing
+
+Add a `render` object to the spec. Existing specs without it keep the portrait defaults.
+For a landscape demo:
+
+```json
+"render": {
+  "width": 1920,
+  "height": 1080,
+  "fps": 24,
+  "crf": 18,
+  "fade": 0.2,
+  "phone_width": 0.45,
+  "phone_height": 0.8,
+  "bezel_width": 0.012,
+  "corner_radius": 0.1
+}
+```
+
+For a square clip, use `"width": 1080, "height": 1080`. Cards and typography scale with the
+canvas; the centered phone fits both width and height limits while preserving source aspect
+ratio. Use `raw` for unframed desktop footage.
+
+| Render option | Meaning and default |
+| --- | --- |
+| `width`, `height` | Canvas pixels; even integers at least 64. Defaults: 1080, 1920 |
+| `fps` | Integer 1–120; default 30 |
+| `crf` | Final H.264 quality, 0–51; lower means higher quality/larger files. Default 18 |
+| `fade` | Fade duration in seconds; 0 disables fades. Default 0.35; capped at half each framed/still segment’s duration; raw clips have no fade |
+| `phone_width`, `phone_height` | Maximum screen width/height as fractions of canvas dimensions, greater than 0 and at most 0.95. Defaults: 0.615, 0.82 |
+| `bezel_width` | Border thickness as a fraction of the smaller canvas dimension, 0–0.25. Default 0.015 |
+| `corner_radius` | Screen corner radius as a fraction of screen width, 0–0.25. Default 0.137 |
+
+### Segments
 
 | Segment | Fields |
 | --- | --- |
 | `phone` | `src`, optional `start`/`end` in seconds, `speed` (default 1), `label`, `island` (false disables the overlay) |
-| `raw` | `src`, optional `start`/`end`, `speed`; unframed footage fitted to the portrait canvas with black padding |
+| `raw` | `src`, optional `start`/`end`, `speed`; unframed footage fitted to the output canvas with black padding |
 | `card` | `title`, optional `eyebrow`, `caption`, `image`, `footer`, `duration` (default 4 seconds) |
 | `end` | `wordmark` or transparent PNG `logo`, optional `caption`, `duration` (default 2.2 seconds) |
 
-Keep cut points within the source duration, speed positive, and segments long enough for the
-0.35-second fades. Card titles wrap; captions, labels, and footers should be short. The
+Keep cut points within the source duration and speed positive. Every segment must last at
+least one output frame. The renderer validates all segments and source paths before encoding. Card titles wrap; captions, labels, and footers should be short. The
 renderer removes audio, so use another editing workflow if narration or app audio is needed.
 
 Store raw takes, specs, and finished films in a scratch directory. Share the inputs and spec
 when teammates need to re-edit a particular demo; they are not required to create a new one.
+
+## Reusing and checking the renderer
+
+Run `film.py --help` or a subcommand with `--help` for CLI options. The Python module can
+also be imported: `normalize(src, dst, fps=30)`, `compose(spec_path)` (returns the output
+`Path`), and `sheet(src, dst, frames=8, height=900)` work without invoking the CLI.
+`RenderSettings` holds layout calculations without mutable global canvas settings.
+
+After editing the renderer, run its focused tests (requires ffmpeg and Pillow):
+
+```bash
+python3 -B -m unittest discover -s .agents/skills/mobile-demo-film/scripts -p 'test_*.py'
+```
+
+These render small portrait, landscape, and square compositions, check output dimensions,
+frame rate and duration, and exercise invalid specs. Also inspect a contact sheet at the
+intended delivery size; automated checks do not judge readability or composition.
