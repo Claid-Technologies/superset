@@ -12791,8 +12791,8 @@ msgstr "Menyimpan…"
 msgid "Saw the paywall"
 msgstr "Melihat paywall"
 
-msgid "Scale from two agents to 100+"
-msgstr "Naik dari dua agen ke 100+"
+msgid "Scale to 100+ agents"
+msgstr "Tingkatkan hingga lebih dari 100 agen"
 
 msgid "Scan to download Superset for iPhone"
 msgstr "Pindai untuk mengunduh Superset untuk iPhone"

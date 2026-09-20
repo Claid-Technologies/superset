@@ -12791,8 +12791,8 @@ msgstr "Kaydediliyor…"
 msgid "Saw the paywall"
 msgstr "Ödeme duvarını gördü"
 
-msgid "Scale from two agents to 100+"
-msgstr "İki ajandan 100+ ajana ölçeklenin"
+msgid "Scale to 100+ agents"
+msgstr "100’den fazla ajana ölçekleyin"
 
 msgid "Scan to download Superset for iPhone"
 msgstr "iPhone için Superset’i indirmek üzere tarayın"

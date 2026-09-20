@@ -1,12 +1,21 @@
 import { PhoneFrame } from "./components/PhoneFrame";
 import { ReviewScreen } from "./components/ReviewScreen";
 import { SessionScreen } from "./components/SessionScreen";
+import { SpreadPhones } from "./components/SpreadPhones";
 import { WorkspacesScreen } from "./components/WorkspacesScreen";
 
 const SIDE_PHONE_CLASS =
 	"absolute top-10 hidden scale-[0.88] opacity-60 sm:block lg:hidden xl:block";
 
-export function PhoneShowcase() {
+interface PhoneShowcaseProps {
+	layout?: "stack" | "spread";
+}
+
+export function PhoneShowcase({ layout = "stack" }: PhoneShowcaseProps) {
+	if (layout === "spread") {
+		return <SpreadPhones />;
+	}
+
 	return (
 		<div
 			aria-hidden="true"

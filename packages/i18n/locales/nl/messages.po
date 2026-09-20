@@ -12791,8 +12791,8 @@ msgstr "Opslaan…"
 msgid "Saw the paywall"
 msgstr "Zag de paywall"
 
-msgid "Scale from two agents to 100+"
-msgstr "Schaal van twee agents naar 100+"
+msgid "Scale to 100+ agents"
+msgstr "Schaal op naar meer dan 100 agents"
 
 msgid "Scan to download Superset for iPhone"
 msgstr "Scan om Superset voor iPhone te downloaden"

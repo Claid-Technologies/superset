@@ -12791,8 +12791,8 @@ msgstr "保存中…"
 msgid "Saw the paywall"
 msgstr "ペイウォールを表示"
 
-msgid "Scale from two agents to 100+"
-msgstr "2体から100体以上へ広げる"
+msgid "Scale to 100+ agents"
+msgstr "100以上のエージェントに拡張"
 
 msgid "Scan to download Superset for iPhone"
 msgstr "スキャンして iPhone 用 Superset をダウンロード"

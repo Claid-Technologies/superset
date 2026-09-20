@@ -12791,8 +12791,8 @@ msgstr "正在保存…"
 msgid "Saw the paywall"
 msgstr "看到付费墙"
 
-msgid "Scale from two agents to 100+"
-msgstr "从两个智能体扩到100多个"
+msgid "Scale to 100+ agents"
+msgstr "扩展至 100 多个智能体"
 
 msgid "Scan to download Superset for iPhone"
 msgstr "扫码下载 iPhone 版 Superset"

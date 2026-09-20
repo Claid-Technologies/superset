@@ -12791,8 +12791,8 @@ msgstr "Ukládám…"
 msgid "Saw the paywall"
 msgstr "Zobrazení paywallu"
 
-msgid "Scale from two agents to 100+"
-msgstr "Od dvou agentů ke stovkám"
+msgid "Scale to 100+ agents"
+msgstr "Škálujte na více než 100 agentů"
 
 msgid "Scan to download Superset for iPhone"
 msgstr "Naskenujte a stáhněte Superset pro iPhone"

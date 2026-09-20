@@ -12791,8 +12791,8 @@ msgstr "저장하는 중…"
 msgid "Saw the paywall"
 msgstr "페이월 조회"
 
-msgid "Scale from two agents to 100+"
-msgstr "에이전트 2개에서 100개 이상까지"
+msgid "Scale to 100+ agents"
+msgstr "100개 이상의 에이전트로 확장"
 
 msgid "Scan to download Superset for iPhone"
 msgstr "스캔하여 iPhone용 Superset 다운로드"

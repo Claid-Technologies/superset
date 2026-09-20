@@ -12791,8 +12791,8 @@ msgstr "Сохранение…"
 msgid "Saw the paywall"
 msgstr "Показ пейволла"
 
-msgid "Scale from two agents to 100+"
-msgstr "От двух агентов до 100+"
+msgid "Scale to 100+ agents"
+msgstr "Масштабируйте до 100+ агентов"
 
 msgid "Scan to download Superset for iPhone"
 msgstr "Сканируйте, чтобы скачать Superset для iPhone"

@@ -3,6 +3,7 @@ import { Trans } from "@lingui/react/macro";
 import { getI18nInstance } from "@superset/i18n/server";
 import type { Metadata } from "next";
 import { FaAndroid } from "react-icons/fa";
+import { PhoneShowcase } from "@/app/[lang]/components/PhoneShowcase";
 import { StoreBadges } from "@/app/[lang]/components/StoreBadges";
 import { localizedAlternates } from "@/app/[lang]/metadata";
 import { initServerI18n } from "@/app/i18n-server";
@@ -10,7 +11,6 @@ import { isMobileLaunched } from "@/lib/site-flags";
 import { AppStoreQr } from "./components/AppStoreQr";
 import { MobileFeatures } from "./components/MobileFeatures";
 import { MobileWaitlist } from "./components/MobileWaitlist";
-import { PhoneShowcase } from "./components/PhoneShowcase";
 
 export async function generateMetadata(): Promise<Metadata> {
 	const lang = await initServerI18n();

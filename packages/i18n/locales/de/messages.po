@@ -12791,8 +12791,8 @@ msgstr "Wird gespeichert…"
 msgid "Saw the paywall"
 msgstr "Paywall gesehen"
 
-msgid "Scale from two agents to 100+"
-msgstr "Von zwei Agenten auf über 100 skalieren"
+msgid "Scale to 100+ agents"
+msgstr "Auf über 100 Agenten skalieren"
 
 msgid "Scan to download Superset for iPhone"
 msgstr "Scannen, um Superset für iPhone herunterzuladen"
