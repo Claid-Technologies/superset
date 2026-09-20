@@ -42,6 +42,45 @@ describe("writeFileIfChanged", () => {
 		expect(fs.readdirSync(TEST_DIR)).toEqual(["rcfile"]);
 	});
 
+	it("writes through a symlinked target instead of replacing the link", () => {
+		const realDir = path.join(TEST_DIR, "dotfiles");
+		fs.mkdirSync(realDir);
+		const real = path.join(realDir, "settings.json");
+		fs.writeFileSync(real, "{}");
+		const linkDir = path.join(TEST_DIR, "home");
+		fs.mkdirSync(linkDir);
+		const target = path.join(linkDir, "settings.json");
+		fs.symlinkSync(real, target);
+
+		expect(writeFileIfChanged(target, '{"hooks":{}}', 0o644)).toBe(true);
+
+		expect(fs.lstatSync(target).isSymbolicLink()).toBe(true);
+		expect(fs.readFileSync(real, "utf-8")).toBe('{"hooks":{}}');
+		expect(fs.readdirSync(linkDir)).toEqual(["settings.json"]);
+		expect(fs.readdirSync(realDir)).toEqual(["settings.json"]);
+	});
+
+	it("skips the write when a symlinked target already has the content", () => {
+		const real = path.join(TEST_DIR, "real.json");
+		fs.writeFileSync(real, "{}");
+		const target = path.join(TEST_DIR, "link.json");
+		fs.symlinkSync(real, target);
+
+		expect(writeFileIfChanged(target, "{}", 0o644)).toBe(false);
+
+		expect(fs.lstatSync(target).isSymbolicLink()).toBe(true);
+	});
+
+	it("claims the path when the symlink dangles", () => {
+		const target = path.join(TEST_DIR, "dangling.json");
+		fs.symlinkSync(path.join(TEST_DIR, "gone.json"), target);
+
+		expect(writeFileIfChanged(target, "{}", 0o644)).toBe(true);
+
+		expect(fs.readFileSync(target, "utf-8")).toBe("{}");
+		expect(fs.readdirSync(TEST_DIR)).toEqual(["dangling.json"]);
+	});
+
 	it("cleans up the temp file when the write fails", () => {
 		const target = path.join(TEST_DIR, "missing-dir", "file");
 
