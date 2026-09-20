@@ -10615,9 +10615,6 @@ msgstr "Se abrió un espacio de trabajo existente"
 msgid "opened PR #841 for review"
 msgstr "abrió la PR #841 para revisión"
 
-msgid "Opening TestFlight…"
-msgstr "Abriendo TestFlight…"
-
 msgid "Opening worktree..."
 msgstr "Abriendo el worktree..."
 

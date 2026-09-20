@@ -10615,9 +10615,6 @@ msgstr "Открыта существующая рабочая область"
 msgid "opened PR #841 for review"
 msgstr "открыл PR #841 на ревью"
 
-msgid "Opening TestFlight…"
-msgstr "Открываем TestFlight…"
-
 msgid "Opening worktree..."
 msgstr "Открытие worktree..."
 

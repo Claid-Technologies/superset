@@ -10615,9 +10615,6 @@ msgstr "已打开现有工作区"
 msgid "opened PR #841 for review"
 msgstr "开了PR #841待审查"
 
-msgid "Opening TestFlight…"
-msgstr "正在打开TestFlight…"
-
 msgid "Opening worktree..."
 msgstr "正在打开worktree..."
 

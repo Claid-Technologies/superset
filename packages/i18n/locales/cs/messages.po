@@ -10615,9 +10615,6 @@ msgstr "Otevřen existující pracovní prostor"
 msgid "opened PR #841 for review"
 msgstr "otevřel PR #841 k revizi"
 
-msgid "Opening TestFlight…"
-msgstr "Otevírám TestFlight…"
-
 msgid "Opening worktree..."
 msgstr "Otevírám worktree..."
 

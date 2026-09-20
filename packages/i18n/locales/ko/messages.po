@@ -10615,9 +10615,6 @@ msgstr "기존 워크스페이스를 열었습니다"
 msgid "opened PR #841 for review"
 msgstr "리뷰용 PR #841 생성"
 
-msgid "Opening TestFlight…"
-msgstr "TestFlight를 여는 중…"
-
 msgid "Opening worktree..."
 msgstr "worktree를 여는 중..."
 

@@ -10615,9 +10615,6 @@ msgstr "Mevcut çalışma alanı açıldı"
 msgid "opened PR #841 for review"
 msgstr "inceleme için PR #841 açtı"
 
-msgid "Opening TestFlight…"
-msgstr "TestFlight açılıyor…"
-
 msgid "Opening worktree..."
 msgstr "Worktree açılıyor..."
 

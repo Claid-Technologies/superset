@@ -10615,9 +10615,6 @@ msgstr "既存のワークスペースを開きました"
 msgid "opened PR #841 for review"
 msgstr "レビュー用にPR #841を作成"
 
-msgid "Opening TestFlight…"
-msgstr "TestFlightを開いています…"
-
 msgid "Opening worktree..."
 msgstr "ワークツリーを開いています..."
 

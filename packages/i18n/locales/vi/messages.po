@@ -10615,9 +10615,6 @@ msgstr "Đã mở workspace có sẵn"
 msgid "opened PR #841 for review"
 msgstr "đã mở PR #841 để review"
 
-msgid "Opening TestFlight…"
-msgstr "Đang mở TestFlight…"
-
 msgid "Opening worktree..."
 msgstr "Đang mở worktree..."
 
