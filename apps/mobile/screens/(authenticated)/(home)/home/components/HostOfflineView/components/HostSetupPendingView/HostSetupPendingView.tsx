@@ -33,7 +33,7 @@ export function HostSetupPendingView({ hostName }: { hostName: string }) {
 	);
 
 	return (
-		<View className="flex-1 items-center justify-center gap-6 px-8">
+		<View className="grow items-center justify-center gap-6 px-8">
 			<View className="bg-muted size-14 items-center justify-center rounded-full">
 				<Icon
 					as={Laptop}
@@ -69,7 +69,11 @@ export function HostSetupPendingView({ hostName }: { hostName: string }) {
 						<Trans>Waiting for it to connect…</Trans>
 					</Text>
 				</View>
-				<Button variant="link" onPress={() => openUrl(REMOTE_ACCESS_DOCS_URL)}>
+				<Button
+					className="h-auto min-h-10"
+					variant="link"
+					onPress={() => openUrl(REMOTE_ACCESS_DOCS_URL)}
+				>
 					<Text>
 						<Trans>Read the setup guide</Trans>
 					</Text>

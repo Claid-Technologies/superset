@@ -13,7 +13,7 @@ export function HostPresenceUnknownView({ hostName }: { hostName: string }) {
 	const [checking, setChecking] = useState(false);
 
 	return (
-		<View className="flex-1 items-center justify-center gap-6 px-8">
+		<View className="grow items-center justify-center gap-6 px-8">
 			<View className="bg-muted size-14 items-center justify-center rounded-full">
 				<Icon
 					as={WifiOff}
@@ -33,6 +33,7 @@ export function HostPresenceUnknownView({ hostName }: { hostName: string }) {
 				</Text>
 			</View>
 			<Button
+				className="h-auto min-h-10"
 				variant="secondary"
 				disabled={checking}
 				onPress={() => {

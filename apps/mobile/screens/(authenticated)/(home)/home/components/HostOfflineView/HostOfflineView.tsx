@@ -38,7 +38,7 @@ export function HostOfflineView({
 	const lastSeen = formatRelativeTime(getLastSeenTime(lastSeenAt, now), now);
 
 	return (
-		<View className="flex-1 items-center justify-center gap-6 px-8">
+		<View className="grow items-center justify-center gap-6 px-8">
 			<View className="bg-muted size-14 items-center justify-center rounded-full">
 				<Icon
 					as={CloudOff}
@@ -78,6 +78,7 @@ export function HostOfflineView({
 			</View>
 			<View className="items-center gap-1">
 				<Button
+					className="h-auto min-h-10"
 					variant="secondary"
 					disabled={checking}
 					onPress={() => {
@@ -93,6 +94,7 @@ export function HostOfflineView({
 				</Button>
 				{hosts.length > 1 ? (
 					<Button
+						className="h-auto min-h-10"
 						variant="link"
 						onPress={() => router.push("/(authenticated)/(home)/filter/scope")}
 					>

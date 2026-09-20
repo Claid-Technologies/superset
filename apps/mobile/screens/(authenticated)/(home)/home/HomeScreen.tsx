@@ -13,6 +13,7 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import {
 	ActivityIndicator,
 	RefreshControl,
+	ScrollView,
 	useWindowDimensions,
 	View,
 } from "react-native";
@@ -664,10 +665,19 @@ export function HomeScreen() {
 					}}
 				>
 					{scopeBar}
-					<HostOfflineView
-						hostName={selectedHost.name}
-						lastSeenAt={selectedHost.lastSeenAt}
-					/>
+					<ScrollView
+						className="flex-1"
+						contentContainerStyle={{
+							flexGrow: 1,
+							paddingTop: 24,
+							paddingBottom: 112,
+						}}
+					>
+						<HostOfflineView
+							hostName={selectedHost.name}
+							lastSeenAt={selectedHost.lastSeenAt}
+						/>
+					</ScrollView>
 				</View>
 			) : (
 				<LegendList
