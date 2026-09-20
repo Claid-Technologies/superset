@@ -3,7 +3,7 @@
 import { Trans, useLingui } from "@lingui/react/macro";
 import { COMPANY } from "@superset/shared/constants";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaApple, FaCloud, FaGithub } from "react-icons/fa";
 import { DownloadButton } from "../DownloadButton";
 import { WaitlistModal } from "../WaitlistModal";
@@ -14,6 +14,15 @@ import { TypewriterText } from "./components/TypewriterText";
 
 export function HeroSection() {
 	const [isWaitlistOpen, setIsWaitlistOpen] = useState(false);
+	const [isIOS, setIsIOS] = useState(false);
+
+	useEffect(() => {
+		setIsIOS(
+			/iphone|ipad|ipod/i.test(navigator.userAgent) ||
+				(/macintosh/i.test(navigator.userAgent) &&
+					navigator.maxTouchPoints > 1),
+		);
+	}, []);
 	const { t, i18n } = useLingui();
 
 	const headlineSegments = [
@@ -110,7 +119,11 @@ export function HeroSection() {
 							/>
 							<Link
 								href={
-									i18n.locale === "en" ? "/mobile" : `/${i18n.locale}/mobile`
+									isIOS
+										? COMPANY.APP_STORE_URL
+										: i18n.locale === "en"
+											? "/mobile"
+											: `/${i18n.locale}/mobile`
 								}
 								aria-label={t({ message: "Superset for iPhone" })}
 								className="flex size-11 shrink-0 items-center justify-center border border-border bg-background text-foreground transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand sm:size-12"
