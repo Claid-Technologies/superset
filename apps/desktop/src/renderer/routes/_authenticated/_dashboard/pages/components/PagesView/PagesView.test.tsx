@@ -87,12 +87,15 @@ mock.module("./hooks/useCreatePageWithAgent", () => ({
 	}),
 }));
 
-mock.module("./hooks/usePageFavorites", () => ({
-	usePageFavorites: () => ({
-		favoritePageIdSet: new Set<string>(),
-		toggleFavorite: mock(),
+mock.module(
+	"renderer/routes/_authenticated/_dashboard/hooks/usePageFavorites",
+	() => ({
+		usePageFavorites: () => ({
+			favoritePageIdSet: new Set<string>(),
+			toggleFavorite: mock(),
+		}),
 	}),
-}));
+);
 
 mock.module(
 	"renderer/routes/_authenticated/_dashboard/hooks/useOpenPage",
@@ -110,8 +113,10 @@ function renderView(scope: "all" | "pinned" = "all") {
 		<PagesView
 			search=""
 			scope={scope}
+			authorId={null}
 			onSearchChange={mock()}
 			onScopeChange={onScopeChange}
+			onAuthorChange={mock()}
 		/>,
 	);
 }

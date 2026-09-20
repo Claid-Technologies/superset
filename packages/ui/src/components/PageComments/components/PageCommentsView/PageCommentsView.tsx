@@ -16,9 +16,9 @@ import {
 } from "@superset/shared/page-zoom";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useComments } from "../../providers/CommentProvider";
+import { PageFrame } from "../PageFrame";
 import { CommentBubble, pinClassName } from "./components/CommentBubble";
 import { CommentPopover } from "./components/CommentPopover";
-import { PageFrame } from "./components/PageFrame";
 import {
 	type PinPoint,
 	pinPointOf,
@@ -270,10 +270,9 @@ export function PageCommentsView({
 		send({
 			type: "track",
 			anchors: [
-				...unresolvedThreads.map((thread) => ({
-					id: thread.id,
-					anchor: thread.anchor,
-				})),
+				...unresolvedThreads.flatMap((thread) =>
+					thread.anchor ? [{ id: thread.id, anchor: thread.anchor }] : [],
+				),
 				...(draft ? [{ id: PENDING_ANCHOR_ID, anchor: draft.anchor }] : []),
 			],
 		});
@@ -283,7 +282,7 @@ export function PageCommentsView({
 		const out: { id: string; point: PinPoint }[] = [];
 		for (const thread of unresolvedThreads) {
 			const rect = rects[thread.id];
-			if (rect)
+			if (rect && thread.anchor)
 				out.push({ id: thread.id, point: pinPointOf(rect, thread.anchor) });
 		}
 		return out;

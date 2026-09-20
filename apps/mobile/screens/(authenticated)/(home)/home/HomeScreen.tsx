@@ -1,10 +1,14 @@
 import { LegendList } from "@legendapp/list/react-native";
 import { useLingui } from "@lingui/react/macro";
 import { i18n } from "@superset/i18n";
+import { FEATURE_FLAGS } from "@superset/shared/constants";
 import { useQueryClient } from "@tanstack/react-query";
 import { isAfter } from "date-fns";
 import * as Haptics from "expo-haptics";
 import { Stack, useFocusEffect, useRouter } from "expo-router";
+import { useHeaderHeight } from "expo-router/react-navigation";
+import { Box } from "lucide-react-native";
+import { useFeatureFlag } from "posthog-react-native";
 import { useCallback, useMemo, useRef, useState } from "react";
 import {
 	ActivityIndicator,
@@ -13,6 +17,7 @@ import {
 	View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import {
 	type CloudWorkspaceStatus,
@@ -43,7 +48,7 @@ import { ProjectSectionHeader } from "./components/ProjectSectionHeader";
 import { ScopeBar } from "./components/ScopeBar";
 import { WorkspaceRow } from "./components/WorkspaceRow";
 import { useAgentLiveActivity } from "./hooks/useAgentLiveActivity";
-import { useCloudRepoPrefix } from "./hooks/useCloudRepoPrefixes";
+import { useCloudRepoPrefixes } from "./hooks/useCloudRepoPrefixes";
 import { useFirstPaint } from "./hooks/useFirstPaint";
 import {
 	type TerminalsHost,
@@ -68,6 +73,8 @@ const VIEWABILITY_CONFIG = {
 const MAX_VISIBLE_DIFF_STATS = 20;
 
 const NAVIGATION_BAR_HEIGHT = 44;
+
+const NO_PROJECT_SECTION_ID = "__none";
 
 /**
  * Cloud is a scope of its own, picked from the same chip as your machines,
@@ -130,6 +137,7 @@ export function HomeScreen() {
 	);
 	const { height: windowHeight } = useWindowDimensions();
 	const insets = useSafeAreaInsets();
+	const headerHeight = useHeaderHeight();
 	const queryClient = useQueryClient();
 	const setTargetKey = useNewSessionPreferencesStore(
 		(state) => state.setTargetKey,
@@ -169,10 +177,14 @@ export function HomeScreen() {
 	// app is open. Foreground-only for now: nothing server-side knows an agent
 	// needs attention yet, so the card goes stale (and says so) once the app
 	// closes. ActivityKit push updates are the follow-up that fixes that.
+	const liveActivityEnabled = Boolean(
+		useFeatureFlag(FEATURE_FLAGS.MOBILE_LIVE_ACTIVITY),
+	);
 	useAgentLiveActivity({
 		terminalsByWorkspace,
 		workspaces,
 		projects,
+		enabled: liveActivityEnabled,
 	});
 	const pullRequests = usePullRequests();
 	const { query: hostsQuery } = useOrgHosts();
@@ -271,16 +283,29 @@ export function HomeScreen() {
 			const projectId =
 				workspace.projectId && knownProjectIds.has(workspace.projectId)
 					? workspace.projectId
-					: "__none";
+					: NO_PROJECT_SECTION_ID;
 			const group = byProject.get(projectId);
 			if (group) group.push(workspace);
 			else byProject.set(projectId, [workspace]);
 		}
 
-		const sections = projects
-			.map((project) => ({
-				project,
-				workspaces: (byProject.get(project.id) ?? []).sort(byPinThenActivity),
+		const sections = [
+			...projects.map((project) => ({
+				projectId: project.id,
+				name: project.name,
+				iconUrl: project.iconUrl,
+			})),
+			{
+				projectId: NO_PROJECT_SECTION_ID,
+				name: t({ message: "No project" }),
+				iconUrl: null,
+			},
+		]
+			.map((section) => ({
+				...section,
+				workspaces: (byProject.get(section.projectId) ?? []).sort(
+					byPinThenActivity,
+				),
 			}))
 			// An empty section is a row that says nothing and does nothing — the
 			// composer's project picker is where you start work in a project that
@@ -296,40 +321,25 @@ export function HomeScreen() {
 				const aTs = aFirst ? activityTs(aFirst) : 0;
 				const bTs = bFirst ? activityTs(bFirst) : 0;
 				if (aTs !== bTs) return bTs - aTs;
-				return a.project.name.localeCompare(b.project.name);
+				return a.name.localeCompare(b.name);
 			});
 
 		for (const section of sections) {
 			const isCollapsed =
 				collapseHydrated &&
 				!!collapsed[
-					collapsedProjectKey(selectedHost?.machineId ?? "", section.project.id)
+					collapsedProjectKey(selectedHost?.machineId ?? "", section.projectId)
 				];
 			items.push({
 				kind: "projectHeader",
-				projectId: section.project.id,
-				name: section.project.name,
-				iconUrl: section.project.iconUrl,
+				projectId: section.projectId,
+				name: section.name,
+				iconUrl: section.iconUrl,
 				count: section.workspaces.length,
 				collapsed: isCollapsed,
 			});
 			if (isCollapsed) continue;
 			for (const workspace of section.workspaces) {
-				items.push({ kind: "workspace", workspace });
-			}
-		}
-
-		// Workspaces whose project the host no longer reports still need a home.
-		const orphans = (byProject.get("__none") ?? []).sort(byPinThenActivity);
-		if (orphans.length) {
-			items.push({
-				kind: "projectHeader",
-				projectId: "__none",
-				name: t({ message: "No project" }),
-				count: orphans.length,
-				collapsed: false,
-			});
-			for (const workspace of orphans) {
 				items.push({ kind: "workspace", workspace });
 			}
 		}
@@ -458,7 +468,7 @@ export function HomeScreen() {
 	// Projects are fully local: PR rows are matched by repo coordinates
 	// parsed from the PR URL (cloud repo UUIDs aren't known host-side).
 	// Cloud rows' projects come from the API instead.
-	const cloudRepoPrefix = useCloudRepoPrefix();
+	const cloudRepoPrefixes = useCloudRepoPrefixes();
 	const repoPrefixesByProject = useMemo(
 		() =>
 			new Map<string, string | null>([
@@ -484,10 +494,16 @@ export function HomeScreen() {
 			if (item.kind === "projectHeader") {
 				// Only a machine's projects get headers — Cloud is a flat scope.
 				const machineId = selectedHost?.machineId;
+				const isNoProject = item.projectId === NO_PROJECT_SECTION_ID;
 				return (
 					<ProjectSectionHeader
 						name={item.name}
 						iconUrl={item.iconUrl}
+						icon={
+							isNoProject ? (
+								<Icon as={Box} className="text-muted-foreground size-4" />
+							) : undefined
+						}
 						count={item.count}
 						collapsed={item.collapsed}
 						onToggle={() => {
@@ -495,12 +511,15 @@ export function HomeScreen() {
 							toggleProject(machineId ?? "", item.projectId);
 						}}
 						onNewWorkspace={
-							// "__none" collects orphans of projects the host no longer
-							// reports — there is nothing to create into.
-							machineId && item.projectId !== "__none"
+							machineId
 								? () => {
 										void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-										setTargetKey(targetKeyFor(item.projectId, machineId));
+										setTargetKey(
+											targetKeyFor(
+												isNoProject ? null : item.projectId,
+												machineId,
+											),
+										);
 										requestComposerFocus();
 									}
 								: undefined
@@ -510,7 +529,7 @@ export function HomeScreen() {
 			}
 			const { workspace, cloudStatus } = item;
 			const repoPrefix = cloudStatus
-				? cloudRepoPrefix
+				? (cloudRepoPrefixes.get(workspace.id) ?? null)
 				: workspace.projectId
 					? repoPrefixesByProject.get(workspace.projectId)
 					: undefined;
@@ -535,7 +554,7 @@ export function HomeScreen() {
 		},
 		[
 			pullRequestsByRepoBranch,
-			cloudRepoPrefix,
+			cloudRepoPrefixes,
 			repoPrefixesByProject,
 			diffStats,
 			cache,
@@ -581,7 +600,7 @@ export function HomeScreen() {
 				logo={activeOrganization?.logo}
 				onPress={() => {
 					void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-					router.push("/(authenticated)/(home)/organizations");
+					router.push("/(authenticated)/settings");
 				}}
 			/>
 			{/* Search opens as a sheet rather than a search bar in this header: on
@@ -591,6 +610,7 @@ export function HomeScreen() {
 			    offline — its list isn't shown, so there is nothing to search. */}
 			<Stack.Screen
 				options={{
+					headerTransparent: true,
 					headerTitle: notice
 						? () => (
 								<HeaderNotice
@@ -623,6 +643,7 @@ export function HomeScreen() {
 					style={{
 						minHeight:
 							windowHeight - insets.top - NAVIGATION_BAR_HEIGHT - insets.bottom,
+						paddingTop: headerHeight,
 					}}
 				>
 					{scopeBar}
