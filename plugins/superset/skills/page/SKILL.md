@@ -341,7 +341,7 @@ for a pipe into `grep`. Two flags change that: `--limit <1-200>` returns a
 single batch, and `--cursor` continues from where a batch stopped.
 
 They also change the JSON. Under `--json`, a plain `list` is a bare array, but
-passing either flag wraps it as `{ items, nextCursor }` — feed that `nextCursor`
+passing either flag wraps it as `{ items, nextCursor }`. Feed that `nextCursor`
 back as `--cursor` until it comes back `null`. Parsing the output? Either don't
 pass the flags, or handle the envelope. The other two modes are unaffected: the
 default table looks the same and tells you when there's more, and `--quiet`
