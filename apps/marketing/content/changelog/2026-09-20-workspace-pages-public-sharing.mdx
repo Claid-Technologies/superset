@@ -1,5 +1,5 @@
 ---
-title: Pages in your workspace and public sharing
+title: Faster iOS sessions, clearer workspaces, and Pages beside your code
 date: 2026-09-20
 image: /changelog/2026-09-20-workspace-pages-hero.png
 ---
@@ -24,6 +24,17 @@ Share a report or design with someone outside your team without asking them to s
 
 Docs: [Pages](https://docs.superset.sh/docs/pages).
 
+## Faster Sessions on iOS <PRBadge url="https://github.com/superset-sh/superset/pull/7552" /> <PRBadge url="https://github.com/superset-sh/superset/pull/7604" />
+
+Switch between your four most recent terminal sessions in a workspace without reconnecting, or start an agent without a repository from **Composer → Project picker → No project**.
+
+## Clearer Workspace Names <PRBadge url="https://github.com/superset-sh/superset/pull/7575" /> <PRBadge url="https://github.com/superset-sh/superset/pull/7650" />
+
+Tell pinned workspaces apart by their project name, and find new worktrees in folders named after the project.
+
+- Pinned rows show the project before the workspace name, contributed by [@pdolega](https://github.com/pdolega)
+- Drag a row in a sorted or filtered sidebar to see how to switch to manual ordering
+
 ## Improvements
 
 - **Find a teammate's pages** - filter by author beside the search box on the Pages screen <PRBadge url="https://github.com/superset-sh/superset/pull/7547" />
@@ -35,12 +46,7 @@ superset pages publish report.html --title "Weekly report"
 superset pages publish report.html --page <page-id>
 ```
 
-- **Pinned workspaces name their project** - tell two pinned `local` workspaces apart at a glance in the sidebar, contributed by [@pdolega](https://github.com/pdolega) <PRBadge url="https://github.com/superset-sh/superset/pull/7575" />
-- **Readable worktree folders** - new worktrees use the project name in their folder path; dragging a sorted or filtered sidebar explains how to enable manual ordering <PRBadge url="https://github.com/superset-sh/superset/pull/7650" />
 - **Pro setup checklist** - set up remote access and automations from the sidebar checklist; reopen it from Help after dismissing it <PRBadge url="https://github.com/superset-sh/superset/pull/7494" />
-- **No project on iOS** - start an agent without choosing a repository by selecting **No project** in the composer's project picker <PRBadge url="https://github.com/superset-sh/superset/pull/7604" />
-- **Faster iOS terminal switching** - the four most recent sessions in a workspace stay connected, so switching tabs no longer reconnects each time <PRBadge url="https://github.com/superset-sh/superset/pull/7552" />
-- **Experimental: Slack follow-ups** - enabled teams can reply in an agent's thread without another mention, queue replies while it works, and stop a turn with `!stop` <PRBadge url="https://github.com/superset-sh/superset/pull/7583" /> <PRBadge url="https://github.com/superset-sh/superset/pull/7586" /> <PRBadge url="https://github.com/superset-sh/superset/pull/7594" />
 
 ---
 
