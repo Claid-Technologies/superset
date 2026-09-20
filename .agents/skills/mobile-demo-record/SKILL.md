@@ -50,6 +50,7 @@ xcrun simctl openurl $U "superset://expo-development-client/?url=http%3A%2F%2Flo
 - `simctl boot` does not launch Simulator.app. Keep it that way.
 - The status bar override resets on shutdown. Reapply it after every boot.
 - No dev client installed, or it crashes on launch after a native dependency change? Rebuild:
+  From `apps/mobile` (`cd apps/mobile` from the repo root), run
   `bunx expo prebuild -p ios`, then `xcodebuild -workspace ios/Superset.xcworkspace -scheme
   Superset -configuration Debug -sdk iphonesimulator -derivedDataPath <scratch>/dd`
   (about 10 minutes), then `xcrun simctl install $U <path to Superset.app>`. Set
@@ -108,9 +109,13 @@ film comments through "Show all comments" and Reply instead.
 
 ## Capturing
 
+Run capture commands from a scratch directory. Use an absolute path to the Maestro flow
+when recording outside the repo.
+
 ```bash
+mkdir -p raw shots cfr
 xcrun simctl io $U recordVideo --codec h264 --force raw/01-story.mov & REC=$!
-maestro test apps/mobile/.maestro/flows/<story>.yml
+maestro test <repo>/apps/mobile/.maestro/flows/<story>.yml
 kill -INT $REC; wait $REC
 xcrun simctl io $U screenshot shots/01.png
 ```
@@ -121,6 +126,8 @@ xcrun simctl io $U screenshot shots/01.png
   `ffmpeg -i raw/01-story.mov -vf fps=30 -an -c:v libx264 -crf 14 -pix_fmt yuv420p cfr/01.mp4`.
 - A screenshot after a `sleep` never catches a sub-second flash. Record, then extract frames
   with `ffmpeg -vf fps=10`.
+- Before changing simulator variants, record the existing appearance, content size, and
+  `AppleLanguages` value (including whether it was unset) so cleanup can restore them.
 - Variants: `simctl ui $U appearance dark`, `simctl ui $U content_size extra-extra-extra-large`,
   and `simctl spawn $U defaults write "Apple Global Domain" AppleLanguages -array de-DE`
   followed by a relaunch.
@@ -129,6 +136,13 @@ For a framed demo video, use the shared `mobile-demo-film` skill after recording
 
 ## Cleanup
 
-Delete seeded rows (subscription, hosts, demo sessions), stop the three terminals, and
-`xcrun simctl shutdown $U`. Recordings and screenshots stay in the scratch directory unless the
-user asks for them in the repo.
+Delete only the rows and objects created for this recording: subscriptions, hosts, demo
+sessions, and, for Pages, published pages, comments, and their objects in the S3 stand-in and
+local R2. Restore any organization or user names changed for the demo.
+
+Stop every service started for the recording, including the usercontent Worker and storage
+stand-in when used. Restore the simulator's prior appearance, content size, and
+`AppleLanguages` value (remove the override if it was originally unset), revert any installed
+app transport-security changes, clear status-bar overrides, then `xcrun simctl shutdown $U`.
+Recordings and screenshots stay in the scratch directory unless the user asks for them in
+the repo.
