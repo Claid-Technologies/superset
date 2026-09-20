@@ -125,6 +125,8 @@ xcrun simctl io $U screenshot shots/01.png
   and `simctl spawn $U defaults write "Apple Global Domain" AppleLanguages -array de-DE`
   followed by a relaunch.
 
+For a framed demo video, use the shared `mobile-demo-film` skill after recording.
+
 ## Cleanup
 
 Delete seeded rows (subscription, hosts, demo sessions), stop the three terminals, and
