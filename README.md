@@ -45,7 +45,13 @@ Superset runs CLI-based coding agents in parallel across isolated git worktrees,
 
 Wait less, ship more.
 
-## Superset for iPhone
+## Features
+
+<table>
+<tr>
+<td width="50%" valign="middle">
+
+### Superset for iPhone
 
 Remotely control Claude Code, Codex, and other terminal agents running on your connected computer. Pick up the same workspaces and terminal sessions, send follow-up prompts, review diffs, and merge PRs from your iPhone.
 
@@ -53,9 +59,11 @@ Requires **Superset Pro**, **iOS 26 or later**, and a connected computer with **
 
 [**Download on the App Store**](https://apps.apple.com/us/app/id6788926383) &nbsp;&bull;&nbsp; [Learn more →](https://superset.sh/mobile)
 
-## Features
-
-<table>
+</td>
+<td width="50%">
+  <a href="https://superset.sh/mobile"><img src="apps/marketing/public/images/blog/superset-mobile/hero.png" alt="Superset for iPhone showing a live coding agent terminal session" width="100%" /></a>
+</td>
+</tr>
 <tr>
 <td width="50%" valign="middle">
 
