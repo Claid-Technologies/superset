@@ -310,6 +310,7 @@ export const usageRouter = router({
 					const workspaceRows = ctx.db
 						.select({
 							worktreePath: workspaces.worktreePath,
+							rootPath: workspaces.rootPath,
 							name: workspaces.name,
 							projectId: workspaces.projectId,
 						})
@@ -331,7 +332,7 @@ export const usageRouter = router({
 					);
 					const cwdLabels = [
 						...workspaceRows.map((row) => ({
-							prefix: row.worktreePath,
+							prefix: row.rootPath ?? row.worktreePath,
 							label: row.name || basename(row.worktreePath),
 							kind: "workspace" as const,
 							group: row.projectId

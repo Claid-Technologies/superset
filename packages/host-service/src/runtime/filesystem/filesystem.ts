@@ -49,7 +49,25 @@ export class WorkspaceFilesystemManager {
 			throw new WorkspaceNotFoundError(`Workspace not found: ${workspaceId}`);
 		}
 
+		return workspace.rootPath ?? workspace.worktreePath;
+	}
+
+	resolveWorkspacePrimaryWorktree(workspaceId: string): string {
+		const workspace = this.db.query.workspaces
+			.findFirst({ where: eq(workspaces.id, workspaceId) })
+			.sync();
+
+		if (!workspace) {
+			throw new WorkspaceNotFoundError(`Workspace not found: ${workspaceId}`);
+		}
+
 		return workspace.worktreePath;
+	}
+
+	getServiceForPrimaryWorktree(workspaceId: string): FsHostService {
+		return this.getServiceForRootPath(
+			this.resolveWorkspacePrimaryWorktree(workspaceId),
+		);
 	}
 
 	resolveProjectRoot(projectId: string): string {

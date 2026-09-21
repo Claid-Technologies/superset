@@ -791,7 +791,7 @@ export class GitWatcher {
 		let iterator: AsyncIterator<{ events: FsWatchEvent[] }> | null = null;
 
 		try {
-			const service = this.filesystem.getServiceForWorkspace(workspaceId);
+			const service = this.filesystem.getServiceForPrimaryWorktree(workspaceId);
 			const stream = service.watchPath({
 				absolutePath: worktreePath,
 			});
