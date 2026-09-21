@@ -24,6 +24,7 @@ import { track } from "@/lib/analytics";
 import { useIsMobileLaunched } from "../../providers/MobileLaunchProvider";
 import { Soc2Badge } from "../Soc2Badge";
 import { SocialLinks } from "../SocialLinks";
+import { StoreBadges } from "../StoreBadges";
 
 function SupersetLogo() {
 	return (
@@ -183,6 +184,10 @@ export function Footer({ locale }: { locale?: SupportedLocale }) {
 							<SupersetLogo />
 						</Link>
 						<SocialLinks className="-ml-2" />
+						{isMobileLaunched && (
+							// TODO: Use the Google Play listing when Android launches; until then, link to signup.
+							<StoreBadges source="footer" androidHref="/mobile#android" />
+						)}
 						<a
 							href={COMPANY.TRUST_URL}
 							target="_blank"
