@@ -80,9 +80,6 @@ export default async function MobilePage() {
 						<h2 className="flex items-center gap-2 font-mono text-brand text-xs uppercase tracking-wider">
 							<FaAndroid aria-hidden="true" className="size-4" />
 							Android
-							<span className="border border-border px-2 py-0.5 text-muted-foreground normal-case tracking-normal">
-								<Trans>Coming soon</Trans>
-							</span>
 						</h2>
 						<p className="mt-3 font-light text-foreground text-xl">
 							<Trans>
