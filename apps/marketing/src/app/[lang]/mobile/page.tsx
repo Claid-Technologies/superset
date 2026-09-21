@@ -10,6 +10,7 @@ import { initServerI18n } from "@/app/i18n-server";
 import { isMobileLaunched } from "@/lib/site-flags";
 import { AppStoreQr } from "./components/AppStoreQr";
 import { MobileFeatures } from "./components/MobileFeatures";
+import { MobileTestimonials } from "./components/MobileTestimonials";
 import { MobileWaitlist } from "./components/MobileWaitlist";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -73,6 +74,8 @@ export default async function MobilePage() {
 				<div className="mt-16 sm:mt-24">
 					<MobileFeatures />
 				</div>
+
+				<MobileTestimonials />
 
 				<section
 					id="android"

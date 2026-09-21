@@ -1250,6 +1250,9 @@ msgstr "Полная перестилизация: плотнее строки, 
 msgid "A gateway is signed in with an API key."
 msgstr "Шлюз авторизован с помощью ключа API."
 
+msgid "A guilty habit I have is waking up with an idea in the middle of the night and opening the app. By morning it's ready for review."
+msgstr "У меня есть грешок: проснуться посреди ночи с идеей и открыть приложение. К утру всё готово к проверке."
+
 msgid "A host must have at least one owner."
 msgstr "У хоста должен быть хотя бы один владелец."
 
@@ -3502,6 +3505,9 @@ msgstr "Облачные песочницы не включены для {accoun
 msgid "Cloud workspace"
 msgstr "Облачная рабочая область"
 
+msgid "Co-founder & CTO, TrainLoop (YC W25)"
+msgstr "Сооснователь и технический директор, TrainLoop (YC W25)"
+
 msgid "Code"
 msgstr "Код"
 
@@ -4747,6 +4753,9 @@ msgstr "Создание worktree"
 
 msgid "Creating..."
 msgstr "Создание..."
+
+msgid "Creative Manager, Valid"
+msgstr "Креативный менеджер, Valid"
 
 msgid "Credentials stay on the server"
 msgstr "Учётные данные остаются на сервере"
@@ -6886,6 +6895,12 @@ msgstr "Вперёд"
 msgid "Found 12 tooltip call sites"
 msgstr "Найдено 12 мест вызова tooltip"
 
+msgid "Founder & CEO, WowMakers"
+msgstr "Основатель и генеральный директор, WowMakers"
+
+msgid "Founding Engineer"
+msgstr "Инженер-основатель"
+
 msgid "Free"
 msgstr "Бесплатно"
 
@@ -7149,6 +7164,9 @@ msgstr "Группировать новые ветки в папке."
 
 msgid "Growth"
 msgstr "Рост"
+
+msgid "GTM & AI Automation Architect, Mistral AI"
+msgstr "Архитектор GTM и ИИ-автоматизации, Mistral AI"
 
 msgid "Guide"
 msgstr "Руководство"
@@ -7455,6 +7473,12 @@ msgstr "Люди пишут каждую строку. Инструменты к
 
 msgid "I already use an IDE like Cursor, is this for me?"
 msgstr "Я уже пользуюсь IDE вроде Cursor — это для меня?"
+
+msgid "I can be in a café with my coffee while the work keeps moving forward."
+msgstr "Я могу сидеть в кафе с чашкой кофе, а работа тем временем продолжается."
+
+msgid "I start my morning walks with an idea, and end with a pull request."
+msgstr "Я начинаю утреннюю прогулку с идеей, а заканчиваю с пул-реквестом."
 
 msgid "I'm #{rank} on the {company} leaderboard with {tokens} tokens of agent usage."
 msgstr "Я на #{rank} месте в рейтинге {company} с {tokens} токенами использования агентов."
@@ -10017,6 +10041,9 @@ msgstr "сейчас"
 msgid "Now"
 msgstr "Сейчас"
 
+msgid "Now I open the workspace on my phone, type the one line it's waiting for, and it carries on."
+msgstr "Теперь я открываю рабочее пространство на телефоне, ввожу ту самую строку, которую он ждёт, и работа продолжается."
+
 #. placeholder {0}: versions.expected
 #. placeholder {1}: versions.running
 msgid "Now running {0} (was {1}). All sessions preserved."
@@ -10916,6 +10943,9 @@ msgstr "Отчасти хроника, отчасти ставка. Первые
 
 msgid "Partial"
 msgstr "Частично"
+
+msgid "Partner, Transpose Platform"
+msgstr "Партнёр, Transpose Platform"
 
 msgid "Passed"
 msgstr "Пройдена"
@@ -14038,6 +14068,9 @@ msgstr "Улучшения стабильности"
 msgid "Stacked"
 msgstr "Стопкой"
 
+msgid "Staff Software Engineer, Vori"
+msgstr "Стафф-инженер-программист, Vori"
+
 msgid "Stage all"
 msgstr "Проиндексировать всё"
 
@@ -14452,6 +14485,9 @@ msgstr "Память Superset"
 msgid "Superset memory · last 5 min"
 msgstr "Память Superset · последние 5 мин"
 
+msgid "Superset mobile gives me the power of my desktop anywhere I go."
+msgstr "Superset mobile даёт мне мощь моего компьютера, где бы я ни был."
+
 msgid "Superset Mobile is here. Learn more"
 msgstr "Мобильный Superset уже здесь. Подробнее"
 
@@ -14494,6 +14530,9 @@ msgstr "Superset работает с любым кодовым агентом с
 
 msgid "superset.sh"
 msgstr "superset.sh"
+
+msgid "Superset's mobile app lets me keep my agents moving and unblock them from anywhere, even when I'm nowhere near my computer."
+msgstr "Мобильное приложение Superset позволяет мне поддерживать работу агентов и помогать им двигаться дальше откуда угодно, даже вдали от компьютера."
 
 msgid "Supervised"
 msgstr "Под присмотром"
@@ -16647,6 +16686,9 @@ msgstr "Что разработчики говорят о Superset"
 msgid "What do you want to do?"
 msgstr "Что нужно сделать?"
 
+msgid "What early users say"
+msgstr "Что говорят первые пользователи"
+
 msgid "What Google shows us for and how much of it is not our own name."
 msgstr "По каким запросам Google показывает нас и какая часть из них не наше имя."
 
@@ -16784,6 +16826,9 @@ msgstr "С подписью"
 
 msgid "with or without attachments"
 msgstr "с вложениями или без"
+
+msgid "With the Superset mobile app, I can address production issues from anywhere."
+msgstr "С мобильным приложением Superset я могу решать проблемы в продакшене откуда угодно."
 
 msgid "Work email"
 msgstr "Рабочая электронная почта"
