@@ -1250,6 +1250,9 @@ msgstr "全面的なデザイン刷新。行はより高密度に、各ワーク
 msgid "A gateway is signed in with an API key."
 msgstr "ゲートウェイは API キーでサインインします。"
 
+msgid "A guilty habit I have is waking up with an idea in the middle of the night and opening the app. By morning it's ready for review."
+msgstr "夜中にアイデアが浮かんで目が覚めると、ついアプリを開いてしまいます。朝にはレビューできる状態になっています。"
+
 msgid "A host must have at least one owner."
 msgstr "ホストには少なくとも1人のオーナーが必要です。"
 
@@ -3502,6 +3505,9 @@ msgstr "クラウドサンドボックスは {account} では有効になって�
 msgid "Cloud workspace"
 msgstr "クラウドワークスペース"
 
+msgid "Co-founder & CTO, TrainLoop (YC W25)"
+msgstr "共同創業者兼CTO、TrainLoop (YC W25)"
+
 msgid "Code"
 msgstr "コード"
 
@@ -4747,6 +4753,9 @@ msgstr "ワークツリーを作成中"
 
 msgid "Creating..."
 msgstr "作成中..."
+
+msgid "Creative Manager, Valid"
+msgstr "クリエイティブマネージャー、Valid"
 
 msgid "Credentials stay on the server"
 msgstr "認証情報はサーバー上に保持されます"
@@ -6772,9 +6781,6 @@ msgstr "フォルダ表示"
 msgid "Folders to check out into new worktrees, one per line, relative to the repo root. Files at the root are always included. Empty checks out everything."
 msgstr "新しいワークツリーにチェックアウトするフォルダを、リポジトリルートからの相対パスで1行に1つずつ。ルートのファイルは常に含まれます。空欄ですべてをチェックアウトします。"
 
-msgid "Follow every session"
-msgstr "すべてのセッションを追跡"
-
 msgid "FOLLOW ON X"
 msgstr "Xでフォロー"
 
@@ -6885,6 +6891,12 @@ msgstr "進む"
 
 msgid "Found 12 tooltip call sites"
 msgstr "tooltipの呼び出し元を12か所検出"
+
+msgid "Founder & CEO, WowMakers"
+msgstr "創業者兼CEO、WowMakers"
+
+msgid "Founding Engineer"
+msgstr "創業エンジニア"
 
 msgid "Free"
 msgstr "Free"
@@ -7149,6 +7161,9 @@ msgstr "新しいブランチをフォルダにまとめます。"
 
 msgid "Growth"
 msgstr "グロース"
+
+msgid "GTM & AI Automation Architect, Mistral AI"
+msgstr "GTM・AI自動化アーキテクト、Mistral AI"
 
 msgid "Guide"
 msgstr "ガイド"
@@ -7455,6 +7470,12 @@ msgstr "人間が全行を書きます。ツールはコンパイルし、lint�
 
 msgid "I already use an IDE like Cursor, is this for me?"
 msgstr "すでにCursorのようなIDEを使っています。それでも役に立ちますか?"
+
+msgid "I can be in a café with my coffee while the work keeps moving forward."
+msgstr "カフェでコーヒーを飲んでいる間も、作業は進み続けます。"
+
+msgid "I start my morning walks with an idea, and end with a pull request."
+msgstr "朝の散歩をアイデアとともに始め、プルリクエストとともに終えます。"
 
 msgid "I'm #{rank} on the {company} leaderboard with {tokens} tokens of agent usage."
 msgstr "{company}のリーダーボードで、エージェント使用量{tokens}トークン、{rank}位です。"
@@ -8149,9 +8170,6 @@ msgstr "起動"
 
 msgid "Launch agents across features, bug fixes, and refactors, all in parallel. Status at a glance shows which agents are working, which are blocked, and which are waiting on you."
 msgstr "機能開発、バグ修正、リファクタリングにまたがってエージェントを並列に起動できます。どのエージェントが作業中で、どれがブロックされ、どれがあなたの返事を待っているかが一目で分かります。"
-
-msgid "Launch an agent on any connected machine the moment an idea lands. Every session gets its own isolated workspace."
-msgstr "アイデアが浮かんだその瞬間に、接続済みのどのマシンでもエージェントを起動。セッションごとに独立したワークスペースが用意されます。"
 
 msgid "Launch mode"
 msgstr "起動モード"
@@ -10017,6 +10035,9 @@ msgstr "今"
 msgid "Now"
 msgstr "現在"
 
+msgid "Now I open the workspace on my phone, type the one line it's waiting for, and it carries on."
+msgstr "今ではスマートフォンでワークスペースを開き、待たれている一行を入力すれば、作業が続きます。"
+
 #. placeholder {0}: versions.expected
 #. placeholder {1}: versions.running
 msgid "Now running {0} (was {1}). All sessions preserved."
@@ -10917,6 +10938,9 @@ msgstr "半分は記録、半分は賭けです。最初の2項目はすでに�
 msgid "Partial"
 msgstr "一部通過"
 
+msgid "Partner, Transpose Platform"
+msgstr "パートナー、Transpose Platform"
+
 msgid "Passed"
 msgstr "成功"
 
@@ -11740,9 +11764,6 @@ msgstr "Changelogを読む"
 msgid "Read the changelog →"
 msgstr "Changelogを読む →"
 
-msgid "Read the full diff file by file, check the PR status, and open a terminal when you need the raw output."
-msgstr "差分全体をファイルごとに読み、PR のステータスを確認し、生の出力が必要なときはターミナルを開けます。"
-
 msgid "Read the guide to parallel coding agents"
 msgstr "並列コーディングエージェントのガイドを読む"
 
@@ -12488,9 +12509,6 @@ msgstr "レビューとCIの待ち行列が、エージェントの生んだ余�
 
 msgid "Review becomes the bottleneck"
 msgstr "レビューがボトルネックになる"
-
-msgid "Review before you merge"
-msgstr "マージ前にレビュー"
 
 msgid "Review Dismissed"
 msgstr "レビューが却下されました"
@@ -14038,6 +14056,9 @@ msgstr "安定性の改善"
 msgid "Stacked"
 msgstr "積み重ね"
 
+msgid "Staff Software Engineer, Vori"
+msgstr "スタッフソフトウェアエンジニア、Vori"
+
 msgid "Stage all"
 msgstr "すべてステージ"
 
@@ -14452,6 +14473,9 @@ msgstr "Supersetメモリ"
 msgid "Superset memory · last 5 min"
 msgstr "Supersetメモリ · 直近5分"
 
+msgid "Superset mobile gives me the power of my desktop anywhere I go."
+msgstr "Supersetモバイルは、どこにいてもデスクトップの力を使えるようにしてくれます。"
+
 msgid "Superset Mobile is here"
 msgstr "Superset Mobile が登場"
 
@@ -14494,6 +14518,9 @@ msgstr "SupersetはClaude Code、OpenCode、OpenAI Codexなど、CLIベースの
 
 msgid "superset.sh"
 msgstr "superset.sh"
+
+msgid "Superset's mobile app lets me keep my agents moving and unblock them from anywhere, even when I'm nowhere near my computer."
+msgstr "Supersetのモバイルアプリなら、コンピューターから遠く離れていても、どこからでもエージェントの作業を進め、行き詰まりを解消できます。"
 
 msgid "Supervised"
 msgstr "監督付き"
@@ -16484,9 +16511,6 @@ msgstr "警告"
 msgid "Warning occurred."
 msgstr "警告が発生しました。"
 
-msgid "Watch agents work in real time and step in with a follow-up, a photo, or a dictated message when they need direction."
-msgstr "エージェントの作業をリアルタイムで見守り、指示が必要なときはフォローアップ、写真、音声入力のメッセージで介入できます。"
-
 msgid "Watchers"
 msgstr "ウォッチャー"
 
@@ -16647,6 +16671,9 @@ msgstr "ビルダーが語るSuperset"
 msgid "What do you want to do?"
 msgstr "何をしますか?"
 
+msgid "What early users say"
+msgstr "初期ユーザーの声"
+
 msgid "What Google shows us for and how much of it is not our own name."
 msgstr "Google が私たちをどの検索で表示しているか、そのうち自社名以外がどれだけか。"
 
@@ -16784,6 +16811,9 @@ msgstr "ラベルあり"
 
 msgid "with or without attachments"
 msgstr "添付の有無を問わず"
+
+msgid "With the Superset mobile app, I can address production issues from anywhere."
+msgstr "Supersetのモバイルアプリがあれば、どこからでも本番環境の問題に対応できます。"
 
 msgid "Work email"
 msgstr "勤務先のメールアドレス"

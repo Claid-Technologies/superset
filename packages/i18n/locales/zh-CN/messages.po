@@ -1250,6 +1250,9 @@ msgstr "整体重做样式：更紧凑的行、每个工作区下方的端口和
 msgid "A gateway is signed in with an API key."
 msgstr "网关使用 API 密钥登录。"
 
+msgid "A guilty habit I have is waking up with an idea in the middle of the night and opening the app. By morning it's ready for review."
+msgstr "我有个忍不住的习惯：半夜醒来有了想法，就打开应用。到早上就可以审查了。"
+
 msgid "A host must have at least one owner."
 msgstr "主机必须至少有一位所有者。"
 
@@ -3502,6 +3505,9 @@ msgstr "{account} 尚未启用云端沙箱。请向 Superset 团队申请访问�
 msgid "Cloud workspace"
 msgstr "云端工作区"
 
+msgid "Co-founder & CTO, TrainLoop (YC W25)"
+msgstr "联合创始人兼 CTO，TrainLoop (YC W25)"
+
 msgid "Code"
 msgstr "代码"
 
@@ -4747,6 +4753,9 @@ msgstr "正在创建worktree"
 
 msgid "Creating..."
 msgstr "正在创建..."
+
+msgid "Creative Manager, Valid"
+msgstr "创意经理，Valid"
 
 msgid "Credentials stay on the server"
 msgstr "凭据保留在服务器上"
@@ -6772,9 +6781,6 @@ msgstr "文件夹视图"
 msgid "Folders to check out into new worktrees, one per line, relative to the repo root. Files at the root are always included. Empty checks out everything."
 msgstr "要检出到新worktree的文件夹，每行一个，相对于仓库根目录。根目录下的文件始终包含在内。留空则检出全部。"
 
-msgid "Follow every session"
-msgstr "跟进每个会话"
-
 msgid "FOLLOW ON X"
 msgstr "在X上关注"
 
@@ -6885,6 +6891,12 @@ msgstr "前进"
 
 msgid "Found 12 tooltip call sites"
 msgstr "找到12处tooltip调用"
+
+msgid "Founder & CEO, WowMakers"
+msgstr "创始人兼 CEO，WowMakers"
+
+msgid "Founding Engineer"
+msgstr "创始工程师"
 
 msgid "Free"
 msgstr "免费版"
@@ -7149,6 +7161,9 @@ msgstr "将新分支归入一个文件夹。"
 
 msgid "Growth"
 msgstr "增长"
+
+msgid "GTM & AI Automation Architect, Mistral AI"
+msgstr "GTM 与 AI 自动化架构师，Mistral AI"
 
 msgid "Guide"
 msgstr "指南"
@@ -7455,6 +7470,12 @@ msgstr "每一行都由人写。工具负责编译、检查、报错。键盘就
 
 msgid "I already use an IDE like Cursor, is this for me?"
 msgstr "我已经在用Cursor这样的IDE，这适合我吗？"
+
+msgid "I can be in a café with my coffee while the work keeps moving forward."
+msgstr "我可以在咖啡馆喝咖啡，工作也一直在推进。"
+
+msgid "I start my morning walks with an idea, and end with a pull request."
+msgstr "我带着一个想法开始晨间散步，结束时就有了一个拉取请求。"
 
 msgid "I'm #{rank} on the {company} leaderboard with {tokens} tokens of agent usage."
 msgstr "我在{company}排行榜上排第{rank}名，智能体用量{tokens}个token。"
@@ -8149,9 +8170,6 @@ msgstr "启动"
 
 msgid "Launch agents across features, bug fixes, and refactors, all in parallel. Status at a glance shows which agents are working, which are blocked, and which are waiting on you."
 msgstr "在新功能、缺陷修复和重构上同时启动智能体，全部并行。状态一眼可见：哪些在干活、哪些被阻塞、哪些在等你。"
-
-msgid "Launch an agent on any connected machine the moment an idea lands. Every session gets its own isolated workspace."
-msgstr "灵感出现的那一刻，就能在任意已连接的机器上启动智能体。每个会话都有独立隔离的工作区。"
 
 msgid "Launch mode"
 msgstr "启动方式"
@@ -10017,6 +10035,9 @@ msgstr "刚刚"
 msgid "Now"
 msgstr "现在"
 
+msgid "Now I open the workspace on my phone, type the one line it's waiting for, and it carries on."
+msgstr "现在，我在手机上打开工作区，输入它正在等待的那一行，它就会继续工作。"
+
 #. placeholder {0}: versions.expected
 #. placeholder {1}: versions.running
 msgid "Now running {0} (was {1}). All sessions preserved."
@@ -10917,6 +10938,9 @@ msgstr "一半是记录，一半是下注。前两条已经在发生。其余的
 msgid "Partial"
 msgstr "部分开启"
 
+msgid "Partner, Transpose Platform"
+msgstr "合伙人，Transpose Platform"
+
 msgid "Passed"
 msgstr "通过"
 
@@ -11740,9 +11764,6 @@ msgstr "查看更新日志"
 msgid "Read the changelog →"
 msgstr "查看更新日志 →"
 
-msgid "Read the full diff file by file, check the PR status, and open a terminal when you need the raw output."
-msgstr "逐个文件阅读完整差异，查看 PR 状态，需要原始输出时打开终端。"
-
 msgid "Read the guide to parallel coding agents"
 msgstr "阅读并行编码智能体指南"
 
@@ -12488,9 +12509,6 @@ msgstr "审查和CI排队把智能体带来的收益吃掉了。"
 
 msgid "Review becomes the bottleneck"
 msgstr "审查成为瓶颈"
-
-msgid "Review before you merge"
-msgstr "合并前先审查"
 
 msgid "Review Dismissed"
 msgstr "审查已忽略"
@@ -14038,6 +14056,9 @@ msgstr "稳定性改进"
 msgid "Stacked"
 msgstr "堆叠"
 
+msgid "Staff Software Engineer, Vori"
+msgstr "Staff 软件工程师，Vori"
+
 msgid "Stage all"
 msgstr "全部暂存"
 
@@ -14452,6 +14473,9 @@ msgstr "Superset内存"
 msgid "Superset memory · last 5 min"
 msgstr "Superset内存 · 最近5分钟"
 
+msgid "Superset mobile gives me the power of my desktop anywhere I go."
+msgstr "无论走到哪里，Superset 手机版都让我拥有桌面电脑的能力。"
+
 msgid "Superset Mobile is here"
 msgstr "Superset Mobile 来了"
 
@@ -14494,6 +14518,9 @@ msgstr "Superset支持任何基于CLI的编码智能体，包括Claude Code、Op
 
 msgid "superset.sh"
 msgstr "superset.sh"
+
+msgid "Superset's mobile app lets me keep my agents moving and unblock them from anywhere, even when I'm nowhere near my computer."
+msgstr "Superset 手机应用让我可以随时随地推动智能体工作、解决它们的阻碍，即使我离电脑很远也没问题。"
 
 msgid "Supervised"
 msgstr "监督"
@@ -16484,9 +16511,6 @@ msgstr "警告"
 msgid "Warning occurred."
 msgstr "出现了警告。"
 
-msgid "Watch agents work in real time and step in with a follow-up, a photo, or a dictated message when they need direction."
-msgstr "实时查看智能体的工作，在它们需要指引时，用后续消息、照片或语音输入介入。"
-
 msgid "Watchers"
 msgstr "关注者"
 
@@ -16647,6 +16671,9 @@ msgstr "开发者怎么评价Superset"
 msgid "What do you want to do?"
 msgstr "你想做什么？"
 
+msgid "What early users say"
+msgstr "早期用户怎么说"
+
 msgid "What Google shows us for and how much of it is not our own name."
 msgstr "Google 为哪些搜索展示我们，其中有多少不是我们自己的名字。"
 
@@ -16784,6 +16811,9 @@ msgstr "带标签"
 
 msgid "with or without attachments"
 msgstr "有无附件均可"
+
+msgid "With the Superset mobile app, I can address production issues from anywhere."
+msgstr "有了 Superset 手机应用，我可以随时随地处理生产环境问题。"
 
 msgid "Work email"
 msgstr "工作邮箱"
