@@ -3,6 +3,7 @@ import { createContext, runInContext } from "node:vm";
 import { PAGE_COMMENTS_RUNTIME_SOURCE } from "./page-comments-runtime";
 
 interface Posted {
+	[key: string]: unknown;
 	type: string;
 }
 
@@ -29,6 +30,8 @@ function setup() {
 	};
 
 	const context = createContext({
+		URL,
+		location: { href: "https://page.example/view" },
 		scrollY: 0,
 		scrollX: 0,
 		innerWidth: 400,
@@ -85,6 +88,54 @@ function setup() {
 
 	return {
 		posted,
+		configureLinks: (enabled = true, trusted = true) =>
+			listeners.get("message")?.({
+				source: trusted ? context.parent : {},
+				data: {
+					channel: "superset-comments/host",
+					type: "set-link-handling",
+					enabled,
+				},
+			}),
+		commentMode: () =>
+			listeners.get("message")?.({
+				data: {
+					channel: "superset-comments/host",
+					type: "set-mode",
+					enabled: true,
+					locked: true,
+				},
+			}),
+		clickLink: (
+			href: string,
+			options: {
+				metaKey?: boolean;
+				ctrlKey?: boolean;
+				shiftKey?: boolean;
+				button?: number;
+				download?: boolean;
+			} = {},
+		) => {
+			let prevented = false;
+			const event = {
+				button: 0,
+				...options,
+				target: {
+					closest: () => ({
+						href,
+						hasAttribute: () => options.download ?? false,
+					}),
+				},
+				preventDefault: () => {
+					prevented = true;
+				},
+				stopPropagation: () => {},
+			};
+			listeners.get(
+				options.button === 1 ? "document:auxclick" : "document:click",
+			)?.(event);
+			return prevented;
+		},
 		advance,
 		track: (count: number) => {
 			listeners.get("message")?.({
@@ -158,5 +209,76 @@ describe("page comments runtime, scroll cost", () => {
 
 		const rects = page.posted.filter((message) => message.type === "rects");
 		expect(rects.length).toBe(FRAMES);
+	});
+});
+
+describe("page links", () => {
+	test("prevents frame navigation and forwards the resolved URL and modifiers", () => {
+		const page = setup();
+		page.configureLinks();
+		page.clear();
+		expect(
+			page.clickLink("https://example.com/job", {
+				metaKey: true,
+				shiftKey: true,
+			}),
+		).toBe(true);
+		expect(page.posted).toEqual([
+			{
+				channel: "superset-comments/frame",
+				type: "link-click",
+				url: "https://example.com/job",
+				metaKey: true,
+				ctrlKey: false,
+				shiftKey: true,
+			},
+		]);
+	});
+	test("requires the parent to opt in", () => {
+		const page = setup();
+		expect(page.clickLink("https://example.com")).toBe(false);
+		page.configureLinks(true, false);
+		expect(page.clickLink("https://example.com")).toBe(false);
+		page.configureLinks();
+		expect(page.clickLink("https://example.com")).toBe(true);
+		page.configureLinks(false);
+		expect(page.clickLink("https://example.com")).toBe(false);
+	});
+	test("keeps local anchors, downloads, and unsupported schemes in the page", () => {
+		const page = setup();
+		page.configureLinks();
+		page.clear();
+		for (const href of [
+			"#section",
+			"javascript:void(0)",
+			"data:text/html,test",
+		]) {
+			expect(page.clickLink(href)).toBe(false);
+		}
+		expect(page.clickLink("https://example.com/file", { download: true })).toBe(
+			false,
+		);
+		expect(page.posted).toEqual([]);
+	});
+	test("forwards relative URLs, middle clicks, and external protocols", () => {
+		const page = setup();
+		page.configureLinks();
+		page.clear();
+		expect(page.clickLink("/other", { button: 1, ctrlKey: true })).toBe(true);
+		expect(page.posted[0]).toMatchObject({
+			url: "https://page.example/other",
+			ctrlKey: true,
+		});
+		expect(page.clickLink("mailto:hello@example.com")).toBe(true);
+		expect(page.clickLink("tel:123")).toBe(true);
+	});
+	test("comment selection never opens links", () => {
+		const page = setup();
+		page.configureLinks();
+		page.commentMode();
+		page.clear();
+		expect(page.clickLink("https://example.com")).toBe(true);
+		expect(page.clickLink("https://example.com", { button: 1 })).toBe(true);
+		expect(page.posted).toEqual([]);
 	});
 });

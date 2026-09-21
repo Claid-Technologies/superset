@@ -841,6 +841,7 @@ export function usePaneRegistry({
 							),
 							renderPane: (ctx: RendererContext<PaneViewerData>) => (
 								<PagePane
+									store={ctx.store}
 									data={ctx.pane.data as PagePaneData}
 									paneId={ctx.pane.id}
 									onDataChange={(data) =>
