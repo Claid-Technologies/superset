@@ -1,0 +1,16 @@
+{
+	"offline": true,
+	"before": {
+		"title": "Terminal links: boundaries, fixed",
+		"count": "3,545 cases · showing 1–50",
+		"images": [true, true],
+		"rows": 50
+	},
+	"search": "2 cases · showing 1–2",
+	"failed": "3,042 cases · showing 1–50",
+	"toggle": true,
+	"mobile": {
+		"width": 390,
+		"scrollWidth": 390
+	}
+}

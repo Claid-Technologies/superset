@@ -1,0 +1,33 @@
+{
+	"pageId": "5ba68a87-6ab7-456d-a716-9bbb141b4231",
+	"url": "https://app.superset.sh/page/terminal-links-boundaries-fixed-12sspz",
+	"version": 2,
+	"baselineCommit": "b18f5f50412915e06899a6596968fd1d9af8d2f0",
+	"urlTests": {
+		"before": {
+			"pass": 503,
+			"fail": 3042
+		},
+		"after": {
+			"pass": 3545,
+			"fail": 0
+		}
+	},
+	"relatedTests": {
+		"pass": 605,
+		"fail": 0
+	},
+	"desktopTypecheck": "pass",
+	"biome": "pass",
+	"diffCheck": "pass",
+	"verificationScope": "Real headless xterm buffers and browser xterm component harness; not signed-in desktop E2E",
+	"publishedSha256": "443a5b8e15f3b879af07aa12cb1a8e14b66c887c96e2311e2ac9d7ca2346efd2",
+	"repositoryTypecheck": "pass: 42 tasks",
+	"repositoryLint": "pass",
+	"repositoryTests": {
+		"status": "failed",
+		"desktopPass": 7531,
+		"desktopFail": 22,
+		"failureScope": "Untouched Git/worktree and shell-environment suites; no link test failures"
+	}
+}

@@ -1,0 +1,48 @@
+[
+	{
+		"name": "before",
+		"hover": "http://localhost:3001/sloyd-web:dev:localhost:sloyd-web:dev:localhost",
+		"range": [
+			{
+				"range": {
+					"end": {
+						"x": 24,
+						"y": 3
+					},
+					"start": {
+						"x": 41,
+						"y": 1
+					}
+				},
+				"text": "http://localhost:3001/sloyd-web:dev:localhost:sloyd-web:dev:localhost"
+			}
+		],
+		"activation": {
+			"id": "before",
+			"url": "http://localhost:3001/sloyd-web:dev:localhost:sloyd-web:dev:localhost"
+		}
+	},
+	{
+		"name": "after",
+		"hover": "http://localhost:3001/",
+		"range": [
+			{
+				"range": {
+					"end": {
+						"x": 62,
+						"y": 1
+					},
+					"start": {
+						"x": 41,
+						"y": 1
+					}
+				},
+				"text": "http://localhost:3001/"
+			}
+		],
+		"activation": {
+			"id": "after",
+			"url": "http://localhost:3001/"
+		}
+	}
+]
