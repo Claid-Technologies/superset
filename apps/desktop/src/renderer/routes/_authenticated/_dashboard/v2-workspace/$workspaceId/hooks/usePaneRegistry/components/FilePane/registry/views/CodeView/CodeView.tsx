@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import {
 	createPaneScrollStateKey,
 	getPaneScrollState,
@@ -9,27 +9,24 @@ import type { ViewProps } from "../../types";
 import { CodeEditor } from "./components/CodeEditor";
 import type { CodeEditorAdapter } from "./components/CodeEditor/CodeEditorAdapter";
 
+import { usePendingFilePosition } from "./hooks/usePendingFilePosition";
+
 export function CodeView({
 	document,
 	filePath,
 	workspaceId,
+	isActive,
 	pendingPosition,
 	onPositionRevealed,
 }: ViewProps) {
 	const editorRef = useRef<CodeEditorAdapter | null>(null);
-	useEffect(() => {
-		if (
-			document.content.kind !== "text" ||
-			!pendingPosition ||
-			!editorRef.current
-		)
-			return;
-		editorRef.current.revealPosition(
-			pendingPosition.line,
-			pendingPosition.column,
-		);
-		onPositionRevealed?.();
-	}, [pendingPosition, onPositionRevealed, document.content.kind]);
+	usePendingFilePosition({
+		editorRef,
+		isReady: document.content.kind === "text",
+		isActive,
+		pendingPosition,
+		onPositionRevealed,
+	});
 	// Quick Open replaces preview panes with new pane IDs, so the file path is
 	// the stable editor identity when a user switches away and back.
 	const scrollStateKey = useMemo(
