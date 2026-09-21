@@ -61,6 +61,7 @@ function createReloadFixture() {
 		byteLength: number;
 	};
 	const reads: Array<ReturnType<typeof Promise.withResolvers<ReadResult>>> = [];
+	let writes = 0;
 	const client = {
 		filesystem: {
 			readFile: {
@@ -71,7 +72,10 @@ function createReloadFixture() {
 				},
 			},
 			writeFile: {
-				mutate: async () => ({ ok: true, revision: "saved-revision" }),
+				mutate: async () => {
+					writes += 1;
+					return { ok: true, revision: "saved-revision" };
+				},
 			},
 		},
 	} as unknown as Parameters<typeof acquireDocument>[2];
@@ -82,6 +86,9 @@ function createReloadFixture() {
 		doc,
 		workspaceId,
 		reads,
+		get writes() {
+			return writes;
+		},
 		update: () =>
 			dispatchFsEvent(workspaceId, { kind: "update", absolutePath }),
 		overflow: () =>
@@ -223,5 +230,42 @@ test("overflow in another workspace does not reload this document", async () => 
 		absolutePath: "/workspace",
 	});
 	expect(f.reads).toHaveLength(1);
+	await f.cleanup();
+});
+
+test("comparing an external change reads disk without saving or discarding edits", async () => {
+	const f = createReloadFixture();
+	await f.resolve(0, "EMAIL=original");
+	f.doc.setContent("EMAIL=edited");
+	f.update();
+	const comparing = f.doc.compareWithDisk();
+	await f.resolve(1, "EMAIL=original\nTOKEN=generated");
+	await comparing;
+	expect(f.doc.conflict?.diskContent).toBe("EMAIL=original\nTOKEN=generated");
+	expect(f.doc.content).toMatchObject({
+		value: "EMAIL=edited",
+		revision: "EMAIL=original",
+	});
+	expect(f.doc.dirty).toBe(true);
+	expect(f.writes).toBe(0);
+	await f.doc.resolveConflict("keep");
+	expect(f.doc.conflict).toBeNull();
+	expect(f.doc.hasExternalChange).toBe(true);
+	expect(f.doc.dirty).toBe(true);
+	expect(f.writes).toBe(0);
+	await f.cleanup();
+});
+
+test("an unreadable disk version leaves the dirty buffer intact for conflict review", async () => {
+	const f = createReloadFixture();
+	await f.resolve(0, "original");
+	f.doc.setContent("unsaved");
+	const comparing = f.doc.compareWithDisk();
+	f.reads[1].reject(new Error("ENOENT"));
+	await comparing;
+	expect(f.doc.conflict).toEqual({ diskContent: null });
+	expect(f.doc.content).toMatchObject({ value: "unsaved" });
+	expect(f.doc.dirty).toBe(true);
+	expect(f.writes).toBe(0);
 	await f.cleanup();
 });

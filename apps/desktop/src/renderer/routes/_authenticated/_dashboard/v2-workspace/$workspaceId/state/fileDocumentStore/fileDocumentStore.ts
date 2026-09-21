@@ -289,6 +289,11 @@ function createHandle(entry: DocumentEntry): SharedFileDocument {
 				return { status: "error", error: error as Error };
 			}
 		},
+		async compareWithDisk() {
+			const diskContent = await fetchCurrentDiskContent(entry);
+			entry.conflict = { diskContent };
+			notify(entry);
+		},
 		async reload() {
 			resetForLoad(entry);
 			notify(entry);
