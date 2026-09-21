@@ -42,13 +42,22 @@ export function findPrimaryMember(
 	return group.members.find((member) => member.position === 0) ?? null;
 }
 
+/**
+ * A repository adopted as another Project's first source folder is the
+ * primary of both that Project and its own backfilled one, so the Project
+ * that owns several folders wins — otherwise the container it names would
+ * never be the one that renders or gets checked out. Host-side
+ * `findGroupForPrimaryProject` resolves the same way.
+ */
 export function indexProjectGroupsByPrimaryProjectId(
 	groups: HostProjectGroup[],
 ): Map<string, HostProjectGroup> {
 	const byProjectId = new Map<string, HostProjectGroup>();
 	for (const group of groups) {
 		const primary = findPrimaryMember(group);
-		if (!primary || byProjectId.has(primary.projectId)) continue;
+		if (!primary) continue;
+		const claimed = byProjectId.get(primary.projectId);
+		if (claimed && claimed.members.length >= group.members.length) continue;
 		byProjectId.set(primary.projectId, group);
 	}
 	return byProjectId;

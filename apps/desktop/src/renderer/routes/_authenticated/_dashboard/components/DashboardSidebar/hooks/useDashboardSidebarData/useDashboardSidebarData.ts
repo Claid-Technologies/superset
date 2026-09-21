@@ -1,10 +1,8 @@
-import { FEATURE_FLAGS } from "@superset/shared/constants";
 import { useLiveQuery } from "@tanstack/react-db";
 import { useQueries, useQueryClient } from "@tanstack/react-query";
-import { useFeatureFlagEnabled } from "posthog-js/react";
 import { useCallback, useMemo, useRef } from "react";
 import { resolveProjectIconUrl } from "renderer/hooks/host-projects/resolveProjectIconUrl";
-import { useHostProjectGroups } from "renderer/hooks/host-projects/useHostProjectGroups";
+import { useGroupedProjects } from "renderer/hooks/host-projects/useGroupedProjects";
 import { useHostProjects } from "renderer/hooks/host-projects/useHostProjects";
 import { useKnownHosts } from "renderer/hooks/known-hosts/useKnownHosts";
 import { useRelayUrl } from "renderer/hooks/useRelayUrl";
@@ -25,7 +23,6 @@ import type {
 	DashboardSidebarProject,
 	DashboardSidebarWorkspace,
 } from "../../types";
-import { applyProjectGroupsToSidebarProjects } from "./applyProjectGroupsToSidebarProjects";
 import {
 	buildDashboardSidebarPinnedWorkspaces,
 	buildDashboardSidebarProjects,
@@ -242,21 +239,7 @@ export function useDashboardSidebarData() {
 			}),
 		[orderedSidebarProjectRows, hostProjectsByKey],
 	);
-	const isMultiRepoEnabled =
-		useFeatureFlagEnabled(FEATURE_FLAGS.MULTI_REPO_PROJECTS) ?? false;
-	const { groups: hostProjectGroups } = useHostProjectGroups({
-		enabled: isMultiRepoEnabled,
-	});
-	const sidebarProjects = useMemo(
-		() =>
-			isMultiRepoEnabled
-				? applyProjectGroupsToSidebarProjects(
-						repositorySidebarProjects,
-						hostProjectGroups,
-					)
-				: repositorySidebarProjects,
-		[hostProjectGroups, isMultiRepoEnabled, repositorySidebarProjects],
-	);
+	const sidebarProjects = useGroupedProjects(repositorySidebarProjects);
 	const hiddenProjects = useMemo<DashboardSidebarHiddenProject[]>(
 		() =>
 			orderedSidebarProjectRows.flatMap((row) => {

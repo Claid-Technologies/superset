@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
+import { applyProjectGroups } from "renderer/hooks/host-projects/useGroupedProjects";
 import type { HostProjectGroup } from "renderer/hooks/host-projects/useHostProjectGroups/useHostProjectGroups.utils";
-import { applyProjectGroupsToSidebarProjects } from "./applyProjectGroupsToSidebarProjects";
 import {
 	buildDashboardSidebarProjects,
 	type SidebarProjectInput,
@@ -89,7 +89,7 @@ describe("a project backfilled from a single repository", () => {
 		const projects = [makeProject()];
 		const flagOff = build(projects);
 		const flagOn = build(
-			applyProjectGroupsToSidebarProjects(projects, [
+			applyProjectGroups(projects, [
 				makeGroup("group-api", "api", ["project-api"]),
 			]),
 		);
@@ -102,7 +102,7 @@ describe("a project backfilled from a single repository", () => {
 	});
 
 	it("keeps rendering when no host has grouped it yet", () => {
-		const grouped = applyProjectGroupsToSidebarProjects([makeProject()], []);
+		const grouped = applyProjectGroups([makeProject()], []);
 
 		expect(grouped).toHaveLength(1);
 		expect(grouped[0]).toMatchObject({
@@ -116,7 +116,7 @@ describe("a project backfilled from a single repository", () => {
 
 describe("a project over several repositories", () => {
 	it("renders once, under its own name, counting its source folders", () => {
-		const grouped = applyProjectGroupsToSidebarProjects(
+		const grouped = applyProjectGroups(
 			[makeProject(), makeProject({ id: "project-web", name: "web" })],
 			[makeGroup("group-platform", "Platform", ["project-api", "project-web"])],
 		);
@@ -128,7 +128,7 @@ describe("a project over several repositories", () => {
 	});
 
 	it("still renders a source folder that is a project in its own right", () => {
-		const grouped = applyProjectGroupsToSidebarProjects(
+		const grouped = applyProjectGroups(
 			[makeProject(), makeProject({ id: "project-web", name: "web" })],
 			[
 				makeGroup("group-platform", "Platform", ["project-api", "project-web"]),

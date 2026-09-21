@@ -37,14 +37,14 @@ const MULTI = makeGroup("group-platform", "Platform", [
 ]);
 
 describe("the project a repository is the primary of", () => {
-	test("is the one the surfaces render it as", () => {
+	test("is the one that owns several source folders", () => {
 		const index = indexProjectGroupsByPrimaryProjectId([BACKFILLED, MULTI]);
 
-		expect(index.get("project-api")).toBe(BACKFILLED);
+		expect(index.get("project-api")).toBe(MULTI);
 		expect(index.get("project-web")).toBeUndefined();
 	});
 
-	test("is the first group listed when two claim the same primary", () => {
+	test("is the first group listed when two claim it with equal standing", () => {
 		const other = makeGroup("group-other", "Other", ["project-api"]);
 		const index = indexProjectGroupsByPrimaryProjectId([BACKFILLED, other]);
 
