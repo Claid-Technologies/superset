@@ -5265,6 +5265,9 @@ msgstr "yeni sekmede fark"
 msgid "Diff size"
 msgstr "Fark boyutu"
 
+msgid "Digital Product Designer"
+msgstr "Dijital Ürün Tasarımcısı"
+
 msgid "Direct"
 msgstr "Doğrudan"
 
@@ -7470,6 +7473,9 @@ msgstr "Her satırı insanlar yazar. Araçlar derler, denetler ve şikâyet eder
 
 msgid "I already use an IDE like Cursor, is this for me?"
 msgstr "Zaten Cursor gibi bir IDE kullanıyorum, bu bana göre mi?"
+
+msgid "I also love being able to spin up a local worktree environment on my Mac directly from my phone."
+msgstr "Doğrudan telefonumdan Mac’imde yerel bir çalışma ağacı ortamı başlatabilmeyi de çok seviyorum."
 
 msgid "I can be in a café with my coffee while the work keeps moving forward."
 msgstr "Ben kafede kahvemi içerken iş ilerlemeye devam edebiliyor."

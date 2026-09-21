@@ -5265,6 +5265,9 @@ msgstr "diff в новой вкладке"
 msgid "Diff size"
 msgstr "Размер diff"
 
+msgid "Digital Product Designer"
+msgstr "Дизайнер цифровых продуктов"
+
 msgid "Direct"
 msgstr "Прямые"
 
@@ -7470,6 +7473,9 @@ msgstr "Люди пишут каждую строку. Инструменты к
 
 msgid "I already use an IDE like Cursor, is this for me?"
 msgstr "Я уже пользуюсь IDE вроде Cursor — это для меня?"
+
+msgid "I also love being able to spin up a local worktree environment on my Mac directly from my phone."
+msgstr "Ещё мне очень нравится, что я могу прямо с телефона запустить на своём Mac локальное окружение с рабочим деревом."
 
 msgid "I can be in a café with my coffee while the work keeps moving forward."
 msgstr "Я могу сидеть в кафе с чашкой кофе, а работа тем временем продолжается."

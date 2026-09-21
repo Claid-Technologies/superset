@@ -5265,6 +5265,9 @@ msgstr "diff ở tab mới"
 msgid "Diff size"
 msgstr "Kích thước diff"
 
+msgid "Digital Product Designer"
+msgstr "Nhà thiết kế sản phẩm số"
+
 msgid "Direct"
 msgstr "Trực tiếp"
 
@@ -7470,6 +7473,9 @@ msgstr "Con người viết từng dòng. Công cụ biên dịch, lint và phà
 
 msgid "I already use an IDE like Cursor, is this for me?"
 msgstr "Tôi đã dùng IDE như Cursor, Superset có hợp với tôi không?"
+
+msgid "I also love being able to spin up a local worktree environment on my Mac directly from my phone."
+msgstr "Tôi cũng rất thích việc có thể khởi tạo môi trường cây làm việc cục bộ trên máy Mac ngay từ điện thoại."
 
 msgid "I can be in a café with my coffee while the work keeps moving forward."
 msgstr "Tôi có thể ngồi trong quán cà phê thưởng thức cà phê trong khi công việc vẫn tiếp tục tiến triển."

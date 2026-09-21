@@ -5265,6 +5265,9 @@ msgstr "在新标签页看差异"
 msgid "Diff size"
 msgstr "差异大小"
 
+msgid "Digital Product Designer"
+msgstr "数字产品设计师"
+
 msgid "Direct"
 msgstr "直接访问"
 
@@ -7470,6 +7473,9 @@ msgstr "每一行都由人写。工具负责编译、检查、报错。键盘就
 
 msgid "I already use an IDE like Cursor, is this for me?"
 msgstr "我已经在用Cursor这样的IDE，这适合我吗？"
+
+msgid "I also love being able to spin up a local worktree environment on my Mac directly from my phone."
+msgstr "我也很喜欢能直接用手机在 Mac 上启动本地工作树环境。"
 
 msgid "I can be in a café with my coffee while the work keeps moving forward."
 msgstr "我可以在咖啡馆喝咖啡，工作也一直在推进。"

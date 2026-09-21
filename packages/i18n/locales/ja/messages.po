@@ -5265,6 +5265,9 @@ msgstr "新しいタブで差分"
 msgid "Diff size"
 msgstr "差分サイズ"
 
+msgid "Digital Product Designer"
+msgstr "デジタルプロダクトデザイナー"
+
 msgid "Direct"
 msgstr "直接"
 
@@ -7470,6 +7473,9 @@ msgstr "人間が全行を書きます。ツールはコンパイルし、lint�
 
 msgid "I already use an IDE like Cursor, is this for me?"
 msgstr "すでにCursorのようなIDEを使っています。それでも役に立ちますか?"
+
+msgid "I also love being able to spin up a local worktree environment on my Mac directly from my phone."
+msgstr "スマートフォンから直接、自分のMacにローカルのワークツリー環境を立ち上げられるのも気に入っています。"
 
 msgid "I can be in a café with my coffee while the work keeps moving forward."
 msgstr "カフェでコーヒーを飲んでいる間も、作業は進み続けます。"

@@ -5265,6 +5265,9 @@ msgstr "diff in nieuw tabblad"
 msgid "Diff size"
 msgstr "Grootte van diff"
 
+msgid "Digital Product Designer"
+msgstr "Ontwerper van digitale producten"
+
 msgid "Direct"
 msgstr "Direct"
 
@@ -7470,6 +7473,9 @@ msgstr "Mensen schrijven elke regel. Tools compileren, linten en klagen. Het toe
 
 msgid "I already use an IDE like Cursor, is this for me?"
 msgstr "Ik gebruik al een IDE zoals Cursor, is dit iets voor mij?"
+
+msgid "I also love being able to spin up a local worktree environment on my Mac directly from my phone."
+msgstr "Ik vind het ook geweldig dat ik rechtstreeks vanaf mijn telefoon een lokale werkboomomgeving op mijn Mac kan starten."
 
 msgid "I can be in a café with my coffee while the work keeps moving forward."
 msgstr "Ik kan in een café zitten met mijn koffie terwijl het werk gewoon doorgaat."

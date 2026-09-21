@@ -5265,6 +5265,9 @@ msgstr "diff dans un nouvel onglet"
 msgid "Diff size"
 msgstr "Taille du diff"
 
+msgid "Digital Product Designer"
+msgstr "Designer de produits numériques"
+
 msgid "Direct"
 msgstr "Direct"
 
@@ -7470,6 +7473,9 @@ msgstr "Les humains écrivent chaque ligne. Les outils compilent, analysent et r
 
 msgid "I already use an IDE like Cursor, is this for me?"
 msgstr "J'utilise déjà un IDE comme Cursor, est-ce fait pour moi ?"
+
+msgid "I also love being able to spin up a local worktree environment on my Mac directly from my phone."
+msgstr "J’adore aussi pouvoir lancer un environnement local avec un arbre de travail sur mon Mac directement depuis mon téléphone."
 
 msgid "I can be in a café with my coffee while the work keeps moving forward."
 msgstr "Je peux être dans un café avec mon café pendant que le travail continue d’avancer."

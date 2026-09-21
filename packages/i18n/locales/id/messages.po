@@ -5265,6 +5265,9 @@ msgstr "diff di tab baru"
 msgid "Diff size"
 msgstr "Ukuran diff"
 
+msgid "Digital Product Designer"
+msgstr "Desainer Produk Digital"
+
 msgid "Direct"
 msgstr "Langsung"
 
@@ -7470,6 +7473,9 @@ msgstr "Manusia menulis tiap baris. Alat mengompilasi, menge-lint, dan mengeluh.
 
 msgid "I already use an IDE like Cursor, is this for me?"
 msgstr "Saya sudah pakai IDE seperti Cursor, apakah ini untuk saya?"
+
+msgid "I also love being able to spin up a local worktree environment on my Mac directly from my phone."
+msgstr "Saya juga senang bisa menjalankan lingkungan pohon kerja lokal di Mac langsung dari ponsel saya."
 
 msgid "I can be in a café with my coffee while the work keeps moving forward."
 msgstr "Saya bisa duduk di kafe sambil minum kopi sementara pekerjaan terus berjalan."
