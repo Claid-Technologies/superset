@@ -6610,6 +6610,9 @@ msgstr "İncelemeye göre filtrele"
 msgid "Filter by state"
 msgstr "Duruma göre filtrele"
 
+msgid "Filter by workspace: {label}"
+msgstr "Çalışma alanına göre filtrele: {label}"
+
 msgid "Filter hosts"
 msgstr "Host'ları filtrele"
 
@@ -16001,6 +16004,9 @@ msgstr "Bilinmeyen değişkenler: {unknownVariables}"
 
 msgid "Unknown Welder"
 msgstr "Bilinmeyen Kaynakçı"
+
+msgid "Unknown workspace"
+msgstr "Bilinmeyen çalışma alanı"
 
 msgid "Unlimited"
 msgstr "Sınırsız"

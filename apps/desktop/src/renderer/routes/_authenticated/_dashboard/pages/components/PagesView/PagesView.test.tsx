@@ -105,6 +105,13 @@ mock.module(
 	}),
 );
 
+mock.module(
+	"renderer/routes/_authenticated/_dashboard/v2-workspaces/hooks/useAccessibleV2Workspaces",
+	() => ({
+		useAccessibleV2Workspaces: () => ({ all: [] }),
+	}),
+);
+
 const { act, cleanup, render } = await import("@testing-library/react");
 const { PagesView } = await import("./PagesView");
 
@@ -114,9 +121,11 @@ function renderView(scope: "all" | "pinned" = "all") {
 			search=""
 			scope={scope}
 			authorId={null}
+			workspaceId={null}
 			onSearchChange={mock()}
 			onScopeChange={onScopeChange}
 			onAuthorChange={mock()}
+			onWorkspaceChange={mock()}
 		/>,
 	);
 }

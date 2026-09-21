@@ -342,6 +342,32 @@ export const pageRouter = {
 					? { updatedAt: last.updatedAtCursor, id: last.id }
 					: null;
 
+			const links = pageRows.length
+				? await db
+						.select({
+							pageId: workspacePages.pageId,
+							workspaceId: workspacePages.workspaceId,
+							entryPath: workspacePages.entryPath,
+						})
+						.from(workspacePages)
+						.where(
+							inArray(
+								workspacePages.pageId,
+								pageRows.map((row) => row.id),
+							),
+						)
+				: [];
+
+			const linksByPage = new Map<
+				string,
+				{ workspaceId: string; entryPath: string }[]
+			>();
+			for (const link of links) {
+				const list = linksByPage.get(link.pageId) ?? [];
+				list.push({ workspaceId: link.workspaceId, entryPath: link.entryPath });
+				linksByPage.set(link.pageId, list);
+			}
+
 			const baseUrl = env.USERCONTENT_URL;
 			const items = await Promise.all(
 				pageRows.map(async ({ updatedAtCursor: _cursor, ...row }) => {
@@ -355,6 +381,7 @@ export const pageRouter = {
 							: await mintPageTicket(row, { version: served });
 					return {
 						...row,
+						workspaceLinks: linksByPage.get(row.id) ?? [],
 						url: pageUrl(row.slug),
 						viewUrl: pageViewUrl({ baseUrl, pageId: row.id, ticket }),
 						thumbnailUrl:

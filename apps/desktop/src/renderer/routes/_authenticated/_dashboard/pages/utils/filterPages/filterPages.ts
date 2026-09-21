@@ -13,6 +13,7 @@ export interface FilterablePage {
 	visibility: string;
 	description?: string | null;
 	createdByUserId?: string | null;
+	workspaceLinks?: readonly { workspaceId: string }[];
 }
 
 export function matchesSearch(page: FilterablePage, query: string): boolean {
@@ -48,6 +49,16 @@ export function matchesAuthor(
 	return page.createdByUserId === authorId;
 }
 
+export function matchesWorkspace(
+	page: FilterablePage,
+	workspaceId: string | null,
+): boolean {
+	if (!workspaceId) return true;
+	return Boolean(
+		page.workspaceLinks?.some((link) => link.workspaceId === workspaceId),
+	);
+}
+
 export function filterPages<T extends FilterablePage>(
 	pages: T[],
 	{
@@ -55,18 +66,21 @@ export function filterPages<T extends FilterablePage>(
 		scope,
 		pinnedPageIds,
 		authorId = null,
+		workspaceId = null,
 	}: {
 		search: string;
 		scope: PageScope;
 		pinnedPageIds: ReadonlySet<string>;
 		authorId?: string | null;
+		workspaceId?: string | null;
 	},
 ): T[] {
 	return pages.filter(
 		(page) =>
 			matchesSearch(page, search) &&
 			matchesScope(page, scope, pinnedPageIds) &&
-			matchesAuthor(page, authorId),
+			matchesAuthor(page, authorId) &&
+			matchesWorkspace(page, workspaceId),
 	);
 }
 

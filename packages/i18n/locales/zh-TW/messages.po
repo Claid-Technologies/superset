@@ -6610,6 +6610,9 @@ msgstr "按審查篩選"
 msgid "Filter by state"
 msgstr "按狀態篩選"
 
+msgid "Filter by workspace: {label}"
+msgstr "依工作區篩選：{label}"
+
 msgid "Filter hosts"
 msgstr "篩選主機"
 
@@ -16001,6 +16004,9 @@ msgstr "未知變數：{unknownVariables}"
 
 msgid "Unknown Welder"
 msgstr "未知焊接工"
+
+msgid "Unknown workspace"
+msgstr "未知工作區"
 
 msgid "Unlimited"
 msgstr "無限"

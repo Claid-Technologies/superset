@@ -6610,6 +6610,9 @@ msgstr "Filtruj wg przeglądów"
 msgid "Filter by state"
 msgstr "Filtruj wg stanu"
 
+msgid "Filter by workspace: {label}"
+msgstr "Filtruj według obszaru roboczego: {label}"
+
 msgid "Filter hosts"
 msgstr "Filtruj hosty"
 
@@ -16001,6 +16004,9 @@ msgstr "Nieznane zmienne: {unknownVariables}"
 
 msgid "Unknown Welder"
 msgstr "Nieznany Spawacz"
+
+msgid "Unknown workspace"
+msgstr "Nieznany obszar roboczy"
 
 msgid "Unlimited"
 msgstr "Bez limitu"

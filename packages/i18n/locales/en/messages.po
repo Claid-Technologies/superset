@@ -6610,6 +6610,9 @@ msgstr "Filter by reviews"
 msgid "Filter by state"
 msgstr "Filter by state"
 
+msgid "Filter by workspace: {label}"
+msgstr "Filter by workspace: {label}"
+
 msgid "Filter hosts"
 msgstr "Filter hosts"
 
@@ -16001,6 +16004,9 @@ msgstr "Unknown variables: {unknownVariables}"
 
 msgid "Unknown Welder"
 msgstr "Unknown Welder"
+
+msgid "Unknown workspace"
+msgstr "Unknown workspace"
 
 msgid "Unlimited"
 msgstr "Unlimited"

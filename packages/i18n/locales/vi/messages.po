@@ -6610,6 +6610,9 @@ msgstr "Lọc theo review"
 msgid "Filter by state"
 msgstr "Lọc theo trạng thái"
 
+msgid "Filter by workspace: {label}"
+msgstr "Lọc theo workspace: {label}"
+
 msgid "Filter hosts"
 msgstr "Lọc host"
 
@@ -16001,6 +16004,9 @@ msgstr "Biến không xác định: {unknownVariables}"
 
 msgid "Unknown Welder"
 msgstr "Thợ hàn vô danh"
+
+msgid "Unknown workspace"
+msgstr "Workspace không xác định"
 
 msgid "Unlimited"
 msgstr "Không giới hạn"

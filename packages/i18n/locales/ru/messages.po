@@ -6610,6 +6610,9 @@ msgstr "Фильтр по ревью"
 msgid "Filter by state"
 msgstr "Фильтр по состоянию"
 
+msgid "Filter by workspace: {label}"
+msgstr "Фильтр по рабочей области: {label}"
+
 msgid "Filter hosts"
 msgstr "Фильтр хостов"
 
@@ -16001,6 +16004,9 @@ msgstr "Неизвестные переменные: {unknownVariables}"
 
 msgid "Unknown Welder"
 msgstr "Неизвестный сварщик"
+
+msgid "Unknown workspace"
+msgstr "Неизвестная рабочая область"
 
 msgid "Unlimited"
 msgstr "Без ограничений"

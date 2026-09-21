@@ -17,6 +17,7 @@ import {
 	useOpenPage,
 } from "renderer/routes/_authenticated/_dashboard/hooks/useOpenPage";
 import { usePageFavorites } from "renderer/routes/_authenticated/_dashboard/hooks/usePageFavorites";
+import { useAccessibleV2Workspaces } from "renderer/routes/_authenticated/_dashboard/v2-workspaces/hooks/useAccessibleV2Workspaces";
 import {
 	filterPages,
 	matchesScope,
@@ -25,6 +26,10 @@ import {
 } from "../../utils/filterPages";
 import { PagesGrid } from "../PagesGrid";
 import { AuthorFilter, type PageAuthorOption } from "./components/AuthorFilter";
+import {
+	type PageWorkspaceOption,
+	WorkspaceFilter,
+} from "./components/WorkspaceFilter";
 import { useCreatePageWithAgent } from "./hooks/useCreatePageWithAgent";
 
 const PAGES_QUERY = pagesListInput();
@@ -40,18 +45,22 @@ interface PagesViewProps {
 	search: string;
 	scope: PageScope;
 	authorId: string | null;
+	workspaceId: string | null;
 	onSearchChange: (search: string) => void;
 	onScopeChange: (scope: PageScope) => void;
 	onAuthorChange: (authorId: string | null) => void;
+	onWorkspaceChange: (workspaceId: string | null) => void;
 }
 
 export function PagesView({
 	search,
 	scope,
 	authorId,
+	workspaceId,
 	onSearchChange,
 	onScopeChange,
 	onAuthorChange,
+	onWorkspaceChange,
 }: PagesViewProps) {
 	const { t } = useLingui();
 	const { creatingWithAgent, handleCreateWithAgent } = useCreatePageWithAgent();
@@ -122,6 +131,27 @@ export function PagesView({
 		});
 	}, [all, currentUserId, t]);
 
+	const { all: accessibleWorkspaces } = useAccessibleV2Workspaces();
+	const workspaceOptions = useMemo<PageWorkspaceOption[]>(() => {
+		const names = new Map(
+			accessibleWorkspaces.map((workspace) => [workspace.id, workspace.name]),
+		);
+		const counts = new Map<string, number>();
+		for (const page of all) {
+			for (const link of page.workspaceLinks ?? []) {
+				counts.set(link.workspaceId, (counts.get(link.workspaceId) ?? 0) + 1);
+			}
+		}
+		return Array.from(counts.entries())
+			.filter(([id]) => names.has(id))
+			.map(([id, count]) => ({
+				workspaceId: id,
+				name: names.get(id) ?? id,
+				count,
+			}))
+			.sort((a, b) => a.name.localeCompare(b.name));
+	}, [all, accessibleWorkspaces]);
+
 	const counts = useMemo(
 		() => ({
 			all: all.length,
@@ -162,10 +192,11 @@ export function PagesView({
 					scope: activeScope,
 					pinnedPageIds: favoritePageIdSet,
 					authorId,
+					workspaceId,
 				}),
 				favoritePageIdSet,
 			),
-		[all, search, activeScope, favoritePageIdSet, authorId],
+		[all, search, activeScope, favoritePageIdSet, authorId, workspaceId],
 	);
 
 	const orgEmpty = !pages.isPending && !pages.error && all.length === 0;
@@ -207,6 +238,13 @@ export function PagesView({
 							</Tabs>
 
 							<div className="flex items-center gap-2">
+								{(workspaceOptions.length > 1 || workspaceId !== null) && (
+									<WorkspaceFilter
+										value={workspaceId}
+										options={workspaceOptions}
+										onChange={onWorkspaceChange}
+									/>
+								)}
 								{(authorOptions.length > 1 || authorId !== null) && (
 									<AuthorFilter
 										value={authorId}
@@ -258,7 +296,8 @@ export function PagesView({
 							!orgEmpty &&
 							(Boolean(search.trim()) ||
 								activeScope !== "all" ||
-								authorId !== null)
+								authorId !== null ||
+								workspaceId !== null)
 						}
 						onOpen={(page, event) =>
 							openPage(

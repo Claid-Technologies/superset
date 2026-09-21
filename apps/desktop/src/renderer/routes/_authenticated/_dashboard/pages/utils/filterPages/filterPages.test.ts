@@ -5,6 +5,7 @@ import {
 	matchesAuthor,
 	matchesScope,
 	matchesSearch,
+	matchesWorkspace,
 	sortPinnedFirst,
 } from "./filterPages";
 
@@ -119,6 +120,39 @@ describe("filterPages", () => {
 			scope: "all",
 			pinnedPageIds: new Set(),
 			authorId: "user-a",
+		});
+		expect(result.map((p) => p.id)).toEqual(["1"]);
+	});
+});
+
+describe("matchesWorkspace", () => {
+	const linked = {
+		...team,
+		workspaceLinks: [{ workspaceId: "ws-a" }, { workspaceId: "ws-b" }],
+	};
+
+	it("keeps every page when no workspace is selected", () => {
+		expect(matchesWorkspace(other, null)).toBe(true);
+	});
+
+	it("matches a page linked to the selected workspace", () => {
+		expect(matchesWorkspace(linked, "ws-b")).toBe(true);
+	});
+
+	it("rejects a page linked only to other workspaces", () => {
+		expect(matchesWorkspace(linked, "ws-c")).toBe(false);
+	});
+
+	it("rejects a page with no workspace links once one is selected", () => {
+		expect(matchesWorkspace(other, "ws-a")).toBe(false);
+	});
+
+	it("filters alongside scope and author", () => {
+		const result = filterPages([linked, mine, other], {
+			search: "",
+			scope: "all",
+			pinnedPageIds: new Set(),
+			workspaceId: "ws-a",
 		});
 		expect(result.map((p) => p.id)).toEqual(["1"]);
 	});
