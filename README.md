@@ -60,8 +60,8 @@ Requires **Superset Pro**, **iOS 26 or later**, and a connected computer with **
 [**Download on the App Store**](https://apps.apple.com/us/app/id6788926383) &nbsp;&bull;&nbsp; [Learn more →](https://superset.sh/mobile)
 
 </td>
-<td width="50%">
-  <a href="https://superset.sh/mobile"><img src="apps/marketing/public/images/blog/superset-mobile/hero.png" alt="Superset for iPhone showing a live coding agent terminal session" width="100%" /></a>
+<td width="50%" align="center">
+  <a href="https://superset.sh/mobile"><img src="apps/marketing/public/images/readme/mobile-terminal.png" alt="Superset for iPhone showing a coding agent terminal session and follow-up prompt" width="260" /></a>
 </td>
 </tr>
 <tr>
