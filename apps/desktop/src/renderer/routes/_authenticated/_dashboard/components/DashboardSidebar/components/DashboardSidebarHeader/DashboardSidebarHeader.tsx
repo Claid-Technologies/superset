@@ -173,7 +173,8 @@ export function DashboardSidebarHeader({
 		(useFeatureFlagEnabled(FEATURE_FLAGS.PLUGINS) ?? false) ||
 		env.NODE_ENV === "development";
 	const isMultiRepoEnabled =
-		useFeatureFlagEnabled(FEATURE_FLAGS.MULTI_REPO_PROJECTS) ?? false;
+		useFeatureFlagEnabled(FEATURE_FLAGS.MULTI_REPO_PROJECTS) ??
+		import.meta.env.DEV;
 	const { myFailedCount, hasAutomations, automationsPending } =
 		useFailedAutomations();
 

@@ -78,7 +78,8 @@ export function DashboardSidebarWorkspacesHeader({
 	const openEmptyProject = useOpenEmptyProjectModal();
 	const openMultiRepoProject = useOpenMultiRepoProjectModal();
 	const isMultiRepoEnabled =
-		useFeatureFlagEnabled(FEATURE_FLAGS.MULTI_REPO_PROJECTS) ?? false;
+		useFeatureFlagEnabled(FEATURE_FLAGS.MULTI_REPO_PROJECTS) ??
+		import.meta.env.DEV;
 	const openNewWorkspace = useOpenNewWorkspaceForLocalProject();
 	const openNewProject = useOpenNewProjectModal();
 	const openTemplateGallery = useOpenTemplateGalleryModal();
