@@ -157,6 +157,53 @@ export const projectFolders = sqliteTable(
 	],
 );
 
+export const projectGroups = sqliteTable("project_groups", {
+	id: text().primaryKey(),
+	name: text().notNull(),
+	icon: text(),
+	color: text(),
+	createdAt: integer("created_at")
+		.notNull()
+		.$defaultFn(() => Date.now()),
+	updatedAt: integer("updated_at")
+		.notNull()
+		.$defaultFn(() => Date.now()),
+});
+
+export const projectGroupMembers = sqliteTable(
+	"project_group_members",
+	{
+		id: text().primaryKey(),
+		groupId: text("group_id")
+			.notNull()
+			.references(() => projectGroups.id, { onDelete: "cascade" }),
+		projectId: text("project_id")
+			.notNull()
+			.references(() => projects.id, { onDelete: "restrict" }),
+		position: integer().notNull(),
+		folder: text().notNull(),
+		baseBranch: text("base_branch"),
+		createdAt: integer("created_at")
+			.notNull()
+			.$defaultFn(() => Date.now()),
+	},
+	(table) => [
+		uniqueIndex("project_group_members_group_position_unique").on(
+			table.groupId,
+			table.position,
+		),
+		uniqueIndex("project_group_members_group_folder_unique").on(
+			table.groupId,
+			table.folder,
+		),
+		uniqueIndex("project_group_members_group_project_unique").on(
+			table.groupId,
+			table.projectId,
+		),
+		index("project_group_members_project_id_idx").on(table.projectId),
+	],
+);
+
 /**
  * Single-row host-wide settings (always `id = 1`). The host-service has no
  * generic settings store yet; this row holds host-wide knobs (worktree base
@@ -265,6 +312,9 @@ export const workspaces = sqliteTable(
 		// ~/.superset/sessions, its own standalone git repo).
 		projectId: text("project_id").references(() => projects.id, {
 			onDelete: "cascade",
+		}),
+		groupId: text("group_id").references(() => projectGroups.id, {
+			onDelete: "set null",
 		}),
 		worktreePath: text("worktree_path").notNull(),
 		// The container directory holding one worktree per project folder, NULL

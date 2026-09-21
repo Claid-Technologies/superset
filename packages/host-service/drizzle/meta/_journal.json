@@ -260,6 +260,13 @@
       "when": 1789746564470,
       "tag": "0036_sweet_king_bedlam",
       "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "6",
+      "when": 1789943058789,
+      "tag": "0037_new_stingray",
+      "breakpoints": true
     }
   ]
 }
