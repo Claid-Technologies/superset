@@ -57,6 +57,7 @@ mock.module("@tanstack/react-query", () => ({
 }));
 mock.module("@tanstack/react-router", () => ({
 	useNavigate: () => () => {},
+	Link: ({ children }: { children?: React.ReactNode }) => children,
 }));
 mock.module("renderer/hooks/host-projects/useHostProjects", () => ({
 	useHostProjects: () => ({ projects: [project], isReady: true }),

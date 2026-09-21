@@ -3,6 +3,7 @@ import { errorMessage } from "@superset/i18n/errors";
 import { Button } from "@superset/ui/button";
 import { toast } from "@superset/ui/sonner";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { LuPlus } from "react-icons/lu";
 import { RemotePathPicker } from "renderer/components/RemotePathPicker";
@@ -40,6 +41,7 @@ export function SourceFoldersSection({
 }: SourceFoldersSectionProps) {
 	const { t } = useLingui();
 	const queryClient = useQueryClient();
+	const navigate = useNavigate();
 	const selectDirectory = electronTrpc.window.selectDirectory.useMutation();
 	const [renameTarget, setRenameTarget] = useState<ProjectFolder | null>(null);
 	const [removeTarget, setRemoveTarget] = useState<ProjectFolder | null>(null);
@@ -182,6 +184,15 @@ export function SourceFoldersSection({
 		onSuccess: (result) => {
 			toast.success(t({ message: `Added ${result.folder} to this project` }));
 			invalidate();
+			// The second folder moves the project's settings to the Project page;
+			// this one is about to become a source folder's page.
+			if (groupId && folders.length === 1) {
+				void navigate({
+					to: "/settings/projects/group/$groupId",
+					params: { groupId },
+					replace: true,
+				});
+			}
 		},
 		onError: (error) => toast.error(errorMessage(error)),
 	});
