@@ -184,10 +184,8 @@ export function Footer({ locale }: { locale?: SupportedLocale }) {
 							<SupersetLogo />
 						</Link>
 						<SocialLinks className="-ml-2" />
-						{isMobileLaunched && (
-							// TODO: Use the Google Play listing when Android launches; until then, link to signup.
-							<StoreBadges source="footer" androidHref="/mobile#android" />
-						)}
+						{/* TODO: Use the Google Play listing when Android launches; until then, link to signup. */}
+						<StoreBadges source="footer" androidHref="/mobile#android" />
 						<a
 							href={COMPANY.TRUST_URL}
 							target="_blank"
