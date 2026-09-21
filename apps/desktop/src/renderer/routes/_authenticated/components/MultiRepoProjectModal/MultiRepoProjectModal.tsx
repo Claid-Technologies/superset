@@ -8,7 +8,9 @@ import {
 	DialogTitle,
 } from "@superset/ui/dialog";
 import { toast } from "@superset/ui/sonner";
+import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { HOST_PROJECT_GROUPS_QUERY_PREFIX } from "renderer/hooks/host-projects/useHostProjectGroups";
 import { electronTrpc } from "renderer/lib/electron-trpc";
 import { getHostServiceClientByUrl } from "renderer/lib/host-service-client";
 import { showHostServiceUnavailableToast } from "renderer/lib/host-service-unavailable";
@@ -16,7 +18,10 @@ import { useFinalizeProjectSetup } from "renderer/react-query/projects";
 import { useLocalHostService } from "renderer/routes/_authenticated/providers/LocalHostServiceProvider";
 import { MultiRepoProjectForm } from "./components/MultiRepoProjectForm";
 import {
+	type AttachedSourceFolder,
 	appendFolder,
+	createProjectWithSourceFolders,
+	type ProjectCreationClient,
 	removeFolder,
 	type SelectedFolder,
 } from "./MultiRepoProjectModal.utils";
@@ -35,22 +40,23 @@ export function MultiRepoProjectModal({
 	const { t } = useLingui();
 	const hostService = useLocalHostService();
 	const finalizeSetup = useFinalizeProjectSetup();
+	const queryClient = useQueryClient();
 	const selectDirectory = electronTrpc.window.selectDirectory.useMutation();
 
 	const [name, setName] = useState("");
 	const [folders, setFolders] = useState<SelectedFolder[]>([]);
 	const [working, setWorking] = useState(false);
 	const [failure, setFailure] = useState<string | null>(null);
-	const [projectId, setProjectId] = useState<string | null>(null);
-	const [committedPaths, setCommittedPaths] = useState<string[]>([]);
+	const [groupId, setGroupId] = useState<string | null>(null);
+	const [attached, setAttached] = useState<AttachedSourceFolder[]>([]);
 
 	const reset = () => {
 		setName("");
 		setFolders([]);
 		setWorking(false);
 		setFailure(null);
-		setProjectId(null);
-		setCommittedPaths([]);
+		setGroupId(null);
+		setAttached([]);
 	};
 
 	const handleOpenChange = (next: boolean) => {
@@ -90,53 +96,53 @@ export function MultiRepoProjectModal({
 				});
 				return;
 			}
-			const client = getHostServiceClientByUrl(hostUrl);
+			const host = getHostServiceClientByUrl(hostUrl);
+			const client: ProjectCreationClient = {
+				createProject: async (projectName) => ({
+					groupId: (
+						await host.projectGroups.create.mutate({ name: projectName })
+					).group.id,
+				}),
+				resolveRepository: (folder) =>
+					host.project.create.mutate({
+						name: folder.name,
+						mode: { kind: "importLocal", repoPath: folder.path },
+					}),
+				addSourceFolder: async (input) => {
+					await host.projectGroups.addMember.mutate(input);
+				},
+			};
 
-			const attached = new Set(committedPaths);
-			let createdProjectId = projectId;
-			if (!createdProjectId) {
-				try {
-					const result = await client.project.create.mutate({
-						name: name.trim() || primary.name,
-						mode: { kind: "importLocal", repoPath: primary.path },
-					});
-					finalizeSetup(hostUrl, result);
-					createdProjectId = result.projectId;
-					setProjectId(createdProjectId);
-				} catch (error) {
-					setFailure(
-						t({
-							message: `Could not create the project from "${primary.name}": ${errorMessage(error)}`,
-						}),
-					);
-					return;
-				}
-				attached.add(primary.path);
-				setCommittedPaths([...attached]);
+			const result = await createProjectWithSourceFolders({
+				client,
+				name: name.trim() || primary.name,
+				folders,
+				previousAttempt: { groupId, attached },
+			});
+			setGroupId(result.groupId);
+			setAttached(result.attached);
+			void queryClient.invalidateQueries({
+				queryKey: HOST_PROJECT_GROUPS_QUERY_PREFIX,
+			});
+
+			if (result.status === "failed") {
+				setFailure(
+					result.folder
+						? t({
+								message: `"${result.folder.name}" could not be added: ${errorMessage(result.error)}. The source folders added before it were kept — remove it or fix it and create again.`,
+							})
+						: t({
+								message: `Could not create the project: ${errorMessage(result.error)}`,
+							}),
+				);
+				return;
 			}
 
-			for (const folder of folders.slice(1)) {
-				if (attached.has(folder.path)) continue;
-				try {
-					await client.project.folders.add.mutate({
-						projectId: createdProjectId,
-						repoPath: folder.path,
-						folder: folder.name,
-					});
-				} catch (error) {
-					setCommittedPaths([...attached]);
-					setFailure(
-						t({
-							message: `The project was created, but "${folder.name}" could not be added: ${errorMessage(error)}. The folders added before it were kept — remove it or fix it and create again.`,
-						}),
-					);
-					return;
-				}
-				attached.add(folder.path);
-			}
-
-			setCommittedPaths([...attached]);
-			onSuccess({ projectId: createdProjectId });
+			finalizeSetup(hostUrl, {
+				projectId: result.primaryProjectId,
+				repoPath: result.primaryRepoPath,
+			});
+			onSuccess({ projectId: result.primaryProjectId });
 			reset();
 			onOpenChange(false);
 		} catch (error) {
@@ -155,8 +161,8 @@ export function MultiRepoProjectModal({
 					</DialogTitle>
 					<DialogDescription>
 						<Trans>
-							Group several repositories into one project. Every workspace
-							checks out all of them.
+							Add the repositories this project works across as source folders.
+							Every workspace checks out all of them.
 						</Trans>
 					</DialogDescription>
 				</DialogHeader>
@@ -164,7 +170,7 @@ export function MultiRepoProjectModal({
 				<MultiRepoProjectForm
 					name={name}
 					folders={folders}
-					committedPaths={committedPaths}
+					committedPaths={attached.map((entry) => entry.path)}
 					failure={failure}
 					isWorking={working}
 					isPicking={selectDirectory.isPending}

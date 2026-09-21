@@ -9,6 +9,10 @@ import {
 	PROJECT_ICON_NONE,
 	resolveProjectIconUrl,
 } from "renderer/hooks/host-projects/resolveProjectIconUrl";
+import {
+	findProjectGroupForProject,
+	useHostProjectGroups,
+} from "renderer/hooks/host-projects/useHostProjectGroups";
 import { useHostProjects } from "renderer/hooks/host-projects/useHostProjects";
 import { useHostUrl } from "renderer/hooks/host-service/useHostTargetUrl";
 import { getHostServiceClientByUrl } from "renderer/lib/host-service-client";
@@ -47,12 +51,8 @@ export function V2ProjectSettings({
 }: V2ProjectSettingsProps) {
 	const navigate = useNavigate();
 	const { t } = useLingui();
-	// TEMPORARY local-dev override — revert before committing.
-	// PostHog runs with a disabled key locally, so flags never resolve and every
-	// gated feature is invisible in dev.
 	const isMultiRepoEnabled =
-		useFeatureFlagEnabled(FEATURE_FLAGS.MULTI_REPO_PROJECTS) ??
-		import.meta.env.DEV;
+		useFeatureFlagEnabled(FEATURE_FLAGS.MULTI_REPO_PROJECTS) ?? false;
 	const { machineId } = useLocalHostService();
 	const { currentDeviceName, localHostId, otherHosts } =
 		useWorkspaceHostOptions();
@@ -64,6 +64,18 @@ export function V2ProjectSettings({
 	const project = useMemo(
 		() => hostProjects.find((item) => item.projectKey === projectId) ?? null,
 		[hostProjects, projectId],
+	);
+
+	const { groups: hostProjectGroups } = useHostProjectGroups({
+		enabled: isMultiRepoEnabled,
+	});
+	const projectGroup = useMemo(
+		() =>
+			findProjectGroupForProject(
+				hostProjectGroups.filter((group) => group.hostId === targetHostId),
+				projectId,
+			),
+		[hostProjectGroups, projectId, targetHostId],
 	);
 
 	const hostOptions = useMemo<HostSelectOption[]>(() => {
@@ -177,11 +189,13 @@ export function V2ProjectSettings({
 			<header className="mb-8 flex items-center justify-between gap-4">
 				<div className="flex min-w-0 items-center gap-3">
 					<ProjectThumbnail
-						projectName={project.name}
+						projectName={projectGroup?.name ?? project.name}
 						iconUrl={iconUrl}
 						color={projectColor}
 					/>
-					<h2 className="truncate text-xl font-semibold">{project.name}</h2>
+					<h2 className="truncate text-xl font-semibold">
+						{projectGroup?.name ?? project.name}
+					</h2>
 				</div>
 				{hasMultipleHosts && targetHostId ? (
 					<HostSelect
@@ -208,10 +222,13 @@ export function V2ProjectSettings({
 					<SettingsRow label={t({ message: "Name" })} htmlFor="project-name">
 						<NameSection
 							projectId={projectId}
+							groupId={projectGroup?.id ?? null}
 							// The targeted host's own name, not the cross-host merged
 							// one — the rename commits to that host, so a newer name
 							// from another replica must not seed (and overwrite) it.
-							currentName={hostProject?.name ?? project.name}
+							currentName={
+								projectGroup?.name ?? hostProject?.name ?? project.name
+							}
 							hostUrl={targetHostUrl}
 							canRename={canRename}
 							onRenamed={() => refetchHostProject()}
@@ -249,6 +266,7 @@ export function V2ProjectSettings({
 				{isMultiRepoEnabled && (
 					<SourceFoldersSection
 						projectId={projectId}
+						groupId={projectGroup?.id ?? null}
 						hostUrl={targetHostUrl}
 						hostName={targetHostName}
 						isRemoteTarget={isRemoteTarget}

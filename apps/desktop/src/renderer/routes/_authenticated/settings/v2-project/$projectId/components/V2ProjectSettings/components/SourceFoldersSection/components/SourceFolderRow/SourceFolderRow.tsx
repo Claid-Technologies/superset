@@ -16,7 +16,7 @@ interface SourceFolderRowProps {
 	isPrimary: boolean;
 	disabled?: boolean;
 	onMakePrimary: () => void;
-	onRename: () => void;
+	onRename?: () => void;
 	onRemove: () => void;
 }
 

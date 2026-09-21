@@ -6,17 +6,23 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { LuPlus } from "react-icons/lu";
 import { RemotePathPicker } from "renderer/components/RemotePathPicker";
+import { HOST_PROJECT_GROUPS_QUERY_PREFIX } from "renderer/hooks/host-projects/useHostProjectGroups";
 import { electronTrpc } from "renderer/lib/electron-trpc";
 import { getHostServiceClientByUrl } from "renderer/lib/host-service-client";
 import { SettingsSection } from "../../../../../../components/SettingsSection";
 import { RemoveFolderDialog } from "./components/RemoveFolderDialog";
 import { RenameFolderDialog } from "./components/RenameFolderDialog";
 import { SourceFolderRow } from "./components/SourceFolderRow";
-import { withoutFolder, withPrimaryFolder } from "./SourceFoldersSection.utils";
+import {
+	toSourceFolders,
+	withoutFolder,
+	withPrimaryFolder,
+} from "./SourceFoldersSection.utils";
 import type { ProjectFolder } from "./types";
 
 interface SourceFoldersSectionProps {
 	projectId: string;
+	groupId: string | null;
 	hostUrl: string | null;
 	hostName: string;
 	isRemoteTarget: boolean;
@@ -26,6 +32,7 @@ interface SourceFoldersSectionProps {
 
 export function SourceFoldersSection({
 	projectId,
+	groupId,
 	hostUrl,
 	hostName,
 	isRemoteTarget,
@@ -38,18 +45,35 @@ export function SourceFoldersSection({
 	const [removeTarget, setRemoveTarget] = useState<ProjectFolder | null>(null);
 	const [browseOpen, setBrowseOpen] = useState(false);
 
-	const queryKey = ["project-folders", "list", hostUrl, projectId];
+	const queryKey = groupId
+		? ["project-group-folders", "list", hostUrl, groupId]
+		: ["project-folders", "list", hostUrl, projectId];
 	const foldersQuery = useQuery({
 		queryKey,
 		enabled: Boolean(hostUrl) && isProjectSetup,
 		queryFn: async () => {
 			if (!hostUrl) return { folders: [] as ProjectFolder[] };
-			return getHostServiceClientByUrl(hostUrl).project.folders.list.query({
-				projectId,
-			});
+			const host = getHostServiceClientByUrl(hostUrl);
+			if (!groupId) {
+				return host.project.folders.list.query({ projectId });
+			}
+			const [{ group }, repositories] = await Promise.all([
+				host.projectGroups.get.query({ groupId }),
+				host.project.list.query(),
+			]);
+			return { folders: toSourceFolders(group.members, repositories) };
 		},
 	});
 	const folders = foldersQuery.data?.folders ?? [];
+
+	const invalidate = () => {
+		void queryClient.invalidateQueries({ queryKey });
+		if (groupId) {
+			void queryClient.invalidateQueries({
+				queryKey: HOST_PROJECT_GROUPS_QUERY_PREFIX,
+			});
+		}
+	};
 
 	const runOptimistically = async (
 		next: ProjectFolder[],
@@ -64,7 +88,7 @@ export function SourceFoldersSection({
 			queryClient.setQueryData(queryKey, previous);
 			throw error;
 		} finally {
-			void queryClient.invalidateQueries({ queryKey });
+			invalidate();
 		}
 	};
 
@@ -76,10 +100,15 @@ export function SourceFoldersSection({
 	const setPrimary = useMutation({
 		mutationFn: (folder: ProjectFolder) =>
 			runOptimistically(withPrimaryFolder(folders, folder.id), () =>
-				client().project.folders.setPrimary.mutate({
-					projectId,
-					folderId: folder.id,
-				}),
+				groupId
+					? client().projectGroups.setPrimary.mutate({
+							groupId,
+							memberId: folder.id,
+						})
+					: client().project.folders.setPrimary.mutate({
+							projectId,
+							folderId: folder.id,
+						}),
 			),
 		onError: (error) => toast.error(errorMessage(error)),
 	});
@@ -87,10 +116,15 @@ export function SourceFoldersSection({
 	const remove = useMutation({
 		mutationFn: (folder: ProjectFolder) =>
 			runOptimistically(withoutFolder(folders, folder.id), () =>
-				client().project.folders.remove.mutate({
-					projectId,
-					folderId: folder.id,
-				}),
+				groupId
+					? client().projectGroups.removeMember.mutate({
+							groupId,
+							memberId: folder.id,
+						})
+					: client().project.folders.remove.mutate({
+							projectId,
+							folderId: folder.id,
+						}),
 			),
 		onSuccess: () => setRemoveTarget(null),
 		onError: (error) => toast.error(errorMessage(error)),
@@ -116,13 +150,38 @@ export function SourceFoldersSection({
 	});
 
 	const add = useMutation({
-		mutationFn: (repoPath: string) =>
-			client().project.folders.add.mutate({ projectId, repoPath }),
-		onSuccess: (result) => {
-			toast.success(
-				t({ message: `Added ${result.folder.folder} to this project` }),
+		mutationFn: async (repoPath: string): Promise<{ folder: string }> => {
+			const host = client();
+			if (!groupId) {
+				const result = await host.project.folders.add.mutate({
+					projectId,
+					repoPath,
+				});
+				return { folder: result.folder.folder };
+			}
+			const repositories = await host.project.list.query();
+			const existing = repositories.find(
+				(repository) => repository.repoPath === repoPath,
 			);
-			void queryClient.invalidateQueries({ queryKey });
+			const repositoryName =
+				repoPath.split(/[\\/]/).filter(Boolean).at(-1) ?? repoPath;
+			const memberProjectId =
+				existing?.id ??
+				(
+					await host.project.create.mutate({
+						name: repositoryName,
+						mode: { kind: "importLocal", repoPath },
+					})
+				).projectId;
+			const { group } = await host.projectGroups.addMember.mutate({
+				groupId,
+				projectId: memberProjectId,
+			});
+			return { folder: group.members.at(-1)?.folder ?? repoPath };
+		},
+		onSuccess: (result) => {
+			toast.success(t({ message: `Added ${result.folder} to this project` }));
+			invalidate();
 		},
 		onError: (error) => toast.error(errorMessage(error)),
 	});
@@ -165,7 +224,7 @@ export function SourceFoldersSection({
 						isPrimary={folder.position === 0}
 						disabled={isBusy}
 						onMakePrimary={() => setPrimary.mutate(folder)}
-						onRename={() => setRenameTarget(folder)}
+						onRename={groupId ? undefined : () => setRenameTarget(folder)}
 						onRemove={() => setRemoveTarget(folder)}
 					/>
 				))}

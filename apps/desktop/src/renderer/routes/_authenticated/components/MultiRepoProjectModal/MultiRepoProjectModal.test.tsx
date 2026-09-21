@@ -15,9 +15,12 @@ const { act, cleanup, fireEvent, render, within } = await import(
 const { MultiRepoProjectForm } = await import(
 	"./components/MultiRepoProjectForm"
 );
-const { appendFolder, removeFolder } = await import(
-	"./MultiRepoProjectModal.utils"
-);
+const { appendFolder, createProjectWithSourceFolders, removeFolder } =
+	await import("./MultiRepoProjectModal.utils");
+
+type CreationClient = Parameters<
+	typeof createProjectWithSourceFolders
+>[0]["client"];
 
 afterEach(cleanup);
 afterAll(async () => {
@@ -106,5 +109,104 @@ describe("removing a folder before creating", () => {
 		expect(ui.getByLabelText("Remove web").hasAttribute("disabled")).toBe(
 			false,
 		);
+	});
+});
+
+function makeClient(
+	overrides: Partial<CreationClient> = {},
+): CreationClient & { calls: string[] } {
+	const calls: string[] = [];
+	return {
+		calls,
+		createProject: async (name) => {
+			calls.push(`createProject:${name}`);
+			return { groupId: "group-1" };
+		},
+		resolveRepository: async (folder) => {
+			calls.push(`resolveRepository:${folder.path}`);
+			return { projectId: `project-${folder.name}`, repoPath: folder.path };
+		},
+		addSourceFolder: async (input) => {
+			calls.push(`addSourceFolder:${input.projectId}:${input.folder}`);
+		},
+		...overrides,
+	};
+}
+
+describe("creating a project", () => {
+	test("adds every folder the same way, with the first as the primary", async () => {
+		const client = makeClient();
+
+		const result = await createProjectWithSourceFolders({
+			client,
+			name: "Platform",
+			folders: FOLDERS,
+		});
+
+		expect(client.calls).toEqual([
+			"createProject:Platform",
+			"resolveRepository:/repos/api",
+			"addSourceFolder:project-api:api",
+			"resolveRepository:/repos/web",
+			"addSourceFolder:project-web:web",
+		]);
+		expect(result).toMatchObject({
+			status: "created",
+			groupId: "group-1",
+			primaryProjectId: "project-api",
+			primaryRepoPath: "/repos/api",
+		});
+	});
+
+	test("keeps what the host accepted when a later folder fails", async () => {
+		const failure = new Error("not a repository");
+		const client = makeClient({
+			addSourceFolder: async (input) => {
+				if (input.projectId === "project-web") throw failure;
+			},
+		});
+
+		const result = await createProjectWithSourceFolders({
+			client,
+			name: "Platform",
+			folders: FOLDERS,
+		});
+
+		expect(result).toMatchObject({
+			status: "failed",
+			groupId: "group-1",
+			error: failure,
+		});
+		expect(result.attached.map((entry) => entry.path)).toEqual(["/repos/api"]);
+		expect(result.status === "failed" && result.folder?.name).toBe("web");
+	});
+
+	test("resumes into the same project instead of creating a second one", async () => {
+		const client = makeClient();
+
+		const result = await createProjectWithSourceFolders({
+			client,
+			name: "Platform",
+			folders: FOLDERS,
+			previousAttempt: {
+				groupId: "group-1",
+				attached: [
+					{
+						path: "/repos/api",
+						projectId: "project-api",
+						repoPath: "/repos/api",
+					},
+				],
+			},
+		});
+
+		expect(client.calls).toEqual([
+			"resolveRepository:/repos/web",
+			"addSourceFolder:project-web:web",
+		]);
+		expect(result).toMatchObject({
+			status: "created",
+			primaryProjectId: "project-api",
+		});
 	});
 });

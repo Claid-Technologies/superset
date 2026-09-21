@@ -39,3 +39,103 @@ export function removeFolder(
 ): SelectedFolder[] {
 	return folders.filter((folder) => folder.path !== path);
 }
+
+export interface AttachedSourceFolder {
+	path: string;
+	projectId: string;
+	repoPath: string;
+}
+
+export interface ProjectCreationClient {
+	createProject: (name: string) => Promise<{ groupId: string }>;
+	resolveRepository: (
+		folder: SelectedFolder,
+	) => Promise<{ projectId: string; repoPath: string }>;
+	addSourceFolder: (input: {
+		groupId: string;
+		projectId: string;
+		folder: string;
+	}) => Promise<void>;
+}
+
+export interface ProjectCreationAttempt {
+	groupId: string | null;
+	attached: AttachedSourceFolder[];
+}
+
+export type ProjectCreationResult =
+	| {
+			status: "created";
+			groupId: string;
+			primaryProjectId: string;
+			primaryRepoPath: string;
+			attached: AttachedSourceFolder[];
+	  }
+	| {
+			status: "failed";
+			groupId: string | null;
+			attached: AttachedSourceFolder[];
+			folder: SelectedFolder | null;
+			error: unknown;
+	  };
+
+export async function createProjectWithSourceFolders({
+	client,
+	name,
+	folders,
+	previousAttempt,
+}: {
+	client: ProjectCreationClient;
+	name: string;
+	folders: SelectedFolder[];
+	previousAttempt?: ProjectCreationAttempt;
+}): Promise<ProjectCreationResult> {
+	const attached = [...(previousAttempt?.attached ?? [])];
+	let groupId = previousAttempt?.groupId ?? null;
+
+	if (!groupId) {
+		try {
+			groupId = (await client.createProject(name)).groupId;
+		} catch (error) {
+			return { status: "failed", groupId: null, attached, folder: null, error };
+		}
+	}
+
+	for (const folder of folders) {
+		if (attached.some((entry) => entry.path === folder.path)) continue;
+		try {
+			const repository = await client.resolveRepository(folder);
+			await client.addSourceFolder({
+				groupId,
+				projectId: repository.projectId,
+				folder: folder.name,
+			});
+			attached.push({
+				path: folder.path,
+				projectId: repository.projectId,
+				repoPath: repository.repoPath,
+			});
+		} catch (error) {
+			return { status: "failed", groupId, attached, folder, error };
+		}
+	}
+
+	const primary = attached[0];
+	if (!primary) {
+		return {
+			status: "failed",
+			groupId,
+			attached,
+			folder: null,
+			error: new Error("A project needs at least one source folder"),
+		};
+	}
+
+	return {
+		status: "created",
+		groupId,
+		primaryProjectId: primary.projectId,
+		primaryRepoPath: primary.repoPath,
+		attached,
+	};
+}

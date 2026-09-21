@@ -8,7 +8,7 @@ interface SourceFolderMenuItemsProps {
 	isPrimary: boolean;
 	disabled?: boolean;
 	onMakePrimary: () => void;
-	onRename: () => void;
+	onRename?: () => void;
 	onRemove: () => void;
 }
 
@@ -33,16 +33,18 @@ export function SourceFolderMenuItems({
 					</span>
 				</DropdownMenuItem>
 			)}
-			<DropdownMenuItem
-				className="gap-2"
-				disabled={disabled}
-				onSelect={onRename}
-			>
-				<LuPencil className="size-4" />
-				<span>
-					<Trans>Rename folder</Trans>
-				</span>
-			</DropdownMenuItem>
+			{onRename && (
+				<DropdownMenuItem
+					className="gap-2"
+					disabled={disabled}
+					onSelect={onRename}
+				>
+					<LuPencil className="size-4" />
+					<span>
+						<Trans>Rename folder</Trans>
+					</span>
+				</DropdownMenuItem>
+			)}
 			{isPrimary ? (
 				<Tooltip>
 					<TooltipTrigger asChild>

@@ -21,3 +21,40 @@ export function withoutFolder(
 		.filter((folder) => folder.id !== folderId)
 		.map((folder, position) => ({ ...folder, position }));
 }
+
+export interface SourceFolderMemberInput {
+	id: string;
+	projectId: string;
+	position: number;
+	folder: string;
+	baseBranch: string | null;
+}
+
+export interface SourceFolderRepositoryInput {
+	id: string;
+	repoPath: string;
+	repoUrl: string | null;
+}
+
+export function toSourceFolders(
+	members: SourceFolderMemberInput[],
+	repositories: SourceFolderRepositoryInput[],
+): ProjectFolder[] {
+	const repositoryById = new Map(
+		repositories.map((repository) => [repository.id, repository]),
+	);
+	return [...members]
+		.sort((left, right) => left.position - right.position)
+		.map((member) => {
+			const repository = repositoryById.get(member.projectId);
+			return {
+				id: member.id,
+				projectId: member.projectId,
+				position: member.position,
+				folder: member.folder,
+				repoPath: repository?.repoPath ?? null,
+				repoUrl: repository?.repoUrl ?? null,
+				baseBranch: member.baseBranch,
+			};
+		});
+}

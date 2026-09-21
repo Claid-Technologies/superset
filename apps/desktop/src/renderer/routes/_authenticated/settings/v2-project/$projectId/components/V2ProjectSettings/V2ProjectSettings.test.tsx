@@ -61,6 +61,11 @@ mock.module("@tanstack/react-router", () => ({
 mock.module("renderer/hooks/host-projects/useHostProjects", () => ({
 	useHostProjects: () => ({ projects: [project], isReady: true }),
 }));
+mock.module("renderer/hooks/host-projects/useHostProjectGroups", () => ({
+	useHostProjectGroups: () => ({ groups: [], isReady: true }),
+	findProjectGroupForProject: () => null,
+	HOST_PROJECT_GROUPS_QUERY_PREFIX: ["host-service", "project-groups", "list"],
+}));
 mock.module("renderer/hooks/host-service/useHostTargetUrl", () => ({
 	useHostUrl: () => "http://127.0.0.1:7777",
 }));

@@ -19,7 +19,9 @@ const { SourceFolderRow } = await import("./components/SourceFolderRow");
 const { SourceFolderMenuItems } = await import(
 	"./components/SourceFolderRow/components/SourceFolderMenuItems"
 );
-const { withPrimaryFolder } = await import("./SourceFoldersSection.utils");
+const { toSourceFolders, withoutFolder, withPrimaryFolder } = await import(
+	"./SourceFoldersSection.utils"
+);
 
 interface ProjectFolderShape {
 	id: string;
@@ -76,7 +78,7 @@ async function renderList(folders: ProjectFolderShape[]) {
 	return within(view.baseElement as HTMLElement);
 }
 
-async function renderMenu(isPrimary: boolean) {
+async function renderMenu(isPrimary: boolean, canRenameFolder = true) {
 	const onRemove = mock(() => {});
 	let view!: ReturnType<typeof render>;
 	await act(async () => {
@@ -86,7 +88,7 @@ async function renderMenu(isPrimary: boolean) {
 					<SourceFolderMenuItems
 						isPrimary={isPrimary}
 						onMakePrimary={() => {}}
-						onRename={() => {}}
+						onRename={canRenameFolder ? () => {} : undefined}
 						onRemove={onRemove}
 					/>
 				</DropdownMenuContent>
@@ -150,5 +152,67 @@ describe("making another folder primary", () => {
 		const ui = await renderList(reordered);
 		expect(ui.getAllByTestId("source-folder-primary-badge")).toHaveLength(1);
 		expect(primaryRowName(ui)).toBe("web");
+	});
+});
+
+const MEMBERS = [
+	{
+		id: "member-api",
+		projectId: "project-api",
+		position: 0,
+		folder: "api",
+		baseBranch: null,
+	},
+	{
+		id: "member-web",
+		projectId: "project-web",
+		position: 1,
+		folder: "web",
+		baseBranch: null,
+	},
+];
+
+const REPOSITORIES = [
+	{ id: "project-api", repoPath: "/repos/api", repoUrl: null },
+	{ id: "project-web", repoPath: "/repos/web", repoUrl: "git@github/web" },
+];
+
+describe("a project's source folders", () => {
+	test("show each member's repository, ordered with the primary first", async () => {
+		const folders = toSourceFolders([...MEMBERS].reverse(), REPOSITORIES);
+
+		expect(folders.map((folder) => folder.folder)).toEqual(["api", "web"]);
+		expect(folders.map((folder) => folder.repoPath)).toEqual([
+			"/repos/api",
+			"/repos/web",
+		]);
+
+		const ui = await renderList(folders);
+		expect(primaryRowName(ui)).toBe("api");
+	});
+
+	test("survive a member whose repository the host no longer serves", () => {
+		const [folder] = toSourceFolders(MEMBERS, []);
+
+		expect(folder?.repoPath).toBeNull();
+		expect(folder?.repoUrl).toBeNull();
+	});
+
+	test("re-badge the primary after one is removed", () => {
+		const remaining = withoutFolder(
+			toSourceFolders(MEMBERS, REPOSITORIES),
+			"member-api",
+		);
+
+		expect(remaining.map((folder) => folder.folder)).toEqual(["web"]);
+		expect(remaining[0]?.position).toBe(0);
+	});
+
+	test("offer no folder rename, which the container has no endpoint for", async () => {
+		const { ui } = await renderMenu(false, false);
+
+		expect(ui.queryByText("Rename folder")).toBeNull();
+		expect(ui.getByText("Make primary")).not.toBeNull();
+		expect(ui.getByText("Remove")).not.toBeNull();
 	});
 });
