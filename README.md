@@ -61,7 +61,7 @@ Requires **Superset Pro**, **iOS 26 or later**, and a connected computer with **
 
 </td>
 <td width="50%" align="center">
-  <a href="https://superset.sh/mobile"><img src="apps/marketing/public/images/readme/mobile-terminal.png" alt="Superset for iPhone showing a coding agent terminal session and follow-up prompt" width="260" /></a>
+  <a href="https://superset.sh/mobile"><img src="apps/marketing/public/images/readme/mobile-desktop.png" alt="Superset desktop with an iPhone terminal session overlaid on the right" width="100%" /></a>
 </td>
 </tr>
 <tr>
