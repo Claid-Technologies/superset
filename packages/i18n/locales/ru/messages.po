@@ -4396,6 +4396,9 @@ msgstr "Не удалось обновить ветку"
 msgid "serverError.plugins.credentialUnverified"
 msgstr "Не удалось проверить учётные данные: {reason}"
 
+msgid "Could not verify the source session. Reopen it and try again."
+msgstr "Не удалось проверить исходную сессию. Откройте её заново и повторите попытку."
+
 msgid "Could not watch this page"
 msgstr "Не удалось начать отслеживание этой страницы"
 

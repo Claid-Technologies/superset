@@ -1,6 +1,6 @@
 import { Database } from "bun:sqlite";
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
-import { mkdirSync, mkdtempSync, rmSync } from "node:fs";
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { TRPCError } from "@trpc/server";
@@ -571,6 +571,48 @@ describe("buildTerminalAgentLaunch default account env", () => {
 			})
 			.run();
 	}
+
+	it("pins a fork to its source home for preflight and launch after configuration changes", () => {
+		const db = createTestDb();
+		const sourceHome = join(supersetHome, "source");
+		const changedHome = join(supersetHome, "changed");
+		mkdirSync(join(sourceHome, "sessions"), { recursive: true });
+		mkdirSync(join(changedHome, "sessions"), { recursive: true });
+		const sessionId = "01a0bfde-622a-7103-8cc3-ddb312e39832";
+		writeFileSync(
+			join(sourceHome, "sessions", `rollout-test-${sessionId}.jsonl`),
+			"",
+		);
+		db.insert(schema.hostAgentConfigs)
+			.values({
+				id: "codex-fork",
+				presetId: "codex",
+				label: "Codex",
+				command: "codex",
+				argsJson: "[]",
+				promptTransport: "argv",
+				promptArgsJson: "[]",
+				forkArgsJson: JSON.stringify(["fork", "{sessionId}"]),
+				envJson: JSON.stringify({ CODEX_HOME: changedHome }),
+				displayOrder: 0,
+			})
+			.run();
+		const input = {
+			workspaceId: "11111111-1111-1111-1111-111111111111",
+			agent: "codex-fork",
+			prompt: "",
+			forkSessionId: sessionId,
+		};
+		expect(() => buildTerminalAgentLaunch(db, input)).toThrow(
+			"no longer has session",
+		);
+		const launch = buildTerminalAgentLaunch(db, input, {
+			CODEX_HOME: sourceHome,
+		});
+		expect(launch.fullCommand).toContain(`CODEX_HOME='${sourceHome}'`);
+		expect(launch.fullCommand).not.toContain(changedHome);
+		expect(launch.fullCommand).toContain(`'fork' '${sessionId}'`);
+	});
 
 	it("injects CLAUDE_CONFIG_DIR for claude agents when a default account is set", () => {
 		const db = createTestDb();

@@ -4396,6 +4396,9 @@ msgstr "Dal güncellenemedi"
 msgid "serverError.plugins.credentialUnverified"
 msgstr "Kimlik bilgisi doğrulanamadı: {reason}"
 
+msgid "Could not verify the source session. Reopen it and try again."
+msgstr "Kaynak oturum doğrulanamadı. Yeniden açıp tekrar deneyin."
+
 msgid "Could not watch this page"
 msgstr "Bu sayfa izlenemedi"
 

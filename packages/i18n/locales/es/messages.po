@@ -4396,6 +4396,9 @@ msgstr "No se pudo actualizar la rama"
 msgid "serverError.plugins.credentialUnverified"
 msgstr "No se pudo verificar la credencial: {reason}"
 
+msgid "Could not verify the source session. Reopen it and try again."
+msgstr "No se pudo verificar la sesión de origen. Vuelve a abrirla e inténtalo de nuevo."
+
 msgid "Could not watch this page"
 msgstr "No se pudo observar esta página"
 

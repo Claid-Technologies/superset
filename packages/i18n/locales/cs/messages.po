@@ -4396,6 +4396,9 @@ msgstr "Nepodařilo se aktualizovat větev"
 msgid "serverError.plugins.credentialUnverified"
 msgstr "Přihlašovací údaje se nepodařilo ověřit: {reason}"
 
+msgid "Could not verify the source session. Reopen it and try again."
+msgstr "Zdrojovou relaci se nepodařilo ověřit. Znovu ji otevřete a zkuste to znovu."
+
 msgid "Could not watch this page"
 msgstr "Tuto stránku se nepodařilo sledovat"
 

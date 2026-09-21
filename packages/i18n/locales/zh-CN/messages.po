@@ -4396,6 +4396,9 @@ msgstr "无法更新分支"
 msgid "serverError.plugins.credentialUnverified"
 msgstr "无法验证凭据：{reason}"
 
+msgid "Could not verify the source session. Reopen it and try again."
+msgstr "无法验证源会话。请重新打开后再试。"
+
 msgid "Could not watch this page"
 msgstr "无法关注此页面"
 

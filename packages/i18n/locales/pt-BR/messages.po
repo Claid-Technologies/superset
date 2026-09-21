@@ -4396,6 +4396,9 @@ msgstr "Não foi possível atualizar a branch"
 msgid "serverError.plugins.credentialUnverified"
 msgstr "Não foi possível verificar a credencial: {reason}"
 
+msgid "Could not verify the source session. Reopen it and try again."
+msgstr "Não foi possível verificar a sessão de origem. Abra-a novamente e tente de novo."
+
 msgid "Could not watch this page"
 msgstr "Não foi possível observar esta página"
 
