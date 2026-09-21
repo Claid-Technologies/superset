@@ -6781,9 +6781,6 @@ msgstr "資料夾檢視"
 msgid "Folders to check out into new worktrees, one per line, relative to the repo root. Files at the root are always included. Empty checks out everything."
 msgstr "要檢出到新worktree的資料夾，每行一個，相對於儲存庫根目錄。根目錄下的檔案始終包含在內。留空則檢出全部。"
 
-msgid "Follow every session"
-msgstr "追蹤每個會話"
-
 msgid "FOLLOW ON X"
 msgstr "在X上關注"
 
@@ -8173,9 +8170,6 @@ msgstr "啟動"
 
 msgid "Launch agents across features, bug fixes, and refactors, all in parallel. Status at a glance shows which agents are working, which are blocked, and which are waiting on you."
 msgstr "在新功能、缺陷修復和重構上同時啟動代理程式，全部並行。狀態一眼可見：哪些在幹活、哪些被阻塞、哪些在等你。"
-
-msgid "Launch an agent on any connected machine the moment an idea lands. Every session gets its own isolated workspace."
-msgstr "靈感出現的那一刻，就能在任何已連線的機器上啟動 agent。每個會話都有獨立隔離的工作區。"
 
 msgid "Launch mode"
 msgstr "啟動方式"
@@ -11770,9 +11764,6 @@ msgstr "檢視更新日誌"
 msgid "Read the changelog →"
 msgstr "檢視更新日誌 →"
 
-msgid "Read the full diff file by file, check the PR status, and open a terminal when you need the raw output."
-msgstr "逐一檔案閱讀完整差異，查看 PR 狀態，需要原始輸出時開啟終端機。"
-
 msgid "Read the guide to parallel coding agents"
 msgstr "閱讀並行編碼代理程式指南"
 
@@ -12518,9 +12509,6 @@ msgstr "審查和CI排隊把代理程式帶來的收益吃掉了。"
 
 msgid "Review becomes the bottleneck"
 msgstr "審查成為瓶頸"
-
-msgid "Review before you merge"
-msgstr "合併前先審查"
 
 msgid "Review Dismissed"
 msgstr "審查已忽略"
@@ -16522,9 +16510,6 @@ msgstr "警告"
 
 msgid "Warning occurred."
 msgstr "出現了警告。"
-
-msgid "Watch agents work in real time and step in with a follow-up, a photo, or a dictated message when they need direction."
-msgstr "即時查看 agent 的工作，在它們需要指引時，用後續訊息、照片或語音輸入介入。"
 
 msgid "Watchers"
 msgstr "關注者"

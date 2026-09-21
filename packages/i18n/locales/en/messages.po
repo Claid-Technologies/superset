@@ -6781,9 +6781,6 @@ msgstr "Folder view"
 msgid "Folders to check out into new worktrees, one per line, relative to the repo root. Files at the root are always included. Empty checks out everything."
 msgstr "Folders to check out into new worktrees, one per line, relative to the repo root. Files at the root are always included. Empty checks out everything."
 
-msgid "Follow every session"
-msgstr "Follow every session"
-
 msgid "FOLLOW ON X"
 msgstr "FOLLOW ON X"
 
@@ -8173,9 +8170,6 @@ msgstr "Launch"
 
 msgid "Launch agents across features, bug fixes, and refactors, all in parallel. Status at a glance shows which agents are working, which are blocked, and which are waiting on you."
 msgstr "Launch agents across features, bug fixes, and refactors, all in parallel. Status at a glance shows which agents are working, which are blocked, and which are waiting on you."
-
-msgid "Launch an agent on any connected machine the moment an idea lands. Every session gets its own isolated workspace."
-msgstr "Launch an agent on any connected machine the moment an idea lands. Every session gets its own isolated workspace."
 
 msgid "Launch mode"
 msgstr "Launch mode"
@@ -11770,9 +11764,6 @@ msgstr "Read the changelog"
 msgid "Read the changelog →"
 msgstr "Read the changelog →"
 
-msgid "Read the full diff file by file, check the PR status, and open a terminal when you need the raw output."
-msgstr "Read the full diff file by file, check the PR status, and open a terminal when you need the raw output."
-
 msgid "Read the guide to parallel coding agents"
 msgstr "Read the guide to parallel coding agents"
 
@@ -12518,9 +12509,6 @@ msgstr "Review and CI queues eat the gains agents create."
 
 msgid "Review becomes the bottleneck"
 msgstr "Review becomes the bottleneck"
-
-msgid "Review before you merge"
-msgstr "Review before you merge"
 
 msgid "Review Dismissed"
 msgstr "Review Dismissed"
@@ -16522,9 +16510,6 @@ msgstr "Warning"
 
 msgid "Warning occurred."
 msgstr "Warning occurred."
-
-msgid "Watch agents work in real time and step in with a follow-up, a photo, or a dictated message when they need direction."
-msgstr "Watch agents work in real time and step in with a follow-up, a photo, or a dictated message when they need direction."
 
 msgid "Watchers"
 msgstr "Watchers"

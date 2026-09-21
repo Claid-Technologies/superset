@@ -6781,9 +6781,6 @@ msgstr "文件夹视图"
 msgid "Folders to check out into new worktrees, one per line, relative to the repo root. Files at the root are always included. Empty checks out everything."
 msgstr "要检出到新worktree的文件夹，每行一个，相对于仓库根目录。根目录下的文件始终包含在内。留空则检出全部。"
 
-msgid "Follow every session"
-msgstr "跟进每个会话"
-
 msgid "FOLLOW ON X"
 msgstr "在X上关注"
 
@@ -8173,9 +8170,6 @@ msgstr "启动"
 
 msgid "Launch agents across features, bug fixes, and refactors, all in parallel. Status at a glance shows which agents are working, which are blocked, and which are waiting on you."
 msgstr "在新功能、缺陷修复和重构上同时启动智能体，全部并行。状态一眼可见：哪些在干活、哪些被阻塞、哪些在等你。"
-
-msgid "Launch an agent on any connected machine the moment an idea lands. Every session gets its own isolated workspace."
-msgstr "灵感出现的那一刻，就能在任意已连接的机器上启动智能体。每个会话都有独立隔离的工作区。"
 
 msgid "Launch mode"
 msgstr "启动方式"
@@ -11770,9 +11764,6 @@ msgstr "查看更新日志"
 msgid "Read the changelog →"
 msgstr "查看更新日志 →"
 
-msgid "Read the full diff file by file, check the PR status, and open a terminal when you need the raw output."
-msgstr "逐个文件阅读完整差异，查看 PR 状态，需要原始输出时打开终端。"
-
 msgid "Read the guide to parallel coding agents"
 msgstr "阅读并行编码智能体指南"
 
@@ -12518,9 +12509,6 @@ msgstr "审查和CI排队把智能体带来的收益吃掉了。"
 
 msgid "Review becomes the bottleneck"
 msgstr "审查成为瓶颈"
-
-msgid "Review before you merge"
-msgstr "合并前先审查"
 
 msgid "Review Dismissed"
 msgstr "审查已忽略"
@@ -16522,9 +16510,6 @@ msgstr "警告"
 
 msgid "Warning occurred."
 msgstr "出现了警告。"
-
-msgid "Watch agents work in real time and step in with a follow-up, a photo, or a dictated message when they need direction."
-msgstr "实时查看智能体的工作，在它们需要指引时，用后续消息、照片或语音输入介入。"
 
 msgid "Watchers"
 msgstr "关注者"

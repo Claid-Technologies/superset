@@ -6781,9 +6781,6 @@ msgstr "Вид папок"
 msgid "Folders to check out into new worktrees, one per line, relative to the repo root. Files at the root are always included. Empty checks out everything."
 msgstr "Папки для выгрузки в новые worktree, по одной в строке, относительно корня репозитория. Файлы в корне включаются всегда. Пусто — выгружается всё."
 
-msgid "Follow every session"
-msgstr "Следите за каждой сессией"
-
 msgid "FOLLOW ON X"
 msgstr "ПОДПИСАТЬСЯ В X"
 
@@ -8173,9 +8170,6 @@ msgstr "Запуск"
 
 msgid "Launch agents across features, bug fixes, and refactors, all in parallel. Status at a glance shows which agents are working, which are blocked, and which are waiting on you."
 msgstr "Запускайте агентов на фичи, исправления багов и рефакторинги — все параллельно. Статус с одного взгляда показывает, кто работает, кто заблокирован, а кто ждёт вас."
-
-msgid "Launch an agent on any connected machine the moment an idea lands. Every session gets its own isolated workspace."
-msgstr "Запускайте агента на любой подключённой машине, как только появилась идея. У каждой сессии своя изолированная рабочая область."
 
 msgid "Launch mode"
 msgstr "Режим запуска"
@@ -11770,9 +11764,6 @@ msgstr "Читать changelog"
 msgid "Read the changelog →"
 msgstr "Читать changelog →"
 
-msgid "Read the full diff file by file, check the PR status, and open a terminal when you need the raw output."
-msgstr "Читайте полный diff файл за файлом, проверяйте статус PR и открывайте терминал, когда нужен необработанный вывод."
-
 msgid "Read the guide to parallel coding agents"
 msgstr "Читать руководство по параллельным кодовым агентам"
 
@@ -12518,9 +12509,6 @@ msgstr "Очереди ревью и CI съедают выигрыш, кото�
 
 msgid "Review becomes the bottleneck"
 msgstr "Ревью становится узким местом"
-
-msgid "Review before you merge"
-msgstr "Проверяйте перед слиянием"
 
 msgid "Review Dismissed"
 msgstr "Ревью отклонено"
@@ -16522,9 +16510,6 @@ msgstr "Предупреждение"
 
 msgid "Warning occurred."
 msgstr "Возникло предупреждение."
-
-msgid "Watch agents work in real time and step in with a follow-up, a photo, or a dictated message when they need direction."
-msgstr "Наблюдайте за работой агентов в реальном времени и вмешивайтесь уточняющим сообщением, фото или надиктованным сообщением, когда им нужно направление."
 
 msgid "Watchers"
 msgstr "Наблюдатели"

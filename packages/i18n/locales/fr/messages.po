@@ -6781,9 +6781,6 @@ msgstr "Vue par dossiers"
 msgid "Folders to check out into new worktrees, one per line, relative to the repo root. Files at the root are always included. Empty checks out everything."
 msgstr "Dossiers à extraire dans les nouveaux worktrees, un par ligne, relatifs à la racine du dépôt. Les fichiers à la racine sont toujours inclus. Vide, tout est extrait."
 
-msgid "Follow every session"
-msgstr "Suivez chaque session"
-
 msgid "FOLLOW ON X"
 msgstr "SUIVRE SUR X"
 
@@ -8173,9 +8170,6 @@ msgstr "Lancement"
 
 msgid "Launch agents across features, bug fixes, and refactors, all in parallel. Status at a glance shows which agents are working, which are blocked, and which are waiting on you."
 msgstr "Lancez des agents sur des fonctionnalités, des corrections de bugs et des refactorisations, tous en parallèle. Le statut en un coup d'œil montre quels agents travaillent, lesquels sont bloqués et lesquels vous attendent."
-
-msgid "Launch an agent on any connected machine the moment an idea lands. Every session gets its own isolated workspace."
-msgstr "Lancez un agent sur n'importe quelle machine connectée dès qu'une idée surgit. Chaque session dispose de son propre espace de travail isolé."
 
 msgid "Launch mode"
 msgstr "Mode de lancement"
@@ -11770,9 +11764,6 @@ msgstr "Lire le changelog"
 msgid "Read the changelog →"
 msgstr "Lire le changelog →"
 
-msgid "Read the full diff file by file, check the PR status, and open a terminal when you need the raw output."
-msgstr "Lisez le diff complet fichier par fichier, vérifiez le statut de la PR et ouvrez un terminal quand vous avez besoin de la sortie brute."
-
 msgid "Read the guide to parallel coding agents"
 msgstr "Lire le guide des agents de code en parallèle"
 
@@ -12518,9 +12509,6 @@ msgstr "Les files d'attente de revue et de CI absorbent les gains créés par le
 
 msgid "Review becomes the bottleneck"
 msgstr "La revue devient le goulot d'étranglement"
-
-msgid "Review before you merge"
-msgstr "Relisez avant de fusionner"
 
 msgid "Review Dismissed"
 msgstr "Revue rejetée"
@@ -16522,9 +16510,6 @@ msgstr "Avertissement"
 
 msgid "Warning occurred."
 msgstr "Un avertissement s'est produit."
-
-msgid "Watch agents work in real time and step in with a follow-up, a photo, or a dictated message when they need direction."
-msgstr "Regardez les agents travailler en temps réel et intervenez avec un message de suivi, une photo ou un message dicté lorsqu'ils ont besoin d'être guidés."
 
 msgid "Watchers"
 msgstr "Observateurs"

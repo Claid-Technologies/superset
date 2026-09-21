@@ -6781,9 +6781,6 @@ msgstr "폴더 보기"
 msgid "Folders to check out into new worktrees, one per line, relative to the repo root. Files at the root are always included. Empty checks out everything."
 msgstr "새 worktree에 체크아웃할 폴더를 리포지토리 루트 기준으로 한 줄에 하나씩 적습니다. 루트에 있는 파일은 항상 포함됩니다. 비워 두면 전체를 체크아웃합니다."
 
-msgid "Follow every session"
-msgstr "모든 세션을 따라가기"
-
 msgid "FOLLOW ON X"
 msgstr "X에서 팔로우하기"
 
@@ -8173,9 +8170,6 @@ msgstr "실행"
 
 msgid "Launch agents across features, bug fixes, and refactors, all in parallel. Status at a glance shows which agents are working, which are blocked, and which are waiting on you."
 msgstr "기능 개발, 버그 수정, 리팩터링에 에이전트를 병렬로 띄우세요. 어떤 에이전트가 작업 중이고, 막혀 있고, 응답을 기다리는지 한눈에 보입니다."
-
-msgid "Launch an agent on any connected machine the moment an idea lands. Every session gets its own isolated workspace."
-msgstr "아이디어가 떠오르는 순간, 연결된 어떤 머신에서든 에이전트를 실행하세요. 모든 세션은 격리된 자체 워크스페이스를 갖습니다."
 
 msgid "Launch mode"
 msgstr "실행 방식"
@@ -11770,9 +11764,6 @@ msgstr "변경 로그 읽기"
 msgid "Read the changelog →"
 msgstr "변경 로그 읽기 →"
 
-msgid "Read the full diff file by file, check the PR status, and open a terminal when you need the raw output."
-msgstr "전체 diff를 파일별로 읽고, PR 상태를 확인하고, 원본 출력이 필요할 땐 터미널을 여세요."
-
 msgid "Read the guide to parallel coding agents"
 msgstr "병렬 코딩 에이전트 가이드 읽기"
 
@@ -12518,9 +12509,6 @@ msgstr "리뷰와 CI 대기열이 에이전트가 만든 이득을 깎아먹습�
 
 msgid "Review becomes the bottleneck"
 msgstr "리뷰가 병목이 됩니다"
-
-msgid "Review before you merge"
-msgstr "머지 전에 리뷰하기"
 
 msgid "Review Dismissed"
 msgstr "리뷰 무시됨"
@@ -16522,9 +16510,6 @@ msgstr "경고"
 
 msgid "Warning occurred."
 msgstr "경고가 발생했습니다."
-
-msgid "Watch agents work in real time and step in with a follow-up, a photo, or a dictated message when they need direction."
-msgstr "에이전트가 일하는 모습을 실시간으로 지켜보고, 방향이 필요할 때 후속 메시지, 사진, 음성 입력 메시지로 개입하세요."
 
 msgid "Watchers"
 msgstr "관찰자"

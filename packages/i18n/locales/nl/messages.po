@@ -6781,9 +6781,6 @@ msgstr "Mapweergave"
 msgid "Folders to check out into new worktrees, one per line, relative to the repo root. Files at the root are always included. Empty checks out everything."
 msgstr "Mappen die in nieuwe worktrees worden uitgecheckt, één per regel, relatief aan de repo-root. Bestanden in de root worden altijd meegenomen. Leeg checkt alles uit."
 
-msgid "Follow every session"
-msgstr "Volg elke sessie"
-
 msgid "FOLLOW ON X"
 msgstr "VOLG ONS OP X"
 
@@ -8173,9 +8170,6 @@ msgstr "Starten"
 
 msgid "Launch agents across features, bug fixes, and refactors, all in parallel. Status at a glance shows which agents are working, which are blocked, and which are waiting on you."
 msgstr "Start agents op features, bugfixes en refactors, allemaal parallel. In één oogopslag zie je welke agents werken, welke vastzitten en welke op jou wachten."
-
-msgid "Launch an agent on any connected machine the moment an idea lands. Every session gets its own isolated workspace."
-msgstr "Start een agent op elke verbonden machine zodra je een idee hebt. Elke sessie krijgt zijn eigen geïsoleerde werkruimte."
 
 msgid "Launch mode"
 msgstr "Startmodus"
@@ -11770,9 +11764,6 @@ msgstr "Lees de changelog"
 msgid "Read the changelog →"
 msgstr "Lees de changelog →"
 
-msgid "Read the full diff file by file, check the PR status, and open a terminal when you need the raw output."
-msgstr "Lees de volledige diff bestand voor bestand, bekijk de PR-status en open een terminal wanneer je de ruwe uitvoer nodig hebt."
-
 msgid "Read the guide to parallel coding agents"
 msgstr "Lees de gids over parallelle coding agents"
 
@@ -12518,9 +12509,6 @@ msgstr "Review- en CI-wachtrijen eten de winst op die agents opleveren."
 
 msgid "Review becomes the bottleneck"
 msgstr "Review wordt het knelpunt"
-
-msgid "Review before you merge"
-msgstr "Review voordat je merget"
 
 msgid "Review Dismissed"
 msgstr "Review afgewezen"
@@ -16522,9 +16510,6 @@ msgstr "Warning"
 
 msgid "Warning occurred."
 msgstr "Er is een waarschuwing opgetreden."
-
-msgid "Watch agents work in real time and step in with a follow-up, a photo, or a dictated message when they need direction."
-msgstr "Kijk in realtime mee terwijl agents werken en grijp in met een vervolgbericht, een foto of een gedicteerd bericht wanneer ze richting nodig hebben."
 
 msgid "Watchers"
 msgstr "Watchers"

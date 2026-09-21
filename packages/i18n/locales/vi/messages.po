@@ -6781,9 +6781,6 @@ msgstr "Xem theo thư mục"
 msgid "Folders to check out into new worktrees, one per line, relative to the repo root. Files at the root are always included. Empty checks out everything."
 msgstr "Các thư mục sẽ được checkout vào worktree mới, mỗi dòng một thư mục, tính từ gốc repo. Tệp ở gốc luôn được đưa vào. Để trống sẽ checkout tất cả."
 
-msgid "Follow every session"
-msgstr "Theo dõi mọi phiên"
-
 msgid "FOLLOW ON X"
 msgstr "THEO DÕI TRÊN X"
 
@@ -8173,9 +8170,6 @@ msgstr "Khởi chạy"
 
 msgid "Launch agents across features, bug fixes, and refactors, all in parallel. Status at a glance shows which agents are working, which are blocked, and which are waiting on you."
 msgstr "Khởi chạy agent cho tính năng, sửa lỗi và refactor, tất cả song song. Trạng thái hiển thị ngay cho biết agent nào đang làm, agent nào bị chặn và agent nào đang chờ bạn."
-
-msgid "Launch an agent on any connected machine the moment an idea lands. Every session gets its own isolated workspace."
-msgstr "Khởi chạy agent trên bất kỳ máy nào đã kết nối ngay khi ý tưởng xuất hiện. Mỗi phiên có workspace biệt lập riêng."
 
 msgid "Launch mode"
 msgstr "Chế độ chạy"
@@ -11770,9 +11764,6 @@ msgstr "Đọc changelog"
 msgid "Read the changelog →"
 msgstr "Đọc changelog →"
 
-msgid "Read the full diff file by file, check the PR status, and open a terminal when you need the raw output."
-msgstr "Đọc toàn bộ diff theo từng tệp, kiểm tra trạng thái PR và mở terminal khi bạn cần đầu ra thô."
-
 msgid "Read the guide to parallel coding agents"
 msgstr "Đọc hướng dẫn về coding agent chạy song song"
 
@@ -12518,9 +12509,6 @@ msgstr "Hàng đợi review và CI ăn mất phần lợi mà agent tạo ra."
 
 msgid "Review becomes the bottleneck"
 msgstr "Review trở thành nút thắt"
-
-msgid "Review before you merge"
-msgstr "Xem xét trước khi merge"
 
 msgid "Review Dismissed"
 msgstr "Review đã bị bỏ qua"
@@ -16522,9 +16510,6 @@ msgstr "Cảnh báo"
 
 msgid "Warning occurred."
 msgstr "Có cảnh báo."
-
-msgid "Watch agents work in real time and step in with a follow-up, a photo, or a dictated message when they need direction."
-msgstr "Xem agent làm việc theo thời gian thực và can thiệp bằng tin nhắn tiếp theo, ảnh hoặc tin nhắn đọc chính tả khi chúng cần định hướng."
 
 msgid "Watchers"
 msgstr "Người theo dõi"

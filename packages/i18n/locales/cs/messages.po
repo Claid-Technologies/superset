@@ -6781,9 +6781,6 @@ msgstr "Zobrazení složek"
 msgid "Folders to check out into new worktrees, one per line, relative to the repo root. Files at the root are always included. Empty checks out everything."
 msgstr "Složky, které se mají vytáhnout do nových worktree, jedna na řádek, relativně ke kořeni repozitáře. Soubory v kořeni jsou vždy zahrnuty. Prázdné vytáhne vše."
 
-msgid "Follow every session"
-msgstr "Sledujte každou relaci"
-
 msgid "FOLLOW ON X"
 msgstr "SLEDOVAT NA X"
 
@@ -8173,9 +8170,6 @@ msgstr "Spuštění"
 
 msgid "Launch agents across features, bug fixes, and refactors, all in parallel. Status at a glance shows which agents are working, which are blocked, and which are waiting on you."
 msgstr "Spouštějte agenty na funkce, opravy chyb i refaktory, všechno paralelně. Stav na první pohled ukáže, kteří agenti pracují, kteří jsou zablokovaní a kteří čekají na vás."
-
-msgid "Launch an agent on any connected machine the moment an idea lands. Every session gets its own isolated workspace."
-msgstr "Spusťte agenta na kterémkoli připojeném počítači ve chvíli, kdy vás něco napadne. Každá relace má vlastní izolovaný pracovní prostor."
 
 msgid "Launch mode"
 msgstr "Režim spuštění"
@@ -11770,9 +11764,6 @@ msgstr "Přečíst changelog"
 msgid "Read the changelog →"
 msgstr "Přečíst changelog →"
 
-msgid "Read the full diff file by file, check the PR status, and open a terminal when you need the raw output."
-msgstr "Čtěte celý diff soubor po souboru, kontrolujte stav PR a otevřete terminál, když potřebujete surový výstup."
-
 msgid "Read the guide to parallel coding agents"
 msgstr "Přečíst průvodce paralelními kódovacími agenty"
 
@@ -12518,9 +12509,6 @@ msgstr "Fronty revizí a CI spolykají zisky, které agenti vytvoří."
 
 msgid "Review becomes the bottleneck"
 msgstr "Úzkým hrdlem se stává revize"
-
-msgid "Review before you merge"
-msgstr "Zkontrolujte před sloučením"
 
 msgid "Review Dismissed"
 msgstr "Revize zamítnuta"
@@ -16522,9 +16510,6 @@ msgstr "Varování"
 
 msgid "Warning occurred."
 msgstr "Došlo k varování."
-
-msgid "Watch agents work in real time and step in with a follow-up, a photo, or a dictated message when they need direction."
-msgstr "Sledujte agenty při práci v reálném čase a zasáhněte doplňující zprávou, fotkou nebo nadiktovanou zprávou, když potřebují nasměrovat."
 
 msgid "Watchers"
 msgstr "Sledující"

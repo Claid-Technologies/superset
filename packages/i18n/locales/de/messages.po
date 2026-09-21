@@ -6781,9 +6781,6 @@ msgstr "Ordneransicht"
 msgid "Folders to check out into new worktrees, one per line, relative to the repo root. Files at the root are always included. Empty checks out everything."
 msgstr "Ordner, die in neue Worktrees ausgecheckt werden, einer pro Zeile, relativ zur Repo-Wurzel. Dateien im Wurzelverzeichnis sind immer dabei. Leer checkt alles aus."
 
-msgid "Follow every session"
-msgstr "Jede Sitzung verfolgen"
-
 msgid "FOLLOW ON X"
 msgstr "AUF X FOLGEN"
 
@@ -8173,9 +8170,6 @@ msgstr "Start"
 
 msgid "Launch agents across features, bug fixes, and refactors, all in parallel. Status at a glance shows which agents are working, which are blocked, and which are waiting on you."
 msgstr "Starte Agenten für Features, Bugfixes und Refactorings, alle parallel. Der Status auf einen Blick zeigt, welche Agenten arbeiten, welche blockiert sind und welche auf dich warten."
-
-msgid "Launch an agent on any connected machine the moment an idea lands. Every session gets its own isolated workspace."
-msgstr "Starte einen Agenten auf jedem verbundenen Rechner, sobald dir eine Idee kommt. Jede Sitzung erhält ihren eigenen isolierten Arbeitsbereich."
 
 msgid "Launch mode"
 msgstr "Startmodus"
@@ -11770,9 +11764,6 @@ msgstr "Changelog lesen"
 msgid "Read the changelog →"
 msgstr "Changelog lesen →"
 
-msgid "Read the full diff file by file, check the PR status, and open a terminal when you need the raw output."
-msgstr "Lies den vollständigen Diff Datei für Datei, prüfe den PR-Status und öffne ein Terminal, wenn du die Rohausgabe brauchst."
-
 msgid "Read the guide to parallel coding agents"
 msgstr "Zum Leitfaden für parallele Coding-Agenten"
 
@@ -12518,9 +12509,6 @@ msgstr "Review- und CI-Warteschlangen fressen die Gewinne der Agenten auf."
 
 msgid "Review becomes the bottleneck"
 msgstr "Review wird zum Engpass"
-
-msgid "Review before you merge"
-msgstr "Vor dem Mergen prüfen"
 
 msgid "Review Dismissed"
 msgstr "Review verworfen"
@@ -16522,9 +16510,6 @@ msgstr "Warnung"
 
 msgid "Warning occurred."
 msgstr "Es gab eine Warnung."
-
-msgid "Watch agents work in real time and step in with a follow-up, a photo, or a dictated message when they need direction."
-msgstr "Sieh Agents in Echtzeit bei der Arbeit zu und greif mit einer Nachfrage, einem Foto oder einer diktierten Nachricht ein, wenn sie Orientierung brauchen."
 
 msgid "Watchers"
 msgstr "Beobachter"
