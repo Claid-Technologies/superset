@@ -96,6 +96,27 @@ export function listProjectGroups(db: HostDb): ProjectGroup[] {
 		.sort((a, b) => a.createdAt - b.createdAt);
 }
 
+/**
+ * A repository adopted as another project's first source folder is the
+ * primary of both that group and its own backfilled one, so the group that
+ * owns several folders wins — the renderer's
+ * `indexProjectGroupsByPrimaryProjectId` resolves the same way, so the name
+ * shown is the name whose folders get checked out.
+ */
+export function findGroupForPrimaryProject(
+	db: HostDb,
+	projectId: string,
+): ProjectGroup | null {
+	let claimed: ProjectGroup | null = null;
+	for (const group of listProjectGroups(db)) {
+		const primary = group.members.find((member) => member.position === 0);
+		if (primary?.projectId !== projectId) continue;
+		if (claimed && claimed.members.length >= group.members.length) continue;
+		claimed = group;
+	}
+	return claimed;
+}
+
 export function reassignMemberPositions(
 	db: HostDb,
 	orderedMemberIds: string[],

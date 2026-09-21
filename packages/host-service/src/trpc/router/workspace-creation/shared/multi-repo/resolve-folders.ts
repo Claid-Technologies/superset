@@ -11,7 +11,12 @@ import {
 	defaultFolderNameForRepo,
 	listProjectFolders,
 	type ProjectFolder,
+	sanitizeFolderName,
 } from "../../../../../projects/project-folders";
+import {
+	findGroupForPrimaryProject,
+	type ProjectGroup,
+} from "../../../../../projects/project-groups";
 import type { HostServiceContext } from "../../../../../types";
 import { persistLocalProject } from "../../../project/utils/persist-project";
 import {
@@ -35,22 +40,34 @@ export interface ResolvedFolder {
 
 export type ProgressReporter = (line: string) => void;
 
+type EffectiveFolder = ProjectFolder & { linkedProjectId: string | null };
+
 /**
- * The project's own folders plus one per extra project id. Extra ids never
- * mutate the project's folder list — they shape this workspace only.
+ * The project's own folders, the source folders of the Project it is the
+ * primary of, then one per extra project id. Neither the group membership
+ * nor the extra ids mutate the project's folder list.
  */
 export function effectiveProjectFolders(
 	ctx: HostServiceContext,
 	projectId: string,
 	extraProjectIds: string[] | undefined,
-): Array<ProjectFolder & { linkedProjectId: string | null }> {
+): EffectiveFolder[] {
 	const base = listProjectFolders(ctx.db, projectId).map((folder) => ({
 		...folder,
 		linkedProjectId: folder.position === 0 ? projectId : null,
 	}));
-	if (!extraProjectIds?.length) return base;
+	const group = findGroupForPrimaryProject(ctx.db, projectId);
+	const primary = base[0];
+	const primaryFolder = group?.members.find((member) => member.position === 0);
+	// Settings name the primary checkout after its membership row, so the
+	// directory has to be the one they name.
+	if (group && group.members.length > 1 && primary && primaryFolder) {
+		base[0] = { ...primary, folder: primaryFolder.folder };
+	}
+	const folders = [...base, ...groupSourceFolders(group, ctx, projectId, base)];
+	if (!extraProjectIds?.length) return folders;
 
-	const taken = base.map((folder) => folder.folder);
+	const taken = folders.map((folder) => folder.folder);
 	const extras = extraProjectIds.map((extraId, index) => {
 		const project = ctx.db
 			.select()
@@ -71,7 +88,7 @@ export function effectiveProjectFolders(
 		return {
 			id: null,
 			projectId,
-			position: base.length + index,
+			position: folders.length + index,
 			folder,
 			repoPath: project.repoPath,
 			repoUrl: project.repoUrl,
@@ -79,7 +96,55 @@ export function effectiveProjectFolders(
 			linkedProjectId: extraId,
 		};
 	});
-	return [...base, ...extras];
+	return [...folders, ...extras];
+}
+
+function groupSourceFolders(
+	group: ProjectGroup | null,
+	ctx: HostServiceContext,
+	projectId: string,
+	base: EffectiveFolder[],
+): EffectiveFolder[] {
+	if (!group) return [];
+
+	const taken = base.map((folder) => folder.folder);
+	const checkedOut = new Set(
+		base.flatMap((folder) => (folder.repoPath ? [folder.repoPath] : [])),
+	);
+	const folders: EffectiveFolder[] = [];
+	for (const member of group.members) {
+		if (member.projectId === projectId) continue;
+		const project = ctx.db
+			.select()
+			.from(projects)
+			.where(eq(projects.id, member.projectId))
+			.get();
+		if (!project) {
+			throw new TRPCError({
+				code: "NOT_FOUND",
+				message: `Source folder "${member.folder}" is not set up on this host`,
+			});
+		}
+		if (checkedOut.has(project.repoPath)) continue;
+		const folder = deduplicateFolderName(
+			sanitizeFolderName(member.folder) ??
+				defaultFolderNameForRepo(project.repoPath),
+			taken,
+		);
+		taken.push(folder);
+		checkedOut.add(project.repoPath);
+		folders.push({
+			id: null,
+			projectId,
+			position: base.length + folders.length,
+			folder,
+			repoPath: project.repoPath,
+			repoUrl: project.repoUrl,
+			baseBranch: member.baseBranch,
+			linkedProjectId: member.projectId,
+		});
+	}
+	return folders;
 }
 
 function isDirectory(path: string): boolean {

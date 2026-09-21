@@ -8,6 +8,7 @@ import {
 	workspaces,
 } from "../../src/db/schema";
 import { runMultiRepoBackfill } from "../../src/runtime/multi-repo-backfill";
+import { runProjectGroupBackfill } from "../../src/runtime/project-group-backfill";
 import { createTestHost, type TestHost } from "../helpers/createTestHost";
 import { createGitFixture, type GitFixture } from "../helpers/git-fixture";
 import { seedProject, seedWorkspace } from "../helpers/seed";
@@ -241,6 +242,126 @@ describe("multi-repo project folders", () => {
 				repo: "nope",
 			}),
 		).rejects.toThrow(/no repo "nope"/);
+	});
+});
+
+describe("a project over several source folders", () => {
+	test("checks out every member and starts the agent in the primary", async () => {
+		scenario = await createScenario();
+		const { host, primary, secondary, projectId, secondaryProjectId } =
+			scenario;
+
+		const { group } = await host.trpc.projectGroups.create.mutate({
+			name: "platform",
+		});
+		await host.trpc.projectGroups.addMember.mutate({
+			groupId: group.id,
+			projectId,
+		});
+		await host.trpc.projectGroups.addMember.mutate({
+			groupId: group.id,
+			projectId: secondaryProjectId,
+			folder: "api",
+		});
+
+		const result = await host.trpc.workspaces.create.mutate({
+			projectId,
+			name: "platform-work",
+			branch: "feature/platform",
+			skipBranchPrefix: true,
+			runSetup: false,
+		});
+
+		const row = host.db
+			.select()
+			.from(workspaces)
+			.where(eq(workspaces.id, result.workspace.id))
+			.get();
+		const repos = repoRows(host, result.workspace.id);
+		expect(repos.map((repo) => repo.projectId)).toEqual([
+			projectId,
+			secondaryProjectId,
+		]);
+		expect(repos.map((repo) => repo.folder)).toEqual([
+			basename(primary.repoPath),
+			"api",
+		]);
+		for (const repo of repos) {
+			expect(repo.worktreePath).toBe(join(row?.rootPath ?? "", repo.folder));
+			expect(existsSync(join(repo.worktreePath, ".git"))).toBe(true);
+		}
+		expect(row?.worktreePath).toBe(repos[0]?.worktreePath ?? "");
+
+		const folders = await host.trpc.project.folders.list.query({ projectId });
+		expect(folders.folders).toHaveLength(1);
+		expect(folders.folders[0]?.repoPath).toBe(primary.repoPath);
+
+		const list = await secondary.git.raw(["worktree", "list", "--porcelain"]);
+		expect(list).toContain(repos[1]?.worktreePath ?? "");
+	});
+
+	test("checks out every member when the primary is also its own backfilled project", async () => {
+		scenario = await createScenario();
+		const { host, projectId, secondaryProjectId } = scenario;
+
+		runProjectGroupBackfill({ db: host.db });
+		const { group } = await host.trpc.projectGroups.create.mutate({
+			name: "platform",
+		});
+		await host.trpc.projectGroups.addMember.mutate({
+			groupId: group.id,
+			projectId,
+			folder: "web",
+		});
+		await host.trpc.projectGroups.addMember.mutate({
+			groupId: group.id,
+			projectId: secondaryProjectId,
+			folder: "api",
+		});
+
+		const result = await host.trpc.workspaces.create.mutate({
+			projectId,
+			name: "platform-work",
+			branch: "feature/platform-backfilled",
+			skipBranchPrefix: true,
+			runSetup: false,
+		});
+
+		const repos = repoRows(host, result.workspace.id);
+		expect(repos.map((repo) => repo.projectId)).toEqual([
+			projectId,
+			secondaryProjectId,
+		]);
+		expect(repos.map((repo) => repo.folder)).toEqual(["web", "api"]);
+	});
+
+	test("a single-member project creates exactly the single-repo workspace", async () => {
+		scenario = await createScenario();
+		const { host, projectId } = scenario;
+
+		const { group } = await host.trpc.projectGroups.create.mutate({
+			name: "solo project",
+		});
+		await host.trpc.projectGroups.addMember.mutate({
+			groupId: group.id,
+			projectId,
+		});
+
+		const result = await host.trpc.workspaces.create.mutate({
+			projectId,
+			name: "solo",
+			branch: "feature/solo",
+			skipBranchPrefix: true,
+			runSetup: false,
+		});
+
+		const row = host.db
+			.select()
+			.from(workspaces)
+			.where(eq(workspaces.id, result.workspace.id))
+			.get();
+		expect(row?.rootPath).toBeNull();
+		expect(basename(row?.worktreePath ?? "")).toBe("solo");
 	});
 });
 
