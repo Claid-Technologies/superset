@@ -3807,6 +3807,9 @@ msgstr "Slackを接続"
 msgid "Connect Slack to manage tasks from conversations. Mention the bot in any channel or send it a direct message to create and update tasks."
 msgstr "Slackを接続して会話からタスクを管理します。任意のチャンネルでボットにメンションするか、ダイレクトメッセージを送ると、タスクの作成と更新ができます。"
 
+msgid "Connect this computer"
+msgstr "このコンピューターに接続"
+
 msgid "Connect your GitHub repositories and sync pull requests. Track CI status and reviews across your team."
 msgstr "GitHubリポジトリを接続してプルリクエストを同期します。チーム全体のCIステータスとレビューを追跡できます。"
 
@@ -5754,8 +5757,8 @@ msgstr "リレーアクセスを有効にする…"
 msgid "Enable remote access"
 msgstr "リモートアクセスを有効にする"
 
-msgid "Enable remote access to reach this computer from your phone. Keep this computer awake and Superset running."
-msgstr "スマートフォンからこのコンピューターに接続するには、リモートアクセスを有効にしてください。このコンピューターをスリープさせず、Superset を起動したままにしてください。"
+msgid "Enable Remote Access and keep this computer awake with Superset running."
+msgstr "リモートアクセスを有効にし、Supersetを起動したまま、このコンピューターがスリープしないようにしてください。"
 
 msgid "Enable skill"
 msgstr "スキルを有効にする"
@@ -7456,9 +7459,6 @@ msgstr "すでにCursorのようなIDEを使っています。それでも役に
 msgid "I'm #{rank} on the {company} leaderboard with {tokens} tokens of agent usage."
 msgstr "{company}のリーダーボードで、エージェント使用量{tokens}トークン、{rank}位です。"
 
-msgid "I've signed in on my phone"
-msgstr "スマートフォンでサインインしました"
-
 msgid "Icon"
 msgstr "アイコン"
 
@@ -7706,6 +7706,9 @@ msgstr "インストールに失敗しました"
 
 msgid "Install GitHub App"
 msgstr "GitHub Appをインストール"
+
+msgid "Install on your iPhone"
+msgstr "iPhoneにインストール"
 
 msgid "Install plugin"
 msgstr "プラグインをインストール"
@@ -8173,9 +8176,6 @@ msgstr "葉"
 
 msgid "Learn how to use scripts"
 msgstr "スクリプトの使い方を見る"
-
-msgid "Learn more"
-msgstr "詳しく見る"
 
 msgid "Learn the workflow that fits this repo — parallel workspaces and agent setup."
 msgstr "このリポジトリに合うワークフロー — 並列ワークスペースとエージェント設定を学びます。"
@@ -8899,9 +8899,6 @@ msgstr "モバイルアプリ"
 
 msgid "Mobile App"
 msgstr "モバイルアプリ"
-
-msgid "Mobile setup confirmed"
-msgstr "モバイルの設定を確認済み"
 
 msgid "model"
 msgstr "モデル"
@@ -12800,14 +12797,11 @@ msgstr "ペイウォールを表示"
 msgid "Scale to 100+ agents"
 msgstr "100以上のエージェントに拡張"
 
+msgid "Scan the QR code, then sign in with the same Superset account and select this organization."
+msgstr "QRコードをスキャンし、同じSupersetアカウントでサインインして、この組織を選択してください。"
+
 msgid "Scan to download Superset for iPhone"
 msgstr "スキャンして iPhone 用 Superset をダウンロード"
-
-msgid "Scan to get the app"
-msgstr "スキャンしてアプリを入手"
-
-msgid "Scan with your iPhone camera, then sign in with the same Superset account and organization."
-msgstr "iPhone のカメラでスキャンし、同じ Superset アカウントと組織でサインインしてください。"
 
 msgid "Scanning transcript logs…"
 msgstr "トランスクリプトログをスキャン中…"
@@ -17110,9 +17104,6 @@ msgstr "アカウントは無効化されており、まもなく完全に削除
 
 msgid "Your account is managed by your organization. Contact your admin to create a new organization."
 msgstr "アカウントは組織によって管理されています。新しい組織を作成するには管理者に連絡してください。"
-
-msgid "Your agents, wherever you are."
-msgstr "どこにいても、あなたのエージェントと。"
 
 msgid "Your Agents, Your Accounts"
 msgstr "エージェントもアカウントも、あなたのもの"

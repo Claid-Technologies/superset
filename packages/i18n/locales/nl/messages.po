@@ -3807,6 +3807,9 @@ msgstr "Slack verbinden"
 msgid "Connect Slack to manage tasks from conversations. Mention the bot in any channel or send it a direct message to create and update tasks."
 msgstr "Verbind Slack om taken vanuit gesprekken te beheren. Vermeld de bot in een kanaal of stuur een direct bericht om taken te maken en bij te werken."
 
+msgid "Connect this computer"
+msgstr "Verbind deze computer"
+
 msgid "Connect your GitHub repositories and sync pull requests. Track CI status and reviews across your team."
 msgstr "Koppel je GitHub-repository's en synchroniseer pull requests. Volg CI-status en reviews in je hele team."
 
@@ -5754,8 +5757,8 @@ msgstr "Relaytoegang inschakelen…"
 msgid "Enable remote access"
 msgstr "Schakel externe toegang in"
 
-msgid "Enable remote access to reach this computer from your phone. Keep this computer awake and Superset running."
-msgstr "Schakel externe toegang in om deze computer vanaf je telefoon te bereiken. Houd deze computer wakker en laat Superset draaien."
+msgid "Enable Remote Access and keep this computer awake with Superset running."
+msgstr "Schakel externe toegang in en houd deze computer wakker met Superset actief."
 
 msgid "Enable skill"
 msgstr "Skill inschakelen"
@@ -7456,9 +7459,6 @@ msgstr "Ik gebruik al een IDE zoals Cursor, is dit iets voor mij?"
 msgid "I'm #{rank} on the {company} leaderboard with {tokens} tokens of agent usage."
 msgstr "Ik sta #{rank} op de ranglijst van {company} met {tokens} tokens aan agentgebruik."
 
-msgid "I've signed in on my phone"
-msgstr "Ik ben ingelogd op mijn telefoon"
-
 msgid "Icon"
 msgstr "Icoon"
 
@@ -7706,6 +7706,9 @@ msgstr "Installeren mislukt"
 
 msgid "Install GitHub App"
 msgstr "GitHub App installeren"
+
+msgid "Install on your iPhone"
+msgstr "Installeer op je iPhone"
 
 msgid "Install plugin"
 msgstr "Plugin installeren"
@@ -8173,9 +8176,6 @@ msgstr "Blad"
 
 msgid "Learn how to use scripts"
 msgstr "Leer hoe je scripts gebruikt"
-
-msgid "Learn more"
-msgstr "Meer informatie"
 
 msgid "Learn the workflow that fits this repo — parallel workspaces and agent setup."
 msgstr "Leer de workflow die bij deze repo past — parallelle werkruimtes en agentconfiguratie."
@@ -8899,9 +8899,6 @@ msgstr "Mobiele app"
 
 msgid "Mobile App"
 msgstr "Mobiele app"
-
-msgid "Mobile setup confirmed"
-msgstr "Mobiele installatie bevestigd"
 
 msgid "model"
 msgstr "model"
@@ -12800,14 +12797,11 @@ msgstr "Zag de paywall"
 msgid "Scale to 100+ agents"
 msgstr "Schaal op naar meer dan 100 agents"
 
+msgid "Scan the QR code, then sign in with the same Superset account and select this organization."
+msgstr "Scan de QR-code, log in met hetzelfde Superset-account en selecteer deze organisatie."
+
 msgid "Scan to download Superset for iPhone"
 msgstr "Scan om Superset voor iPhone te downloaden"
-
-msgid "Scan to get the app"
-msgstr "Scan om de app te downloaden"
-
-msgid "Scan with your iPhone camera, then sign in with the same Superset account and organization."
-msgstr "Scan met de camera van je iPhone en log in met hetzelfde Superset-account en dezelfde organisatie."
 
 msgid "Scanning transcript logs…"
 msgstr "Transcriptlogs scannen…"
@@ -17110,9 +17104,6 @@ msgstr "Je account is gedeactiveerd en wordt binnenkort definitief verwijderd. R
 
 msgid "Your account is managed by your organization. Contact your admin to create a new organization."
 msgstr "Je account wordt beheerd door je organisatie. Neem contact op met je beheerder om een nieuwe organisatie aan te maken."
-
-msgid "Your agents, wherever you are."
-msgstr "Je agents, waar je ook bent."
 
 msgid "Your Agents, Your Accounts"
 msgstr "Jouw agents, jouw accounts"

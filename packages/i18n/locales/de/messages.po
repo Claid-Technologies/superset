@@ -3807,6 +3807,9 @@ msgstr "Slack verbinden"
 msgid "Connect Slack to manage tasks from conversations. Mention the bot in any channel or send it a direct message to create and update tasks."
 msgstr "Verbinde Slack, um Aufgaben aus Unterhaltungen zu verwalten. Erwähne den Bot in einem beliebigen Kanal oder schreib ihm direkt, um Aufgaben zu erstellen und zu aktualisieren."
 
+msgid "Connect this computer"
+msgstr "Diesen Computer verbinden"
+
 msgid "Connect your GitHub repositories and sync pull requests. Track CI status and reviews across your team."
 msgstr "Verbinde deine GitHub-Repositories und synchronisiere Pull Requests. Verfolge CI-Status und Reviews im ganzen Team."
 
@@ -5754,8 +5757,8 @@ msgstr "Relay-Zugriff aktivieren…"
 msgid "Enable remote access"
 msgstr "Fernzugriff aktivieren"
 
-msgid "Enable remote access to reach this computer from your phone. Keep this computer awake and Superset running."
-msgstr "Aktiviere den Fernzugriff, um diesen Computer von deinem Smartphone aus zu erreichen. Halte den Computer wach und Superset geöffnet."
+msgid "Enable Remote Access and keep this computer awake with Superset running."
+msgstr "Aktiviere den Fernzugriff und halte diesen Computer mit laufendem Superset wach."
 
 msgid "Enable skill"
 msgstr "Skill aktivieren"
@@ -7456,9 +7459,6 @@ msgstr "Ich nutze schon eine IDE wie Cursor — ist das etwas für mich?"
 msgid "I'm #{rank} on the {company} leaderboard with {tokens} tokens of agent usage."
 msgstr "Ich bin #{rank} im {company}-Leaderboard mit {tokens} Tokens Agenten-Nutzung."
 
-msgid "I've signed in on my phone"
-msgstr "Ich habe mich auf meinem Smartphone angemeldet"
-
 msgid "Icon"
 msgstr "Icon"
 
@@ -7706,6 +7706,9 @@ msgstr "Installation fehlgeschlagen"
 
 msgid "Install GitHub App"
 msgstr "GitHub-App installieren"
+
+msgid "Install on your iPhone"
+msgstr "Auf deinem iPhone installieren"
 
 msgid "Install plugin"
 msgstr "Plugin installieren"
@@ -8173,9 +8176,6 @@ msgstr "Blatt"
 
 msgid "Learn how to use scripts"
 msgstr "So verwendest du Skripte"
-
-msgid "Learn more"
-msgstr "Mehr erfahren"
 
 msgid "Learn the workflow that fits this repo — parallel workspaces and agent setup."
 msgstr "Lerne den Workflow, der zu diesem Repo passt — parallele Arbeitsbereiche und Agenten-Setup."
@@ -8899,9 +8899,6 @@ msgstr "Mobile App"
 
 msgid "Mobile App"
 msgstr "Mobile App"
-
-msgid "Mobile setup confirmed"
-msgstr "Mobile Einrichtung bestätigt"
 
 msgid "model"
 msgstr "Modell"
@@ -12800,14 +12797,11 @@ msgstr "Paywall gesehen"
 msgid "Scale to 100+ agents"
 msgstr "Auf über 100 Agenten skalieren"
 
+msgid "Scan the QR code, then sign in with the same Superset account and select this organization."
+msgstr "Scanne den QR-Code, melde dich mit demselben Superset-Konto an und wähle diese Organisation aus."
+
 msgid "Scan to download Superset for iPhone"
 msgstr "Scannen, um Superset für iPhone herunterzuladen"
-
-msgid "Scan to get the app"
-msgstr "Scannen, um die App zu laden"
-
-msgid "Scan with your iPhone camera, then sign in with the same Superset account and organization."
-msgstr "Scanne mit deiner iPhone-Kamera und melde dich dann mit demselben Superset-Konto und derselben Organisation an."
 
 msgid "Scanning transcript logs…"
 msgstr "Transkript-Logs werden durchsucht…"
@@ -17110,9 +17104,6 @@ msgstr "Dein Konto ist deaktiviert und wird bald endgültig gelöscht. Reaktivie
 
 msgid "Your account is managed by your organization. Contact your admin to create a new organization."
 msgstr "Dein Konto wird von deiner Organisation verwaltet. Wende dich an deinen Admin, um eine neue Organisation zu erstellen."
-
-msgid "Your agents, wherever you are."
-msgstr "Deine Agenten, wo immer du bist."
 
 msgid "Your Agents, Your Accounts"
 msgstr "Deine Agenten, deine Konten"

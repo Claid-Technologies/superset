@@ -3807,6 +3807,9 @@ msgstr "Slack 연결"
 msgid "Connect Slack to manage tasks from conversations. Mention the bot in any channel or send it a direct message to create and update tasks."
 msgstr "Slack을 연결해 대화에서 바로 작업을 관리하세요. 아무 채널에서나 봇을 멘션하거나 다이렉트 메시지를 보내 작업을 만들고 업데이트할 수 있습니다."
 
+msgid "Connect this computer"
+msgstr "이 컴퓨터에 연결"
+
 msgid "Connect your GitHub repositories and sync pull requests. Track CI status and reviews across your team."
 msgstr "GitHub 리포지토리를 연결하고 풀 리퀘스트를 동기화하세요. 팀 전체의 CI 상태와 리뷰를 추적할 수 있습니다."
 
@@ -5754,8 +5757,8 @@ msgstr "릴레이 접근 활성화…"
 msgid "Enable remote access"
 msgstr "원격 액세스 활성화하기"
 
-msgid "Enable remote access to reach this computer from your phone. Keep this computer awake and Superset running."
-msgstr "휴대폰에서 이 컴퓨터에 연결하려면 원격 액세스를 활성화하세요. 컴퓨터가 잠자기 모드로 전환되지 않도록 하고 Superset을 실행해 두세요."
+msgid "Enable Remote Access and keep this computer awake with Superset running."
+msgstr "원격 액세스를 활성화하고 Superset이 실행된 상태로 이 컴퓨터가 깨어 있도록 유지하세요."
 
 msgid "Enable skill"
 msgstr "스킬 활성화"
@@ -7456,9 +7459,6 @@ msgstr "이미 Cursor 같은 IDE를 쓰고 있는데, 저에게 맞나요?"
 msgid "I'm #{rank} on the {company} leaderboard with {tokens} tokens of agent usage."
 msgstr "에이전트 사용량 {tokens} 토큰으로 {company} 리더보드 {rank}위입니다."
 
-msgid "I've signed in on my phone"
-msgstr "휴대폰에서 로그인했습니다"
-
 msgid "Icon"
 msgstr "아이콘"
 
@@ -7706,6 +7706,9 @@ msgstr "설치 실패"
 
 msgid "Install GitHub App"
 msgstr "GitHub App 설치"
+
+msgid "Install on your iPhone"
+msgstr "iPhone에 설치"
 
 msgid "Install plugin"
 msgstr "플러그인 설치"
@@ -8173,9 +8176,6 @@ msgstr "잎"
 
 msgid "Learn how to use scripts"
 msgstr "스크립트 사용법 알아보기"
-
-msgid "Learn more"
-msgstr "자세히 알아보기"
 
 msgid "Learn the workflow that fits this repo — parallel workspaces and agent setup."
 msgstr "이 리포지토리에 맞는 워크플로 익히기 — 병렬 워크스페이스와 에이전트 설정."
@@ -8899,9 +8899,6 @@ msgstr "모바일 앱"
 
 msgid "Mobile App"
 msgstr "모바일 앱"
-
-msgid "Mobile setup confirmed"
-msgstr "모바일 설정 확인됨"
 
 msgid "model"
 msgstr "모델"
@@ -12800,14 +12797,11 @@ msgstr "페이월 조회"
 msgid "Scale to 100+ agents"
 msgstr "100개 이상의 에이전트로 확장"
 
+msgid "Scan the QR code, then sign in with the same Superset account and select this organization."
+msgstr "QR 코드를 스캔한 후 동일한 Superset 계정으로 로그인하고 이 조직을 선택하세요."
+
 msgid "Scan to download Superset for iPhone"
 msgstr "스캔하여 iPhone용 Superset 다운로드"
-
-msgid "Scan to get the app"
-msgstr "스캔하여 앱 다운로드"
-
-msgid "Scan with your iPhone camera, then sign in with the same Superset account and organization."
-msgstr "iPhone 카메라로 스캔한 다음 동일한 Superset 계정 및 조직으로 로그인하세요."
 
 msgid "Scanning transcript logs…"
 msgstr "트랜스크립트 로그를 스캔하는 중…"
@@ -17110,9 +17104,6 @@ msgstr "계정이 비활성화되었으며 곧 영구적으로 삭제됩니다. 
 
 msgid "Your account is managed by your organization. Contact your admin to create a new organization."
 msgstr "계정이 조직에서 관리됩니다. 새 조직을 만들려면 관리자에게 문의하세요."
-
-msgid "Your agents, wherever you are."
-msgstr "어디서나 함께하는 에이전트."
 
 msgid "Your Agents, Your Accounts"
 msgstr "당신의 에이전트, 당신의 계정"

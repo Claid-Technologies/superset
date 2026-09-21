@@ -3807,6 +3807,9 @@ msgstr "Connecter Slack"
 msgid "Connect Slack to manage tasks from conversations. Mention the bot in any channel or send it a direct message to create and update tasks."
 msgstr "Connectez Slack pour gérer les tâches depuis vos conversations. Mentionnez le bot dans n'importe quel canal ou envoyez-lui un message direct pour créer et mettre à jour des tâches."
 
+msgid "Connect this computer"
+msgstr "Connecter cet ordinateur"
+
 msgid "Connect your GitHub repositories and sync pull requests. Track CI status and reviews across your team."
 msgstr "Connectez vos dépôts GitHub et synchronisez les pull requests. Suivez l'état de la CI et les revues au sein de votre équipe."
 
@@ -5754,8 +5757,8 @@ msgstr "Activer l'accès au relais…"
 msgid "Enable remote access"
 msgstr "Activer l’accès à distance"
 
-msgid "Enable remote access to reach this computer from your phone. Keep this computer awake and Superset running."
-msgstr "Activez l’accès à distance pour accéder à cet ordinateur depuis votre téléphone. Gardez cet ordinateur éveillé et Superset ouvert."
+msgid "Enable Remote Access and keep this computer awake with Superset running."
+msgstr "Activez l’accès à distance et gardez cet ordinateur éveillé avec Superset en cours d’exécution."
 
 msgid "Enable skill"
 msgstr "Activer la compétence"
@@ -7456,9 +7459,6 @@ msgstr "J'utilise déjà un IDE comme Cursor, est-ce fait pour moi ?"
 msgid "I'm #{rank} on the {company} leaderboard with {tokens} tokens of agent usage."
 msgstr "Je suis n°{rank} du classement {company} avec {tokens} tokens d'utilisation d'agents."
 
-msgid "I've signed in on my phone"
-msgstr "Je me suis connecté sur mon téléphone"
-
 msgid "Icon"
 msgstr "Icône"
 
@@ -7706,6 +7706,9 @@ msgstr "Échec de l'installation"
 
 msgid "Install GitHub App"
 msgstr "Installer la GitHub App"
+
+msgid "Install on your iPhone"
+msgstr "Installer sur votre iPhone"
 
 msgid "Install plugin"
 msgstr "Installer le plugin"
@@ -8173,9 +8176,6 @@ msgstr "Feuille"
 
 msgid "Learn how to use scripts"
 msgstr "Découvrir comment utiliser les scripts"
-
-msgid "Learn more"
-msgstr "En savoir plus"
 
 msgid "Learn the workflow that fits this repo — parallel workspaces and agent setup."
 msgstr "Découvrir le flux de travail adapté à ce dépôt — espaces de travail parallèles et configuration des agents."
@@ -8899,9 +8899,6 @@ msgstr "Application mobile"
 
 msgid "Mobile App"
 msgstr "Application mobile"
-
-msgid "Mobile setup confirmed"
-msgstr "Configuration mobile confirmée"
 
 msgid "model"
 msgstr "modèle"
@@ -12800,14 +12797,11 @@ msgstr "A vu le paywall"
 msgid "Scale to 100+ agents"
 msgstr "Passez à plus de 100 agents"
 
+msgid "Scan the QR code, then sign in with the same Superset account and select this organization."
+msgstr "Scannez le code QR, puis connectez-vous avec le même compte Superset et sélectionnez cette organisation."
+
 msgid "Scan to download Superset for iPhone"
 msgstr "Scannez pour télécharger Superset pour iPhone"
-
-msgid "Scan to get the app"
-msgstr "Scannez pour obtenir l’application"
-
-msgid "Scan with your iPhone camera, then sign in with the same Superset account and organization."
-msgstr "Scannez avec l’appareil photo de votre iPhone, puis connectez-vous avec le même compte Superset et la même organisation."
 
 msgid "Scanning transcript logs…"
 msgstr "Analyse des journaux de transcription…"
@@ -17110,9 +17104,6 @@ msgstr "Votre compte est désactivé et sera définitivement supprimé prochaine
 
 msgid "Your account is managed by your organization. Contact your admin to create a new organization."
 msgstr "Votre compte est géré par votre organisation. Contactez votre administrateur pour créer une nouvelle organisation."
-
-msgid "Your agents, wherever you are."
-msgstr "Vos agents, où que vous soyez."
 
 msgid "Your Agents, Your Accounts"
 msgstr "Vos agents, vos comptes"

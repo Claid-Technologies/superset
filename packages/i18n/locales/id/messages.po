@@ -3807,6 +3807,9 @@ msgstr "Hubungkan Slack"
 msgid "Connect Slack to manage tasks from conversations. Mention the bot in any channel or send it a direct message to create and update tasks."
 msgstr "Hubungkan Slack untuk mengelola tugas dari percakapan. Sebut bot-nya di channel mana pun atau kirim pesan langsung untuk membuat dan memperbarui tugas."
 
+msgid "Connect this computer"
+msgstr "Hubungkan komputer ini"
+
 msgid "Connect your GitHub repositories and sync pull requests. Track CI status and reviews across your team."
 msgstr "Hubungkan repositori GitHub Anda dan sinkronkan pull request. Lacak status CI dan review di seluruh tim Anda."
 
@@ -5754,8 +5757,8 @@ msgstr "Aktifkan akses relay…"
 msgid "Enable remote access"
 msgstr "Aktifkan akses jarak jauh"
 
-msgid "Enable remote access to reach this computer from your phone. Keep this computer awake and Superset running."
-msgstr "Aktifkan akses jarak jauh untuk mengakses komputer ini dari ponsel. Pastikan komputer tetap aktif dan Superset tetap berjalan."
+msgid "Enable Remote Access and keep this computer awake with Superset running."
+msgstr "Aktifkan akses jarak jauh dan biarkan komputer ini tetap aktif dengan Superset berjalan."
 
 msgid "Enable skill"
 msgstr "Aktifkan skill"
@@ -7456,9 +7459,6 @@ msgstr "Saya sudah pakai IDE seperti Cursor, apakah ini untuk saya?"
 msgid "I'm #{rank} on the {company} leaderboard with {tokens} tokens of agent usage."
 msgstr "Saya peringkat #{rank} di papan peringkat {company} dengan {tokens} token penggunaan agen."
 
-msgid "I've signed in on my phone"
-msgstr "Saya sudah masuk di ponsel"
-
 msgid "Icon"
 msgstr "Ikon"
 
@@ -7706,6 +7706,9 @@ msgstr "Pemasangan gagal"
 
 msgid "Install GitHub App"
 msgstr "Pasang GitHub App"
+
+msgid "Install on your iPhone"
+msgstr "Instal di iPhone Anda"
 
 msgid "Install plugin"
 msgstr "Instal plugin"
@@ -8173,9 +8176,6 @@ msgstr "Daun"
 
 msgid "Learn how to use scripts"
 msgstr "Pelajari cara memakai skrip"
-
-msgid "Learn more"
-msgstr "Pelajari lebih lanjut"
 
 msgid "Learn the workflow that fits this repo — parallel workspaces and agent setup."
 msgstr "Pelajari alur kerja yang cocok untuk repo ini — workspace paralel dan penyiapan agen."
@@ -8899,9 +8899,6 @@ msgstr "Aplikasi mobile"
 
 msgid "Mobile App"
 msgstr "Aplikasi Mobile"
-
-msgid "Mobile setup confirmed"
-msgstr "Penyiapan seluler dikonfirmasi"
 
 msgid "model"
 msgstr "model"
@@ -12800,14 +12797,11 @@ msgstr "Melihat paywall"
 msgid "Scale to 100+ agents"
 msgstr "Tingkatkan hingga lebih dari 100 agen"
 
+msgid "Scan the QR code, then sign in with the same Superset account and select this organization."
+msgstr "Pindai kode QR, lalu masuk dengan akun Superset yang sama dan pilih organisasi ini."
+
 msgid "Scan to download Superset for iPhone"
 msgstr "Pindai untuk mengunduh Superset untuk iPhone"
-
-msgid "Scan to get the app"
-msgstr "Pindai untuk mendapatkan aplikasi"
-
-msgid "Scan with your iPhone camera, then sign in with the same Superset account and organization."
-msgstr "Pindai dengan kamera iPhone, lalu masuk dengan akun dan organisasi Superset yang sama."
 
 msgid "Scanning transcript logs…"
 msgstr "Memindai log transkrip…"
@@ -17110,9 +17104,6 @@ msgstr "Akun Anda dinonaktifkan dan akan segera dihapus permanen. Aktifkan kemba
 
 msgid "Your account is managed by your organization. Contact your admin to create a new organization."
 msgstr "Akun Anda dikelola oleh organisasi Anda. Hubungi admin Anda untuk membuat organisasi baru."
-
-msgid "Your agents, wherever you are."
-msgstr "Agen Anda, di mana pun Anda berada."
 
 msgid "Your Agents, Your Accounts"
 msgstr "Agen Anda, Akun Anda"

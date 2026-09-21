@@ -3807,6 +3807,9 @@ msgstr "Slack'i bağla"
 msgid "Connect Slack to manage tasks from conversations. Mention the bot in any channel or send it a direct message to create and update tasks."
 msgstr "Görevleri konuşmalardan yönetmek için Slack'i bağlayın. Görev oluşturmak ve güncellemek için herhangi bir kanalda bottan bahsedin veya ona doğrudan mesaj gönderin."
 
+msgid "Connect this computer"
+msgstr "Bu bilgisayarı bağlayın"
+
 msgid "Connect your GitHub repositories and sync pull requests. Track CI status and reviews across your team."
 msgstr "GitHub depolarınızı bağlayın ve pull request'leri eşitleyin. CI durumunu ve incelemeleri takımınız genelinde izleyin."
 
@@ -5754,8 +5757,8 @@ msgstr "Röle erişimini etkinleştir…"
 msgid "Enable remote access"
 msgstr "Uzaktan erişimi etkinleştirin"
 
-msgid "Enable remote access to reach this computer from your phone. Keep this computer awake and Superset running."
-msgstr "Bu bilgisayara telefonunuzdan ulaşmak için uzaktan erişimi etkinleştirin. Bilgisayarı uyanık ve Superset’i çalışır durumda tutun."
+msgid "Enable Remote Access and keep this computer awake with Superset running."
+msgstr "Uzaktan erişimi etkinleştirin ve Superset çalışırken bu bilgisayarı uyanık tutun."
 
 msgid "Enable skill"
 msgstr "Beceriyi etkinleştir"
@@ -7456,9 +7459,6 @@ msgstr "Zaten Cursor gibi bir IDE kullanıyorum, bu bana göre mi?"
 msgid "I'm #{rank} on the {company} leaderboard with {tokens} tokens of agent usage."
 msgstr "{tokens} token ajan kullanımıyla {company} lider tablosunda #{rank} sıradayım."
 
-msgid "I've signed in on my phone"
-msgstr "Telefonumda giriş yaptım"
-
 msgid "Icon"
 msgstr "Simge"
 
@@ -7706,6 +7706,9 @@ msgstr "Kurulum başarısız"
 
 msgid "Install GitHub App"
 msgstr "GitHub App'i kur"
+
+msgid "Install on your iPhone"
+msgstr "iPhone’unuza yükleyin"
 
 msgid "Install plugin"
 msgstr "Eklenti kur"
@@ -8173,9 +8176,6 @@ msgstr "Yaprak"
 
 msgid "Learn how to use scripts"
 msgstr "Betiklerin nasıl kullanılacağını öğrenin"
-
-msgid "Learn more"
-msgstr "Daha fazla bilgi"
 
 msgid "Learn the workflow that fits this repo — parallel workspaces and agent setup."
 msgstr "Bu depoya uygun iş akışını öğren — paralel çalışma alanları ve ajan kurulumu."
@@ -8899,9 +8899,6 @@ msgstr "Mobil uygulama"
 
 msgid "Mobile App"
 msgstr "Mobil uygulama"
-
-msgid "Mobile setup confirmed"
-msgstr "Mobil kurulum onaylandı"
 
 msgid "model"
 msgstr "model"
@@ -12800,14 +12797,11 @@ msgstr "Ödeme duvarını gördü"
 msgid "Scale to 100+ agents"
 msgstr "100’den fazla ajana ölçekleyin"
 
+msgid "Scan the QR code, then sign in with the same Superset account and select this organization."
+msgstr "QR kodunu tarayın, ardından aynı Superset hesabıyla oturum açıp bu kuruluşu seçin."
+
 msgid "Scan to download Superset for iPhone"
 msgstr "iPhone için Superset’i indirmek üzere tarayın"
-
-msgid "Scan to get the app"
-msgstr "Uygulamayı indirmek için tarayın"
-
-msgid "Scan with your iPhone camera, then sign in with the same Superset account and organization."
-msgstr "iPhone kameranızla tarayın, ardından aynı Superset hesabı ve kuruluşuyla giriş yapın."
 
 msgid "Scanning transcript logs…"
 msgstr "Kayıt günlükleri taranıyor…"
@@ -17110,9 +17104,6 @@ msgstr "Hesabınız devre dışı bırakıldı ve yakında kalıcı olarak silin
 
 msgid "Your account is managed by your organization. Contact your admin to create a new organization."
 msgstr "Hesabınız kuruluşunuz tarafından yönetiliyor. Yeni bir kuruluş oluşturmak için yöneticinizle iletişime geçin."
-
-msgid "Your agents, wherever you are."
-msgstr "Nerede olursanız olun, ajanlarınız yanınızda."
 
 msgid "Your Agents, Your Accounts"
 msgstr "Sizin ajanlarınız, sizin hesaplarınız"

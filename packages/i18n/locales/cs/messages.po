@@ -3807,6 +3807,9 @@ msgstr "Připojit Slack"
 msgid "Connect Slack to manage tasks from conversations. Mention the bot in any channel or send it a direct message to create and update tasks."
 msgstr "Připojte Slack a spravujte úkoly přímo z konverzací. Zmiňte bota v libovolném kanálu nebo mu pošlete přímou zprávu a úkoly vytvářejte i aktualizujte."
 
+msgid "Connect this computer"
+msgstr "Připojte tento počítač"
+
 msgid "Connect your GitHub repositories and sync pull requests. Track CI status and reviews across your team."
 msgstr "Připojte své GitHub repozitáře a synchronizujte pull requesty. Sledujte stav CI a revize napříč týmem."
 
@@ -5754,8 +5757,8 @@ msgstr "Povolit přístup přes relay…"
 msgid "Enable remote access"
 msgstr "Povolte vzdálený přístup"
 
-msgid "Enable remote access to reach this computer from your phone. Keep this computer awake and Superset running."
-msgstr "Zapněte vzdálený přístup, abyste se k tomuto počítači mohli připojit z telefonu. Nechte počítač probuzený a Superset spuštěný."
+msgid "Enable Remote Access and keep this computer awake with Superset running."
+msgstr "Zapněte vzdálený přístup a nechte tento počítač aktivní se spuštěným Superset."
 
 msgid "Enable skill"
 msgstr "Zapnout skill"
@@ -7456,9 +7459,6 @@ msgstr "Už používám IDE jako Cursor, je to pro mě?"
 msgid "I'm #{rank} on the {company} leaderboard with {tokens} tokens of agent usage."
 msgstr "Jsem #{rank} v žebříčku {company} s {tokens} tokeny využití agentů."
 
-msgid "I've signed in on my phone"
-msgstr "Přihlásil jsem se na telefonu"
-
 msgid "Icon"
 msgstr "Ikona"
 
@@ -7706,6 +7706,9 @@ msgstr "Instalace selhala"
 
 msgid "Install GitHub App"
 msgstr "Nainstalovat GitHub App"
+
+msgid "Install on your iPhone"
+msgstr "Nainstalujte na iPhone"
 
 msgid "Install plugin"
 msgstr "Nainstalovat plugin"
@@ -8173,9 +8176,6 @@ msgstr "List"
 
 msgid "Learn how to use scripts"
 msgstr "Jak používat skripty"
-
-msgid "Learn more"
-msgstr "Další informace"
 
 msgid "Learn the workflow that fits this repo — parallel workspaces and agent setup."
 msgstr "Poznejte postup, který k tomuto repozitáři sedí — paralelní pracovní prostory a nastavení agentů."
@@ -8899,9 +8899,6 @@ msgstr "Mobilní aplikace"
 
 msgid "Mobile App"
 msgstr "Mobilní aplikace"
-
-msgid "Mobile setup confirmed"
-msgstr "Mobilní nastavení potvrzeno"
 
 msgid "model"
 msgstr "model"
@@ -12800,14 +12797,11 @@ msgstr "Zobrazení paywallu"
 msgid "Scale to 100+ agents"
 msgstr "Škálujte na více než 100 agentů"
 
+msgid "Scan the QR code, then sign in with the same Superset account and select this organization."
+msgstr "Naskenujte QR kód, přihlaste se stejným účtem Superset a vyberte tuto organizaci."
+
 msgid "Scan to download Superset for iPhone"
 msgstr "Naskenujte a stáhněte Superset pro iPhone"
-
-msgid "Scan to get the app"
-msgstr "Naskenujte a stáhněte aplikaci"
-
-msgid "Scan with your iPhone camera, then sign in with the same Superset account and organization."
-msgstr "Naskenujte fotoaparátem iPhonu a poté se přihlaste stejným účtem Superset do stejné organizace."
 
 msgid "Scanning transcript logs…"
 msgstr "Procházím logy přepisů…"
@@ -17110,9 +17104,6 @@ msgstr "Váš účet je deaktivovaný a brzy bude trvale smazán. Obnovte ho a b
 
 msgid "Your account is managed by your organization. Contact your admin to create a new organization."
 msgstr "Váš účet spravuje vaše organizace. O vytvoření nové organizace požádejte svého správce."
-
-msgid "Your agents, wherever you are."
-msgstr "Vaši agenti, ať jste kdekoli."
 
 msgid "Your Agents, Your Accounts"
 msgstr "Vaši agenti, vaše účty"
