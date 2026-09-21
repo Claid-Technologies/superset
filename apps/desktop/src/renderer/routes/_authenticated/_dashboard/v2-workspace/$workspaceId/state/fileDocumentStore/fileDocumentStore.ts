@@ -27,6 +27,7 @@ interface DocumentEntry {
 	byteSize: number | null;
 	refCount: number;
 	version: number;
+	loadGeneration: number;
 	subscribers: Set<() => void>;
 }
 
@@ -90,6 +91,16 @@ async function loadEntry(
 	entry: DocumentEntry,
 	options: { unlimited?: boolean } = {},
 ): Promise<void> {
+	const generation = ++entry.loadGeneration;
+	const canApplyResult = () => {
+		if (generation !== entry.loadGeneration) return false;
+		if (computeDirty(entry)) {
+			entry.hasExternalChange = true;
+			notify(entry);
+			return false;
+		}
+		return true;
+	};
 	const client = entry.trpcClient;
 	const readAsBinary =
 		isImageFile(entry.absolutePath) ||
@@ -103,6 +114,7 @@ async function loadEntry(
 			encoding: readAsBinary ? undefined : "utf-8",
 			maxBytes,
 		});
+		if (!canApplyResult()) return;
 
 		entry.byteSize = result.byteLength;
 		entry.isBinary = readAsBinary ? true : entry.isBinary;
@@ -135,6 +147,7 @@ async function loadEntry(
 		entry.savedContentText = result.content;
 		notify(entry);
 	} catch (error) {
+		if (!canApplyResult()) return;
 		const isNotFound = isEnoentLikeError(error);
 		entry.content = isNotFound
 			? { kind: "not-found" }
@@ -228,6 +241,7 @@ function createHandle(entry: DocumentEntry): SharedFileDocument {
 			const client = entry.trpcClient;
 			const currentValue = entry.content.value;
 			const currentRevision = entry.content.revision;
+			entry.loadGeneration += 1;
 			entry.pendingSave = true;
 			entry.saveError = null;
 			notify(entry);
@@ -342,6 +356,7 @@ export function acquireDocument(
 			byteSize: null,
 			refCount: 0,
 			version: 0,
+			loadGeneration: 0,
 			subscribers: new Set(),
 		};
 		entries.set(k, entry);
@@ -392,6 +407,7 @@ export function dispatchFsEvent(
 	for (const entry of Array.from(entries.values())) {
 		if (entry.workspaceId !== workspaceId) continue;
 		const affects =
+			event.kind === "overflow" ||
 			entry.absolutePath === event.absolutePath ||
 			(event.kind === "rename" && event.oldAbsolutePath === entry.absolutePath);
 		if (!affects) continue;
@@ -403,6 +419,7 @@ export function dispatchFsEvent(
 			(event.kind === "rename" && event.absolutePath === entry.absolutePath);
 
 		if (event.kind === "delete") {
+			entry.loadGeneration += 1;
 			entry.orphaned = true;
 			notify(entry);
 			continue;
@@ -412,10 +429,12 @@ export function dispatchFsEvent(
 			event.kind === "rename" &&
 			event.oldAbsolutePath === entry.absolutePath
 		) {
+			entry.loadGeneration += 1;
 			const oldKey = key(entry.workspaceId, entry.absolutePath);
 			entries.delete(oldKey);
 			entry.absolutePath = event.absolutePath;
 			entries.set(key(entry.workspaceId, entry.absolutePath), entry);
+			if (!computeDirty(entry)) void loadEntry(entry);
 			notify(entry);
 			continue;
 		}
@@ -423,6 +442,7 @@ export function dispatchFsEvent(
 		if (isContentMutation) {
 			if (entry.orphaned) entry.orphaned = false;
 			if (computeDirty(entry)) {
+				entry.loadGeneration += 1;
 				entry.hasExternalChange = true;
 				notify(entry);
 			} else {
