@@ -6892,8 +6892,8 @@ msgstr "무료"
 msgid "Free for everyone"
 msgstr "누구나 무료"
 
-msgid "Free plan available · No credit card required"
-msgstr "무료 요금제 제공 · 신용카드가 필요 없습니다"
+msgid "Free to start · No credit card required"
+msgstr "무료로 시작 · 신용카드 필요 없음"
 
 msgid "Frequently<0/>asked questions"
 msgstr "자주 묻는<0/>질문"
@@ -14452,8 +14452,8 @@ msgstr "Superset 메모리"
 msgid "Superset memory · last 5 min"
 msgstr "Superset 메모리 · 최근 5분"
 
-msgid "Superset Mobile is here. Learn more"
-msgstr "모바일 Superset이 출시되었습니다. 자세히 알아보기"
+msgid "Superset Mobile is here"
+msgstr "Superset Mobile 출시"
 
 msgid "Superset Mobile is part of Pro"
 msgstr "Superset Mobile은 Pro에 포함되어 있습니다"

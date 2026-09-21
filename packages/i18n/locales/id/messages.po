@@ -6892,8 +6892,8 @@ msgstr "Gratis"
 msgid "Free for everyone"
 msgstr "Gratis untuk semua orang"
 
-msgid "Free plan available · No credit card required"
-msgstr "Paket gratis tersedia · Tanpa kartu kredit"
+msgid "Free to start · No credit card required"
+msgstr "Mulai gratis · Tidak perlu kartu kredit"
 
 msgid "Frequently<0/>asked questions"
 msgstr "Pertanyaan<0/>yang sering diajukan"
@@ -14452,8 +14452,8 @@ msgstr "Memori Superset"
 msgid "Superset memory · last 5 min"
 msgstr "Memori Superset · 5 menit terakhir"
 
-msgid "Superset Mobile is here. Learn more"
-msgstr "Superset seluler telah hadir. Pelajari lebih lanjut"
+msgid "Superset Mobile is here"
+msgstr "Superset Mobile telah hadir"
 
 msgid "Superset Mobile is part of Pro"
 msgstr "Superset Mobile termasuk dalam Pro"

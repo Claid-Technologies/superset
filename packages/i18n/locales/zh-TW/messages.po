@@ -6892,8 +6892,8 @@ msgstr "免費版"
 msgid "Free for everyone"
 msgstr "對所有人免費"
 
-msgid "Free plan available · No credit card required"
-msgstr "提供免費方案 · 無需信用卡"
+msgid "Free to start · No credit card required"
+msgstr "免費開始 · 無需信用卡"
 
 msgid "Frequently<0/>asked questions"
 msgstr "常見<0/>問題"
@@ -14452,8 +14452,8 @@ msgstr "Superset記憶體"
 msgid "Superset memory · last 5 min"
 msgstr "Superset記憶體 · 最近5分鐘"
 
-msgid "Superset Mobile is here. Learn more"
-msgstr "Superset 行動版現已推出。瞭解更多"
+msgid "Superset Mobile is here"
+msgstr "Superset Mobile 來了"
 
 msgid "Superset Mobile is part of Pro"
 msgstr "Superset Mobile屬於專業版"

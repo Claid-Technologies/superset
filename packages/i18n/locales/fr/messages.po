@@ -6892,8 +6892,8 @@ msgstr "Free"
 msgid "Free for everyone"
 msgstr "Gratuit pour tout le monde"
 
-msgid "Free plan available · No credit card required"
-msgstr "Offre gratuite disponible · Aucune carte bancaire requise"
+msgid "Free to start · No credit card required"
+msgstr "Commencez gratuitement · Aucune carte bancaire requise"
 
 msgid "Frequently<0/>asked questions"
 msgstr "Questions<0/>fréquentes"
@@ -14452,8 +14452,8 @@ msgstr "Mémoire de Superset"
 msgid "Superset memory · last 5 min"
 msgstr "Mémoire de Superset · 5 dernières minutes"
 
-msgid "Superset Mobile is here. Learn more"
-msgstr "Superset sur mobile est arrivé. En savoir plus"
+msgid "Superset Mobile is here"
+msgstr "Superset Mobile est arrivé"
 
 msgid "Superset Mobile is part of Pro"
 msgstr "Superset Mobile fait partie de Pro"

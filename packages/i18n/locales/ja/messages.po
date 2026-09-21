@@ -6892,8 +6892,8 @@ msgstr "Free"
 msgid "Free for everyone"
 msgstr "誰でも無料"
 
-msgid "Free plan available · No credit card required"
-msgstr "無料プランあり · クレジットカード不要"
+msgid "Free to start · No credit card required"
+msgstr "無料で始められます · クレジットカード不要"
 
 msgid "Frequently<0/>asked questions"
 msgstr "よくある<0/>ご質問"
@@ -14452,8 +14452,8 @@ msgstr "Supersetメモリ"
 msgid "Superset memory · last 5 min"
 msgstr "Supersetメモリ · 直近5分"
 
-msgid "Superset Mobile is here. Learn more"
-msgstr "モバイル版Supersetが登場。詳しく見る"
+msgid "Superset Mobile is here"
+msgstr "Superset Mobile が登場"
 
 msgid "Superset Mobile is part of Pro"
 msgstr "Superset MobileはProの一部です"
