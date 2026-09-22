@@ -809,6 +809,9 @@ msgstr "{offlineHostCount, plural, one {기기 #대가 오프라인 상태이며
 msgid "{openCount} open"
 msgstr "{openCount}개 열림"
 
+msgid "{otherFolderChanges} changed files in other folders"
+msgstr "다른 폴더에서 {otherFolderChanges}개 파일이 변경됨"
+
 msgid "{partialCount} partial"
 msgstr "{partialCount}개 부분 달성"
 

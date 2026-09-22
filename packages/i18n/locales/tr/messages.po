@@ -809,6 +809,9 @@ msgstr "{offlineHostCount, plural, one {# cihaz çevrimdışı ve kopyasını ko
 msgid "{openCount} open"
 msgstr "{openCount} açık"
 
+msgid "{otherFolderChanges} changed files in other folders"
+msgstr "Diğer klasörlerde {otherFolderChanges} değişen dosya"
+
 msgid "{partialCount} partial"
 msgstr "{partialCount} kısmi"
 

@@ -118,6 +118,19 @@ export class WorkspaceFilesystemManager {
 		);
 	}
 
+	/**
+	 * The two above, addressed by checkout rather than by workspace: a
+	 * multi-repo workspace watches each of its checkouts, and `watchPath`
+	 * takes only a service's own root.
+	 */
+	getServiceForCheckout(worktreePath: string): FsHostService {
+		return this.getServiceForRootPath(worktreePath);
+	}
+
+	async refreshCheckoutWatcherIgnores(worktreePath: string): Promise<boolean> {
+		return await this.watcherManager.refreshIgnores(worktreePath);
+	}
+
 	private getServiceForRootPath(rootPath: string): FsHostService {
 		let service = this.serviceCache.get(rootPath);
 		if (!service) {

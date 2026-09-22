@@ -809,6 +809,9 @@ msgstr "{offlineHostCount, plural, one {#台のデバイスがオフラインの
 msgid "{openCount} open"
 msgstr "{openCount}件通過"
 
+msgid "{otherFolderChanges} changed files in other folders"
+msgstr "他のフォルダで {otherFolderChanges} 件のファイルが変更されています"
+
 msgid "{partialCount} partial"
 msgstr "{partialCount}件一部通過"
 

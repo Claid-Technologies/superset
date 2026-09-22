@@ -809,6 +809,9 @@ msgstr "{offlineHostCount, plural, one {# устройство офлайн и �
 msgid "{openCount} open"
 msgstr "{openCount} открыто"
 
+msgid "{otherFolderChanges} changed files in other folders"
+msgstr "Изменённых файлов в других папках: {otherFolderChanges}"
+
 msgid "{partialCount} partial"
 msgstr "{partialCount} частично"
 

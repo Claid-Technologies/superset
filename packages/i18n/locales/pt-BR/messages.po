@@ -809,6 +809,9 @@ msgstr "{offlineHostCount, plural, one {# dispositivo está offline e mantém su
 msgid "{openCount} open"
 msgstr "{openCount} abertos"
 
+msgid "{otherFolderChanges} changed files in other folders"
+msgstr "{otherFolderChanges} arquivos alterados em outras pastas"
+
 msgid "{partialCount} partial"
 msgstr "{partialCount} parciais"
 

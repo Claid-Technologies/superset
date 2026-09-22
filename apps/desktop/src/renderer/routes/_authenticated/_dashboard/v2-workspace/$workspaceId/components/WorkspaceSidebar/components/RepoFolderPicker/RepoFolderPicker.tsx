@@ -5,7 +5,7 @@ import { cn } from "@superset/ui/utils";
 import { Check, ChevronDown, Folder } from "lucide-react";
 import { useState } from "react";
 import { useWorkspaceRepos } from "renderer/routes/_authenticated/_dashboard/v2-workspace/$workspaceId/hooks/useWorkspaceRepos";
-import { useRepoDirtyCounts } from "./hooks/useRepoDirtyCounts";
+import { useRepoDirtyCounts } from "../../../../hooks/useRepoDirtyCounts";
 
 interface RepoFolderPickerProps {
 	workspaceId: string;

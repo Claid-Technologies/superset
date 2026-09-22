@@ -809,6 +809,9 @@ msgstr "{offlineHostCount, plural, one {# thiết bị đang ngoại tuyến và
 msgid "{openCount} open"
 msgstr "{openCount} còn mở"
 
+msgid "{otherFolderChanges} changed files in other folders"
+msgstr "{otherFolderChanges} tệp đã thay đổi ở các thư mục khác"
+
 msgid "{partialCount} partial"
 msgstr "{partialCount} một phần"
 

@@ -45,6 +45,27 @@ hosts table, so anything that resolves a host through it degrades: the remote
 version gate has nothing to check (skipped for cloud), and the unreachable
 overlay renders "Unknown host".
 
+**A project over several source folders has no cloud counterpart, and the
+box models multi-repo differently.** Locally a Project is `project_groups` +
+`project_group_members` in `host.db`, and a workspace built from one is a
+single `workspaces` row with a `workspace_repos` row per checkout under one
+container — that is what the repo picker, per-folder git status, the Run
+button and the chained lifecycle scripts all read. On cloud the repository
+list comes from the *environment* (`environment_repositories`, fixed at
+create into `cloud_workspace_repositories`) and `runSandboxSelfSeed` seeds
+**one project and one workspace row per repository**, with no
+`workspace_repos` rows at all. Consequences, none of them fixed: a local
+Project's folder list does not travel to a cloud workspace; every
+`workspace_repos`-shaped surface degrades to the primary checkout on cloud;
+per-checkout git watching attaches once; and lifecycle scripts on the box
+come from the single hooks checkout (`hooksRepositoryId` → `hooksPath`),
+not per folder. Converging the seeding onto one workspace + `workspace_repos`
+is what would let the desktop's multi-repo surfaces work on cloud unchanged;
+until then treat "multi-repo" as two separate features with one name. Note
+also that cloud repositories must be connected GitHub repos in a single
+installation (`loadRepositories` rejects a mixed set), so a source folder
+with no remote can exist locally and cannot exist on cloud.
+
 ## Addressing and auth
 
 **The address is brokered and expires.** A sandbox has no stable URL the

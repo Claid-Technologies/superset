@@ -809,6 +809,9 @@ msgstr "{offlineHostCount, plural, one {# 台裝置處於離線狀態，將保�
 msgid "{openCount} open"
 msgstr "{openCount}項已開啟"
 
+msgid "{otherFolderChanges} changed files in other folders"
+msgstr "其他資料夾中有 {otherFolderChanges} 個檔案已變更"
+
 msgid "{partialCount} partial"
 msgstr "{partialCount}項部分開啟"
 

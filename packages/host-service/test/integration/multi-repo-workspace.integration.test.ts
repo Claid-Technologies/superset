@@ -7,6 +7,8 @@ import {
 	workspaceRepos,
 	workspaces,
 } from "../../src/db/schema";
+import { GitWatcher } from "../../src/events/git-watcher";
+import { WorkspaceFilesystemManager } from "../../src/runtime/filesystem";
 import { runMultiRepoBackfill } from "../../src/runtime/multi-repo-backfill";
 import { runProjectGroupBackfill } from "../../src/runtime/project-group-backfill";
 import { createTestHost, type TestHost } from "../helpers/createTestHost";
@@ -206,6 +208,51 @@ describe("multi-repo project folders", () => {
 		expect(repos[1]?.folder).toBe(basename(secondary.repoPath));
 		const folders = await host.trpc.project.folders.list.query({ projectId });
 		expect(folders.folders).toHaveLength(1);
+	});
+
+	test("watches every checkout for git activity, not just the primary", async () => {
+		scenario = await createScenario();
+		const { host, secondary, projectId } = scenario;
+
+		await host.trpc.project.folders.add.mutate({
+			projectId,
+			repoPath: secondary.repoPath,
+		});
+		const result = await host.trpc.workspaces.create.mutate({
+			projectId,
+			name: "watched",
+			branch: "feature/watched",
+			skipBranchPrefix: true,
+			runSetup: false,
+		});
+		const expected = repoRows(host, result.workspace.id).map(
+			(repo) => repo.worktreePath,
+		);
+
+		const filesystem = new WorkspaceFilesystemManager({ db: host.db });
+		const watcher = new GitWatcher(host.db, filesystem, () => {});
+		const watched = () => [
+			...(
+				watcher as unknown as {
+					watched: Map<string, { worktreePath: string }>;
+				}
+			).watched.values(),
+		];
+		try {
+			watcher.watchWorkspace(result.workspace.id);
+			const deadline = Date.now() + 5_000;
+			while (watched().length < expected.length && Date.now() < deadline) {
+				await new Promise((resolve) => setTimeout(resolve, 25));
+			}
+			expect(
+				watched()
+					.map((entry) => entry.worktreePath)
+					.sort(),
+			).toEqual([...expected].sort());
+		} finally {
+			watcher.close();
+			await filesystem.close();
+		}
 	});
 
 	test("git procedures address a secondary checkout through `repo`", async () => {

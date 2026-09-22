@@ -809,6 +809,9 @@ msgstr "{offlineHostCount, plural, one {# zařízení je offline a ponechá si s
 msgid "{openCount} open"
 msgstr "{openCount} otevřených"
 
+msgid "{otherFolderChanges} changed files in other folders"
+msgstr "{otherFolderChanges} změněných souborů v jiných složkách"
+
 msgid "{partialCount} partial"
 msgstr "{partialCount} částečně"
 

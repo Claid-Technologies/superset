@@ -809,6 +809,9 @@ msgstr "{offlineHostCount, plural, one {# perangkat sedang offline dan tetap men
 msgid "{openCount} open"
 msgstr "{openCount} terbuka"
 
+msgid "{otherFolderChanges} changed files in other folders"
+msgstr "{otherFolderChanges} berkas berubah di folder lain"
+
 msgid "{partialCount} partial"
 msgstr "{partialCount} sebagian"
 
