@@ -5,7 +5,8 @@ from commit `fc67f14caacdc4db3f77fee74498395a2fb824b1`. The MIT notices are in
 `LICENSE`. The state machine and quote/bracket/Markdown/Unicode delimiter rules
 are retained; editor types and imports are removed, the character classifier
 uses a Map, only referenced character codes are included, and the static class
-is expressed as functions.
+is expressed as functions. Square-bracket context is reset between links so an
+unterminated bracket cannot make a later URL absorb trailing prose.
 
 The provider applies terminal-specific policy after parsing: HTTP(S) only,
 URL-constructor validation, 4096 UTF-16 code units maximum, balanced delimiter

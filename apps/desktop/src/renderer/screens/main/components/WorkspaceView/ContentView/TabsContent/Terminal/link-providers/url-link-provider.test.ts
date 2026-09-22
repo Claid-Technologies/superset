@@ -436,3 +436,31 @@ it("does not truncate long wide-character URLs at the context boundary", async (
 		terminal.dispose();
 	}
 });
+
+for (const delimiter of ["|", "<", '"']) {
+	for (const cols of [30, 120]) {
+		it(`resets bracket context after ${delimiter} with ${cols} columns`, async () => {
+			const url = "https://second.example/path";
+			const { terminal, provider } = await setup(
+				`https://first.example/[unfinished${delimiter} ${url} trailing prose`,
+				cols,
+			);
+			try {
+				const found = new Map<string, ILink>();
+				for (let row = 1; row <= terminal.buffer.active.length; row++) {
+					for (const link of linksAt(provider, row))
+						found.set(JSON.stringify(link.range), link);
+				}
+				const links = [...found.values()];
+				expect(links.map((link) => link.text)).toEqual([
+					"https://first.example/[unfinished",
+					url,
+				]);
+				for (const link of links)
+					expect(selectedText(terminal, link)).toBe(link.text);
+			} finally {
+				terminal.dispose();
+			}
+		});
+	}
+}

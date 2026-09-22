@@ -382,6 +382,7 @@ export function computeLinks(
 				state = State.Start;
 				hasOpenParens = false;
 				hasOpenSquareBracket = false;
+				inSquareBrackets = false;
 				hasOpenCurlyBracket = false;
 
 				// Record where the link started
