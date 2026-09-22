@@ -18,21 +18,44 @@ interface WorkspaceLink {
 
 type PageRow = Record<string, unknown> & { workspaceLinks?: WorkspaceLink[] };
 
-async function workspaceNames(ctx: CliContext): Promise<Map<string, string>> {
-	const organizationId = ctx.config.organizationId;
-	if (!organizationId) return new Map();
+async function cloudWorkspaceNames(
+	ctx: CliContext,
+	organizationId: string,
+): Promise<[string, string][]> {
+	try {
+		const workspaces = await ctx.api.cloudWorkspace.list.query({
+			organizationId,
+		});
+		return workspaces.map((workspace) => [workspace.id, workspace.name]);
+	} catch {
+		return [];
+	}
+}
+
+async function hostWorkspaceNames(
+	ctx: CliContext,
+	organizationId: string,
+): Promise<[string, string][]> {
 	try {
 		const { workspaces } = await listWorkspacesOnHost({
 			organizationId,
 			userJwt: ctx.bearer,
 			api: ctx.api,
 		});
-		return new Map(
-			workspaces.map((workspace) => [workspace.id, workspace.name]),
-		);
+		return workspaces.map((workspace) => [workspace.id, workspace.name]);
 	} catch {
-		return new Map();
+		return [];
 	}
+}
+
+async function workspaceNames(ctx: CliContext): Promise<Map<string, string>> {
+	const organizationId = ctx.config.organizationId;
+	if (!organizationId) return new Map();
+	const [cloud, host] = await Promise.all([
+		cloudWorkspaceNames(ctx, organizationId),
+		hostWorkspaceNames(ctx, organizationId),
+	]);
+	return new Map([...host, ...cloud]);
 }
 
 export function nameLinks(
