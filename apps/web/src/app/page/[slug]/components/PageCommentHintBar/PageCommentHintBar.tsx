@@ -11,18 +11,16 @@ import {
 interface PageCommentHintBarProps {
 	slug: string;
 	initialWatching: boolean;
-	initialAgentId: string | null;
 }
 
 export function PageCommentHintBar({
 	slug,
 	initialWatching,
-	initialAgentId,
 }: PageCommentHintBarProps) {
 	const [visible, setVisible] = useState(false);
-	const watch = usePageWatch(slug, {
+	const { watching } = usePageWatch(slug, {
 		watching: initialWatching,
-		agentId: initialAgentId,
+		agentId: null,
 	});
 
 	useEffect(() => {
@@ -33,8 +31,7 @@ export function PageCommentHintBar({
 
 	return (
 		<PageCommentHint
-			watching={watch.watching}
-			agentId={watch.agentId}
+			watching={watching}
 			onDismiss={() => {
 				rememberPageCommentHint();
 				setVisible(false);

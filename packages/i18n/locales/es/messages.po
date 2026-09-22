@@ -3286,14 +3286,11 @@ msgstr "Haz clic en <0>Importar tema</0> y selecciona el archivo descargado."
 msgid "Click a terminal script to edit its details."
 msgstr "Haz clic en un script de terminal para editar sus detalles."
 
-msgid "Click anything on this page to comment on it. <0>{agentId}</0> is watching, and will pick your comment up and republish the page."
-msgstr "Haz clic en cualquier elemento de esta página para comentarlo. <0>{agentId}</0> la está observando y recogerá tu comentario para volver a publicar la página."
-
 msgid "Click anything on this page to comment on it. An agent is watching, and will pick your comment up and republish the page."
 msgstr "Haz clic en cualquier elemento de esta página para comentarlo. Un agente la está observando y recogerá tu comentario para volver a publicar la página."
 
-msgid "Click anything on this page to comment on it. No agent is watching right now, so your comment is recorded for whoever published the page."
-msgstr "Haz clic en cualquier elemento de esta página para comentarlo. Ahora mismo no hay ningún agente observándola, así que tu comentario queda registrado para quien publicó la página."
+msgid "Click anything on this page to comment on it. No agent is watching right now, so your comment is saved on the page."
+msgstr "Haz clic en cualquier elemento de esta página para comentarlo. Ahora mismo no hay ningún agente observándola, así que tu comentario queda guardado en la página."
 
 msgid "Click here if not redirected"
 msgstr "Haz clic aquí si no se te redirige"

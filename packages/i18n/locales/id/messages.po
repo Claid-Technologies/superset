@@ -3286,14 +3286,11 @@ msgstr "Klik <0>Import Theme</0> dan pilih file yang sudah diunduh."
 msgid "Click a terminal script to edit its details."
 msgstr "Klik sebuah skrip terminal untuk mengedit detailnya."
 
-msgid "Click anything on this page to comment on it. <0>{agentId}</0> is watching, and will pick your comment up and republish the page."
-msgstr "Klik apa pun di halaman ini untuk mengomentarinya. <0>{agentId}</0> sedang mengawasi, dan akan menindaklanjuti komentar Anda lalu menerbitkan ulang halaman ini."
-
 msgid "Click anything on this page to comment on it. An agent is watching, and will pick your comment up and republish the page."
 msgstr "Klik apa pun di halaman ini untuk mengomentarinya. Ada agen yang sedang mengawasi, dan akan menindaklanjuti komentar Anda lalu menerbitkan ulang halaman ini."
 
-msgid "Click anything on this page to comment on it. No agent is watching right now, so your comment is recorded for whoever published the page."
-msgstr "Klik apa pun di halaman ini untuk mengomentarinya. Saat ini tidak ada agen yang mengawasi, jadi komentar Anda dicatat untuk orang yang menerbitkan halaman ini."
+msgid "Click anything on this page to comment on it. No agent is watching right now, so your comment is saved on the page."
+msgstr "Klik apa pun di halaman ini untuk mengomentarinya. Saat ini tidak ada agen yang mengawasi, jadi komentar Anda disimpan di halaman ini."
 
 msgid "Click here if not redirected"
 msgstr "Klik di sini kalau tidak dialihkan"

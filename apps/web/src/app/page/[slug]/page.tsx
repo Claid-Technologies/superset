@@ -197,7 +197,6 @@ export default async function PublishedPage({
 					<PageCommentHintBar
 						slug={slug}
 						initialWatching={page.watch.watching}
-						initialAgentId={page.watch.agentId}
 					/>
 				)}
 

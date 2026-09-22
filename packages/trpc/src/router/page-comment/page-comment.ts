@@ -104,6 +104,8 @@ export const pageCommentRouter = {
 					and ${pageComments.deletedAt} is null
 					order by ${pageComments.createdAt} desc, ${pageComments.id} desc
 					limit 1)`,
+				watchedByAgent: pages.watchedByAgent,
+				watchHeartbeatAt: pages.watchHeartbeatAt,
 			})
 			.from(pageCommentThreads)
 			.innerJoin(pages, eq(pages.id, pageCommentThreads.pageId))
@@ -120,7 +122,7 @@ export const pageCommentRouter = {
 				),
 			);
 
-		return countWaitingByWorkspace(rows);
+		return countWaitingByWorkspace(rows, Date.now());
 	}),
 
 	list: protectedProcedure

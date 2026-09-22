@@ -3286,14 +3286,11 @@ msgstr "Nhấp <0>Import Theme</0> và chọn tệp vừa tải."
 msgid "Click a terminal script to edit its details."
 msgstr "Nhấp vào một script terminal để sửa chi tiết."
 
-msgid "Click anything on this page to comment on it. <0>{agentId}</0> is watching, and will pick your comment up and republish the page."
-msgstr "Nhấp vào bất kỳ phần nào trên trang này để bình luận. <0>{agentId}</0> đang theo dõi và sẽ tiếp nhận bình luận của bạn rồi đăng lại trang."
-
 msgid "Click anything on this page to comment on it. An agent is watching, and will pick your comment up and republish the page."
 msgstr "Nhấp vào bất kỳ phần nào trên trang này để bình luận. Một agent đang theo dõi và sẽ tiếp nhận bình luận của bạn rồi đăng lại trang."
 
-msgid "Click anything on this page to comment on it. No agent is watching right now, so your comment is recorded for whoever published the page."
-msgstr "Nhấp vào bất kỳ phần nào trên trang này để bình luận. Hiện không có agent nào đang theo dõi, nên bình luận của bạn được ghi lại cho người đã đăng trang."
+msgid "Click anything on this page to comment on it. No agent is watching right now, so your comment is saved on the page."
+msgstr "Nhấp vào bất kỳ phần nào trên trang này để bình luận. Hiện không có agent nào đang theo dõi, nên bình luận của bạn được lưu trên trang."
 
 msgid "Click here if not redirected"
 msgstr "Nhấp vào đây nếu không được chuyển hướng"

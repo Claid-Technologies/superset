@@ -3286,14 +3286,11 @@ msgstr "<0>Temayı İçe Aktar</0> seçeneğine tıklayın ve indirdiğiniz dosy
 msgid "Click a terminal script to edit its details."
 msgstr "Ayrıntılarını düzenlemek için bir terminal betiğine tıklayın."
 
-msgid "Click anything on this page to comment on it. <0>{agentId}</0> is watching, and will pick your comment up and republish the page."
-msgstr "Bu sayfadaki herhangi bir öğeye tıklayarak yorum yapın. <0>{agentId}</0> sayfayı izliyor; yorumunuzu alıp sayfayı yeniden yayımlayacak."
-
 msgid "Click anything on this page to comment on it. An agent is watching, and will pick your comment up and republish the page."
 msgstr "Bu sayfadaki herhangi bir öğeye tıklayarak yorum yapın. Bir ajan sayfayı izliyor; yorumunuzu alıp sayfayı yeniden yayımlayacak."
 
-msgid "Click anything on this page to comment on it. No agent is watching right now, so your comment is recorded for whoever published the page."
-msgstr "Bu sayfadaki herhangi bir öğeye tıklayarak yorum yapın. Şu anda sayfayı izleyen bir ajan yok, bu yüzden yorumunuz sayfayı yayımlayan kişi için kaydedilir."
+msgid "Click anything on this page to comment on it. No agent is watching right now, so your comment is saved on the page."
+msgstr "Bu sayfadaki herhangi bir öğeye tıklayarak yorum yapın. Şu anda sayfayı izleyen bir ajan yok, bu yüzden yorumunuz sayfaya kaydedilir."
 
 msgid "Click here if not redirected"
 msgstr "Yönlendirilmediyseniz buraya tıklayın"

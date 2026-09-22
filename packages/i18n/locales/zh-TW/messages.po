@@ -3286,14 +3286,11 @@ msgstr "點選<0>匯入主題</0>，選擇下載好的檔案。"
 msgid "Click a terminal script to edit its details."
 msgstr "點選終端指令碼以編輯其詳情。"
 
-msgid "Click anything on this page to comment on it. <0>{agentId}</0> is watching, and will pick your comment up and republish the page."
-msgstr "點選本頁任何元素即可留言。<0>{agentId}</0> 正在關注，會接收你的留言並重新發布頁面。"
-
 msgid "Click anything on this page to comment on it. An agent is watching, and will pick your comment up and republish the page."
 msgstr "點選本頁任何元素即可留言。有代理程式正在關注，會接收你的留言並重新發布頁面。"
 
-msgid "Click anything on this page to comment on it. No agent is watching right now, so your comment is recorded for whoever published the page."
-msgstr "點選本頁任何元素即可留言。目前沒有代理程式在關注，你的留言會記錄下來給發布此頁面的人。"
+msgid "Click anything on this page to comment on it. No agent is watching right now, so your comment is saved on the page."
+msgstr "點選本頁任何元素即可留言。目前沒有代理程式在關注，你的留言會保存在頁面上。"
 
 msgid "Click here if not redirected"
 msgstr "如果沒有自動跳轉，請點選這裡"

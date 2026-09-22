@@ -3286,14 +3286,11 @@ msgstr "<0>테마 가져오기</0>를 클릭하고 다운로드한 파일을 선
 msgid "Click a terminal script to edit its details."
 msgstr "터미널 스크립트를 클릭하면 세부 정보를 편집합니다."
 
-msgid "Click anything on this page to comment on it. <0>{agentId}</0> is watching, and will pick your comment up and republish the page."
-msgstr "이 페이지의 아무 요소나 클릭해 댓글을 남기세요. <0>{agentId}</0>이(가) 지켜보고 있으며, 댓글을 받아 페이지를 다시 게시합니다."
-
 msgid "Click anything on this page to comment on it. An agent is watching, and will pick your comment up and republish the page."
 msgstr "이 페이지의 아무 요소나 클릭해 댓글을 남기세요. 에이전트가 지켜보고 있으며, 댓글을 받아 페이지를 다시 게시합니다."
 
-msgid "Click anything on this page to comment on it. No agent is watching right now, so your comment is recorded for whoever published the page."
-msgstr "이 페이지의 아무 요소나 클릭해 댓글을 남기세요. 지금은 지켜보는 에이전트가 없으므로 댓글은 페이지를 게시한 사람에게 기록됩니다."
+msgid "Click anything on this page to comment on it. No agent is watching right now, so your comment is saved on the page."
+msgstr "이 페이지의 아무 요소나 클릭해 댓글을 남기세요. 지금은 지켜보는 에이전트가 없으므로 댓글은 페이지에 저장됩니다."
 
 msgid "Click here if not redirected"
 msgstr "이동하지 않으면 여기를 클릭하세요"
