@@ -1,6 +1,7 @@
 import { buildHostRoutingKey } from "@superset/shared/host-routing";
 import { useMemo } from "react";
 import { useRelayUrl } from "renderer/hooks/useRelayUrl";
+import { useDirectHosts } from "renderer/lib/direct-hosts";
 import { useHostWorkspaces } from "renderer/routes/_authenticated/providers/HostWorkspacesProvider";
 import { useLocalHostService } from "renderer/routes/_authenticated/providers/LocalHostServiceProvider";
 import { useSandboxAccess } from "renderer/routes/_authenticated/providers/SandboxAccessProvider";
@@ -34,6 +35,7 @@ export function useWorkspaceHostTarget(
 ): WorkspaceHostTarget {
 	const { machineId, activeHostUrl } = useLocalHostService();
 	const relayUrl = useRelayUrl();
+	const directHosts = useDirectHosts();
 	const { workspaces, isReady } = useHostWorkspaces();
 	const { targets: sandboxes, isReady: sandboxesReady } = useSandboxAccess();
 
@@ -69,12 +71,13 @@ export function useWorkspaceHostTarget(
 					}
 				: { status: "local-starting", hostId: match.hostId };
 		}
+		const directUrl = directHosts[match.hostId]?.url;
 		const routingKey = buildHostRoutingKey(match.organizationId, match.hostId);
 		return {
 			status: "ready",
 			kind: "remote",
 			hostId: match.hostId,
-			url: `${relayUrl}/hosts/${routingKey}`,
+			url: directUrl ?? `${relayUrl}/hosts/${routingKey}`,
 		};
 	}, [
 		workspaceId,
@@ -85,6 +88,7 @@ export function useWorkspaceHostTarget(
 		machineId,
 		activeHostUrl,
 		relayUrl,
+		directHosts,
 	]);
 }
 

@@ -20,6 +20,13 @@ export const env = createEnv({
 			.optional(),
 		PORT: z.coerce.number().int().positive().default(4879),
 		RELAY_URL: z.string().url().optional(),
+		/**
+		 * "off" makes this a direct-only host: it still registers with the
+		 * cloud (so it appears in the org's roster) but never opens the relay
+		 * tunnel, so it is reachable only on its own loopback — e.g. through
+		 * an SSH/IAP tunnel that terminates on 127.0.0.1.
+		 */
+		SUPERSET_HOST_RELAY: z.enum(["on", "off"]).default("on"),
 		// Loopback control surface for the desktop's in-app browser panes. Only
 		// set when a desktop app spawned this host; absent on standalone hosts.
 		BROWSER_BRIDGE_URL: z.string().url().optional(),

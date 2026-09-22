@@ -171,6 +171,7 @@ async function main(): Promise<void> {
 				organizationId: env.ORGANIZATION_ID,
 				authProvider,
 				hostServiceSecret: env.HOST_SERVICE_SECRET,
+				tunnel: env.SUPERSET_HOST_RELAY !== "off",
 			});
 		}
 	});

@@ -8,6 +8,7 @@ import {
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import SuperJSON from "superjson";
 import type { ApiClient } from "../api-client";
+import { getDirectHost } from "../host/direct-hosts";
 import { isProcessAlive, readManifest } from "../host/manifest";
 import { getRelayUrl } from "../host/relay-url";
 import { readJwtSubject } from "./readJwtSubject";
@@ -25,8 +26,12 @@ export interface HostWsEndpoint {
 }
 
 export type ResolvedHostTarget = {
-	/** `cloud`: host-service inside a cloud workspace's sandbox, through the gate. */
-	kind: "local" | "remote" | "cloud";
+	/**
+	 * `cloud`: host-service inside a cloud workspace's sandbox, through the gate.
+	 * `direct`: a remote host reached over the user's own tunnel with its
+	 * pre-shared secret (`~/.superset/direct-hosts.json`), never the relay.
+	 */
+	kind: "local" | "remote" | "cloud" | "direct";
 	hostId: string;
 	client: HostServiceClient;
 	ws: HostWsEndpoint;
@@ -87,6 +92,33 @@ export async function resolveHostTarget(
 			ws: {
 				baseWsUrl: manifest.endpoint.replace(/^http/, "ws"),
 				token: manifest.authToken,
+			},
+		};
+	}
+
+	const direct = getDirectHost(targetHostId);
+	if (direct) {
+		return {
+			kind: "direct",
+			hostId: targetHostId,
+			client: createTRPCClient<HostServiceRouter>({
+				links: [
+					httpBatchLink({
+						url: `${direct.url}/trpc`,
+						transformer: SuperJSON,
+						headers: {
+							// The host takes its own secret, exactly as on loopback;
+							// no relay stands in to swap a JWT for it.
+							Authorization: `Bearer ${direct.token}`,
+							"x-superset-client-machine-id": localHostId,
+							...(userId ? { [SUPERSET_USER_ID_HEADER]: userId } : {}),
+						},
+					}),
+				],
+			}),
+			ws: {
+				baseWsUrl: direct.url.replace(/^http/, "ws"),
+				token: direct.token,
 			},
 		};
 	}

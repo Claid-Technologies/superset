@@ -20,6 +20,11 @@ export interface ConnectRelayOptions {
 	authProvider: JwtApiAuthProvider;
 	hostServiceSecret: string;
 	signal?: AbortSignal;
+	/**
+	 * False registers the host with the cloud but never dials the relay:
+	 * a direct-only host that clients reach over their own tunnel.
+	 */
+	tunnel?: boolean;
 }
 
 // The API decides which relay this host belongs on, and it is asked here —
@@ -73,6 +78,13 @@ export async function connectRelay(
 			if (options.signal?.aborted) return null;
 			recordRegistrationSuccess();
 			console.log(`[host-service] registered as host ${host.machineId}`);
+
+			if (options.tunnel === false) {
+				console.log(
+					"[host-service] relay tunnel disabled (SUPERSET_HOST_RELAY=off): direct-only host, reachable on loopback only",
+				);
+				return null;
+			}
 
 			const relayUrl = await resolveRelayUrl(options.api, options.relayUrl);
 			if (options.signal?.aborted) return null;

@@ -1,9 +1,9 @@
 import type { WorkspaceState } from "@superset/panes";
-import { buildHostRoutingKey } from "@superset/shared/host-routing";
 import { useLiveQuery } from "@tanstack/react-db";
 import { useEffectEvent, useMemo } from "react";
 import { useHostProjects } from "renderer/hooks/host-projects/useHostProjects";
 import { useRelayUrl } from "renderer/hooks/useRelayUrl";
+import { resolveRemoteHostUrl } from "renderer/lib/direct-hosts";
 import { electronTrpc } from "renderer/lib/electron-trpc";
 import { getHostServiceClientByUrl } from "renderer/lib/host-service-client";
 import type { PaneViewerData } from "renderer/routes/_authenticated/_dashboard/v2-workspace/$workspaceId/types";
@@ -291,5 +291,5 @@ function getHostUrlForWorkspace({
 	if (machineId && hostId === machineId) {
 		return activeHostUrl;
 	}
-	return `${relayUrl}/hosts/${buildHostRoutingKey(organizationId, hostId)}`;
+	return resolveRemoteHostUrl({ organizationId, hostId, relayUrl });
 }

@@ -1,4 +1,5 @@
 import { buildHostRoutingKey } from "@superset/shared/host-routing";
+import { getDirectHostUrl } from "renderer/lib/direct-hosts";
 
 /**
  * Pure resolver: hostId + machineId + activeHostUrl + organizationId → URL.
@@ -24,6 +25,8 @@ export function resolveHostUrl(args: {
 }): string | null {
 	if (args.sandboxUrl) return args.sandboxUrl;
 	if (args.hostId === args.machineId) return args.activeHostUrl;
+	const direct = getDirectHostUrl(args.hostId);
+	if (direct) return direct;
 	const routingKey = buildHostRoutingKey(args.organizationId, args.hostId);
 	return `${args.relayUrl}/hosts/${routingKey}`;
 }

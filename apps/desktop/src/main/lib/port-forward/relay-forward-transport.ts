@@ -4,7 +4,8 @@ import { MuxSession } from "./mux-session";
 import type { ForwardTransport } from "./types";
 
 export interface RelayForwardTransportOptions {
-	getToken: () => string | null;
+	/** The bearer for this target: a direct host's secret, else the relay JWT. */
+	getToken: (target: ForwardTarget) => string | null;
 }
 
 /**
@@ -37,7 +38,7 @@ export class RelayForwardTransport implements ForwardTransport {
 		const existing = this.sessions.get(key);
 		if (existing && !existing.isDead) return existing;
 
-		const token = this.options.getToken();
+		const token = this.options.getToken(target);
 		if (!token) throw new Error("Not signed in");
 		const url = new URL(`${target.hostUrl}/fwd`);
 		if (url.protocol === "http:") url.protocol = "ws:";

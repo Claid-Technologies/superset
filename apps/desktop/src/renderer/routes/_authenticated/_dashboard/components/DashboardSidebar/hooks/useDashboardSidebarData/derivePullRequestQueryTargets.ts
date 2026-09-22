@@ -1,4 +1,4 @@
-import { buildHostRoutingKey } from "@superset/shared/host-routing";
+import { resolveRemoteHostUrl } from "renderer/lib/direct-hosts";
 import type { DashboardSidebarWorkspaceHostType } from "../../types";
 
 export interface PullRequestQueryHostRow {
@@ -67,7 +67,11 @@ export function derivePullRequestQueryTargets({
 
 		const hostUrl = isLocal
 			? activeHostUrl
-			: `${relayUrl}/hosts/${buildHostRoutingKey(host.organizationId, host.machineId)}`;
+			: resolveRemoteHostUrl({
+					organizationId: host.organizationId,
+					hostId: host.machineId,
+					relayUrl,
+				});
 
 		return [
 			{

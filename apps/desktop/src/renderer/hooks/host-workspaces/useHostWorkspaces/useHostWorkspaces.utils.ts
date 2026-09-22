@@ -1,11 +1,11 @@
 import type { SelectV2Workspace } from "@superset/db/schema";
-import { buildHostRoutingKey } from "@superset/shared/host-routing";
 import { visibleWorkspaceTags } from "@superset/shared/workspace-tags";
 import type {
 	HostConnectionState,
 	WorkspaceSnapshotPayload,
 } from "@superset/workspace-client";
 import { get as idbGet, set as idbSet } from "idb-keyval";
+import { resolveRemoteHostUrl } from "renderer/lib/direct-hosts";
 
 /**
  * The frozen cloud row shape, widened for host-only capabilities the cloud
@@ -124,7 +124,11 @@ export function deriveHostWorkspacesQueryTargets({
 		const hostUrl = isLocal
 			? activeHostUrl
 			: host.isOnline
-				? `${relayUrl}/hosts/${buildHostRoutingKey(host.organizationId, host.machineId)}`
+				? resolveRemoteHostUrl({
+						organizationId: host.organizationId,
+						hostId: host.machineId,
+						relayUrl,
+					})
 				: null;
 		return {
 			machineId: host.machineId,

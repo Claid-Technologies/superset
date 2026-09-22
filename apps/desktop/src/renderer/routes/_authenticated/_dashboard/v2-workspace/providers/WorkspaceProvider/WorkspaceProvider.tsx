@@ -1,4 +1,3 @@
-import { buildHostRoutingKey } from "@superset/shared/host-routing";
 import {
 	createContext,
 	type ReactNode,
@@ -8,6 +7,10 @@ import {
 } from "react";
 import type { HostShapedWorkspace } from "renderer/hooks/host-workspaces/useHostWorkspaces";
 import { useRelayUrl } from "renderer/hooks/useRelayUrl";
+import {
+	resolveRemoteHostUrl,
+	useDirectHosts,
+} from "renderer/lib/direct-hosts";
 import {
 	getHostServiceHeaders,
 	getHostServiceWsToken,
@@ -34,6 +37,7 @@ export function WorkspaceProvider({
 }) {
 	const { machineId, activeHostUrl } = useLocalHostService();
 	const relayUrl = useRelayUrl();
+	const directHosts = useDirectHosts();
 
 	// A host-service restart takes the coordinator's port away for ~5s and
 	// usually brings it back on the same one. Dropping to null there would
@@ -55,10 +59,12 @@ export function WorkspaceProvider({
 		cache.resolveHostUrl(workspace.hostId) ??
 		(workspace.hostId === machineId
 			? localHostUrl
-			: `${relayUrl}/hosts/${buildHostRoutingKey(
-					workspace.organizationId,
-					workspace.hostId,
-				)}`);
+			: resolveRemoteHostUrl({
+					organizationId: workspace.organizationId,
+					hostId: workspace.hostId,
+					relayUrl,
+					directHosts,
+				}));
 
 	// Only before the local host service has ever reported a port — there is
 	// nothing to point a client at, so this can't go through WorkspaceHostGate.

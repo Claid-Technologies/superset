@@ -1,6 +1,5 @@
 import { msg } from "@lingui/core/macro";
 import { i18n } from "@superset/i18n";
-import { buildHostRoutingKey } from "@superset/shared/host-routing";
 import {
 	deriveHostVersionState,
 	type HostInstallSource,
@@ -11,6 +10,10 @@ import { useHostServiceInfo } from "renderer/hooks/host-service/useHostServiceIn
 import type { HostShapedWorkspace } from "renderer/hooks/host-workspaces/useHostWorkspaces";
 import { useKnownHosts } from "renderer/hooks/known-hosts/useKnownHosts";
 import { useRelayUrl } from "renderer/hooks/useRelayUrl";
+import {
+	resolveRemoteHostUrl,
+	useDirectHosts,
+} from "renderer/lib/direct-hosts";
 import { useLocalHostService } from "renderer/routes/_authenticated/providers/LocalHostServiceProvider";
 
 export type RemoteHostStatus =
@@ -32,6 +35,7 @@ export function useRemoteHostStatus(
 ): RemoteHostStatus {
 	const { machineId } = useLocalHostService();
 	const relayUrl = useRelayUrl();
+	const directHosts = useDirectHosts();
 	const organizationId = workspace?.organizationId ?? "";
 	const hostId = workspace?.hostId ?? "";
 	const isLocal =
@@ -49,10 +53,12 @@ export function useRemoteHostStatus(
 		[hostRows, organizationId, filterMachineId],
 	);
 
-	const hostUrl = `${relayUrl}/hosts/${buildHostRoutingKey(
+	const hostUrl = resolveRemoteHostUrl({
 		organizationId,
 		hostId,
-	)}`;
+		relayUrl,
+		directHosts,
+	});
 
 	const infoQuery = useHostServiceInfo(hostUrl, workspace != null && !isLocal);
 

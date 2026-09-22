@@ -16,6 +16,7 @@ import { useSettingsSearchQuery } from "renderer/stores/settings-state";
 import type { CandidateRow } from "./components/AddMemberDropdown";
 import { AddMemberDropdown } from "./components/AddMemberDropdown";
 import { DeleteHostSection } from "./components/DeleteHostSection";
+import { DirectConnectionSection } from "./components/DirectConnectionSection";
 import { HostHeader } from "./components/HostHeader";
 import { HostServiceSection } from "./components/HostServiceSection";
 import type { MemberRowData } from "./components/MembersTable";
@@ -193,6 +194,8 @@ export function HostSettings({ hostId }: HostSettingsProps) {
 					isOnline={hostIsOnline || !isRemoteTarget}
 					canEdit={isOwner}
 				/>
+
+				{isRemoteTarget && <DirectConnectionSection machineId={hostId} />}
 
 				{hostId === machineId && (
 					<section className="space-y-3">

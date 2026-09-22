@@ -30,6 +30,12 @@ export interface SpawnHostOptions {
 	api: ApiClient;
 	port?: number;
 	daemon: boolean;
+	/** Stable pre-shared secret; a fresh random one per start when unset. */
+	secret?: string;
+	/** False = direct-only host: cloud-registered, relay tunnel never opened. */
+	relay?: boolean;
+	/** Browser origins allowed to call the host directly (CORS allow-list). */
+	corsOrigins?: string[];
 }
 
 export interface HostExit {
@@ -124,7 +130,7 @@ export async function spawnHostService(
 	}
 
 	const port = options.port ?? (await findFreePort());
-	const secret = randomBytes(32).toString("hex");
+	const secret = options.secret ?? randomBytes(32).toString("hex");
 	const migrationsFolder = resolveMigrationsFolder();
 	const relayUrl = await getRelayUrl(options.api);
 
@@ -154,6 +160,10 @@ export async function spawnHostService(
 				: {}),
 			SUPERSET_API_URL: env.SUPERSET_API_URL,
 			RELAY_URL: relayUrl,
+			SUPERSET_HOST_RELAY: options.relay === false ? "off" : "on",
+			...(options.corsOrigins?.length
+				? { CORS_ORIGINS: options.corsOrigins.join(",") }
+				: {}),
 			PORT: String(port),
 			HOST_SERVICE_PORT: String(port),
 			HOST_SERVICE_SECRET: secret,

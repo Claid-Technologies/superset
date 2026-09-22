@@ -1,3 +1,12 @@
+import { randomBytes } from "node:crypto";
+import {
+	chmodSync,
+	existsSync,
+	mkdirSync,
+	readFileSync,
+	writeFileSync,
+} from "node:fs";
+import { dirname } from "node:path";
 import * as p from "@clack/prompts";
 import { boolean, CLIError, number, string } from "@superset/cli-framework";
 import { command } from "../../lib/command";
@@ -15,12 +24,46 @@ import {
 } from "../../lib/host/spawn";
 import { resolveOrganization } from "../../lib/resolve-org";
 
+const SECRET_BYTES = 32;
+
+/**
+ * A stable pre-shared secret for a direct-only host. Clients that reach the
+ * host over their own tunnel need to know it, so it must survive restarts:
+ * read it from `path`, or mint one there (0600) on first start.
+ */
+function loadOrCreateSecret(path: string): string {
+	if (existsSync(path)) {
+		const secret = readFileSync(path, "utf-8").trim();
+		if (secret.length < SECRET_BYTES) {
+			throw new CLIError(
+				`Secret in ${path} is too short (need at least ${SECRET_BYTES} characters)`,
+			);
+		}
+		return secret;
+	}
+	const dir = dirname(path);
+	if (!existsSync(dir)) mkdirSync(dir, { recursive: true, mode: 0o700 });
+	const secret = randomBytes(SECRET_BYTES).toString("hex");
+	writeFileSync(path, `${secret}\n`, { mode: 0o600 });
+	chmodSync(path, 0o600);
+	return secret;
+}
+
 export default command({
 	description: "Start the host service",
 	options: {
 		daemon: boolean().desc("Run in background"),
 		port: number().desc("Port to listen on"),
 		org: string().desc("Organization to register under (id, slug, or name)"),
+		direct: boolean().desc(
+			"Direct-only host: register with the cloud but never open the relay tunnel (reachable on loopback only, e.g. through your own SSH tunnel)",
+		),
+		secretFile: string().desc(
+			"File holding the host's pre-shared secret (created with 0600 if missing); keeps the secret stable across restarts",
+		),
+		corsOrigins: string().desc(
+			"Comma-separated browser origins allowed to call this host directly (a dev desktop needs its Vite origin)",
+		),
 	},
 	run: async ({ ctx, options, signal }) => {
 		const orgs = await ctx.api.user.myOrganizations.query();
@@ -37,6 +80,14 @@ export default command({
 			};
 		}
 
+		const secret = options.secretFile
+			? loadOrCreateSecret(options.secretFile)
+			: undefined;
+		const corsOrigins = options.corsOrigins
+			?.split(",")
+			.map((origin) => origin.trim())
+			.filter(Boolean);
+
 		p.intro(`superset start (${organization.name})`);
 		const spinner = p.spinner();
 		spinner.start("Starting host service...");
@@ -51,12 +102,21 @@ export default command({
 				api: ctx.api,
 				port: options.port,
 				daemon: options.daemon ?? false,
+				secret,
+				relay: !options.direct,
+				corsOrigins,
 			});
 
 			spinner.stop(
 				`Host service running on port ${result.port} (pid ${result.pid})`,
 			);
-			p.log.info("Connected to relay — machine is now accessible.");
+			if (options.direct) {
+				p.log.info(
+					"Direct-only host: registered with the cloud, relay tunnel disabled. Reach it at http://127.0.0.1:<port> through your own tunnel.",
+				);
+			} else {
+				p.log.info("Connected to relay — machine is now accessible.");
+			}
 
 			if (options.daemon) {
 				p.outro("Running in background.");

@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useActiveOrganizationId } from "renderer/hooks/useActiveOrganizationId";
 import { useRelayUrl } from "renderer/hooks/useRelayUrl";
 import { cloudTrpc } from "renderer/lib/cloud-trpc";
+import { type DirectHostsMap, useDirectHosts } from "renderer/lib/direct-hosts";
 import { getHostEventBus } from "renderer/lib/host-event-bus";
 
 type HostRow = RouterOutputs["host"]["roster"][number];
@@ -49,7 +50,8 @@ export function useKnownHosts(): {
 		},
 	);
 	const rows = hostsQuery.data ?? NO_ROWS;
-	const presence = useRelayPresence(relayUrl, rows);
+	const directHosts = useDirectHosts();
+	const presence = useRelayPresence(relayUrl, rows, directHosts);
 	const hosts = useMemo(
 		() =>
 			rows.map((row) => ({
@@ -64,17 +66,21 @@ export function useKnownHosts(): {
 function useRelayPresence(
 	relayUrl: string,
 	rows: HostRow[],
+	directHosts: DirectHostsMap,
 ): Map<string, boolean> {
+	// A direct host is observed on its own tunnel: its relay socket would
+	// never open, since a direct-only host holds no relay connection.
 	const hostUrls = useMemo(
 		() =>
 			rows.map(
 				(row) =>
 					[
 						row.machineId,
-						`${relayUrl}/hosts/${buildHostRoutingKey(row.organizationId, row.machineId)}`,
+						directHosts[row.machineId]?.url ??
+							`${relayUrl}/hosts/${buildHostRoutingKey(row.organizationId, row.machineId)}`,
 					] as const,
 			),
-		[rows, relayUrl],
+		[rows, relayUrl, directHosts],
 	);
 	const [presence, setPresence] = useState<Map<string, boolean>>(
 		() => new Map(),

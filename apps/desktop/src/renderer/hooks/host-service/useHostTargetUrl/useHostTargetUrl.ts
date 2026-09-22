@@ -1,6 +1,7 @@
 import { buildHostRoutingKey } from "@superset/shared/host-routing";
 import { useMemo } from "react";
 import { useRelayUrl } from "renderer/hooks/useRelayUrl";
+import { type DirectHostsMap, useDirectHosts } from "renderer/lib/direct-hosts";
 import { useLocalHostService } from "renderer/routes/_authenticated/providers/LocalHostServiceProvider";
 
 interface HostUrlContext {
@@ -8,6 +9,7 @@ interface HostUrlContext {
 	activeHostUrl: string | null;
 	activeOrganizationId: string | null;
 	relayUrl: string;
+	directHosts: DirectHostsMap;
 }
 
 function useHostUrlContext(): HostUrlContext {
@@ -16,18 +18,33 @@ function useHostUrlContext(): HostUrlContext {
 	const { machineId, activeHostUrl, activeOrganizationId } =
 		useLocalHostService();
 	const relayUrl = useRelayUrl();
+	const directHosts = useDirectHosts();
 	return useMemo(
-		() => ({ machineId, activeHostUrl, activeOrganizationId, relayUrl }),
-		[machineId, activeHostUrl, activeOrganizationId, relayUrl],
+		() => ({
+			machineId,
+			activeHostUrl,
+			activeOrganizationId,
+			relayUrl,
+			directHosts,
+		}),
+		[machineId, activeHostUrl, activeOrganizationId, relayUrl, directHosts],
 	);
 }
 
 // Single source of routing truth for both hooks below.
 function resolveUrl(
 	hostId: string | null,
-	{ machineId, activeHostUrl, activeOrganizationId, relayUrl }: HostUrlContext,
+	{
+		machineId,
+		activeHostUrl,
+		activeOrganizationId,
+		relayUrl,
+		directHosts,
+	}: HostUrlContext,
 ): string | null {
 	if (hostId === null || hostId === machineId) return activeHostUrl;
+	const direct = directHosts[hostId]?.url;
+	if (direct) return direct;
 	if (!activeOrganizationId) return null;
 	return `${relayUrl}/hosts/${buildHostRoutingKey(activeOrganizationId, hostId)}`;
 }

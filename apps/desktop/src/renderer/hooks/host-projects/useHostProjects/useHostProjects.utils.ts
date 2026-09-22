@@ -1,6 +1,6 @@
-import { buildHostRoutingKey } from "@superset/shared/host-routing";
 import type { ProjectSnapshotPayload } from "@superset/workspace-client";
 import { del as idbDel, get as idbGet, set as idbSet } from "idb-keyval";
+import { resolveRemoteHostUrl } from "renderer/lib/direct-hosts";
 
 /** A project row as served by a host (`project.list`). */
 /** One tag folder's host-side presentation row. */
@@ -116,7 +116,11 @@ export function deriveHostProjectsQueryTargets({
 		const hostUrl = isLocal
 			? activeHostUrl
 			: host.isOnline
-				? `${relayUrl}/hosts/${buildHostRoutingKey(host.organizationId, host.machineId)}`
+				? resolveRemoteHostUrl({
+						organizationId: host.organizationId,
+						hostId: host.machineId,
+						relayUrl,
+					})
 				: null;
 		return {
 			machineId: host.machineId,
