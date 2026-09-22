@@ -52,19 +52,28 @@ single `workspaces` row with a `workspace_repos` row per checkout under one
 container — that is what the repo picker, per-folder git status, the Run
 button and the chained lifecycle scripts all read. On cloud the repository
 list comes from the *environment* (`environment_repositories`, fixed at
-create into `cloud_workspace_repositories`) and `runSandboxSelfSeed` seeds
-**one project and one workspace row per repository**, with no
-`workspace_repos` rows at all. Consequences, none of them fixed: a local
-Project's folder list does not travel to a cloud workspace; every
-`workspace_repos`-shaped surface degrades to the primary checkout on cloud;
-per-checkout git watching attaches once; and lifecycle scripts on the box
-come from the single hooks checkout (`hooksRepositoryId` → `hooksPath`),
-not per folder. Converging the seeding onto one workspace + `workspace_repos`
-is what would let the desktop's multi-repo surfaces work on cloud unchanged;
-until then treat "multi-repo" as two separate features with one name. Note
-also that cloud repositories must be connected GitHub repos in a single
-installation (`loadRepositories` rejects a mixed set), so a source folder
-with no remote can exist locally and cannot exist on cloud.
+create into `cloud_workspace_repositories`), not from a Project. The seeding
+half is **fixed**: `runSandboxSelfSeed` writes one `workspaces` row (its
+`root_path` the container when there is more than one repository) over one
+`workspace_repos` row per checkout, one project per repository, so the repo
+picker, per-folder git status, the `repo` argument on `git.*` and per-checkout
+watching read a box through the same path they read a laptop. It used to seed
+one project and one workspace row per repository, under ids derived by
+`sandboxRepositoryWorkspaceId`; boxes seeded that way converge on their next
+boot — the seed materializes the repo rows against the projects that already
+exist and deletes the derived workspace rows. A single-repository box is
+untouched by all of this: one row, null `root_path`, no repo rows.
+
+Still open: a local Project's folder list does not travel to a cloud
+workspace, because cloud repositories must be connected GitHub repos in a
+single installation (`loadRepositories` rejects a mixed set) — a source folder
+with no remote can exist locally and cannot exist on cloud, so what a Project
+means on cloud is a product decision, not a mapping. And lifecycle scripts on
+the box still come from the single hooks checkout (`hooksRepositoryId` →
+`hooksPath`) rather than per folder the way `startSetupTerminalIfPresent` and
+`resolveWorkspaceTeardown` chain them locally; the box runs `start` from
+`runSandboxStartHook` against one directory, and per-folder hooks would mean
+teaching that one call site the checkout list.
 
 ## Addressing and auth
 
