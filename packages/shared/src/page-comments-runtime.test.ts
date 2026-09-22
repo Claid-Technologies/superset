@@ -7,7 +7,7 @@ interface Posted {
 	type: string;
 }
 
-function setup() {
+function setup({ baseUrl = "https://page.example/view" } = {}) {
 	const listeners = new Map<string, (event: unknown) => void>();
 	const posted: Posted[] = [];
 	let frames: (() => void)[] = [];
@@ -37,6 +37,7 @@ function setup() {
 		innerWidth: 400,
 		innerHeight: 800,
 		document: {
+			baseURI: baseUrl,
 			documentElement: { style: {}, ...element },
 			body: { ...element },
 			addEventListener: (type: string, fn: (event: unknown) => void) =>
@@ -114,6 +115,9 @@ function setup() {
 				shiftKey?: boolean;
 				button?: number;
 				download?: boolean;
+				defaultPrevented?: boolean;
+				svg?: boolean;
+				noAnchor?: boolean;
 			} = {},
 		) => {
 			let prevented = false;
@@ -121,10 +125,16 @@ function setup() {
 				button: 0,
 				...options,
 				target: {
-					closest: () => ({
-						href,
-						hasAttribute: () => options.download ?? false,
-					}),
+					closest: () =>
+						options.noAnchor
+							? null
+							: {
+									href: options.svg
+										? { baseVal: href }
+										: new URL(href, baseUrl).href,
+									getAttribute: () => href,
+									hasAttribute: () => options.download ?? false,
+								},
 				},
 				preventDefault: () => {
 					prevented = true;
@@ -279,6 +289,75 @@ describe("page links", () => {
 		page.clear();
 		expect(page.clickLink("https://example.com")).toBe(true);
 		expect(page.clickLink("https://example.com", { button: 1 })).toBe(true);
+		expect(page.posted).toEqual([]);
+	});
+});
+
+describe("page link edge cases", () => {
+	test.each([
+		"#",
+		"#section",
+		" # ",
+		"/view#",
+		"https://page.example/view#",
+		"https://page.example/view#section",
+	])("keeps same-document anchor %s in the frame", (href) => {
+		const page = setup();
+		page.configureLinks();
+		page.clear();
+		expect(page.clickLink(href)).toBe(false);
+		expect(page.posted).toEqual([]);
+	});
+	test.each(["", "  "])("keeps empty href %j in the frame", (href) => {
+		const page = setup();
+		page.configureLinks();
+		page.clear();
+		expect(page.clickLink(href)).toBe(false);
+		expect(page.posted).toEqual([]);
+	});
+	test("resolves links against the document base, including SVG anchors", () => {
+		const page = setup({ baseUrl: "https://other.example/docs/" });
+		page.configureLinks();
+		page.clear();
+		expect(page.clickLink("guide", { svg: true })).toBe(true);
+		expect(page.posted[0]).toMatchObject({
+			url: "https://other.example/docs/guide",
+		});
+		expect(page.clickLink("#section")).toBe(true);
+		expect(page.posted[1]).toMatchObject({
+			url: "https://other.example/docs/#section",
+		});
+	});
+	test.each([
+		"/other#section",
+		"/view?query=1#section",
+		"//other.example/view#",
+		"https://page.example/view%23section",
+	])("forwards distinct document %s", (href) => {
+		const page = setup();
+		page.configureLinks();
+		page.clear();
+		expect(page.clickLink(href)).toBe(true);
+		expect(page.posted).toHaveLength(1);
+	});
+	test("ignores malformed URLs", () => {
+		const page = setup();
+		page.configureLinks();
+		page.clear();
+		expect(page.clickLink("http://[", { svg: true })).toBe(false);
+		expect(page.posted).toEqual([]);
+	});
+	test("ignores cancelled events, right clicks, and non-link targets", () => {
+		const page = setup();
+		page.configureLinks();
+		page.clear();
+		expect(
+			page.clickLink("https://example.com", { defaultPrevented: true }),
+		).toBe(false);
+		expect(page.clickLink("https://example.com", { button: 2 })).toBe(false);
+		expect(page.clickLink("https://example.com", { noAnchor: true })).toBe(
+			false,
+		);
 		expect(page.posted).toEqual([]);
 	});
 });

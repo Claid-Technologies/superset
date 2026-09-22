@@ -241,11 +241,13 @@ export const PAGE_COMMENTS_RUNTIME_SOURCE = `(() => {
 		if (!handleLinks || event.defaultPrevented || event.button > 1) return;
 		const anchor = event.target?.closest?.("a[href]");
 		if (!anchor || anchor.hasAttribute("download")) return;
+		const href = anchor.getAttribute("href")?.trim();
+		if (!href) return;
 		let url;
-		try { url = new URL(anchor.href, location.href); } catch { return; }
+		try { url = new URL(href, document.baseURI); } catch { return; }
 		if (!["http:", "https:", "mailto:", "tel:"].includes(url.protocol)) return;
 		const current = new URL(location.href);
-		if (url.hash && url.origin === current.origin && url.pathname === current.pathname && url.search === current.search) return;
+		if (url.href.includes("#") && url.origin === current.origin && url.pathname === current.pathname && url.search === current.search) return;
 		event.preventDefault();
 		event.stopPropagation();
 		post({
