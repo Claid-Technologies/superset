@@ -10712,7 +10712,7 @@ msgid "Or ask your coding agent to install the Superset CLI."
 msgstr "Ou peça ao seu agente de código para instalar a CLI do Superset."
 
 msgid "Or describe your own in the workspace that opens."
-msgstr "Ou descreva a sua na área de trabalho que abrir."
+msgstr "Ou descreva a sua na área de trabalho que será aberta."
 
 msgid "Orange"
 msgstr "Laranja"
@@ -14220,7 +14220,7 @@ msgid "Start Workspace"
 msgstr "Iniciar área de trabalho"
 
 msgid "Start your agent on one of these"
-msgstr "Comece seu agente por uma destas"
+msgstr "Inicie seu agente com uma destas"
 
 msgid "Started"
 msgstr "Iniciada"

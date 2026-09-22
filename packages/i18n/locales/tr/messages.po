@@ -10178,7 +10178,7 @@ msgid "one of the selected repositories"
 msgstr "seçili depolardan biri"
 
 msgid "One self-contained document, opened by link. Your agent publishes it, teammates pin comments to it, and the agent republishes with the fixes."
-msgstr "Bağlantıyla açılan, kendi kendine yeten tek bir belge. Ajanınız belgeyi yayımlar, takım arkadaşlarınız üzerine yorum iğneler ve ajan düzeltmelerle yeniden yayımlar."
+msgstr "Bağlantıyla açılan, kendi kendine yeten tek bir belge. Ajanınız belgeyi yayımlar, takım arkadaşlarınız belgeye yorum sabitler ve ajan düzeltmelerle yeniden yayımlar."
 
 msgid "One step left"
 msgstr "Bir adım kaldı"

@@ -14220,7 +14220,7 @@ msgid "Start Workspace"
 msgstr "启动工作区"
 
 msgid "Start your agent on one of these"
-msgstr "让你的智能体从这些开始"
+msgstr "让你的智能体从以下任一项开始"
 
 msgid "Started"
 msgstr "开始时间"

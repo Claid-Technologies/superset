@@ -10178,7 +10178,7 @@ msgid "one of the selected repositories"
 msgstr "uno dei repository selezionati"
 
 msgid "One self-contained document, opened by link. Your agent publishes it, teammates pin comments to it, and the agent republishes with the fixes."
-msgstr "Un documento autonomo, aperto da un link. Il tuo agente lo pubblica, i colleghi ci appuntano commenti e l'agente lo ripubblica con le correzioni."
+msgstr "Un documento autonomo, aperto da un link. Il tuo agente lo pubblica, i colleghi ci fissano commenti e l'agente lo ripubblica con le correzioni."
 
 msgid "One step left"
 msgstr "Manca un passaggio"

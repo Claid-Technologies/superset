@@ -10712,7 +10712,7 @@ msgid "Or ask your coding agent to install the Superset CLI."
 msgstr "Atau minta agen coding Anda memasang CLI Superset."
 
 msgid "Or describe your own in the workspace that opens."
-msgstr "Atau jelaskan sendiri di workspace yang terbuka."
+msgstr "Atau jelaskan ide Anda sendiri di workspace yang terbuka."
 
 msgid "Orange"
 msgstr "Oranye"
@@ -14220,7 +14220,7 @@ msgid "Start Workspace"
 msgstr "Mulai Workspace"
 
 msgid "Start your agent on one of these"
-msgstr "Mulai agen Anda dari salah satu ini"
+msgstr "Mulai agen Anda dengan salah satu opsi ini"
 
 msgid "Started"
 msgstr "Dimulai"

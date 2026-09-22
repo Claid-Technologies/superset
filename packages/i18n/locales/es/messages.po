@@ -14220,7 +14220,7 @@ msgid "Start Workspace"
 msgstr "Iniciar espacio de trabajo"
 
 msgid "Start your agent on one of these"
-msgstr "Empieza con tu agente por una de estas"
+msgstr "Inicia tu agente con una de estas opciones"
 
 msgid "Started"
 msgstr "Iniciada"
