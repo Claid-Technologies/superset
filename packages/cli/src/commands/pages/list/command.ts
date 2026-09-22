@@ -78,9 +78,9 @@ export function nameLinks(
 
 export function workspaceCell(row: PageRow): string {
 	const links = row.workspaceLinks ?? [];
-	const [first] = links;
-	if (!first) return "—";
-	const label = first.name ?? first.workspaceId.slice(0, 8);
+	const shown = links.find((link) => link.name) ?? links[0];
+	if (!shown) return "—";
+	const label = shown.name ?? shown.workspaceId.slice(0, 8);
 	return links.length > 1 ? `${label} +${links.length - 1}` : label;
 }
 

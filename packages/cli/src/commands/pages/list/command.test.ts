@@ -50,6 +50,20 @@ describe("workspaceCell", () => {
 		).toBe("pipeline-review +1");
 	});
 
+	test("shows a name from a later link when the first is unresolved", () => {
+		expect(
+			workspaceCell(
+				named(
+					[
+						{ workspaceId: WORKSPACE_B, entryPath: "b.html" },
+						{ workspaceId: WORKSPACE_A, entryPath: "a.html" },
+					],
+					new Map([[WORKSPACE_A, "pipeline-review"]]),
+				),
+			),
+		).toBe("pipeline-review +1");
+	});
+
 	test("marks a page that belongs to no workspace", () => {
 		expect(workspaceCell(row([]))).toBe("—");
 		expect(workspaceCell(row())).toBe("—");

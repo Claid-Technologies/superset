@@ -238,7 +238,7 @@ export function PagesView({
 							</Tabs>
 
 							<div className="flex items-center gap-2">
-								{(workspaceOptions.length > 1 || workspaceId !== null) && (
+								{(workspaceOptions.length > 0 || workspaceId !== null) && (
 									<WorkspaceFilter
 										value={workspaceId}
 										options={workspaceOptions}

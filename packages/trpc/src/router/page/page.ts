@@ -356,6 +356,7 @@ export const pageRouter = {
 								pageRows.map((row) => row.id),
 							),
 						)
+						.orderBy(workspacePages.workspaceId)
 				: [];
 
 			const linksByPage = new Map<
