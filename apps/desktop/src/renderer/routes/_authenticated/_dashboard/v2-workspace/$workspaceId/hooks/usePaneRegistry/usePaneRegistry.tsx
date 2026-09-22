@@ -41,7 +41,9 @@ import {
 	probeTerminalRunning,
 } from "renderer/lib/terminal/confirm-close-terminals";
 import { consumeTerminalBackgroundIntent } from "renderer/lib/terminal/terminal-background-intents";
+import { writeTerminalClipboard } from "renderer/lib/terminal/terminal-clipboard";
 import { terminalRuntimeRegistry } from "renderer/lib/terminal/terminal-runtime-registry";
+import type { OpenFile } from "renderer/routes/_authenticated/_dashboard/v2-workspace/$workspaceId/types";
 import { useWorkspace } from "renderer/routes/_authenticated/_dashboard/v2-workspace/providers/WorkspaceProvider";
 import { useCollections } from "renderer/routes/_authenticated/providers/CollectionsProvider";
 import { getV2NotificationSourcesForPane } from "renderer/stores/v2-notifications";
@@ -143,7 +145,7 @@ const MOD_KEY = navigator.platform.toLowerCase().includes("mac")
 interface UsePaneRegistryOptions {
 	onOpenDiff: OpenReviewDiff;
 	onOpenComment: (comment: CommentPaneData) => void;
-	onOpenFile: (path: string, openInNewTab?: boolean) => void;
+	onOpenFile: OpenFile;
 	onRevealPath: (path: string) => void;
 	launcher: TerminalLauncher;
 	store: StoreApi<WorkspaceStore<PaneViewerData>>;
@@ -490,7 +492,11 @@ export function usePaneRegistry({
 									terminalId,
 									ctx.pane.id,
 								);
-								if (text) navigator.clipboard.writeText(text);
+								if (text) {
+									void writeTerminalClipboard(text).catch((error: unknown) => {
+										console.error("[terminal] Failed to copy selection", error);
+									});
+								}
 							},
 						},
 						{
@@ -836,6 +842,7 @@ export function usePaneRegistry({
 							),
 							renderPane: (ctx: RendererContext<PaneViewerData>) => (
 								<PagePane
+									store={ctx.store}
 									data={ctx.pane.data as PagePaneData}
 									paneId={ctx.pane.id}
 									onDataChange={(data) =>

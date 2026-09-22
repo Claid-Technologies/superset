@@ -136,6 +136,11 @@ export function FilePane({ context, workspaceId }: FilePaneProps) {
 		[context.store, isPagesEnabled],
 	);
 
+	const handlePositionRevealed = useCallback(() => {
+		const { pendingPosition: _pendingPosition, ...rest } = data;
+		context.actions.updateData(rest);
+	}, [context.actions, data]);
+
 	// Content gating — LoadingState/ErrorState rendered before view resolution when
 	// there's nothing for the view to consume.
 	if (document.content.kind === "loading") {
@@ -209,6 +214,8 @@ export function FilePane({ context, workspaceId }: FilePaneProps) {
 						onChangeView={handleChangeView}
 						onForceView={handleForceView}
 						onOpenUrl={handleOpenUrl}
+						pendingPosition={data.pendingPosition}
+						onPositionRevealed={handlePositionRevealed}
 					/>
 				</MarkdownResourceProvider>
 			</div>
