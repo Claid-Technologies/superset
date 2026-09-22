@@ -290,7 +290,9 @@ function createHandle(entry: DocumentEntry): SharedFileDocument {
 			}
 		},
 		async compareWithDisk() {
+			const generation = entry.loadGeneration;
 			const diskContent = await fetchCurrentDiskContent(entry);
+			if (generation !== entry.loadGeneration) return;
 			entry.conflict = { diskContent };
 			notify(entry);
 		},

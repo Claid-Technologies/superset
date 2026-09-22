@@ -269,3 +269,29 @@ test("an unreadable disk version leaves the dirty buffer intact for conflict rev
 	expect(f.writes).toBe(0);
 	await f.cleanup();
 });
+
+for (const action of ["save", "reload"] as const) {
+	test(`a pending comparison cannot reopen a conflict after ${action}`, async () => {
+		const f = createReloadFixture();
+		await f.resolve(0, "original");
+		f.doc.setContent("edited");
+		const comparing = f.doc.compareWithDisk();
+		if (action === "save") {
+			await f.doc.save();
+		} else {
+			const reloading = f.doc.reload();
+			await f.resolve(2, "latest disk");
+			await reloading;
+		}
+		const version = f.doc.getVersion();
+		await f.resolve(1, "obsolete disk");
+		await comparing;
+		expect(f.doc.conflict).toBeNull();
+		expect(f.doc.getVersion()).toBe(version);
+		expect(f.doc.content).toMatchObject({
+			value: action === "save" ? "edited" : "latest disk",
+		});
+		expect(f.doc.dirty).toBe(false);
+		await f.cleanup();
+	});
+}
