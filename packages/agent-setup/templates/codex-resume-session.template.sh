@@ -3,6 +3,7 @@ _superset_codex_resume_id() {
   local _superset_token
   for _superset_token in "$@"; do
     if [ "$_superset_skip_value" = "1" ]; then
+      case "$_superset_token" in -*) return ;; esac
       _superset_skip_value="0"
       continue
     fi

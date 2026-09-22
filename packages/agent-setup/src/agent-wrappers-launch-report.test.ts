@@ -172,6 +172,8 @@ describe("Codex resume launch report", () => {
 			{ args: ["fork", id] },
 			{ args: ["exec", "resume", id] },
 			{ args: ["resume", "--last"] },
+			{ args: ["resume", id, "--disable", "--unknown-option"] },
+			{ args: ["--model", "--disable", "resume", id] },
 			{ args: ["resume", "--last", id] },
 			{ args: ["resume", id, "hello", "--last"] },
 			{ args: ["resume"] },

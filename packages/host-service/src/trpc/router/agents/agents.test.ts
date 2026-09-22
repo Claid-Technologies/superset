@@ -16,6 +16,7 @@ import {
 	buildAgentCommandString,
 	buildTerminalAgentLaunch,
 	continuationTarget,
+	runAgentInWorkspace,
 	validateAgentEffortSelection,
 	validateAgentForkSelection,
 	validateAgentModelSelection,
@@ -284,6 +285,40 @@ describe("buildTerminalAgentLaunch", () => {
 			})
 			.run();
 	}
+
+	it("rejects a stale Claude fork after its terminal resumes another session", async () => {
+		const db = createTestDb();
+		seedConfig(db);
+		db.insert(schema.workspaces)
+			.values({
+				id: "ws-1",
+				projectId: "project-1",
+				worktreePath: "/tmp/fork-test",
+				branch: "test",
+			})
+			.run();
+		const terminalAgentStore = new TerminalAgentStore();
+		terminalAgentStore.recordEvent({
+			terminalId: "source",
+			workspaceId: "ws-1",
+			agentId: "claude",
+			agentSessionId: "current-session",
+			eventType: "SessionStart",
+			occurredAt: 1,
+		});
+		const ctx = { db, terminalAgentStore } as Parameters<
+			typeof runAgentInWorkspace
+		>[0];
+		await expect(
+			runAgentInWorkspace(ctx, {
+				workspaceId: "ws-1",
+				agent: "claude",
+				prompt: "",
+				forkSourceTerminalId: "source",
+				forkSessionId: "stale-session",
+			}),
+		).rejects.toMatchObject({ code: "CONFLICT" });
+	});
 
 	it("resolves the agent config to a runnable command without a terminal", () => {
 		const db = createTestDb();

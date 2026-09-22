@@ -15285,7 +15285,7 @@ msgid "This action is irreversible."
 msgstr "Deze actie kan niet worden teruggedraaid."
 
 msgid "This agent configuration does not support forking."
-msgstr "Deze agentconfiguratie ondersteunt geen sessievertakkingen."
+msgstr "Deze agentconfiguratie ondersteunt het forken van sessies niet."
 
 msgid "This agent no longer exists on the selected device (its agents may have been reset). Runs will fail until you pick a new one."
 msgstr "Deze agent bestaat niet meer op het gekozen apparaat (de agents zijn mogelijk gereset). Runs mislukken totdat je een nieuwe kiest."

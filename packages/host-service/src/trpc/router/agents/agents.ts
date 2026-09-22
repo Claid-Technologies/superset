@@ -598,7 +598,9 @@ async function runTerminalAgent(
 		if (
 			!input.forkSessionId ||
 			binding?.workspaceId !== input.workspaceId ||
-			sourceConfig?.id !== config?.id
+			sourceConfig?.id !== config?.id ||
+			(binding?.agentId !== "codex" &&
+				binding?.agentSessionId !== input.forkSessionId)
 		) {
 			throw new TRPCError({
 				code: "CONFLICT",
