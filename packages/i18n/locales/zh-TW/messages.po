@@ -16540,7 +16540,7 @@ msgid "Warning occurred."
 msgstr "出現了警告。"
 
 msgid "Watched by an agent in another workspace"
-msgstr "由另一個工作區的代理程式監看"
+msgstr "由另一個工作區的代理程式關注"
 
 msgid "Watchers"
 msgstr "關注者"

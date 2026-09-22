@@ -16540,7 +16540,7 @@ msgid "Warning occurred."
 msgstr "Er is een waarschuwing opgetreden."
 
 msgid "Watched by an agent in another workspace"
-msgstr "Bekeken door een agent in een andere werkruimte"
+msgstr "Gevolgd door een agent in een andere werkruimte"
 
 msgid "Watchers"
 msgstr "Watchers"

@@ -3643,7 +3643,7 @@ msgid "Comments could not be loaded"
 msgstr "Kommentare konnten nicht geladen werden"
 
 msgid "Comments go to this agent"
-msgstr "Kommentare gehen an diesen Agent"
+msgstr "Kommentare gehen an diesen Agenten"
 
 msgid "Commit"
 msgstr "Committen"
@@ -16540,7 +16540,7 @@ msgid "Warning occurred."
 msgstr "Es gab eine Warnung."
 
 msgid "Watched by an agent in another workspace"
-msgstr "Wird von einem Agent in einem anderen Arbeitsbereich beobachtet"
+msgstr "Wird von einem Agenten in einem anderen Arbeitsbereich beobachtet"
 
 msgid "Watchers"
 msgstr "Beobachter"
