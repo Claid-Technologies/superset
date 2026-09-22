@@ -1913,6 +1913,10 @@ msgstr "Également : @superset/ui/spinner"
 msgid "Always know which agent needs you, with notifications that deep-link straight to the blocked agent."
 msgstr "Sachez toujours quel agent a besoin de vous, grâce à des notifications qui mènent directement à l'agent bloqué."
 
+msgctxt "page watcher with no known name"
+msgid "An agent"
+msgstr "Un agent"
+
 msgid "An agent completes multi-file changes end to end."
 msgstr "Un agent mène des changements multi-fichiers de bout en bout."
 
@@ -16534,6 +16538,9 @@ msgstr "Avertissement"
 
 msgid "Warning occurred."
 msgstr "Un avertissement s'est produit."
+
+msgid "Watched by an agent in another workspace"
+msgstr "Surveillée par un agent d'un autre espace de travail"
 
 msgid "Watchers"
 msgstr "Observateurs"

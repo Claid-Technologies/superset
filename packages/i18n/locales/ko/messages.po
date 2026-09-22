@@ -1913,6 +1913,10 @@ msgstr "참고: @superset/ui/spinner"
 msgid "Always know which agent needs you, with notifications that deep-link straight to the blocked agent."
 msgstr "어떤 에이전트가 나를 필요로 하는지 항상 알 수 있습니다. 알림을 누르면 막힌 에이전트로 바로 이동합니다."
 
+msgctxt "page watcher with no known name"
+msgid "An agent"
+msgstr "에이전트"
+
 msgid "An agent completes multi-file changes end to end."
 msgstr "에이전트가 여러 파일에 걸친 변경을 처음부터 끝까지 완료합니다."
 
@@ -16534,6 +16538,9 @@ msgstr "경고"
 
 msgid "Warning occurred."
 msgstr "경고가 발생했습니다."
+
+msgid "Watched by an agent in another workspace"
+msgstr "다른 워크스페이스의 에이전트가 감시 중입니다"
 
 msgid "Watchers"
 msgstr "관찰자"

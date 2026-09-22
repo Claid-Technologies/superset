@@ -1913,6 +1913,10 @@ msgstr "另有：@superset/ui/spinner"
 msgid "Always know which agent needs you, with notifications that deep-link straight to the blocked agent."
 msgstr "随时知道哪个智能体需要你，通知可直接跳转到被阻塞的智能体。"
 
+msgctxt "page watcher with no known name"
+msgid "An agent"
+msgstr "智能体"
+
 msgid "An agent completes multi-file changes end to end."
 msgstr "智能体能端到端完成跨文件改动。"
 
@@ -16534,6 +16538,9 @@ msgstr "警告"
 
 msgid "Warning occurred."
 msgstr "出现了警告。"
+
+msgid "Watched by an agent in another workspace"
+msgstr "由另一个工作区的智能体关注"
 
 msgid "Watchers"
 msgstr "关注者"

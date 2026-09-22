@@ -17,7 +17,11 @@ import { Bot, Check, EyeOff } from "lucide-react";
 import { useCallback, useState } from "react";
 import { usePageWatchers } from "renderer/hooks/host-service/usePageWatchers";
 import { useTerminalAgentBindings } from "renderer/hooks/host-service/useTerminalAgentBindings";
+import { cloudTrpc } from "renderer/lib/cloud-trpc";
 import { StatusIndicator } from "renderer/screens/main/components/StatusIndicator";
+
+const WATCHING_REFRESH_MS = 30_000;
+const IDLE_REFRESH_MS = 5 * 60_000;
 
 interface PageWatcherMenuProps {
 	workspaceId: string;
@@ -35,13 +39,29 @@ export function PageWatcherMenu({
 	const { t } = useLingui();
 	const bindings = useTerminalAgentBindings(workspaceId);
 	const watchers = usePageWatchers(workspaceId);
+	const cloudUtils = cloudTrpc.useUtils();
 	const assign = workspaceTrpc.pageWatch.assign.useMutation();
 	const unwatch = workspaceTrpc.pageWatch.unwatch.useMutation();
 	const [menuOpen, setMenuOpen] = useState(false);
 
 	useFramePointerDown(useCallback(() => setMenuOpen(false), []));
 
+	const cloudWatch = cloudTrpc.page.get.useQuery(
+		{ id: pageId ?? "" },
+		{
+			enabled: Boolean(pageId),
+			refetchInterval: (query) =>
+				query.state.data?.watch.watching
+					? WATCHING_REFRESH_MS
+					: IDLE_REFRESH_MS,
+		},
+	);
+
 	const watcher = pageId ? watchers.get(pageId) : undefined;
+	const elsewhere =
+		!watcher && cloudWatch.data?.watch.watching === true
+			? cloudWatch.data.watch
+			: null;
 
 	const running = [...bindings.values()]
 		.filter((binding) => !binding.endedAt)
@@ -65,6 +85,7 @@ export function PageWatcherMenu({
 				agentId,
 			},
 			{
+				onSettled: () => cloudUtils.page.get.invalidate({ id: pageId }),
 				onError: (error) =>
 					toast.error(
 						t({
@@ -80,6 +101,7 @@ export function PageWatcherMenu({
 		unwatch.mutate(
 			{ pageId },
 			{
+				onSettled: () => cloudUtils.page.get.invalidate({ id: pageId }),
 				onError: (error) =>
 					toast.error(
 						t({
@@ -103,11 +125,17 @@ export function PageWatcherMenu({
 					})}
 					disabled={assign.isPending || unwatch.isPending}
 				>
-					{watcher ? (
+					{watcher || elsewhere ? (
 						<>
 							<StatusIndicator status="working" />
 							<span className="max-w-24 truncate">
-								{watcher.agentId ?? label(watcher.terminalId)}
+								{watcher
+									? (watcher.agentId ?? label(watcher.terminalId))
+									: (elsewhere?.agentId ??
+										t({
+											message: "An agent",
+											context: "page watcher with no known name",
+										}))}
 							</span>
 						</>
 					) : (
@@ -119,6 +147,8 @@ export function PageWatcherMenu({
 				<DropdownMenuLabel className="font-normal text-muted-foreground text-xs">
 					{watcher ? (
 						<Trans>Comments go to this agent</Trans>
+					) : elsewhere ? (
+						<Trans>Watched by an agent in another workspace</Trans>
 					) : (
 						<Trans>Nothing is watching this page</Trans>
 					)}

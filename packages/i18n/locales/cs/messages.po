@@ -1913,6 +1913,10 @@ msgstr "Také: @superset/ui/spinner"
 msgid "Always know which agent needs you, with notifications that deep-link straight to the blocked agent."
 msgstr "Vždy víte, který agent vás potřebuje — oznámení vedou přímo na zablokovaného agenta."
 
+msgctxt "page watcher with no known name"
+msgid "An agent"
+msgstr "Agent"
+
 msgid "An agent completes multi-file changes end to end."
 msgstr "Agent dokončí změnu napříč více soubory od začátku do konce."
 
@@ -16534,6 +16538,9 @@ msgstr "Varování"
 
 msgid "Warning occurred."
 msgstr "Došlo k varování."
+
+msgid "Watched by an agent in another workspace"
+msgstr "Sleduje ji agent v jiném pracovním prostoru"
 
 msgid "Watchers"
 msgstr "Sledující"

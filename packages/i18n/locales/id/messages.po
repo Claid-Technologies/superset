@@ -1913,6 +1913,10 @@ msgstr "Juga: @superset/ui/spinner"
 msgid "Always know which agent needs you, with notifications that deep-link straight to the blocked agent."
 msgstr "Selalu tahu agen mana yang membutuhkan Anda, dengan notifikasi yang langsung menuju agen yang terhambat."
 
+msgctxt "page watcher with no known name"
+msgid "An agent"
+msgstr "Agen"
+
 msgid "An agent completes multi-file changes end to end."
 msgstr "Agen menyelesaikan perubahan lintas file dari awal sampai akhir."
 
@@ -16534,6 +16538,9 @@ msgstr "Warning"
 
 msgid "Warning occurred."
 msgstr "Terjadi peringatan."
+
+msgid "Watched by an agent in another workspace"
+msgstr "Diawasi oleh agen di workspace lain"
 
 msgid "Watchers"
 msgstr "Pengamat"

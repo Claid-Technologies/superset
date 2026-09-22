@@ -1913,6 +1913,10 @@ msgstr "Ngoài ra: @superset/ui/spinner"
 msgid "Always know which agent needs you, with notifications that deep-link straight to the blocked agent."
 msgstr "Luôn biết agent nào cần bạn, với thông báo dẫn thẳng tới agent đang bị chặn."
 
+msgctxt "page watcher with no known name"
+msgid "An agent"
+msgstr "Agent"
+
 msgid "An agent completes multi-file changes end to end."
 msgstr "Agent hoàn thành trọn vẹn các thay đổi trên nhiều tệp."
 
@@ -16534,6 +16538,9 @@ msgstr "Cảnh báo"
 
 msgid "Warning occurred."
 msgstr "Có cảnh báo."
+
+msgid "Watched by an agent in another workspace"
+msgstr "Được một agent ở workspace khác theo dõi"
 
 msgid "Watchers"
 msgstr "Người theo dõi"
