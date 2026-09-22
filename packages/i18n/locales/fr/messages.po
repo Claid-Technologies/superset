@@ -589,6 +589,9 @@ msgstr "{count, plural, one {# commentaire} other {# commentaires}}"
 msgid "{count, plural, one {# file} other {# files}}"
 msgstr "{count, plural, one {# fichier} other {# fichiers}}"
 
+msgid "{count, plural, one {# page comment is waiting on an agent here} other {# page comments are waiting on an agent here}}"
+msgstr "{count, plural, one {# commentaire de page attend ici un agent} other {# commentaires de page attendent ici un agent}}"
+
 msgid "{count, plural, one {# search} other {# searches}}"
 msgstr "{count, plural, one {# recherche} other {# recherches}}"
 
@@ -3282,6 +3285,15 @@ msgstr "Cliquez sur <0>Importer un thème</0> et sélectionnez le fichier télé
 
 msgid "Click a terminal script to edit its details."
 msgstr "Cliquez sur un script de terminal pour modifier ses détails."
+
+msgid "Click anything on this page to comment on it. <0>{agentId}</0> is watching, and will pick your comment up and republish the page."
+msgstr "Cliquez sur n'importe quel élément de cette page pour le commenter. <0>{agentId}</0> surveille la page : il prendra en compte votre commentaire et republiera la page."
+
+msgid "Click anything on this page to comment on it. An agent is watching, and will pick your comment up and republish the page."
+msgstr "Cliquez sur n'importe quel élément de cette page pour le commenter. Un agent surveille la page : il prendra en compte votre commentaire et republiera la page."
+
+msgid "Click anything on this page to comment on it. No agent is watching right now, so your comment is recorded for whoever published the page."
+msgstr "Cliquez sur n'importe quel élément de cette page pour le commenter. Aucun agent ne la surveille pour le moment : votre commentaire est enregistré pour la personne qui a publié la page."
 
 msgid "Click here if not redirected"
 msgstr "Cliquez ici si la redirection n'a pas lieu"
@@ -7143,6 +7155,9 @@ msgstr "Google n'a pas accordé d'accès durable. Retirez Superset des accès ti
 
 msgid "Google Search Console"
 msgstr "Google Search Console"
+
+msgid "Got it"
+msgstr "J'ai compris"
 
 msgid "Grant the OS permissions Superset needs."
 msgstr "Accordez à Superset les autorisations système dont il a besoin."

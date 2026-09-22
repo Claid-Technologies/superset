@@ -589,6 +589,9 @@ msgstr "{count, plural, one {# комментарий} few {# комментар
 msgid "{count, plural, one {# file} other {# files}}"
 msgstr "{count, plural, one {# файл} few {# файла} many {# файлов} other {# файла}}"
 
+msgid "{count, plural, one {# page comment is waiting on an agent here} other {# page comments are waiting on an agent here}}"
+msgstr "{count, plural, one {# комментарий к странице ждёт здесь агента} few {# комментария к странице ждут здесь агента} many {# комментариев к странице ждут здесь агента} other {# комментария к странице ждут здесь агента}}"
+
 msgid "{count, plural, one {# search} other {# searches}}"
 msgstr "{count, plural, one {# поиск} few {# поиска} many {# поисков} other {# поиска}}"
 
@@ -3282,6 +3285,15 @@ msgstr "Нажмите <0>Импорт темы</0> и выберите скач
 
 msgid "Click a terminal script to edit its details."
 msgstr "Нажмите на скрипт терминала, чтобы изменить его."
+
+msgid "Click anything on this page to comment on it. <0>{agentId}</0> is watching, and will pick your comment up and republish the page."
+msgstr "Нажмите на любой элемент этой страницы, чтобы оставить комментарий. За страницей следит <0>{agentId}</0>: он учтёт ваш комментарий и опубликует страницу заново."
+
+msgid "Click anything on this page to comment on it. An agent is watching, and will pick your comment up and republish the page."
+msgstr "Нажмите на любой элемент этой страницы, чтобы оставить комментарий. За страницей следит агент: он учтёт ваш комментарий и опубликует страницу заново."
+
+msgid "Click anything on this page to comment on it. No agent is watching right now, so your comment is recorded for whoever published the page."
+msgstr "Нажмите на любой элемент этой страницы, чтобы оставить комментарий. Сейчас за ней не следит ни один агент, поэтому ваш комментарий сохранится для того, кто опубликовал страницу."
 
 msgid "Click here if not redirected"
 msgstr "Нажмите здесь, если переход не произошёл"
@@ -7143,6 +7155,9 @@ msgstr "Google не выдал длительный доступ. Удалите
 
 msgid "Google Search Console"
 msgstr "Google Search Console"
+
+msgid "Got it"
+msgstr "Понятно"
 
 msgid "Grant the OS permissions Superset needs."
 msgstr "Выдайте разрешения ОС, нужные Superset."

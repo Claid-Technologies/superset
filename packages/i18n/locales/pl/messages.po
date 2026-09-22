@@ -589,6 +589,9 @@ msgstr "{count, plural, one {# komentarz} few {# komentarze} many {# komentarzy}
 msgid "{count, plural, one {# file} other {# files}}"
 msgstr "{count, plural, one {# plik} few {# pliki} many {# plików} other {# pliku}}"
 
+msgid "{count, plural, one {# page comment is waiting on an agent here} other {# page comments are waiting on an agent here}}"
+msgstr "{count, plural, one {# komentarz do strony czeka tu na agenta} few {# komentarze do strony czekają tu na agenta} many {# komentarzy do strony czeka tu na agenta} other {# komentarza do strony czeka tu na agenta}}"
+
 msgid "{count, plural, one {# search} other {# searches}}"
 msgstr "{count, plural, one {# wyszukiwanie} few {# wyszukiwania} many {# wyszukiwań} other {# wyszukiwania}}"
 
@@ -3282,6 +3285,15 @@ msgstr "Kliknij <0>Importuj motyw</0> i wskaż pobrany plik."
 
 msgid "Click a terminal script to edit its details."
 msgstr "Kliknij skrypt terminala, aby edytować jego szczegóły."
+
+msgid "Click anything on this page to comment on it. <0>{agentId}</0> is watching, and will pick your comment up and republish the page."
+msgstr "Kliknij dowolny element tej strony, aby go skomentować. Stronę obserwuje <0>{agentId}</0>, który podejmie Twój komentarz i opublikuje stronę ponownie."
+
+msgid "Click anything on this page to comment on it. An agent is watching, and will pick your comment up and republish the page."
+msgstr "Kliknij dowolny element tej strony, aby go skomentować. Stronę obserwuje agent, który podejmie Twój komentarz i opublikuje stronę ponownie."
+
+msgid "Click anything on this page to comment on it. No agent is watching right now, so your comment is recorded for whoever published the page."
+msgstr "Kliknij dowolny element tej strony, aby go skomentować. Obecnie nie obserwuje jej żaden agent, więc Twój komentarz zostanie zapisany dla osoby, która opublikowała stronę."
 
 msgid "Click here if not redirected"
 msgstr "Kliknij tutaj, jeśli przekierowanie nie nastąpi"
@@ -7143,6 +7155,9 @@ msgstr "Google nie przyznało trwałego dostępu. Usuń Superset z dostępu apli
 
 msgid "Google Search Console"
 msgstr "Google Search Console"
+
+msgid "Got it"
+msgstr "Rozumiem"
 
 msgid "Grant the OS permissions Superset needs."
 msgstr "Przyznaj uprawnienia systemowe, których potrzebuje Superset."

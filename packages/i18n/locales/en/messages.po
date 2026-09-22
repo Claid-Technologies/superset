@@ -589,6 +589,9 @@ msgstr "{count, plural, one {# comment} other {# comments}}"
 msgid "{count, plural, one {# file} other {# files}}"
 msgstr "{count, plural, one {# file} other {# files}}"
 
+msgid "{count, plural, one {# page comment is waiting on an agent here} other {# page comments are waiting on an agent here}}"
+msgstr "{count, plural, one {# page comment is waiting on an agent here} other {# page comments are waiting on an agent here}}"
+
 msgid "{count, plural, one {# search} other {# searches}}"
 msgstr "{count, plural, one {# search} other {# searches}}"
 
@@ -3282,6 +3285,15 @@ msgstr "Click <0>Import Theme</0> and select the downloaded file."
 
 msgid "Click a terminal script to edit its details."
 msgstr "Click a terminal script to edit its details."
+
+msgid "Click anything on this page to comment on it. <0>{agentId}</0> is watching, and will pick your comment up and republish the page."
+msgstr "Click anything on this page to comment on it. <0>{agentId}</0> is watching, and will pick your comment up and republish the page."
+
+msgid "Click anything on this page to comment on it. An agent is watching, and will pick your comment up and republish the page."
+msgstr "Click anything on this page to comment on it. An agent is watching, and will pick your comment up and republish the page."
+
+msgid "Click anything on this page to comment on it. No agent is watching right now, so your comment is recorded for whoever published the page."
+msgstr "Click anything on this page to comment on it. No agent is watching right now, so your comment is recorded for whoever published the page."
 
 msgid "Click here if not redirected"
 msgstr "Click here if not redirected"
@@ -7143,6 +7155,9 @@ msgstr "Google did not grant lasting access. Remove Superset from your Google ac
 
 msgid "Google Search Console"
 msgstr "Google Search Console"
+
+msgid "Got it"
+msgstr "Got it"
 
 msgid "Grant the OS permissions Superset needs."
 msgstr "Grant the OS permissions Superset needs."

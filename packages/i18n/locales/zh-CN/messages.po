@@ -589,6 +589,9 @@ msgstr "{count, plural, one {#条评论} other {#条评论}}"
 msgid "{count, plural, one {# file} other {# files}}"
 msgstr "{count, plural, one {#个文件} other {#个文件}}"
 
+msgid "{count, plural, one {# page comment is waiting on an agent here} other {# page comments are waiting on an agent here}}"
+msgstr "{count, plural, one {#条页面评论正在这里等待智能体} other {#条页面评论正在这里等待智能体}}"
+
 msgid "{count, plural, one {# search} other {# searches}}"
 msgstr "{count, plural, one {#次搜索} other {#次搜索}}"
 
@@ -3282,6 +3285,15 @@ msgstr "点击<0>导入主题</0>，选择下载好的文件。"
 
 msgid "Click a terminal script to edit its details."
 msgstr "点击终端脚本以编辑其详情。"
+
+msgid "Click anything on this page to comment on it. <0>{agentId}</0> is watching, and will pick your comment up and republish the page."
+msgstr "点击本页任意元素即可评论。<0>{agentId}</0> 正在关注，会接收你的评论并重新发布页面。"
+
+msgid "Click anything on this page to comment on it. An agent is watching, and will pick your comment up and republish the page."
+msgstr "点击本页任意元素即可评论。有智能体正在关注，会接收你的评论并重新发布页面。"
+
+msgid "Click anything on this page to comment on it. No agent is watching right now, so your comment is recorded for whoever published the page."
+msgstr "点击本页任意元素即可评论。目前没有智能体在关注，你的评论会记录下来给发布此页面的人。"
 
 msgid "Click here if not redirected"
 msgstr "如果没有自动跳转，请点击这里"
@@ -7143,6 +7155,9 @@ msgstr "Google没有授予持久访问权限。请在你的Google账户的第三
 
 msgid "Google Search Console"
 msgstr "Google Search Console"
+
+msgid "Got it"
+msgstr "知道了"
 
 msgid "Grant the OS permissions Superset needs."
 msgstr "授予Superset所需的系统权限。"

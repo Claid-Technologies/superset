@@ -589,6 +589,9 @@ msgstr "{count, plural, one {# comentario} other {# comentarios}}"
 msgid "{count, plural, one {# file} other {# files}}"
 msgstr "{count, plural, one {# archivo} other {# archivos}}"
 
+msgid "{count, plural, one {# page comment is waiting on an agent here} other {# page comments are waiting on an agent here}}"
+msgstr "{count, plural, one {# comentario de página espera aquí a un agente} other {# comentarios de página esperan aquí a un agente}}"
+
 msgid "{count, plural, one {# search} other {# searches}}"
 msgstr "{count, plural, one {# búsqueda} other {# búsquedas}}"
 
@@ -3282,6 +3285,15 @@ msgstr "Haz clic en <0>Importar tema</0> y selecciona el archivo descargado."
 
 msgid "Click a terminal script to edit its details."
 msgstr "Haz clic en un script de terminal para editar sus detalles."
+
+msgid "Click anything on this page to comment on it. <0>{agentId}</0> is watching, and will pick your comment up and republish the page."
+msgstr "Haz clic en cualquier elemento de esta página para comentarlo. <0>{agentId}</0> la está observando y recogerá tu comentario para volver a publicar la página."
+
+msgid "Click anything on this page to comment on it. An agent is watching, and will pick your comment up and republish the page."
+msgstr "Haz clic en cualquier elemento de esta página para comentarlo. Un agente la está observando y recogerá tu comentario para volver a publicar la página."
+
+msgid "Click anything on this page to comment on it. No agent is watching right now, so your comment is recorded for whoever published the page."
+msgstr "Haz clic en cualquier elemento de esta página para comentarlo. Ahora mismo no hay ningún agente observándola, así que tu comentario queda registrado para quien publicó la página."
 
 msgid "Click here if not redirected"
 msgstr "Haz clic aquí si no se te redirige"
@@ -7143,6 +7155,9 @@ msgstr "Google no concedió un acceso duradero. Quita Superset del acceso de ter
 
 msgid "Google Search Console"
 msgstr "Google Search Console"
+
+msgid "Got it"
+msgstr "Entendido"
 
 msgid "Grant the OS permissions Superset needs."
 msgstr "Concede los permisos del sistema que Superset necesita."

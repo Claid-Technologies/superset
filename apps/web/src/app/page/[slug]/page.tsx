@@ -11,6 +11,7 @@ import { notFound } from "next/navigation";
 import { cache } from "react";
 import { initServerI18n } from "@/lib/i18n-server";
 import { api } from "../../../trpc/server";
+import { PageCommentHintBar } from "./components/PageCommentHintBar";
 import { PageCommentsShell } from "./components/PageCommentsShell";
 import { PageHeaderBar } from "./components/PageHeaderBar";
 import { PageUnavailable } from "./components/PageUnavailable";
@@ -191,6 +192,14 @@ export default async function PublishedPage({
 						page.version === page.servedVersion ? null : page.version
 					}
 				/>
+
+				{previewing ? null : (
+					<PageCommentHintBar
+						slug={slug}
+						initialWatching={page.watch.watching}
+						initialAgentId={page.watch.agentId}
+					/>
+				)}
 
 				<div className="relative flex min-h-0 flex-1">
 					<main className="min-h-0 flex-1">

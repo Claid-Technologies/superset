@@ -589,6 +589,9 @@ msgstr "{count, plural, one {# Kommentar} other {# Kommentare}}"
 msgid "{count, plural, one {# file} other {# files}}"
 msgstr "{count, plural, one {# Datei} other {# Dateien}}"
 
+msgid "{count, plural, one {# page comment is waiting on an agent here} other {# page comments are waiting on an agent here}}"
+msgstr "{count, plural, one {# Seitenkommentar wartet hier auf einen Agenten} other {# Seitenkommentare warten hier auf einen Agenten}}"
+
 msgid "{count, plural, one {# search} other {# searches}}"
 msgstr "{count, plural, one {# Suche} other {# Suchen}}"
 
@@ -3282,6 +3285,15 @@ msgstr "Klicke auf <0>Theme importieren</0> und wähle die heruntergeladene Date
 
 msgid "Click a terminal script to edit its details."
 msgstr "Klicke ein Terminal-Skript an, um seine Details zu bearbeiten."
+
+msgid "Click anything on this page to comment on it. <0>{agentId}</0> is watching, and will pick your comment up and republish the page."
+msgstr "Klicke auf ein beliebiges Element dieser Seite, um es zu kommentieren. <0>{agentId}</0> beobachtet die Seite, greift deinen Kommentar auf und veröffentlicht die Seite neu."
+
+msgid "Click anything on this page to comment on it. An agent is watching, and will pick your comment up and republish the page."
+msgstr "Klicke auf ein beliebiges Element dieser Seite, um es zu kommentieren. Ein Agent beobachtet die Seite, greift deinen Kommentar auf und veröffentlicht die Seite neu."
+
+msgid "Click anything on this page to comment on it. No agent is watching right now, so your comment is recorded for whoever published the page."
+msgstr "Klicke auf ein beliebiges Element dieser Seite, um es zu kommentieren. Derzeit beobachtet kein Agent die Seite, dein Kommentar wird also für die Person festgehalten, die sie veröffentlicht hat."
 
 msgid "Click here if not redirected"
 msgstr "Hier klicken, falls du nicht weitergeleitet wirst"
@@ -7143,6 +7155,9 @@ msgstr "Google hat keinen dauerhaften Zugriff gewährt. Entferne Superset aus de
 
 msgid "Google Search Console"
 msgstr "Google Search Console"
+
+msgid "Got it"
+msgstr "Verstanden"
 
 msgid "Grant the OS permissions Superset needs."
 msgstr "Erteile die Systemberechtigungen, die Superset braucht."

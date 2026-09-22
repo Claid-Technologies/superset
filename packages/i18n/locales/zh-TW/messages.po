@@ -589,6 +589,9 @@ msgstr "{count, plural, one {#條評論} other {#條評論}}"
 msgid "{count, plural, one {# file} other {# files}}"
 msgstr "{count, plural, one {#個檔案} other {#個檔案}}"
 
+msgid "{count, plural, one {# page comment is waiting on an agent here} other {# page comments are waiting on an agent here}}"
+msgstr "{count, plural, one {#則頁面留言正在這裡等待代理程式} other {#則頁面留言正在這裡等待代理程式}}"
+
 msgid "{count, plural, one {# search} other {# searches}}"
 msgstr "{count, plural, one {#次搜尋} other {#次搜尋}}"
 
@@ -3282,6 +3285,15 @@ msgstr "點選<0>匯入主題</0>，選擇下載好的檔案。"
 
 msgid "Click a terminal script to edit its details."
 msgstr "點選終端指令碼以編輯其詳情。"
+
+msgid "Click anything on this page to comment on it. <0>{agentId}</0> is watching, and will pick your comment up and republish the page."
+msgstr "點選本頁任何元素即可留言。<0>{agentId}</0> 正在關注，會接收你的留言並重新發布頁面。"
+
+msgid "Click anything on this page to comment on it. An agent is watching, and will pick your comment up and republish the page."
+msgstr "點選本頁任何元素即可留言。有代理程式正在關注，會接收你的留言並重新發布頁面。"
+
+msgid "Click anything on this page to comment on it. No agent is watching right now, so your comment is recorded for whoever published the page."
+msgstr "點選本頁任何元素即可留言。目前沒有代理程式在關注，你的留言會記錄下來給發布此頁面的人。"
 
 msgid "Click here if not redirected"
 msgstr "如果沒有自動跳轉，請點選這裡"
@@ -7143,6 +7155,9 @@ msgstr "Google沒有授予持久存取權限。請在你的Google帳戶的第三
 
 msgid "Google Search Console"
 msgstr "Google Search Console"
+
+msgid "Got it"
+msgstr "知道了"
 
 msgid "Grant the OS permissions Superset needs."
 msgstr "授予Superset所需的系統權限。"

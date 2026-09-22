@@ -589,6 +589,9 @@ msgstr "{count, plural, one {# komentar} other {# komentar}}"
 msgid "{count, plural, one {# file} other {# files}}"
 msgstr "{count, plural, one {# file} other {# file}}"
 
+msgid "{count, plural, one {# page comment is waiting on an agent here} other {# page comments are waiting on an agent here}}"
+msgstr "{count, plural, one {# komentar halaman menunggu agen di sini} other {# komentar halaman menunggu agen di sini}}"
+
 msgid "{count, plural, one {# search} other {# searches}}"
 msgstr "{count, plural, one {# pencarian} other {# pencarian}}"
 
@@ -3282,6 +3285,15 @@ msgstr "Klik <0>Import Theme</0> dan pilih file yang sudah diunduh."
 
 msgid "Click a terminal script to edit its details."
 msgstr "Klik sebuah skrip terminal untuk mengedit detailnya."
+
+msgid "Click anything on this page to comment on it. <0>{agentId}</0> is watching, and will pick your comment up and republish the page."
+msgstr "Klik apa pun di halaman ini untuk mengomentarinya. <0>{agentId}</0> sedang mengawasi, dan akan menindaklanjuti komentar Anda lalu menerbitkan ulang halaman ini."
+
+msgid "Click anything on this page to comment on it. An agent is watching, and will pick your comment up and republish the page."
+msgstr "Klik apa pun di halaman ini untuk mengomentarinya. Ada agen yang sedang mengawasi, dan akan menindaklanjuti komentar Anda lalu menerbitkan ulang halaman ini."
+
+msgid "Click anything on this page to comment on it. No agent is watching right now, so your comment is recorded for whoever published the page."
+msgstr "Klik apa pun di halaman ini untuk mengomentarinya. Saat ini tidak ada agen yang mengawasi, jadi komentar Anda dicatat untuk orang yang menerbitkan halaman ini."
 
 msgid "Click here if not redirected"
 msgstr "Klik di sini kalau tidak dialihkan"
@@ -7143,6 +7155,9 @@ msgstr "Google tidak memberikan akses jangka panjang. Hapus Superset dari akses 
 
 msgid "Google Search Console"
 msgstr "Google Search Console"
+
+msgid "Got it"
+msgstr "Mengerti"
 
 msgid "Grant the OS permissions Superset needs."
 msgstr "Berikan izin OS yang dibutuhkan Superset."

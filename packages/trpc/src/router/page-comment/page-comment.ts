@@ -6,9 +6,10 @@ import {
 	pageVersions,
 	type SelectPage,
 	users,
+	workspacePages,
 } from "@superset/db/schema";
 import { TRPCError, type TRPCRouterRecord } from "@trpc/server";
-import { and, asc, eq, isNotNull, isNull } from "drizzle-orm";
+import { and, asc, eq, isNotNull, isNull, ne, or, sql } from "drizzle-orm";
 import { protectedProcedure, userError } from "../../trpc";
 import { assertPageReadable } from "../page/access";
 import { requireActiveOrgMembership } from "../utils/active-org";
@@ -26,6 +27,7 @@ import {
 	resolvePageCommentThreadSchema,
 } from "./schema";
 import { shapeComment, shapeThread } from "./shape";
+import { countWaitingByWorkspace } from "./waiting";
 
 async function loadReadablePage({
 	pageId,
@@ -86,6 +88,41 @@ async function loadThread({
 }
 
 export const pageCommentRouter = {
+	waitingByWorkspace: protectedProcedure.query(async ({ ctx }) => {
+		const organizationId = await requireActiveOrgMembership(ctx);
+		const userId = ctx.session.user.id;
+
+		const rows = await db
+			.select({
+				workspaceId: workspacePages.workspaceId,
+				agentActivatedAt: pageCommentThreads.agentActivatedAt,
+				resolvedAt: pageCommentThreads.resolvedAt,
+				lastAuthorKind: sql<
+					"human" | "agent" | null
+				>`(select ${pageComments.authorKind} from ${pageComments}
+					where ${pageComments.threadId} = ${pageCommentThreads.id}
+					and ${pageComments.deletedAt} is null
+					order by ${pageComments.createdAt} desc, ${pageComments.id} desc
+					limit 1)`,
+			})
+			.from(pageCommentThreads)
+			.innerJoin(pages, eq(pages.id, pageCommentThreads.pageId))
+			.innerJoin(workspacePages, eq(workspacePages.pageId, pages.id))
+			.where(
+				and(
+					eq(pages.organizationId, organizationId),
+					isNotNull(pageCommentThreads.agentActivatedAt),
+					isNull(pageCommentThreads.resolvedAt),
+					or(
+						ne(pages.visibility, "just_me"),
+						eq(pages.createdByUserId, userId),
+					),
+				),
+			);
+
+		return countWaitingByWorkspace(rows);
+	}),
+
 	list: protectedProcedure
 		.input(listPageCommentsSchema)
 		.query(async ({ ctx, input }) => {

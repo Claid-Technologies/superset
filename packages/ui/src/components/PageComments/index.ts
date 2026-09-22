@@ -16,6 +16,7 @@ export {
 	CommentModeToggle,
 } from "./components/CommentModeToggle";
 export { CommentsPanel } from "./components/CommentsPanel";
+export { PageCommentHint } from "./components/PageCommentHint";
 export { PageCommentsView } from "./components/PageCommentsView";
 export { PageFrame } from "./components/PageFrame";
 export {

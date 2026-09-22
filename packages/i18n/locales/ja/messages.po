@@ -589,6 +589,9 @@ msgstr "{count, plural, one {#件のコメント} other {#件のコメント}}"
 msgid "{count, plural, one {# file} other {# files}}"
 msgstr "{count, plural, one {#件のファイル} other {#件のファイル}}"
 
+msgid "{count, plural, one {# page comment is waiting on an agent here} other {# page comments are waiting on an agent here}}"
+msgstr "{count, plural, one {#件のページコメントがここでエージェントを待っています} other {#件のページコメントがここでエージェントを待っています}}"
+
 msgid "{count, plural, one {# search} other {# searches}}"
 msgstr "{count, plural, one {#件の検索} other {#件の検索}}"
 
@@ -3282,6 +3285,15 @@ msgstr "<0>テーマをインポート</0>をクリックし、ダウンロー�
 
 msgid "Click a terminal script to edit its details."
 msgstr "ターミナルスクリプトをクリックして詳細を編集します。"
+
+msgid "Click anything on this page to comment on it. <0>{agentId}</0> is watching, and will pick your comment up and republish the page."
+msgstr "このページの好きな要素をクリックするとコメントできます。<0>{agentId}</0> が監視中で、コメントを受け取ってページを再公開します。"
+
+msgid "Click anything on this page to comment on it. An agent is watching, and will pick your comment up and republish the page."
+msgstr "このページの好きな要素をクリックするとコメントできます。エージェントが監視中で、コメントを受け取ってページを再公開します。"
+
+msgid "Click anything on this page to comment on it. No agent is watching right now, so your comment is recorded for whoever published the page."
+msgstr "このページの好きな要素をクリックするとコメントできます。現在は監視中のエージェントがいないため、コメントはページを公開した人に向けて記録されます。"
 
 msgid "Click here if not redirected"
 msgstr "リダイレクトされない場合はこちらをクリック"
@@ -7143,6 +7155,9 @@ msgstr "Googleが継続的なアクセスを許可しませんでした。Google
 
 msgid "Google Search Console"
 msgstr "Google Search Console"
+
+msgid "Got it"
+msgstr "了解"
 
 msgid "Grant the OS permissions Superset needs."
 msgstr "Supersetに必要なOS権限を許可します。"

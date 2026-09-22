@@ -589,6 +589,9 @@ msgstr "{count, plural, one {댓글 #개} other {댓글 #개}}"
 msgid "{count, plural, one {# file} other {# files}}"
 msgstr "{count, plural, one {파일 #개} other {파일 #개}}"
 
+msgid "{count, plural, one {# page comment is waiting on an agent here} other {# page comments are waiting on an agent here}}"
+msgstr "{count, plural, one {페이지 댓글 #개가 여기서 에이전트를 기다리는 중} other {페이지 댓글 #개가 여기서 에이전트를 기다리는 중}}"
+
 msgid "{count, plural, one {# search} other {# searches}}"
 msgstr "{count, plural, one {검색 #회} other {검색 #회}}"
 
@@ -3282,6 +3285,15 @@ msgstr "<0>테마 가져오기</0>를 클릭하고 다운로드한 파일을 선
 
 msgid "Click a terminal script to edit its details."
 msgstr "터미널 스크립트를 클릭하면 세부 정보를 편집합니다."
+
+msgid "Click anything on this page to comment on it. <0>{agentId}</0> is watching, and will pick your comment up and republish the page."
+msgstr "이 페이지의 아무 요소나 클릭해 댓글을 남기세요. <0>{agentId}</0>이(가) 지켜보고 있으며, 댓글을 받아 페이지를 다시 게시합니다."
+
+msgid "Click anything on this page to comment on it. An agent is watching, and will pick your comment up and republish the page."
+msgstr "이 페이지의 아무 요소나 클릭해 댓글을 남기세요. 에이전트가 지켜보고 있으며, 댓글을 받아 페이지를 다시 게시합니다."
+
+msgid "Click anything on this page to comment on it. No agent is watching right now, so your comment is recorded for whoever published the page."
+msgstr "이 페이지의 아무 요소나 클릭해 댓글을 남기세요. 지금은 지켜보는 에이전트가 없으므로 댓글은 페이지를 게시한 사람에게 기록됩니다."
 
 msgid "Click here if not redirected"
 msgstr "이동하지 않으면 여기를 클릭하세요"
@@ -7143,6 +7155,9 @@ msgstr "Google이 지속적인 접근 권한을 부여하지 않았습니다. Go
 
 msgid "Google Search Console"
 msgstr "Google Search Console"
+
+msgid "Got it"
+msgstr "알겠습니다"
 
 msgid "Grant the OS permissions Superset needs."
 msgstr "Superset에 필요한 OS 권한을 허용합니다."

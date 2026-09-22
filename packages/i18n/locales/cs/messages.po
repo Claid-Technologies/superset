@@ -589,6 +589,9 @@ msgstr "{count, plural, one {# komentář} few {# komentáře} many {# komentá�
 msgid "{count, plural, one {# file} other {# files}}"
 msgstr "{count, plural, one {# soubor} few {# soubory} many {# souboru} other {# souborů}}"
 
+msgid "{count, plural, one {# page comment is waiting on an agent here} other {# page comments are waiting on an agent here}}"
+msgstr "{count, plural, one {# komentář ke stránce zde čeká na agenta} few {# komentáře ke stránce zde čekají na agenta} many {# komentáře ke stránce zde čeká na agenta} other {# komentářů ke stránce zde čeká na agenta}}"
+
 msgid "{count, plural, one {# search} other {# searches}}"
 msgstr "{count, plural, one {# hledání} few {# hledání} many {# hledání} other {# hledání}}"
 
@@ -3282,6 +3285,15 @@ msgstr "Klikněte na <0>Importovat motiv</0> a vyberte stažený soubor."
 
 msgid "Click a terminal script to edit its details."
 msgstr "Kliknutím na terminálový skript upravíte jeho podrobnosti."
+
+msgid "Click anything on this page to comment on it. <0>{agentId}</0> is watching, and will pick your comment up and republish the page."
+msgstr "Klikněte na cokoli na této stránce a okomentujte to. Stránku sleduje <0>{agentId}</0>, který váš komentář převezme a stránku znovu publikuje."
+
+msgid "Click anything on this page to comment on it. An agent is watching, and will pick your comment up and republish the page."
+msgstr "Klikněte na cokoli na této stránce a okomentujte to. Stránku sleduje agent, který váš komentář převezme a stránku znovu publikuje."
+
+msgid "Click anything on this page to comment on it. No agent is watching right now, so your comment is recorded for whoever published the page."
+msgstr "Klikněte na cokoli na této stránce a okomentujte to. Právě ji nesleduje žádný agent, takže se váš komentář uloží pro toho, kdo stránku publikoval."
 
 msgid "Click here if not redirected"
 msgstr "Pokud nedojde k přesměrování, klikněte sem"
@@ -7143,6 +7155,9 @@ msgstr "Google neudělil trvalý přístup. Odeberte Superset z přístupu třet
 
 msgid "Google Search Console"
 msgstr "Google Search Console"
+
+msgid "Got it"
+msgstr "Rozumím"
 
 msgid "Grant the OS permissions Superset needs."
 msgstr "Udělte systémová oprávnění, která Superset potřebuje."

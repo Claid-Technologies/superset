@@ -13,6 +13,7 @@ import { useQuickCreateWorkspace } from "renderer/hooks/useQuickCreateWorkspace"
 import { useHotkey } from "renderer/hotkeys";
 import { electronTrpc } from "renderer/lib/electron-trpc";
 import { DashboardSidebar } from "renderer/routes/_authenticated/_dashboard/components/DashboardSidebar";
+import { DashboardSidebarPageCommentsProvider } from "renderer/routes/_authenticated/_dashboard/components/DashboardSidebar/providers/DashboardSidebarPageCommentsProvider";
 import { DashboardSidebarPortsProvider } from "renderer/routes/_authenticated/_dashboard/components/DashboardSidebar/providers/DashboardSidebarPortsProvider";
 import { PortForwardsProvider } from "renderer/routes/_authenticated/_dashboard/components/DashboardSidebar/providers/PortForwardsProvider";
 import { useDevSeedV2Sidebar } from "renderer/routes/_authenticated/hooks/useDevSeedV2Sidebar";
@@ -269,52 +270,54 @@ function DashboardLayout() {
 					selectedWorkspaceIsRemote)
 			}
 		>
-			<PortForwardsProvider>
-				<RemotePortForwarder />
-				<div className="flex h-full w-full overflow-hidden">
-					<CommandPaletteHost />
-					{sidebarOutsideColumn && sidebarPanel}
-					<div className="flex flex-1 flex-col min-w-0 min-h-0">
-						{!hideTopBar && <TopBar />}
-						<div className="flex flex-1 min-h-0 min-w-0 overflow-hidden">
-							{!sidebarOutsideColumn && sidebarPanel}
-							<div className="relative flex flex-1 min-h-0 min-w-0">
-								{versionMismatch ? (
-									// A v2 user on a stale v1 workspace route has nothing to go
-									// back to, so send them somewhere actionable instead of a
-									// dead-end "pick a workspace" screen. v1 users keep the
-									// static state — /new-workspace is a v2-only surface.
-									isV2CloudEnabled ? (
-										<Redirect to="/new-workspace" replace />
+			<DashboardSidebarPageCommentsProvider>
+				<PortForwardsProvider>
+					<RemotePortForwarder />
+					<div className="flex h-full w-full overflow-hidden">
+						<CommandPaletteHost />
+						{sidebarOutsideColumn && sidebarPanel}
+						<div className="flex flex-1 flex-col min-w-0 min-h-0">
+							{!hideTopBar && <TopBar />}
+							<div className="flex flex-1 min-h-0 min-w-0 overflow-hidden">
+								{!sidebarOutsideColumn && sidebarPanel}
+								<div className="relative flex flex-1 min-h-0 min-w-0">
+									{versionMismatch ? (
+										// A v2 user on a stale v1 workspace route has nothing to go
+										// back to, so send them somewhere actionable instead of a
+										// dead-end "pick a workspace" screen. v1 users keep the
+										// static state — /new-workspace is a v2-only surface.
+										isV2CloudEnabled ? (
+											<Redirect to="/new-workspace" replace />
+										) : (
+											<CrossVersionMismatchState />
+										)
 									) : (
-										<CrossVersionMismatchState />
-									)
-								) : (
-									<ContentBoundary>
-										<Outlet />
-									</ContentBoundary>
-								)}
+										<ContentBoundary>
+											<Outlet />
+										</ContentBoundary>
+									)}
+								</div>
 							</div>
 						</div>
-					</div>
-					<div
-						id="workspace-right-sidebar-slot"
-						className="flex h-full shrink-0"
-					/>
-					<AddRepositoryModals />
-					{deleteTarget && (
-						<DeleteWorkspaceDialog
-							workspaceId={deleteTarget.workspaceId}
-							workspaceName={deleteTarget.workspaceName}
-							workspaceType={deleteTarget.workspaceType}
-							open={true}
-							onOpenChange={(open) => {
-								if (!open) setDeleteTarget(null);
-							}}
+						<div
+							id="workspace-right-sidebar-slot"
+							className="flex h-full shrink-0"
 						/>
-					)}
-				</div>
-			</PortForwardsProvider>
+						<AddRepositoryModals />
+						{deleteTarget && (
+							<DeleteWorkspaceDialog
+								workspaceId={deleteTarget.workspaceId}
+								workspaceName={deleteTarget.workspaceName}
+								workspaceType={deleteTarget.workspaceType}
+								open={true}
+								onOpenChange={(open) => {
+									if (!open) setDeleteTarget(null);
+								}}
+							/>
+						)}
+					</div>
+				</PortForwardsProvider>
+			</DashboardSidebarPageCommentsProvider>
 		</DashboardSidebarPortsProvider>
 	);
 }
