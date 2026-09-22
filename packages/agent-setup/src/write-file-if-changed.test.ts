@@ -81,6 +81,28 @@ describe("writeFileIfChanged", () => {
 		expect(fs.readdirSync(TEST_DIR)).toEqual(["dangling.json"]);
 	});
 
+	it("claims the path when the symlink is cyclic", () => {
+		const target = path.join(TEST_DIR, "loop.json");
+		const other = path.join(TEST_DIR, "loop-other.json");
+		fs.symlinkSync(other, target);
+		fs.symlinkSync(target, other);
+
+		expect(writeFileIfChanged(target, "{}", 0o644)).toBe(true);
+
+		expect(fs.readFileSync(target, "utf-8")).toBe("{}");
+		expect(fs.lstatSync(target).isSymbolicLink()).toBe(false);
+	});
+
+	it("surfaces a resolution failure that is not a broken link", () => {
+		const blocker = path.join(TEST_DIR, "not-a-dir");
+		fs.writeFileSync(blocker, "");
+		const target = path.join(blocker, "settings.json");
+
+		expect(() => writeFileIfChanged(target, "{}", 0o644)).toThrow(/ENOTDIR/);
+
+		expect(fs.readdirSync(TEST_DIR)).toEqual(["not-a-dir"]);
+	});
+
 	it("cleans up the temp file when the write fails", () => {
 		const target = path.join(TEST_DIR, "missing-dir", "file");
 

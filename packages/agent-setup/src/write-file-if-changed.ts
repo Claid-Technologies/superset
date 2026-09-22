@@ -24,8 +24,15 @@ export function writeFileIfChanged(
 	let target: string;
 	try {
 		target = fs.realpathSync(filePath);
-	} catch {
-		// Absent, or a dangling link — debris ours to replace.
+	} catch (error) {
+		const code = (error as NodeJS.ErrnoException).code;
+		// Absent, dangling, or cyclic: no inode to write through, so the path
+		// itself is ours to claim. Anything else (a directory we cannot
+		// traverse, a parent that is not a directory) is a real problem the
+		// caller should see rather than have us write past.
+		if (code !== "ENOENT" && code !== "ELOOP") {
+			throw error;
+		}
 		target = filePath;
 	}
 
