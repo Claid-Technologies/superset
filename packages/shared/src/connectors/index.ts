@@ -7,7 +7,7 @@ const identityRef = z.object({
 });
 
 const identityProbe = z.object({
-	url: z.string(),
+	url: z.string().optional(),
 	method: z.enum(["GET", "POST"]).default("GET"),
 	headers: z.record(z.string(), z.string()).optional(),
 	body: z.record(z.string(), z.unknown()).optional(),
