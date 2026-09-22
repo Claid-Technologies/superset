@@ -28,11 +28,30 @@ export function resolvePrimaryProjectId(
 	return primary?.projectId ?? projectId;
 }
 
+/**
+ * A project assembled out of local folders has no remote of its own to draw an
+ * avatar from, so it falls through to its source folders rather than to the
+ * letter tile.
+ */
+export function inheritedProjectIconUrl(
+	group: HostProjectGroup,
+	iconUrlByProjectId: Map<string, string | null | undefined>,
+): string | null {
+	for (const member of group.members) {
+		const iconUrl = iconUrlByProjectId.get(member.projectId);
+		if (iconUrl) return iconUrl;
+	}
+	return null;
+}
+
 export function applyProjectGroups<
-	Project extends { id: string; name: string },
+	Project extends { id: string; name: string; iconUrl?: string | null },
 >(projects: Project[], groups: HostProjectGroup[]): GroupedProject<Project>[] {
 	const groupByPrimaryProjectId = indexProjectGroupsByPrimaryProjectId(groups);
 	const sourceFolderOnlyProjectIds = collectSourceFolderOnlyProjectIds(groups);
+	const iconUrlByProjectId = new Map(
+		projects.map((project) => [project.id, project.iconUrl]),
+	);
 
 	return projects.flatMap((project): GroupedProject<Project>[] => {
 		if (sourceFolderOnlyProjectIds.has(project.id)) return [];
@@ -42,6 +61,8 @@ export function applyProjectGroups<
 			{
 				...project,
 				name: group.name,
+				iconUrl:
+					project.iconUrl ?? inheritedProjectIconUrl(group, iconUrlByProjectId),
 				groupId: group.id,
 				repoCount: group.members.length,
 			},

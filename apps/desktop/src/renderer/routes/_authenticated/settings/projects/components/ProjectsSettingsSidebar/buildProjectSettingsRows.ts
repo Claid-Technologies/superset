@@ -1,3 +1,4 @@
+import { inheritedProjectIconUrl } from "renderer/hooks/host-projects/useGroupedProjects";
 import {
 	collectSourceFolderOnlyProjectIds,
 	type HostProjectGroup,
@@ -29,6 +30,9 @@ export function buildProjectSettingsRows(
 	const projectsById = new Map(
 		projects.map((project) => [project.id, project]),
 	);
+	const iconUrlByProjectId = new Map(
+		projects.map((project) => [project.id, project.iconUrl]),
+	);
 
 	return projects.flatMap((project): ProjectSettingsRow[] => {
 		if (sourceFolderOnlyProjectIds.has(project.id)) return [];
@@ -51,6 +55,8 @@ export function buildProjectSettingsRows(
 			{
 				...project,
 				name: group.name,
+				iconUrl:
+					project.iconUrl ?? inheritedProjectIconUrl(group, iconUrlByProjectId),
 				kind: "project",
 				groupId: group.id,
 				parentGroupId: null,

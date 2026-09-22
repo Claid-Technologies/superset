@@ -2,10 +2,20 @@ import { useLingui } from "@lingui/react/macro";
 import { Popover, PopoverContent, PopoverTrigger } from "@superset/ui/popover";
 import { ScrollArea } from "@superset/ui/scroll-area";
 import { cn } from "@superset/ui/utils";
-import { Check, ChevronDown, Folder } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
 import { useState } from "react";
+import { resolveProjectIconUrl } from "renderer/hooks/host-projects/resolveProjectIconUrl";
 import { useWorkspaceRepos } from "renderer/routes/_authenticated/_dashboard/v2-workspace/$workspaceId/hooks/useWorkspaceRepos";
+import { ProjectThumbnail } from "renderer/routes/_authenticated/components/ProjectThumbnail";
 import { useRepoDirtyCounts } from "../../../../hooks/useRepoDirtyCounts";
+
+/** `repository` is `owner/name` when the checkout has a parsed GitHub remote. */
+function repoIconUrl(repository: string | null): string | null {
+	return resolveProjectIconUrl({
+		icon: null,
+		repoOwner: repository?.split("/")[0] ?? null,
+	});
+}
 
 interface RepoFolderPickerProps {
 	workspaceId: string;
@@ -33,7 +43,11 @@ export function RepoFolderPicker({ workspaceId }: RepoFolderPickerProps) {
 						aria-label={t({ message: "Change folder" })}
 						className="flex h-7 min-w-0 flex-1 items-center gap-1.5 rounded-md px-1.5 text-xs text-foreground transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
 					>
-						<Folder className="size-3.5 shrink-0 text-muted-foreground" />
+						<ProjectThumbnail
+							projectName={selected.folder}
+							iconUrl={repoIconUrl(selected.repository)}
+							className="size-4"
+						/>
 						<span className="min-w-0 truncate font-medium">
 							{selected.folder}
 						</span>
@@ -60,7 +74,11 @@ export function RepoFolderPicker({ workspaceId }: RepoFolderPickerProps) {
 											setOpen(false);
 										}}
 									>
-										<Folder className="size-3.5 shrink-0 text-muted-foreground" />
+										<ProjectThumbnail
+											projectName={repo.folder}
+											iconUrl={repoIconUrl(repo.repository)}
+											className="size-4"
+										/>
 										<span className="flex min-w-0 flex-1 flex-col">
 											<span className="truncate">{repo.folder}</span>
 											{repo.repository && repo.repository !== repo.folder && (

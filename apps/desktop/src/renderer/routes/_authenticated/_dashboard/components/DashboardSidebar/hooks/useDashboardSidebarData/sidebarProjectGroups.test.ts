@@ -139,3 +139,52 @@ describe("a project over several repositories", () => {
 		expect(grouped.map((project) => project.name)).toEqual(["Platform", "web"]);
 	});
 });
+
+describe("a project whose own folder has no remote", () => {
+	it("takes the avatar of the first source folder that has one", () => {
+		const grouped = applyProjectGroups(
+			[
+				makeProject({ id: "project-town", name: "town", iconUrl: null }),
+				makeProject({
+					id: "project-roster",
+					name: "roster",
+					iconUrl: "https://github.com/acme.png?size=64",
+				}),
+			],
+			[
+				makeGroup("group-samplee", "samplee", [
+					"project-town",
+					"project-roster",
+				]),
+			],
+		);
+
+		expect(grouped).toHaveLength(1);
+		expect(grouped[0]?.iconUrl).toBe("https://github.com/acme.png?size=64");
+	});
+
+	it("keeps its own avatar when it has one", () => {
+		const grouped = applyProjectGroups(
+			[
+				makeProject({
+					id: "project-town",
+					name: "town",
+					iconUrl: "https://github.com/town.png?size=64",
+				}),
+				makeProject({
+					id: "project-roster",
+					name: "roster",
+					iconUrl: "https://github.com/acme.png?size=64",
+				}),
+			],
+			[
+				makeGroup("group-samplee", "samplee", [
+					"project-town",
+					"project-roster",
+				]),
+			],
+		);
+
+		expect(grouped[0]?.iconUrl).toBe("https://github.com/town.png?size=64");
+	});
+});

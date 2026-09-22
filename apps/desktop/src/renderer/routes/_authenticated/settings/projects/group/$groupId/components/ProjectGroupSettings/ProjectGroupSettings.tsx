@@ -79,10 +79,15 @@ export function ProjectGroupSettings({ groupId }: ProjectGroupSettingsProps) {
 	}
 
 	const projectIcon = group.icon ?? hostProject?.icon ?? null;
-	const iconUrl = resolveProjectIconUrl({
-		icon: projectIcon,
-		repoOwner: primaryProject?.repoOwner ?? null,
-	});
+	// A project assembled out of local folders has no remote of its own, so the
+	// avatar comes from whichever source folder has one.
+	const repoOwner =
+		primaryProject?.repoOwner ??
+		group.members
+			.map((member) => projectsById.get(member.projectId)?.repoOwner)
+			.find(Boolean) ??
+		null;
+	const iconUrl = resolveProjectIconUrl({ icon: projectIcon, repoOwner });
 
 	return (
 		<div className="p-6 max-w-4xl w-full mx-auto select-text">
