@@ -202,6 +202,7 @@ interface PendingBatch {
 }
 
 interface WatchedWorkspace {
+	key: string;
 	workspaceId: string;
 	worktreePath: string;
 	gitDir: string;
@@ -338,9 +339,17 @@ export class GitWatcher {
 		}
 	}
 
-	/** Watch state is per checkout; everything downstream of an event is per workspace. */
-	private watchKey(workspaceId: string, worktreePath: string): string {
-		return `${workspaceId}\u0000${worktreePath}`;
+	/**
+	 * Watch state is per checkout; everything downstream of an event is per
+	 * workspace. The primary keeps the workspace's own id, which is the
+	 * identity every reader of this map already assumes.
+	 */
+	private watchKey(
+		workspaceId: string,
+		worktreePath: string,
+		isPrimary: boolean,
+	): string {
+		return isPrimary ? workspaceId : `${workspaceId}\u0000${worktreePath}`;
 	}
 
 	private isWatched(workspaceId: string): boolean {
@@ -472,6 +481,7 @@ export class GitWatcher {
 	 * git; `force` bypasses the min-interval for the initial load.
 	 */
 	private refreshIgnoredDirs(
+		key: string,
 		workspaceId: string,
 		worktreePath: string,
 		force = false,
@@ -480,7 +490,6 @@ export class GitWatcher {
 		// started them: unwatchWorkspace() (or unwatch-then-rewatch) mid-refresh
 		// would otherwise re-create ignore state and, on a swap, schedule a
 		// git:changed for a workspace nobody watches any more.
-		const key = this.watchKey(workspaceId, worktreePath);
 		const entry = this.watched.get(key);
 		if (!entry) return;
 		const stillCurrent = () => !this.closed && this.watched.get(key) === entry;
@@ -532,7 +541,7 @@ export class GitWatcher {
 				// is stale and the emit that flagged it was swallowed by the
 				// `refreshing` guard — run once more.
 				if (state.rulesChanged && stillCurrent()) {
-					this.refreshIgnoredDirs(workspaceId, worktreePath, true);
+					this.refreshIgnoredDirs(key, workspaceId, worktreePath, true);
 				}
 			});
 	}
@@ -587,7 +596,7 @@ export class GitWatcher {
 		// set so the follow-up churn stops emitting.
 		for (const entry of this.watched.values()) {
 			if (entry.workspaceId !== workspaceId) continue;
-			this.refreshIgnoredDirs(workspaceId, entry.worktreePath);
+			this.refreshIgnoredDirs(entry.key, workspaceId, entry.worktreePath);
 		}
 	}
 
@@ -740,7 +749,8 @@ export class GitWatcher {
 		for (const id of this.interest.keys()) {
 			if (!worktreePathById.has(id)) continue;
 			for (const [index, worktreePath] of this.checkoutsOf(id).entries()) {
-				if (this.watched.has(this.watchKey(id, worktreePath))) continue;
+				if (this.watched.has(this.watchKey(id, worktreePath, index === 0)))
+					continue;
 				await this.attachWatcher(id, worktreePath, index === 0);
 			}
 		}
@@ -776,7 +786,7 @@ export class GitWatcher {
 			return;
 		}
 
-		const key = this.watchKey(workspaceId, worktreePath);
+		const key = this.watchKey(workspaceId, worktreePath, isPrimary);
 		if (this.closed || this.watched.has(key)) return;
 
 		// Start the worktree watch first so we have a dispose handle to capture
@@ -785,6 +795,7 @@ export class GitWatcher {
 		const disposeWorktreeWatch = this.startWorktreeWatch(
 			workspaceId,
 			worktreePath,
+			key,
 			isPrimary,
 			() => {
 				if (
@@ -834,6 +845,7 @@ export class GitWatcher {
 
 		const wasWatched = this.isWatched(workspaceId);
 		this.watched.set(key, {
+			key,
 			workspaceId,
 			worktreePath,
 			gitDir,
@@ -841,7 +853,7 @@ export class GitWatcher {
 			disposeWorktreeWatch,
 		});
 		if (!wasWatched) this.notifyWatchState(workspaceId, true);
-		this.refreshIgnoredDirs(workspaceId, worktreePath, true);
+		this.refreshIgnoredDirs(key, workspaceId, worktreePath, true);
 
 		// A change can land in the gap between watchWorkspace() and this line
 		// (the DB lookup + `git rev-parse` above are async) and go unobserved —
@@ -862,6 +874,7 @@ export class GitWatcher {
 	private startWorktreeWatch(
 		workspaceId: string,
 		worktreePath: string,
+		watchKey: string,
 		isPrimary: boolean,
 		onFailure: () => void = () => {},
 	): () => void {
@@ -913,9 +926,7 @@ export class GitWatcher {
 						continue;
 					}
 
-					const ignoredState = this.getOrCreateIgnoredDirsState(
-						this.watchKey(workspaceId, worktreePath),
-					);
+					const ignoredState = this.getOrCreateIgnoredDirsState(watchKey);
 					const filtered = filterGitIgnoredEvents(
 						next.value.events,
 						worktreePath,
