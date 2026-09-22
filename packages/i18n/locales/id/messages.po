@@ -2277,6 +2277,9 @@ msgstr "Log audit"
 msgid "Aug 2026"
 msgstr "Agu 2026"
 
+msgid "Auth refactor, before and after"
+msgstr "Refaktor autentikasi, sebelum dan sesudah"
+
 msgid "Authentication"
 msgstr "Autentikasi"
 
@@ -2741,6 +2744,9 @@ msgstr "Riwayat penjelajahan"
 
 msgid "Bug"
 msgstr "Bug"
+
+msgid "Build an incident timeline"
+msgstr "Susun linimasa insiden"
 
 msgid "Build the future of Superset in the cloud"
 msgstr "Bangun masa depan Superset di komputasi awan"
@@ -3683,6 +3689,9 @@ msgstr "Metrik Perusahaan"
 
 msgid "Compare"
 msgstr "Bandingkan"
+
+msgid "Compare design options"
+msgstr "Bandingkan opsi desain"
 
 msgid "Compare pages"
 msgstr "Halaman perbandingan"
@@ -5528,6 +5537,9 @@ msgstr "Draf · file"
 msgid "Draft · line {0}"
 msgstr "Draf · baris {0}"
 
+msgid "Draft a proposal"
+msgstr "Susun proposal"
+
 msgid "Draft opened"
 msgstr "Draf dibuka"
 
@@ -5777,6 +5789,9 @@ msgstr "Aktifkan akses jarak jauh dan biarkan komputer ini tetap aktif dengan Su
 
 msgid "Enable skill"
 msgstr "Aktifkan skill"
+
+msgid "Engineering"
+msgstr "Rekayasa"
 
 msgid "Engineering deep-dives and launches."
 msgstr "Bahasan mendalam soal teknik dan peluncuran."
@@ -10162,6 +10177,9 @@ msgstr "Termasuk seratus orang pertama di papan"
 msgid "one of the selected repositories"
 msgstr "salah satu repositori yang dipilih"
 
+msgid "One self-contained document, opened by link. Your agent publishes it, teammates pin comments to it, and the agent republishes with the fixes."
+msgstr "Satu dokumen mandiri yang dibuka lewat tautan. Agen Anda menerbitkannya, rekan tim menyematkan komentar di sana, lalu agen menerbitkan ulang dengan perbaikannya."
+
 msgid "One step left"
 msgstr "Tinggal satu langkah"
 
@@ -10692,6 +10710,9 @@ msgstr "Opsi"
 
 msgid "Or ask your coding agent to install the Superset CLI."
 msgstr "Atau minta agen coding Anda memasang CLI Superset."
+
+msgid "Or describe your own in the workspace that opens."
+msgstr "Atau jelaskan sendiri di workspace yang terbuka."
 
 msgid "Orange"
 msgstr "Oranye"
@@ -13469,9 +13490,6 @@ msgstr "Kepekatan warna relatif terhadap hari tersibuk pengembang ini"
 msgid "Share"
 msgstr "Bagikan"
 
-msgid "Share designs and reports. Let your agent handle the feedback."
-msgstr "Bagikan desain dan laporan. Biarkan agen Anda menangani masukan."
-
 msgid "Share page"
 msgstr "Bagikan halaman"
 
@@ -14200,6 +14218,9 @@ msgstr "Mulai bekerja dari mana saja"
 
 msgid "Start Workspace"
 msgstr "Mulai Workspace"
+
+msgid "Start your agent on one of these"
+msgstr "Mulai agen Anda dari salah satu ini"
 
 msgid "Started"
 msgstr "Dimulai"
@@ -16405,6 +16426,9 @@ msgstr "Versi {version} akan dipasang saat Anda memulai ulang berikutnya."
 msgid "Version {version} is the latest version."
 msgstr "Versi {version} adalah versi terbaru."
 
+msgid "Version 3"
+msgstr "Versi 3"
+
 msgid "Version Control"
 msgstr "Version Control"
 
@@ -16525,6 +16549,9 @@ msgstr "Menunggu pesan pertama dari subagen…"
 
 msgid "Waitlist signups"
 msgstr "Pendaftaran daftar tunggu"
+
+msgid "Walk through a change"
+msgstr "Uraikan sebuah perubahan"
 
 msgid "Want something sooner? <0>Tell us in Discord</0>. Much of what's here started as a user request."
 msgstr "Ingin sesuatu lebih cepat? <0>Beri tahu kami di Discord</0>. Banyak yang ada di sini bermula dari permintaan pengguna."
@@ -17001,6 +17028,9 @@ msgstr "Tulis komentar…"
 
 msgid "Write a reply…"
 msgstr "Tulis balasan…"
+
+msgid "Write a status report"
+msgstr "Tulis laporan status"
 
 msgid "Write docs for the part everyone asks about…"
 msgstr "Tulis dokumentasi untuk bagian yang selalu ditanyakan…"

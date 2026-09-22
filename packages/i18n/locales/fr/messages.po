@@ -2277,6 +2277,9 @@ msgstr "Journaux d'audit"
 msgid "Aug 2026"
 msgstr "Août 2026"
 
+msgid "Auth refactor, before and after"
+msgstr "Refonte de l'authentification, avant et après"
+
 msgid "Authentication"
 msgstr "Authentification"
 
@@ -2741,6 +2744,9 @@ msgstr "Historique de navigation"
 
 msgid "Bug"
 msgstr "Bug"
+
+msgid "Build an incident timeline"
+msgstr "Construire une chronologie d'incident"
 
 msgid "Build the future of Superset in the cloud"
 msgstr "Construisez l’avenir de Superset dans le cloud"
@@ -3683,6 +3689,9 @@ msgstr "Métriques de l'entreprise"
 
 msgid "Compare"
 msgstr "Comparer"
+
+msgid "Compare design options"
+msgstr "Comparer des options de design"
 
 msgid "Compare pages"
 msgstr "Pages de comparaison"
@@ -5528,6 +5537,9 @@ msgstr "Brouillon · fichier"
 msgid "Draft · line {0}"
 msgstr "Brouillon · ligne {0}"
 
+msgid "Draft a proposal"
+msgstr "Rédiger une proposition"
+
 msgid "Draft opened"
 msgstr "Brouillon ouvert"
 
@@ -5777,6 +5789,9 @@ msgstr "Activez l’accès à distance et gardez cet ordinateur éveillé avec S
 
 msgid "Enable skill"
 msgstr "Activer la compétence"
+
+msgid "Engineering"
+msgstr "Ingénierie"
 
 msgid "Engineering deep-dives and launches."
 msgstr "Analyses techniques et lancements."
@@ -10162,6 +10177,9 @@ msgstr "Parmi les cent premiers du classement"
 msgid "one of the selected repositories"
 msgstr "l'un des dépôts sélectionnés"
 
+msgid "One self-contained document, opened by link. Your agent publishes it, teammates pin comments to it, and the agent republishes with the fixes."
+msgstr "Un document autonome, ouvert par un lien. Votre agent le publie, vos collègues y épinglent des commentaires, et l'agent le republie avec les corrections."
+
 msgid "One step left"
 msgstr "Plus qu'une étape"
 
@@ -10692,6 +10710,9 @@ msgstr "Options"
 
 msgid "Or ask your coding agent to install the Superset CLI."
 msgstr "Ou demandez à votre agent de code d'installer la CLI Superset."
+
+msgid "Or describe your own in the workspace that opens."
+msgstr "Ou décrivez la vôtre dans l'espace de travail qui s'ouvre."
 
 msgid "Orange"
 msgstr "Orange"
@@ -13469,9 +13490,6 @@ msgstr "L'intensité est relative au jour le plus chargé de ce développeur"
 msgid "Share"
 msgstr "Partager"
 
-msgid "Share designs and reports. Let your agent handle the feedback."
-msgstr "Partagez des maquettes et des rapports. Laissez votre agent traiter les retours."
-
 msgid "Share page"
 msgstr "Partager la page"
 
@@ -14200,6 +14218,9 @@ msgstr "Commencez à travailler où que vous soyez"
 
 msgid "Start Workspace"
 msgstr "Démarrer l'espace de travail"
+
+msgid "Start your agent on one of these"
+msgstr "Lancez votre agent sur l'un de ces sujets"
 
 msgid "Started"
 msgstr "Démarrée"
@@ -16405,6 +16426,9 @@ msgstr "La version {version} s'installera au prochain redémarrage."
 msgid "Version {version} is the latest version."
 msgstr "La version {version} est la dernière version."
 
+msgid "Version 3"
+msgstr "Version 3"
+
 msgid "Version Control"
 msgstr "Gestion de versions"
 
@@ -16525,6 +16549,9 @@ msgstr "En attente du premier message du sous-agent…"
 
 msgid "Waitlist signups"
 msgstr "Inscriptions à la liste d'attente"
+
+msgid "Walk through a change"
+msgstr "Expliquer une modification"
 
 msgid "Want something sooner? <0>Tell us in Discord</0>. Much of what's here started as a user request."
 msgstr "Vous voulez quelque chose plus tôt ? <0>Dites-le-nous sur Discord</0>. Une bonne partie de ce qui figure ici est née d'une demande d'utilisateur."
@@ -17001,6 +17028,9 @@ msgstr "Écrire un commentaire…"
 
 msgid "Write a reply…"
 msgstr "Écrire une réponse…"
+
+msgid "Write a status report"
+msgstr "Rédiger un rapport d'avancement"
 
 msgid "Write docs for the part everyone asks about…"
 msgstr "Rédige la documentation de la partie sur laquelle tout le monde pose des questions…"

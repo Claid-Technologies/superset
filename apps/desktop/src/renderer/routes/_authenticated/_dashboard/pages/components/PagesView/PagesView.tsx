@@ -153,7 +153,7 @@ export function PagesView({
 					<FeatureHeader
 						title={<Trans>Pages</Trans>}
 						docsUrl={`${COMPANY.DOCS_URL}/pages`}
-						onCreate={handleCreateWithAgent}
+						onCreate={() => handleCreateWithAgent()}
 						isCreating={creatingWithAgent}
 						showCreate={!orgEmpty}
 					/>

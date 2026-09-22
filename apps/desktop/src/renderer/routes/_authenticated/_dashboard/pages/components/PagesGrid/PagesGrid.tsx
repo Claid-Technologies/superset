@@ -1,5 +1,4 @@
 import { Trans } from "@lingui/react/macro";
-import { Button } from "@superset/ui/button";
 import {
 	Empty,
 	EmptyDescription,
@@ -8,8 +7,9 @@ import {
 	EmptyTitle,
 } from "@superset/ui/empty";
 import { Skeleton } from "@superset/ui/skeleton";
-import { LuFileText, LuPlus, LuSearchX } from "react-icons/lu";
+import { LuSearchX } from "react-icons/lu";
 import { PageCard, type PageCardItem } from "./components/PageCard";
+import { PagesEmptyState } from "./components/PagesEmptyState";
 import { THUMBNAIL_ASPECT_RATIO } from "./constants";
 
 const SKELETON_KEYS = [
@@ -22,7 +22,7 @@ const SKELETON_KEYS = [
 ] as const;
 
 interface PagesGridProps {
-	onCreate: () => void;
+	onCreate: (request?: string) => void;
 	isCreating: boolean;
 	pages: PageCardItem[];
 	pinnedPageIds: ReadonlySet<string>;
@@ -75,39 +75,22 @@ export function PagesGrid({
 	}
 
 	if (pages.length === 0) {
+		if (!hasFilters) {
+			return <PagesEmptyState onCreate={onCreate} isCreating={isCreating} />;
+		}
 		return (
 			<Empty className="my-auto min-h-80 items-start border-0 px-0 py-20 text-left max-w-md mx-auto w-full md:px-0 md:py-20">
 				<EmptyHeader className="items-start text-left">
 					<EmptyMedia variant="icon">
-						{hasFilters ? (
-							<LuSearchX className="size-5" />
-						) : (
-							<LuFileText className="size-5" />
-						)}
+						<LuSearchX className="size-5" />
 					</EmptyMedia>
 					<EmptyTitle>
-						{hasFilters ? (
-							<Trans>No pages match</Trans>
-						) : (
-							<Trans>No pages yet</Trans>
-						)}
+						<Trans>No pages match</Trans>
 					</EmptyTitle>
 					<EmptyDescription>
-						{hasFilters ? (
-							<Trans>Try a different search or filter.</Trans>
-						) : (
-							<Trans>
-								Share designs and reports. Let your agent handle the feedback.
-							</Trans>
-						)}
+						<Trans>Try a different search or filter.</Trans>
 					</EmptyDescription>
 				</EmptyHeader>
-				{!hasFilters && (
-					<Button size="sm" onClick={onCreate} disabled={isCreating}>
-						<LuPlus className="size-3.5" />
-						<Trans>Create with AI</Trans>
-					</Button>
-				)}
 			</Empty>
 		);
 	}

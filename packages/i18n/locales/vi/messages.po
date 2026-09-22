@@ -2277,6 +2277,9 @@ msgstr "Nhật ký kiểm toán"
 msgid "Aug 2026"
 msgstr "Th8 2026"
 
+msgid "Auth refactor, before and after"
+msgstr "Tái cấu trúc xác thực, trước và sau"
+
 msgid "Authentication"
 msgstr "Xác thực"
 
@@ -2741,6 +2744,9 @@ msgstr "Lịch sử duyệt web"
 
 msgid "Bug"
 msgstr "Bug"
+
+msgid "Build an incident timeline"
+msgstr "Dựng dòng thời gian sự cố"
 
 msgid "Build the future of Superset in the cloud"
 msgstr "Xây dựng tương lai của Superset trên đám mây"
@@ -3683,6 +3689,9 @@ msgstr "Chỉ số công ty"
 
 msgid "Compare"
 msgstr "So sánh"
+
+msgid "Compare design options"
+msgstr "So sánh các phương án thiết kế"
 
 msgid "Compare pages"
 msgstr "Trang so sánh"
@@ -5528,6 +5537,9 @@ msgstr "Nháp · tệp"
 msgid "Draft · line {0}"
 msgstr "Nháp · dòng {0}"
 
+msgid "Draft a proposal"
+msgstr "Soạn một đề xuất"
+
 msgid "Draft opened"
 msgstr "Mở bản nháp"
 
@@ -5777,6 +5789,9 @@ msgstr "Bật truy cập từ xa và giữ máy tính này hoạt động với 
 
 msgid "Enable skill"
 msgstr "Bật skill"
+
+msgid "Engineering"
+msgstr "Kỹ thuật"
 
 msgid "Engineering deep-dives and launches."
 msgstr "Bài kỹ thuật chuyên sâu và các lần ra mắt."
@@ -10162,6 +10177,9 @@ msgstr "Một trong một trăm người đầu tiên trên bảng"
 msgid "one of the selected repositories"
 msgstr "một trong các repository đã chọn"
 
+msgid "One self-contained document, opened by link. Your agent publishes it, teammates pin comments to it, and the agent republishes with the fixes."
+msgstr "Một tài liệu độc lập, mở bằng liên kết. Agent của bạn xuất bản tài liệu, đồng nghiệp ghim bình luận lên đó, rồi agent xuất bản lại kèm phần đã sửa."
+
 msgid "One step left"
 msgstr "Còn một bước nữa"
 
@@ -10692,6 +10710,9 @@ msgstr "Tùy chọn"
 
 msgid "Or ask your coding agent to install the Superset CLI."
 msgstr "Hoặc bảo coding agent của bạn cài CLI Superset."
+
+msgid "Or describe your own in the workspace that opens."
+msgstr "Hoặc tự mô tả trong workspace vừa mở."
 
 msgid "Orange"
 msgstr "Cam"
@@ -13469,9 +13490,6 @@ msgstr "Độ đậm được tính theo ngày bận rộn nhất của nhà ph�
 msgid "Share"
 msgstr "Chia sẻ"
 
-msgid "Share designs and reports. Let your agent handle the feedback."
-msgstr "Chia sẻ thiết kế và báo cáo. Hãy để agent của bạn xử lý phản hồi."
-
 msgid "Share page"
 msgstr "Chia sẻ trang"
 
@@ -14200,6 +14218,9 @@ msgstr "Bắt đầu công việc từ bất cứ đâu"
 
 msgid "Start Workspace"
 msgstr "Bắt đầu workspace"
+
+msgid "Start your agent on one of these"
+msgstr "Bắt đầu agent của bạn với một trong những việc này"
 
 msgid "Started"
 msgstr "Bắt đầu"
@@ -16405,6 +16426,9 @@ msgstr "Phiên bản {version} sẽ được cài đặt trong lần khởi đ�
 msgid "Version {version} is the latest version."
 msgstr "Phiên bản {version} là phiên bản mới nhất."
 
+msgid "Version 3"
+msgstr "Phiên bản 3"
+
 msgid "Version Control"
 msgstr "Quản lý phiên bản"
 
@@ -16525,6 +16549,9 @@ msgstr "Đang chờ tin nhắn đầu tiên của agent con…"
 
 msgid "Waitlist signups"
 msgstr "Đăng ký danh sách chờ"
+
+msgid "Walk through a change"
+msgstr "Trình bày một thay đổi"
 
 msgid "Want something sooner? <0>Tell us in Discord</0>. Much of what's here started as a user request."
 msgstr "Muốn có sớm hơn? <0>Hãy nói với chúng tôi trên Discord</0>. Phần lớn những gì ở đây bắt đầu từ yêu cầu của người dùng."
@@ -17001,6 +17028,9 @@ msgstr "Viết bình luận…"
 
 msgid "Write a reply…"
 msgstr "Viết trả lời…"
+
+msgid "Write a status report"
+msgstr "Viết báo cáo trạng thái"
 
 msgid "Write docs for the part everyone asks about…"
 msgstr "Viết tài liệu cho phần ai cũng hỏi…"

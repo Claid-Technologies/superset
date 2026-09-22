@@ -2277,6 +2277,9 @@ msgstr "監査ログ"
 msgid "Aug 2026"
 msgstr "2026年8月"
 
+msgid "Auth refactor, before and after"
+msgstr "認証のリファクタリング、変更前と変更後"
+
 msgid "Authentication"
 msgstr "認証"
 
@@ -2741,6 +2744,9 @@ msgstr "閲覧履歴"
 
 msgid "Bug"
 msgstr "バグ"
+
+msgid "Build an incident timeline"
+msgstr "インシデントのタイムラインを作成"
 
 msgid "Build the future of Superset in the cloud"
 msgstr "クラウドでSupersetの未来を築く"
@@ -3683,6 +3689,9 @@ msgstr "会社メトリクス"
 
 msgid "Compare"
 msgstr "比較"
+
+msgid "Compare design options"
+msgstr "デザイン案を比較"
 
 msgid "Compare pages"
 msgstr "比較ページ"
@@ -5528,6 +5537,9 @@ msgstr "下書き · ファイル"
 msgid "Draft · line {0}"
 msgstr "下書き · {0}行目"
 
+msgid "Draft a proposal"
+msgstr "提案書を作成"
+
 msgid "Draft opened"
 msgstr "ドラフト作成"
 
@@ -5777,6 +5789,9 @@ msgstr "リモートアクセスを有効にし、Supersetを起動したまま�
 
 msgid "Enable skill"
 msgstr "スキルを有効にする"
+
+msgid "Engineering"
+msgstr "エンジニアリング"
 
 msgid "Engineering deep-dives and launches."
 msgstr "技術の深掘りとリリース情報。"
@@ -10162,6 +10177,9 @@ msgstr "ボード最初の100人のひとり"
 msgid "one of the selected repositories"
 msgstr "選択したリポジトリのいずれか"
 
+msgid "One self-contained document, opened by link. Your agent publishes it, teammates pin comments to it, and the agent republishes with the fixes."
+msgstr "リンクで開ける自己完結型のドキュメント1枚です。エージェントが公開し、チームメイトがコメントをピン留めし、エージェントが修正して再公開します。"
+
 msgid "One step left"
 msgstr "あと1ステップ"
 
@@ -10692,6 +10710,9 @@ msgstr "オプション"
 
 msgid "Or ask your coding agent to install the Superset CLI."
 msgstr "または、お使いのコーディングエージェントにSuperset CLIのインストールを頼んでください。"
+
+msgid "Or describe your own in the workspace that opens."
+msgstr "または、開いたワークスペースで自由に説明してください。"
 
 msgid "Orange"
 msgstr "オレンジ"
@@ -13469,9 +13490,6 @@ msgstr "濃さはこの開発者の最も活動量が多い日を基準にして
 msgid "Share"
 msgstr "共有"
 
-msgid "Share designs and reports. Let your agent handle the feedback."
-msgstr "デザインやレポートを共有しましょう。フィードバックへの対応はエージェントに任せられます。"
-
 msgid "Share page"
 msgstr "ページを共有"
 
@@ -14200,6 +14218,9 @@ msgstr "どこからでも作業を開始"
 
 msgid "Start Workspace"
 msgstr "ワークスペースを開始"
+
+msgid "Start your agent on one of these"
+msgstr "次のいずれかからエージェントを始めましょう"
 
 msgid "Started"
 msgstr "開始"
@@ -16405,6 +16426,9 @@ msgstr "バージョン{version}は次回の再起動時にインストールさ
 msgid "Version {version} is the latest version."
 msgstr "バージョン{version}が最新です。"
 
+msgid "Version 3"
+msgstr "バージョン 3"
+
 msgid "Version Control"
 msgstr "バージョン管理"
 
@@ -16525,6 +16549,9 @@ msgstr "サブエージェントの最初のメッセージを待っています
 
 msgid "Waitlist signups"
 msgstr "ウェイトリスト登録"
+
+msgid "Walk through a change"
+msgstr "変更内容を解説"
 
 msgid "Want something sooner? <0>Tell us in Discord</0>. Much of what's here started as a user request."
 msgstr "もっと早く欲しいものがありますか?<0>Discordで教えてください</0>。ここにあるものの多くは、ユーザーの要望から始まりました。"
@@ -17001,6 +17028,9 @@ msgstr "コメントを入力…"
 
 msgid "Write a reply…"
 msgstr "返信を入力…"
+
+msgid "Write a status report"
+msgstr "ステータスレポートを作成"
 
 msgid "Write docs for the part everyone asks about…"
 msgstr "よく質問される部分のドキュメントを書く…"

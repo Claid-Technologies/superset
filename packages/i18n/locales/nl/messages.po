@@ -2277,6 +2277,9 @@ msgstr "Auditlogs"
 msgid "Aug 2026"
 msgstr "Aug 2026"
 
+msgid "Auth refactor, before and after"
+msgstr "Auth-refactor, voor en na"
+
 msgid "Authentication"
 msgstr "Authenticatie"
 
@@ -2741,6 +2744,9 @@ msgstr "Browsegeschiedenis"
 
 msgid "Bug"
 msgstr "Bug"
+
+msgid "Build an incident timeline"
+msgstr "Een incidenttijdlijn bouwen"
 
 msgid "Build the future of Superset in the cloud"
 msgstr "Bouw aan de toekomst van Superset in de cloud"
@@ -3683,6 +3689,9 @@ msgstr "Bedrijfsstatistieken"
 
 msgid "Compare"
 msgstr "Vergelijken"
+
+msgid "Compare design options"
+msgstr "Ontwerpopties vergelijken"
 
 msgid "Compare pages"
 msgstr "Vergelijkingspagina's"
@@ -5528,6 +5537,9 @@ msgstr "Concept · bestand"
 msgid "Draft · line {0}"
 msgstr "Concept · regel {0}"
 
+msgid "Draft a proposal"
+msgstr "Een voorstel opstellen"
+
 msgid "Draft opened"
 msgstr "Draft geopend"
 
@@ -5777,6 +5789,9 @@ msgstr "Schakel externe toegang in en houd deze computer wakker met Superset act
 
 msgid "Enable skill"
 msgstr "Skill inschakelen"
+
+msgid "Engineering"
+msgstr "Engineering"
 
 msgid "Engineering deep-dives and launches."
 msgstr "Technische verdiepingen en lanceringen."
@@ -10162,6 +10177,9 @@ msgstr "Bij de eerste honderd op het bord"
 msgid "one of the selected repositories"
 msgstr "een van de geselecteerde repository's"
 
+msgid "One self-contained document, opened by link. Your agent publishes it, teammates pin comments to it, and the agent republishes with the fixes."
+msgstr "Eén zelfstandig document dat je via een link opent. Je agent publiceert het, teamgenoten pinnen er reacties op vast en de agent publiceert opnieuw met de correcties."
+
 msgid "One step left"
 msgstr "Nog één stap"
 
@@ -10692,6 +10710,9 @@ msgstr "Opties"
 
 msgid "Or ask your coding agent to install the Superset CLI."
 msgstr "Of vraag je coding agent om de Superset-CLI te installeren."
+
+msgid "Or describe your own in the workspace that opens."
+msgstr "Of beschrijf je eigen idee in de werkruimte die opent."
 
 msgid "Orange"
 msgstr "Oranje"
@@ -13469,9 +13490,6 @@ msgstr "De kleurintensiteit is relatief aan de drukste dag van deze ontwikkelaar
 msgid "Share"
 msgstr "Delen"
 
-msgid "Share designs and reports. Let your agent handle the feedback."
-msgstr "Deel ontwerpen en rapporten. Laat je agent de feedback verwerken."
-
 msgid "Share page"
 msgstr "Pagina delen"
 
@@ -14200,6 +14218,9 @@ msgstr "Begin overal met werken"
 
 msgid "Start Workspace"
 msgstr "Werkruimte starten"
+
+msgid "Start your agent on one of these"
+msgstr "Zet je agent op een van deze aan het werk"
 
 msgid "Started"
 msgstr "Gestart"
@@ -16405,6 +16426,9 @@ msgstr "Versie {version} wordt geïnstalleerd zodra je opnieuw opstart."
 msgid "Version {version} is the latest version."
 msgstr "Versie {version} is de nieuwste versie."
 
+msgid "Version 3"
+msgstr "Versie 3"
+
 msgid "Version Control"
 msgstr "Versiebeheer"
 
@@ -16525,6 +16549,9 @@ msgstr "Wachten op het eerste bericht van de subagent…"
 
 msgid "Waitlist signups"
 msgstr "Wachtlijstaanmeldingen"
+
+msgid "Walk through a change"
+msgstr "Een wijziging doorlopen"
 
 msgid "Want something sooner? <0>Tell us in Discord</0>. Much of what's here started as a user request."
 msgstr "Wil je iets eerder zien? <0>Laat het weten in Discord</0>. Veel van wat hier staat begon als gebruikersverzoek."
@@ -17001,6 +17028,9 @@ msgstr "Schrijf een opmerking…"
 
 msgid "Write a reply…"
 msgstr "Schrijf een antwoord…"
+
+msgid "Write a status report"
+msgstr "Een statusrapport schrijven"
 
 msgid "Write docs for the part everyone asks about…"
 msgstr "Schrijf docs voor het onderdeel waar iedereen naar vraagt…"

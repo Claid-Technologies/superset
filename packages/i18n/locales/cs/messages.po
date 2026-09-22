@@ -2277,6 +2277,9 @@ msgstr "Auditní logy"
 msgid "Aug 2026"
 msgstr "Srp 2026"
 
+msgid "Auth refactor, before and after"
+msgstr "Refaktoring autentizace, před a po"
+
 msgid "Authentication"
 msgstr "Ověřování"
 
@@ -2741,6 +2744,9 @@ msgstr "Historie prohlížení"
 
 msgid "Bug"
 msgstr "Brouk"
+
+msgid "Build an incident timeline"
+msgstr "Sestavit časovou osu incidentu"
 
 msgid "Build the future of Superset in the cloud"
 msgstr "Tvořte budoucnost Superset v cloudu"
@@ -3683,6 +3689,9 @@ msgstr "Firemní metriky"
 
 msgid "Compare"
 msgstr "Srovnání"
+
+msgid "Compare design options"
+msgstr "Porovnat varianty designu"
 
 msgid "Compare pages"
 msgstr "Srovnávací stránky"
@@ -5528,6 +5537,9 @@ msgstr "Koncept · soubor"
 msgid "Draft · line {0}"
 msgstr "Koncept · řádek {0}"
 
+msgid "Draft a proposal"
+msgstr "Sepsat návrh"
+
 msgid "Draft opened"
 msgstr "Otevřen koncept"
 
@@ -5777,6 +5789,9 @@ msgstr "Zapněte vzdálený přístup a nechte tento počítač aktivní se spu�
 
 msgid "Enable skill"
 msgstr "Zapnout skill"
+
+msgid "Engineering"
+msgstr "Inženýrství"
 
 msgid "Engineering deep-dives and launches."
 msgstr "Technické hloubkové články a spuštění novinek."
@@ -10162,6 +10177,9 @@ msgstr "Mezi první stovkou v žebříčku"
 msgid "one of the selected repositories"
 msgstr "jeden z vybraných repozitářů"
 
+msgid "One self-contained document, opened by link. Your agent publishes it, teammates pin comments to it, and the agent republishes with the fixes."
+msgstr "Jeden samostatný dokument, který se otevře přes odkaz. Váš agent ho publikuje, kolegové k němu připínají komentáře a agent ho znovu publikuje s opravami."
+
 msgid "One step left"
 msgstr "Zbývá jeden krok"
 
@@ -10692,6 +10710,9 @@ msgstr "Možnosti"
 
 msgid "Or ask your coding agent to install the Superset CLI."
 msgstr "Nebo požádejte svého kódovacího agenta, ať nainstaluje Superset CLI."
+
+msgid "Or describe your own in the workspace that opens."
+msgstr "Nebo popište vlastní zadání v pracovním prostoru, který se otevře."
 
 msgid "Orange"
 msgstr "Oranžová"
@@ -13469,9 +13490,6 @@ msgstr "Sytost barvy se vztahuje k nejrušnějšímu dni tohoto vývojáře"
 msgid "Share"
 msgstr "Sdílet"
 
-msgid "Share designs and reports. Let your agent handle the feedback."
-msgstr "Sdílejte návrhy a zprávy. Zpětnou vazbu nechte na svém agentovi."
-
 msgid "Share page"
 msgstr "Sdílet stránku"
 
@@ -14200,6 +14218,9 @@ msgstr "Začněte pracovat odkudkoli"
 
 msgid "Start Workspace"
 msgstr "Spustit pracovní prostor"
+
+msgid "Start your agent on one of these"
+msgstr "Nastartujte agenta jedním z těchto zadání"
 
 msgid "Started"
 msgstr "Zahájeno"
@@ -16405,6 +16426,9 @@ msgstr "Verze {version} se nainstaluje při příštím restartu."
 msgid "Version {version} is the latest version."
 msgstr "Verze {version} je nejnovější."
 
+msgid "Version 3"
+msgstr "Verze 3"
+
 msgid "Version Control"
 msgstr "Správa verzí"
 
@@ -16525,6 +16549,9 @@ msgstr "Čekání na první zprávu subagenta…"
 
 msgid "Waitlist signups"
 msgstr "Zápisy na čekací listinu"
+
+msgid "Walk through a change"
+msgstr "Projít změnu"
 
 msgid "Want something sooner? <0>Tell us in Discord</0>. Much of what's here started as a user request."
 msgstr "Chcete něco dřív? <0>Napište nám na Discordu</0>. Spousta z toho, co je tady, začala jako přání uživatele."
@@ -17001,6 +17028,9 @@ msgstr "Napište komentář…"
 
 msgid "Write a reply…"
 msgstr "Napište odpověď…"
+
+msgid "Write a status report"
+msgstr "Napsat zprávu o stavu"
 
 msgid "Write docs for the part everyone asks about…"
 msgstr "Napiš dokumentaci k části, na kterou se všichni ptají…"

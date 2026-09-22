@@ -2277,6 +2277,9 @@ msgstr "Denetim günlükleri"
 msgid "Aug 2026"
 msgstr "Ağu 2026"
 
+msgid "Auth refactor, before and after"
+msgstr "Kimlik doğrulama yeniden düzenlemesi, öncesi ve sonrası"
+
 msgid "Authentication"
 msgstr "Kimlik doğrulama"
 
@@ -2741,6 +2744,9 @@ msgstr "Tarama geçmişi"
 
 msgid "Bug"
 msgstr "Böcek"
+
+msgid "Build an incident timeline"
+msgstr "Olay zaman çizelgesi oluştur"
 
 msgid "Build the future of Superset in the cloud"
 msgstr "Superset’in buluttaki geleceğini inşa edin"
@@ -3683,6 +3689,9 @@ msgstr "Şirket metrikleri"
 
 msgid "Compare"
 msgstr "Karşılaştır"
+
+msgid "Compare design options"
+msgstr "Tasarım seçeneklerini karşılaştır"
 
 msgid "Compare pages"
 msgstr "Karşılaştırma sayfaları"
@@ -5528,6 +5537,9 @@ msgstr "Taslak · dosya"
 msgid "Draft · line {0}"
 msgstr "Taslak · {0}. satır"
 
+msgid "Draft a proposal"
+msgstr "Teklif taslağı yaz"
+
 msgid "Draft opened"
 msgstr "Taslak açıldı"
 
@@ -5777,6 +5789,9 @@ msgstr "Uzaktan erişimi etkinleştirin ve Superset çalışırken bu bilgisayar
 
 msgid "Enable skill"
 msgstr "Beceriyi etkinleştir"
+
+msgid "Engineering"
+msgstr "Mühendislik"
 
 msgid "Engineering deep-dives and launches."
 msgstr "Mühendislik derinlemesine yazıları ve lansmanlar."
@@ -10162,6 +10177,9 @@ msgstr "Tablodaki ilk yüz kişiden biri"
 msgid "one of the selected repositories"
 msgstr "seçili depolardan biri"
 
+msgid "One self-contained document, opened by link. Your agent publishes it, teammates pin comments to it, and the agent republishes with the fixes."
+msgstr "Bağlantıyla açılan, kendi kendine yeten tek bir belge. Ajanınız belgeyi yayımlar, takım arkadaşlarınız üzerine yorum iğneler ve ajan düzeltmelerle yeniden yayımlar."
+
 msgid "One step left"
 msgstr "Bir adım kaldı"
 
@@ -10692,6 +10710,9 @@ msgstr "Seçenekler"
 
 msgid "Or ask your coding agent to install the Superset CLI."
 msgstr "Ya da kodlama ajanınızdan Superset CLI'yi kurmasını isteyin."
+
+msgid "Or describe your own in the workspace that opens."
+msgstr "Ya da açılan çalışma alanında kendi fikrinizi anlatın."
 
 msgid "Orange"
 msgstr "Turuncu"
@@ -13469,9 +13490,6 @@ msgstr "Renk koyuluğu bu geliştiricinin en yoğun gününe göredir"
 msgid "Share"
 msgstr "Paylaş"
 
-msgid "Share designs and reports. Let your agent handle the feedback."
-msgstr "Tasarımları ve raporları paylaşın. Geri bildirimleri ajanınız ele alsın."
-
 msgid "Share page"
 msgstr "Sayfayı paylaş"
 
@@ -14200,6 +14218,9 @@ msgstr "Her yerden işe başlayın"
 
 msgid "Start Workspace"
 msgstr "Çalışma alanı başlat"
+
+msgid "Start your agent on one of these"
+msgstr "Ajanınızı bunlardan biriyle başlatın"
 
 msgid "Started"
 msgstr "Başladı"
@@ -16405,6 +16426,9 @@ msgstr "{version} sürümü bir sonraki yeniden başlatmada yüklenecek."
 msgid "Version {version} is the latest version."
 msgstr "{version} sürümü en son sürümdür."
 
+msgid "Version 3"
+msgstr "Sürüm 3"
+
 msgid "Version Control"
 msgstr "Sürüm kontrolü"
 
@@ -16525,6 +16549,9 @@ msgstr "Alt ajanın ilk mesajı bekleniyor…"
 
 msgid "Waitlist signups"
 msgstr "Bekleme listesi kayıtları"
+
+msgid "Walk through a change"
+msgstr "Bir değişikliği anlat"
 
 msgid "Want something sooner? <0>Tell us in Discord</0>. Much of what's here started as a user request."
 msgstr "Bir şeyi daha erken mi istiyorsunuz? <0>Discord'da bize söyleyin</0>. Buradakilerin çoğu bir kullanıcı isteği olarak başladı."
@@ -17001,6 +17028,9 @@ msgstr "Bir yorum yazın…"
 
 msgid "Write a reply…"
 msgstr "Bir yanıt yazın…"
+
+msgid "Write a status report"
+msgstr "Durum raporu yaz"
 
 msgid "Write docs for the part everyone asks about…"
 msgstr "Herkesin sorduğu bölüm için belge yaz…"

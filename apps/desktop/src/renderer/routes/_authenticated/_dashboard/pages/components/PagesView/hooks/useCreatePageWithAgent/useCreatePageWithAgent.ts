@@ -18,7 +18,7 @@ export function useCreatePageWithAgent() {
 	const [creatingWithAgent, setCreatingWithAgent] = useState(false);
 	const isReady =
 		!!activeHostUrl && hostServiceStatus === "running" && agentsFetched;
-	const handleCreateWithAgent = () => {
+	const handleCreateWithAgent = (request?: string) => {
 		if (creatingWithAgent || !isReady) return;
 		if (!machineId) {
 			toast.error(
@@ -46,7 +46,7 @@ export function useCreatePageWithAgent() {
 			snapshot: {
 				id: crypto.randomUUID(),
 				projectId: null,
-				agents: [{ agent, prompt: buildPageAgentPrompt() }],
+				agents: [{ agent, prompt: buildPageAgentPrompt(request) }],
 			},
 		});
 		// The store shows creation failures on the optimistic sidebar row; this

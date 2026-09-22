@@ -2277,6 +2277,9 @@ msgstr "Журналы аудита"
 msgid "Aug 2026"
 msgstr "Авг 2026"
 
+msgid "Auth refactor, before and after"
+msgstr "Рефакторинг аутентификации, до и после"
+
 msgid "Authentication"
 msgstr "Аутентификация"
 
@@ -2741,6 +2744,9 @@ msgstr "История просмотров"
 
 msgid "Bug"
 msgstr "Жук"
+
+msgid "Build an incident timeline"
+msgstr "Составить хронологию инцидента"
 
 msgid "Build the future of Superset in the cloud"
 msgstr "Создайте будущее Superset в облаке"
@@ -3683,6 +3689,9 @@ msgstr "Метрики компании"
 
 msgid "Compare"
 msgstr "Сравнение"
+
+msgid "Compare design options"
+msgstr "Сравнить варианты дизайна"
 
 msgid "Compare pages"
 msgstr "Страницы сравнения"
@@ -5528,6 +5537,9 @@ msgstr "Черновик · файл"
 msgid "Draft · line {0}"
 msgstr "Черновик · строка {0}"
 
+msgid "Draft a proposal"
+msgstr "Подготовить предложение"
+
 msgid "Draft opened"
 msgstr "Открыт черновик"
 
@@ -5777,6 +5789,9 @@ msgstr "Включите удалённый доступ и не перевод�
 
 msgid "Enable skill"
 msgstr "Включить навык"
+
+msgid "Engineering"
+msgstr "Инженерия"
 
 msgid "Engineering deep-dives and launches."
 msgstr "Инженерные разборы и запуски."
@@ -10162,6 +10177,9 @@ msgstr "В числе первых ста в рейтинге"
 msgid "one of the selected repositories"
 msgstr "один из выбранных репозиториев"
 
+msgid "One self-contained document, opened by link. Your agent publishes it, teammates pin comments to it, and the agent republishes with the fixes."
+msgstr "Один самодостаточный документ, который открывается по ссылке. Ваш агент публикует его, коллеги закрепляют на нём комментарии, а агент публикует новую версию с правками."
+
 msgid "One step left"
 msgstr "Остался один шаг"
 
@@ -10692,6 +10710,9 @@ msgstr "Параметры"
 
 msgid "Or ask your coding agent to install the Superset CLI."
 msgstr "Или попросите своего кодового агента установить CLI Superset."
+
+msgid "Or describe your own in the workspace that opens."
+msgstr "Или опишите свою задачу в рабочей области, которая откроется."
 
 msgid "Orange"
 msgstr "Оранжевый"
@@ -13469,9 +13490,6 @@ msgstr "Насыщенность цвета отсчитывается от са
 msgid "Share"
 msgstr "Поделиться"
 
-msgid "Share designs and reports. Let your agent handle the feedback."
-msgstr "Делитесь дизайнами и отчётами. Пусть ваш агент обработает отзывы."
-
 msgid "Share page"
 msgstr "Поделиться страницей"
 
@@ -14200,6 +14218,9 @@ msgstr "Начинайте работу откуда угодно"
 
 msgid "Start Workspace"
 msgstr "Запустить рабочую область"
+
+msgid "Start your agent on one of these"
+msgstr "Начните работу агента с одного из этих вариантов"
 
 msgid "Started"
 msgstr "Начато"
@@ -16405,6 +16426,9 @@ msgstr "Версия {version} установится при следующем 
 msgid "Version {version} is the latest version."
 msgstr "Версия {version} — самая свежая."
 
+msgid "Version 3"
+msgstr "Версия 3"
+
 msgid "Version Control"
 msgstr "Контроль версий"
 
@@ -16525,6 +16549,9 @@ msgstr "Ожидание первого сообщения субагента…
 
 msgid "Waitlist signups"
 msgstr "Записи в лист ожидания"
+
+msgid "Walk through a change"
+msgstr "Разобрать изменение"
 
 msgid "Want something sooner? <0>Tell us in Discord</0>. Much of what's here started as a user request."
 msgstr "Хотите что-то быстрее? <0>Скажите нам в Discord</0>. Многое из этого началось с пожелания пользователя."
@@ -17001,6 +17028,9 @@ msgstr "Напишите комментарий…"
 
 msgid "Write a reply…"
 msgstr "Напишите ответ…"
+
+msgid "Write a status report"
+msgstr "Написать отчёт о статусе"
 
 msgid "Write docs for the part everyone asks about…"
 msgstr "Напиши документацию по той части, о которой все спрашивают…"

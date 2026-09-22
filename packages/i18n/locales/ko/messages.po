@@ -2277,6 +2277,9 @@ msgstr "감사 로그"
 msgid "Aug 2026"
 msgstr "2026년 8월"
 
+msgid "Auth refactor, before and after"
+msgstr "인증 리팩터링, 전과 후"
+
 msgid "Authentication"
 msgstr "인증"
 
@@ -2741,6 +2744,9 @@ msgstr "방문 기록"
 
 msgid "Bug"
 msgstr "버그"
+
+msgid "Build an incident timeline"
+msgstr "인시던트 타임라인 만들기"
 
 msgid "Build the future of Superset in the cloud"
 msgstr "클라우드에서 Superset의 미래를 함께 만드세요"
@@ -3683,6 +3689,9 @@ msgstr "회사 지표"
 
 msgid "Compare"
 msgstr "비교"
+
+msgid "Compare design options"
+msgstr "디자인 옵션 비교하기"
 
 msgid "Compare pages"
 msgstr "비교 페이지"
@@ -5528,6 +5537,9 @@ msgstr "초안 · 파일"
 msgid "Draft · line {0}"
 msgstr "초안 · {0}번 줄"
 
+msgid "Draft a proposal"
+msgstr "제안서 작성하기"
+
 msgid "Draft opened"
 msgstr "초안 열림"
 
@@ -5777,6 +5789,9 @@ msgstr "원격 액세스를 활성화하고 Superset이 실행된 상태로 이 
 
 msgid "Enable skill"
 msgstr "스킬 활성화"
+
+msgid "Engineering"
+msgstr "엔지니어링"
 
 msgid "Engineering deep-dives and launches."
 msgstr "엔지니어링 심층 글과 출시 소식."
@@ -10162,6 +10177,9 @@ msgstr "보드의 첫 100명 중 한 명"
 msgid "one of the selected repositories"
 msgstr "선택한 리포지토리 중 하나"
 
+msgid "One self-contained document, opened by link. Your agent publishes it, teammates pin comments to it, and the agent republishes with the fixes."
+msgstr "링크로 여는 자체 완결형 문서 한 장입니다. 에이전트가 게시하고, 팀원이 댓글을 고정하면, 에이전트가 수정해서 다시 게시합니다."
+
 msgid "One step left"
 msgstr "한 단계 남았습니다"
 
@@ -10692,6 +10710,9 @@ msgstr "옵션"
 
 msgid "Or ask your coding agent to install the Superset CLI."
 msgstr "또는 코딩 에이전트에게 Superset CLI를 설치해 달라고 하세요."
+
+msgid "Or describe your own in the workspace that opens."
+msgstr "또는 열리는 워크스페이스에서 직접 설명하세요."
 
 msgid "Orange"
 msgstr "주황"
@@ -13469,9 +13490,6 @@ msgstr "색의 진하기는 이 개발자의 가장 바빴던 날을 기준으�
 msgid "Share"
 msgstr "공유"
 
-msgid "Share designs and reports. Let your agent handle the feedback."
-msgstr "디자인과 보고서를 공유하세요. 피드백 처리는 에이전트에게 맡기세요."
-
 msgid "Share page"
 msgstr "페이지 공유"
 
@@ -14200,6 +14218,9 @@ msgstr "어디서든 작업 시작"
 
 msgid "Start Workspace"
 msgstr "워크스페이스 시작"
+
+msgid "Start your agent on one of these"
+msgstr "에이전트를 이 중 하나로 시작하세요"
 
 msgid "Started"
 msgstr "시작"
@@ -16405,6 +16426,9 @@ msgstr "다음에 재시작하면 {version} 버전이 설치됩니다."
 msgid "Version {version} is the latest version."
 msgstr "버전 {version}이 최신 버전입니다."
 
+msgid "Version 3"
+msgstr "버전 3"
+
 msgid "Version Control"
 msgstr "버전 관리"
 
@@ -16525,6 +16549,9 @@ msgstr "서브 에이전트의 첫 메시지를 기다리는 중…"
 
 msgid "Waitlist signups"
 msgstr "대기자 명단 가입"
+
+msgid "Walk through a change"
+msgstr "변경 사항 설명하기"
 
 msgid "Want something sooner? <0>Tell us in Discord</0>. Much of what's here started as a user request."
 msgstr "더 빨리 필요한 기능이 있나요? <0>Discord에서 알려 주세요</0>. 여기 있는 항목 상당수가 사용자 요청에서 시작했습니다."
@@ -17001,6 +17028,9 @@ msgstr "댓글을 작성하세요…"
 
 msgid "Write a reply…"
 msgstr "답글 작성…"
+
+msgid "Write a status report"
+msgstr "상태 보고서 작성하기"
 
 msgid "Write docs for the part everyone asks about…"
 msgstr "모두가 궁금해하는 부분에 문서 작성…"

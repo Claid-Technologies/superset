@@ -2277,6 +2277,9 @@ msgstr "Audit logs"
 msgid "Aug 2026"
 msgstr "Aug 2026"
 
+msgid "Auth refactor, before and after"
+msgstr "Auth refactor, before and after"
+
 msgid "Authentication"
 msgstr "Authentication"
 
@@ -2741,6 +2744,9 @@ msgstr "Browsing history"
 
 msgid "Bug"
 msgstr "Bug"
+
+msgid "Build an incident timeline"
+msgstr "Build an incident timeline"
 
 msgid "Build the future of Superset in the cloud"
 msgstr "Build the future of Superset in the cloud"
@@ -3683,6 +3689,9 @@ msgstr "Company Metrics"
 
 msgid "Compare"
 msgstr "Compare"
+
+msgid "Compare design options"
+msgstr "Compare design options"
 
 msgid "Compare pages"
 msgstr "Compare pages"
@@ -5528,6 +5537,9 @@ msgstr "Draft · file"
 msgid "Draft · line {0}"
 msgstr "Draft · line {0}"
 
+msgid "Draft a proposal"
+msgstr "Draft a proposal"
+
 msgid "Draft opened"
 msgstr "Draft opened"
 
@@ -5777,6 +5789,9 @@ msgstr "Enable Remote Access and keep this computer awake with Superset running.
 
 msgid "Enable skill"
 msgstr "Enable skill"
+
+msgid "Engineering"
+msgstr "Engineering"
 
 msgid "Engineering deep-dives and launches."
 msgstr "Engineering deep-dives and launches."
@@ -10162,6 +10177,9 @@ msgstr "One of the first hundred on the board"
 msgid "one of the selected repositories"
 msgstr "one of the selected repositories"
 
+msgid "One self-contained document, opened by link. Your agent publishes it, teammates pin comments to it, and the agent republishes with the fixes."
+msgstr "One self-contained document, opened by link. Your agent publishes it, teammates pin comments to it, and the agent republishes with the fixes."
+
 msgid "One step left"
 msgstr "One step left"
 
@@ -10692,6 +10710,9 @@ msgstr "Options"
 
 msgid "Or ask your coding agent to install the Superset CLI."
 msgstr "Or ask your coding agent to install the Superset CLI."
+
+msgid "Or describe your own in the workspace that opens."
+msgstr "Or describe your own in the workspace that opens."
 
 msgid "Orange"
 msgstr "Orange"
@@ -13469,9 +13490,6 @@ msgstr "Shade is relative to this developer's busiest day"
 msgid "Share"
 msgstr "Share"
 
-msgid "Share designs and reports. Let your agent handle the feedback."
-msgstr "Share designs and reports. Let your agent handle the feedback."
-
 msgid "Share page"
 msgstr "Share page"
 
@@ -14200,6 +14218,9 @@ msgstr "Start work from anywhere"
 
 msgid "Start Workspace"
 msgstr "Start Workspace"
+
+msgid "Start your agent on one of these"
+msgstr "Start your agent on one of these"
 
 msgid "Started"
 msgstr "Started"
@@ -16405,6 +16426,9 @@ msgstr "Version {version} installs the next time you restart."
 msgid "Version {version} is the latest version."
 msgstr "Version {version} is the latest version."
 
+msgid "Version 3"
+msgstr "Version 3"
+
 msgid "Version Control"
 msgstr "Version Control"
 
@@ -16525,6 +16549,9 @@ msgstr "Waiting for the subagent's first message…"
 
 msgid "Waitlist signups"
 msgstr "Waitlist signups"
+
+msgid "Walk through a change"
+msgstr "Walk through a change"
 
 msgid "Want something sooner? <0>Tell us in Discord</0>. Much of what's here started as a user request."
 msgstr "Want something sooner? <0>Tell us in Discord</0>. Much of what's here started as a user request."
@@ -17001,6 +17028,9 @@ msgstr "Write a comment…"
 
 msgid "Write a reply…"
 msgstr "Write a reply…"
+
+msgid "Write a status report"
+msgstr "Write a status report"
 
 msgid "Write docs for the part everyone asks about…"
 msgstr "Write docs for the part everyone asks about…"

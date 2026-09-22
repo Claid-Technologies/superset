@@ -2277,6 +2277,9 @@ msgstr "審計日誌"
 msgid "Aug 2026"
 msgstr "2026年8月"
 
+msgid "Auth refactor, before and after"
+msgstr "認證重構，修改前後對比"
+
 msgid "Authentication"
 msgstr "認證"
 
@@ -2741,6 +2744,9 @@ msgstr "瀏覽歷史"
 
 msgid "Bug"
 msgstr "蟲子"
+
+msgid "Build an incident timeline"
+msgstr "整理事故時間軸"
 
 msgid "Build the future of Superset in the cloud"
 msgstr "共創 Superset 的雲端未來"
@@ -3683,6 +3689,9 @@ msgstr "公司指標"
 
 msgid "Compare"
 msgstr "對比"
+
+msgid "Compare design options"
+msgstr "比較設計方案"
 
 msgid "Compare pages"
 msgstr "比較頁面"
@@ -5528,6 +5537,9 @@ msgstr "草稿 · 檔案"
 msgid "Draft · line {0}"
 msgstr "草稿 · 第{0}行"
 
+msgid "Draft a proposal"
+msgstr "草擬提案"
+
 msgid "Draft opened"
 msgstr "建立了草稿"
 
@@ -5777,6 +5789,9 @@ msgstr "啟用遠端存取，並保持這台電腦喚醒且 Superset 持續執�
 
 msgid "Enable skill"
 msgstr "啟用技能"
+
+msgid "Engineering"
+msgstr "工程"
 
 msgid "Engineering deep-dives and launches."
 msgstr "工程深度文章與新功能釋出。"
@@ -10162,6 +10177,9 @@ msgstr "榜單最早的一百人之一"
 msgid "one of the selected repositories"
 msgstr "所選儲存庫之一"
 
+msgid "One self-contained document, opened by link. Your agent publishes it, teammates pin comments to it, and the agent republishes with the fixes."
+msgstr "一份自成一體的文件，透過連結就能打開。代理程式發布它，隊友在上面釘選評論，代理程式再帶著修改重新發布。"
+
 msgid "One step left"
 msgstr "還差一步"
 
@@ -10692,6 +10710,9 @@ msgstr "選項"
 
 msgid "Or ask your coding agent to install the Superset CLI."
 msgstr "或者讓你的編碼代理程式安裝Superset CLI。"
+
+msgid "Or describe your own in the workspace that opens."
+msgstr "或者在開啟的工作區裡自己描述。"
 
 msgid "Orange"
 msgstr "橙色"
@@ -13469,9 +13490,6 @@ msgstr "深淺以該開發者最忙的一天為基準"
 msgid "Share"
 msgstr "分享"
 
-msgid "Share designs and reports. Let your agent handle the feedback."
-msgstr "分享設計和報告，讓你的代理程式處理回饋。"
-
 msgid "Share page"
 msgstr "分享頁面"
 
@@ -14200,6 +14218,9 @@ msgstr "隨時隨地開始工作"
 
 msgid "Start Workspace"
 msgstr "啟動工作區"
+
+msgid "Start your agent on one of these"
+msgstr "讓你的代理程式從這些開始"
 
 msgid "Started"
 msgstr "開始時間"
@@ -16405,6 +16426,9 @@ msgstr "版本{version}將在下次重新啟動時安裝。"
 msgid "Version {version} is the latest version."
 msgstr "版本{version}已是最新版本。"
 
+msgid "Version 3"
+msgstr "版本 3"
+
 msgid "Version Control"
 msgstr "版本控制"
 
@@ -16525,6 +16549,9 @@ msgstr "正在等待子代理程式的第一則訊息…"
 
 msgid "Waitlist signups"
 msgstr "候補名單註冊"
+
+msgid "Walk through a change"
+msgstr "講解一次變更"
 
 msgid "Want something sooner? <0>Tell us in Discord</0>. Much of what's here started as a user request."
 msgstr "想讓某件事早點做？<0>在Discord上告訴我們</0>。這裡的很多條目最初都來自使用者的請求。"
@@ -17001,6 +17028,9 @@ msgstr "寫下評論…"
 
 msgid "Write a reply…"
 msgstr "寫一條回覆…"
+
+msgid "Write a status report"
+msgstr "寫一份狀態報告"
 
 msgid "Write docs for the part everyone asks about…"
 msgstr "給大家最常問的那部分寫文件…"
