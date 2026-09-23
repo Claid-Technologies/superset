@@ -437,7 +437,14 @@ export function simulateError(): void {
 }
 
 export function setupAutoUpdater(): void {
-	if (env.NODE_ENV === "development" || !IS_AUTO_UPDATE_PLATFORM) {
+	// A fork build bakes SUPERSET_DISABLE_AUTO_UPDATE=1: its feed would be the
+	// upstream release, and updating would silently swap the fork for stock
+	// Superset.
+	if (
+		env.NODE_ENV === "development" ||
+		!IS_AUTO_UPDATE_PLATFORM ||
+		process.env.SUPERSET_DISABLE_AUTO_UPDATE === "1"
+	) {
 		return;
 	}
 

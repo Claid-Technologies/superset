@@ -14,7 +14,10 @@ import {
 
 const currentYear = new Date().getFullYear();
 const author = pkg.author?.name ?? pkg.author;
-const productName = pkg.productName;
+// SUPERSET_FORK_BUILD=1 marks a self-built fork that ships under its own
+// name and id so it installs next to the stock app.
+const isForkBuild = process.env.SUPERSET_FORK_BUILD === "1";
+const productName = process.env.SUPERSET_PRODUCT_NAME ?? pkg.productName;
 const macIconPath = join(pkg.resources, "build/icons/icon.icns");
 const linuxIconPath = join(pkg.resources, "build/icons");
 const winIconPath = join(pkg.resources, "build/icons/icon.ico");
@@ -24,7 +27,7 @@ const dmgBackgroundPath = join(
 );
 
 const config: Configuration = {
-	appId: "com.superset.desktop",
+	appId: process.env.SUPERSET_APP_ID ?? "com.superset.desktop",
 	productName,
 	copyright: `Copyright © ${currentYear} — ${author}`,
 	electronVersion: pkg.devDependencies.electron.replace(/^\^/, ""),
@@ -114,9 +117,9 @@ const config: Configuration = {
 		...(existsSync(macIconPath) ? { icon: macIconPath } : {}),
 		category: "public.app-category.utilities",
 		target: "default",
-		hardenedRuntime: true,
+		hardenedRuntime: !isForkBuild,
 		gatekeeperAssess: false,
-		notarize: true,
+		notarize: !isForkBuild,
 		entitlements: join(pkg.resources, "build/entitlements.mac.plist"),
 		entitlementsInherit: join(
 			pkg.resources,

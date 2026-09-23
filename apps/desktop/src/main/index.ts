@@ -30,6 +30,7 @@ import {
 	PLATFORM,
 	PROTOCOL_SCHEME,
 } from "shared/constants";
+import { getWorkspaceName } from "shared/env.shared";
 import { sweepDevAppProfiles } from "./dev-app-profile-sweep";
 import { initAppState } from "./lib/app-state";
 import { requestAppleEventsAccess } from "./lib/apple-events-permission";
@@ -106,6 +107,20 @@ if (IS_DEV) {
 			"[main] Not renaming the app: unusable profile name",
 			profileName,
 		);
+	}
+} else {
+	// A packaged build with a baked workspace name (a fork such as "direct")
+	// is a separate app: its protocol scheme and home dir already derive from
+	// the name, so give it its own Electron profile too, or it shares userData
+	// and the single-instance lock with stock Superset.
+	const packagedWorkspace = getWorkspaceName();
+	if (packagedWorkspace) {
+		const profileName = `Superset-${packagedWorkspace}`;
+		const profilePath = path.join(app.getPath("appData"), profileName);
+		mkdirSync(profilePath, { recursive: true });
+		app.setPath("userData", profilePath);
+		app.setPath("sessionData", profilePath);
+		app.setName(profileName);
 	}
 }
 

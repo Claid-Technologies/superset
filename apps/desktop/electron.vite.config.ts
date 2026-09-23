@@ -119,6 +119,10 @@ export default defineConfig({
 			"process.env.SUPERSET_WORKSPACE_NAME": defineEnv(
 				process.env.SUPERSET_WORKSPACE_NAME,
 			),
+			// A fork build must never replace itself with the upstream release.
+			"process.env.SUPERSET_DISABLE_AUTO_UPDATE": defineEnv(
+				process.env.SUPERSET_DISABLE_AUTO_UPDATE,
+			),
 		},
 
 		build: {
